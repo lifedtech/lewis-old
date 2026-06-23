@@ -84,7 +84,7 @@ flowchart TD
     
     Validate -->|Yes| ScoreAll[Compute Normalized Scores]:::process
     
-    subgraph Dimension Calculations
+    subgraph "Dimension Calculations"
         ScoreAll --> WHO5[WHO-5: sum * 4]:::process
         ScoreAll --> PSS10[PSS-10: apply reverse scoring on indices 3, 4, 6, 7]:::process
         ScoreAll --> Others[Calculate standard 3-question indexes: UCLA-3, SQI, PAI, FSI, PMI, BWI, NHI]:::process

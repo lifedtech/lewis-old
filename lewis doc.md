@@ -78,17 +78,17 @@ graph TD
     classDef ai fill:#f2f5fa,stroke:#4A90E2,stroke-width:2px,color:#1a2e30;
     classDef output fill:#f9f5ff,stroke:#9B5DE5,stroke-width:2px,color:#1a2e30;
 
-    subgraph Phase 1: Input Collection (React Web Frontend)
+    subgraph "Phase 1: Input Collection (React Web Frontend)"
         UI[User Interface / Sliders]:::frontend --> |"9D Inputs (WHO-5, PSS-10, UCLA-3, SQI, GSE-10, CFPB-5, Diener, BWI, NHI)"| Gather[Gather Answers & Logistics]:::frontend
         Logistics[Logistics:<br>- Time Available<br>- Current Environment<br>- Arrival Word]:::frontend --> Gather
         Gather -->|"POST /assessment/full (JSON)"| API[FastAPI Endpoint]:::backend
     end
 
-    subgraph Phase 2: Core Processing & Scoring (FastAPI Backend)
+    subgraph "Phase 2: Core Processing & Scoring (FastAPI Backend)"
         API --> |"Pydantic Validation"| Validator[FullAssessmentInput Model]:::backend
         Validator --> Scoring[Scoring & Normalization Engine]:::backend
         
-        subgraph Scoring Metrics (Normalized to 0-100)
+        subgraph "Scoring Metrics (Normalized to 0-100)"
             Scoring --> |"Raw Sum * 4"| WHO5[WHO-5: Wellbeing]:::backend
             Scoring --> |"Reverse Score & Norm"| PSS10[PSS-10: Stress Load]:::backend
             Scoring --> |"Scale Normalization"| Others[UCLA-3, SQI, PAI, FSI, PMI, BWI, NHI]:::backend
@@ -96,7 +96,7 @@ graph TD
         
         WHO5 & PSS10 & Others --> Cascade[9D Cascade Matrix Analysis]:::backend
         
-        subgraph Cascade Calculations
+        subgraph "Cascade Calculations"
             Cascade --> Deficit[Wellbeing Deficit = 100 - WHO5]:::backend
             Cascade --> |"Apply Systemic Influence Weights"| Weights["Calculate Pressures:<br>- Stress * 0.80<br>- Sleep * 0.90<br>- Wellbeing Deficit * 0.50<br>- ...others"]:::backend
             Weights --> Max["Find Max Pressure"]:::backend
@@ -106,14 +106,14 @@ graph TD
         Router --> |"Filters by Time & Environment"| Prescribe[Selected Micro-Habit]:::backend
     end
 
-    subgraph Phase 3: AI Narration Generation (llm.py)
+    subgraph "Phase 3: AI Narration Generation (llm.py)"
         Max & Prescribe --> |"Diagnostic Package"| Package[JSON Context:<br>- primary_root_driver<br>- prescribed_habit<br>- action_steps]:::backend
         Package --> |"Empathetic System Prompt"| LLM[Groq OpenAI Client]:::ai
         LLM --> |"Model: llama-3.1-8b-instant"| Groq[Generate Empathetic Narrative]:::ai
         Groq --> |"3-4 Warm Sentences"| ResponseBuilder[Build Final API JSON Response]:::backend
     end
 
-    subgraph Phase 4: Output Rendering (React Web Frontend)
+    subgraph "Phase 4: Output Rendering (React Web Frontend)"
         ResponseBuilder --> |"HTTP Response (JSON)"| UI_Display[UI Rendering]:::output
         UI_Display --> |"Empathetic Paragraph"| DisplayNarrative[Personal Narrative Card]:::output
         UI_Display --> |"Linear Gradient Banner"| DisplayDriver[Primary Root Driver Card]:::output
