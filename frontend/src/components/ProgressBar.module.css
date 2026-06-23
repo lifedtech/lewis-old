@@ -35,7 +35,7 @@
 .active .dot {
   background: linear-gradient(135deg, var(--teal), var(--green));
   color: white;
-  box-shadow: 0 2px 8px rgba(0,176,155,0.4);
+  box-shadow: 0 2px 8px rgba(0,179,152,0.4);
 }
 .done .dot {
   background: var(--green);

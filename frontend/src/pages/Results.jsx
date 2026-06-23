@@ -21,7 +21,7 @@ function DimBar({ icon, label, score }) {
     return () => clearTimeout(t)
   }, [score])
 
-  const color = score > 65 ? 'var(--teal)' : score > 40 ? 'var(--green)' : '#f97316'
+  const color = score > 65 ? 'var(--teal)' : score > 40 ? 'var(--green)' : 'var(--muted)'
 
   return (
     <div className={styles.dimRow}>

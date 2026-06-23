@@ -1,13 +1,13 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --green:   #78C652;
-  --teal:    #00B09B;
+  --green:   #6CC24A; /* Pantone 360 C */
+  --teal:    #00B398; /* Pantone 3275 C */
   --dark:    #1a2e30;
   --grey:    #f0f0f0;
   --white:   #ffffff;
   --text:    #2d3a3b;
-  --muted:   #6b7280;
+  --muted:   #808285; /* CMYK 0 0 0 60 */
   --border:  #e2e8f0;
   --radius:  12px;
   --shadow:  0 4px 20px rgba(0,0,0,0.08);
