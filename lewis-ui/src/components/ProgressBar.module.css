@@ -1,0 +1,72 @@
+.wrap {
+  max-width: 780px;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+}
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  gap: 0.25rem;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+.active .dot {
+  background: linear-gradient(135deg, var(--teal), var(--green));
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,176,155,0.4);
+}
+.done .dot {
+  background: var(--green);
+  color: white;
+}
+
+.labelText {
+  font-size: 0.68rem;
+  color: var(--muted);
+  font-weight: 400;
+  text-align: center;
+}
+.active .labelText { color: var(--teal); font-weight: 700; }
+.done .labelText { color: var(--green); }
+
+.track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--green));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.stepText {
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.4rem;
+}

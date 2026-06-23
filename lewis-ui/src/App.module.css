@@ -1,0 +1,38 @@
+.shell {
+  min-height: 100vh;
+  background: var(--grey);
+}
+
+.header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--teal);
+  letter-spacing: 0.04em;
+}
+
+.phaseTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}

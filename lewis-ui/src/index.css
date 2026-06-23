@@ -1,0 +1,29 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:   #78C652;
+  --teal:    #00B09B;
+  --dark:    #1a2e30;
+  --grey:    #f0f0f0;
+  --white:   #ffffff;
+  --text:    #2d3a3b;
+  --muted:   #6b7280;
+  --border:  #e2e8f0;
+  --radius:  12px;
+  --shadow:  0 4px 20px rgba(0,0,0,0.08);
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  background: var(--grey);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+h1,h2,h3,h4,h5 { font-weight: 700; color: var(--dark); }
+p { line-height: 1.6; }
+button { font-family: 'Roboto', sans-serif; cursor: pointer; }
+input, select, textarea { font-family: 'Roboto', sans-serif; }
