@@ -259,91 +259,79 @@ Normalized Score = (Total Score / 40) × 100
 
 ## Response Generation Logic
 
-### WHO-5 Score Calculation
+The scoring engine in [scoring.py](file:///e:/lifed-LEWIS%20-%20Copy/backend/scoring.py) processes raw assessment questionnaire answers across 9 health and wellbeing dimensions, normalizes each dimension to a standard 0-100 scale, and computes the primary root driver using a weighted influence cascade matrix.
 
-```
-Step 1: Sum the 5 scores
-  Raw Sum = score1 + score2 + score3 + score4 + score5
-  Example: 4 + 3 + 5 + 2 + 3 = 17
+### 1. WHO-5 (World Health Organization Wellbeing Index)
+- **Inputs**: 5 questions, rated 0–5 (where higher indicates better wellbeing).
+- **Calculation**:
+  1. Sum the 5 raw scores (Max: 25).
+  2. Scale to 0-100 by multiplying by 4:
+     $$\text{Wellbeing Score} = \text{Raw Sum} \times 4$$
+- **Classification Bands**:
+  - **70+**: Thriving
+  - **55-69**: Steady
+  - **40-54**: Stretched
+  - **<40**: Asking for care
 
-Step 2: Scale to 0-100
-  Scaled Score = Raw Sum × 4
-  Example: 17 × 4 = 68
+### 2. PSS-10 (Perceived Stress Scale)
+- **Inputs**: 10 questions, rated 0–4 (where higher indicates higher stress).
+- **Calculation**:
+  1. Reverse-score questions 4, 5, 7, and 8 (indices 3, 4, 6, 7):
+     $$\text{Score}_{\text{flipped}} = 4 - \text{Score}_{\text{original}}$$
+  2. Sum all raw scores (Max: 40).
+  3. Normalize to a 0-100 scale:
+     $$\text{Normalized Stress} = \left(\frac{\text{Total Score}}{40}\right) \times 100$$
 
-Step 3: Classify into Well-being Band
-  if Scaled Score >= 70    → "Thriving"
-  if Scaled Score >= 55    → "Steady"
-  if Scaled Score >= 40    → "Stretched"
-  else                     → "Asking for care"
-  
-  Example: 68 → "Steady"
-```
+### 3. UCLA-3 (Loneliness & Connection Index)
+- **Inputs**: 3 questions, rated 1–3 (where higher indicates higher isolation).
+- **Calculation**:
+  1. Sum the 3 raw scores (Range: 3 to 9).
+  2. Normalize to a 0-100 scale:
+     $$\text{Normalized Loneliness} = \left(\frac{\text{Raw Sum} - 3}{6}\right) \times 100$$
 
-### PSS-10 Score Calculation
+### 4. SQI-4 (Sleep Quality Index)
+- **Inputs**: 4 questions, rated 0–3 (where higher indicates worse sleep).
+- **Calculation**:
+  1. Sum the 4 raw scores (Max: 12).
+  2. Normalize to a 0-100 scale:
+     $$\text{Normalized Sleep Deficit} = \left(\frac{\text{Raw Sum}}{12}\right) \times 100$$
 
-```
-Step 1: Identify questions to reverse (4, 5, 7, 8)
-  These are array indices: 3, 4, 6, 7
+### 5. Standard 3-Question Scales (PAI, FSI, PMI, BWI, NHI)
+Used to calculate scores for the remaining five dimensions: Physical Activity Index (PAI), Financial Stability Index (FSI), Purpose Meaning Index (PMI), Burnout Workload Index (BWI), and Nutrition Hydration Index (NHI).
+- **Inputs**: 3 questions, rated 0–4 (where higher indicates worse baseline/higher pressure).
+- **Calculation**:
+  1. Sum the 3 raw scores (Max: 12).
+  2. Normalize to a 0-100 scale:
+     $$\text{Normalized Score} = \left(\frac{\text{Raw Sum}}{12}\right) \times 100$$
 
-Step 2: Apply reverse scoring
-  For indices [3, 4, 6, 7]:
-    Flipped Score = 4 - Original Score
-  For other indices:
-    Keep original score
+---
 
-Example input: [2, 1, 3, 2, 1, 2, 3, 2, 1, 2]
-After reverse-scoring:
-  Index 0: 2 (no flip)
-  Index 1: 1 (no flip)
-  Index 2: 3 (no flip)
-  Index 3: 4-2 = 2 (flip)
-  Index 4: 4-1 = 3 (flip)
-  Index 5: 2 (no flip)
-  Index 6: 4-3 = 1 (flip)
-  Index 7: 4-2 = 2 (flip)
-  Index 8: 1 (no flip)
-  Index 9: 2 (no flip)
-  
-Step 3: Sum all scores
-  Total Raw Score = 2 + 1 + 3 + 2 + 3 + 2 + 1 + 2 + 1 + 2 = 19
+### 6. Cascade Matrix (Root Driver Analysis)
+Instead of returning a simple highest score, the core engine runs a weighted cascade matrix in `calculate_root_driver` to determine which dimension causes the most system-wide pressure.
 
-Step 4: Normalize to 0-100 scale
-  Normalized Score = (Total Score / 40) × 100
-  Example: (19 / 40) × 100 = 47.5
-```
+1. **Calculate Wellbeing Deficit**:
+   $$\text{Wellbeing Deficit} = 100 - \text{WHO-5 Scaled Score}$$
 
-### Cascade Matrix (Root Driver Analysis)
+2. **Compute Pressure Scores**:
+   Each normalized score (representing a deficit or load) is multiplied by its systemic influence weight:
 
-The cascade matrix determines whether **stress is driving low well-being** or **low well-being is exacerbating stress**.
+   | Dimension | Weight | Meaning / Impact |
+   |-----------|--------|------------------|
+   | **Chronic Sleep & Recovery Deficit** | `0.90` | High biological impact on systemic baseline |
+   | **Social Isolation & Disconnection** | `0.85` | High psychological driver of mental distress |
+   | **Burnout & Workload** | `0.85` | High pressure exceeding active recovery capacity |
+   | **Stress Load (PSS-10)** | `0.80` | High day-to-day cognitive and emotional impact |
+   | **Financial Stress** | `0.75` | High impact on long-term cognitive bandwidth |
+   | **Physical Sedentary Behavior** | `0.70` | Moderate biological and baseline impact |
+   | **Lack of Purpose/Meaning** | `0.65` | Baseline driver of systemic apathy |
+   | **Nutritional/Hydration Deficits** | `0.60` | Lower physical baseline and systemic energy |
+   | **Low Emotional Wellbeing** | `0.50` | Feedback loop driver |
 
-```
-Step 1: Calculate Well-being Deficit
-  Wellbeing Deficit = 100 - WHO5_Scaled_Score
-  Example: 100 - 68 = 32
+3. **Determine Root Driver**:
+   The engine evaluates all weighted pressures and returns the text label corresponding to the **maximum calculated pressure value**:
+   $$\text{Root Driver} = \operatorname{argmax}(\text{Pressures})$$
 
-Step 2: Define Influence Weights
-  Weight Stress→Wellbeing = 0.8 (stress has high impact on well-being)
-  Weight Wellbeing→Stress = 0.5 (poor well-being moderately increases stress)
-
-Step 3: Calculate Cascade Pressures
-  Stress-Driven Pressure = PSS10_Normalized × Weight_Stress_on_Wellbeing
-  Example: 47.5 × 0.8 = 38
-
-  Wellbeing-Driven Pressure = Wellbeing_Deficit × Weight_Wellbeing_on_Stress
-  Example: 32 × 0.5 = 16
-
-Step 4: Determine Root Driver
-  if Stress-Driven Pressure > Wellbeing-Driven Pressure:
-    → "Stress Load is the primary driver of current state."
-  
-  elif Wellbeing-Driven Pressure > Stress-Driven Pressure:
-    → "Low Emotional Wellbeing is exacerbating stress."
-  
-  else:
-    → "Co-occurring dimensions (Feedback Loop)."
-  
-  Example: 38 > 16 → "Stress Load is the primary driver"
-```
+---
 
 ---
 
