@@ -11,11 +11,11 @@ This diagram shows the chronological order of interaction and message-passing be
 sequenceDiagram
     autonumber
     actor User as User
-    participant FE as React Frontend (lewis-ui)
-    participant BE as FastAPI Backend (main.py)
-    participant SC as Scoring Engine (scoring.py)
-    participant CO as Content Router (content.py)
-    participant AI as AI Narration (llm.py)
+    participant FE as React Frontend (frontend)
+    participant BE as FastAPI Backend (backend/main.py)
+    participant SC as Scoring Engine (backend/scoring.py)
+    participant CO as Content Router (backend/content.py)
+    participant AI as AI Narration (backend/llm.py)
     participant Groq as Llama-3 API (Groq)
 
     User->>FE: Fill 9D Sliders & Logistics

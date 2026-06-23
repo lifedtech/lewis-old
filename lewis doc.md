@@ -37,30 +37,26 @@ The goal is to provide actionable insights for personal health tracking, coachin
 
 ```
 lifed-LEWIS/
-├── main.py              # FastAPI application & endpoint definitions
-├── scoring.py           # Psychological assessment scoring algorithms
-├── content.py           # Content database and micro-habit routing
-├── llm.py               # AI narration client wrapper (Groq/OpenAI)
+├── backend/             # FastAPI backend application (the brain)
+│   ├── main.py          # Application configuration, Pydantic models & endpoints
+│   ├── scoring.py       # 9D scoring logic & cascade driver engine
+│   ├── content.py       # Catalog of habits and routing algorithm
+│   └── llm.py           # Groq Llama-3 AI narrative generation wrapper
+├── frontend/            # React/Vite web application (user interface)
+│   ├── src/             # React source files (App.jsx, pages, components)
+│   ├── package.json     # Node.js dependencies and script configuration
+│   └── index.html       # SPA HTML entrypoint
 ├── lewis doc.md         # Project documentation (this file)
-├── lewis-ui/            # React/Vite web application (frontend)
-│   ├── src/             # Frontend React source code
-│   │   ├── pages/       # Phase-based multi-step form pages & Results
-│   │   ├── components/  # Reusable React components (e.g. ProgressBar)
-│   │   └── App.jsx      # Main layout and step state router
-│   ├── package.json     # Node dependencies & run scripts
-│   └── index.html       # Single-page app HTML template
+├── workflow_uml.md      # UML sequence and activity flow diagrams
 └── .venv/               # Python virtual environment (dependencies)
 ```
 
-### File Descriptions
+### Folder Descriptions
 
-| File / Directory | Purpose |
-|------------------|---------|
-| **main.py** | Core application entry point containing FastAPI configuration, Pydantic inputs, and handler functions |
-| **scoring.py** | Scoring and normalization logic for 9 dimensions and cascade root driver calculation |
-| **content.py** | Library of micro-habits and routing based on the primary root driver, time, and environment |
-| **llm.py** | Empathetic narrative generation wrapper querying Groq Llama-3 API |
-| **lewis-ui/** | User interface built using React, Vite, and modular CSS styling |
+| Directory | Purpose |
+|-----------|---------|
+| **backend/** | Python backend hosting the FastAPI server, core scoring matrix calculations, and LLM communication |
+| **frontend/** | React frontend application serving the 9-Phase check-in wizard and Results page |
 
 ---
 
@@ -407,7 +403,9 @@ pip install fastapi uvicorn pydantic python-multipart
 ```
 
 ### Step 4: Run the Server
+Navigate to the `backend` folder first:
 ```bash
+cd backend
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -420,7 +418,7 @@ FastAPI automatically generates interactive documentation:
 
 ---
 
-### React Frontend Setup (lewis-ui)
+### React Frontend Setup (frontend)
 
 The frontend is built using React, Vite, and modular CSS.
 
@@ -430,7 +428,7 @@ The frontend is built using React, Vite, and modular CSS.
 
 #### Step 1: Navigate to the Frontend Directory
 ```bash
-cd lewis-ui
+cd frontend
 ```
 
 #### Step 2: Install Node Dependencies
