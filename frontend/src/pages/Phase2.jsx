@@ -1,3 +1,4 @@
+import styles from './Phase.module.css'
 import { Card, SectionTitle, Caption, SliderField, Divider } from '../components/ui.jsx'
 import NavButtons from './NavButtons.jsx'
 
@@ -39,11 +40,19 @@ export default function Phase2({ data, onChange, onNext, onBack }) {
   const get = (key, def) => data[key] ?? def
 
   return (
-    <div>
+    <div className={styles.phaseWrap}>
+
+      <div className={styles.phaseHeader}>
+        <h2 className={styles.phaseTitle}>Emotional & Mental Wellbeing</h2>
+        <p className={styles.phaseSub}>
+          These questions use validated scales. Answer honestly — there are no right answers.
+        </p>
+      </div>
+
       {/* WHO-5 */}
-      <Card>
+      <Card stagger={0}>
         <SectionTitle>🌤 Emotional Wellbeing (WHO-5)</SectionTitle>
-        <Caption>Over the last two weeks — how often? &nbsp; 0 = At no time · 5 = All of the time</Caption>
+        <Caption>Over the last two weeks — how often? · 0 = At no time · 5 = All of the time</Caption>
         {WHO5.map((q, i) => (
           <SliderField
             key={i}
@@ -59,9 +68,9 @@ export default function Phase2({ data, onChange, onNext, onBack }) {
       </Card>
 
       {/* PSS-10 */}
-      <Card>
+      <Card stagger={1}>
         <SectionTitle>🧠 Stress Load (PSS-10)</SectionTitle>
-        <Caption>In the last month — how often? &nbsp; 0 = Never · 4 = Very often</Caption>
+        <Caption>In the last month — how often? · 0 = Never · 4 = Very often</Caption>
         {PSS10.map((q, i) => (
           <SliderField
             key={i}
@@ -77,7 +86,7 @@ export default function Phase2({ data, onChange, onNext, onBack }) {
       </Card>
 
       {/* UCLA-3 */}
-      <Card>
+      <Card stagger={2}>
         <SectionTitle>🤝 Connection & Loneliness (UCLA-3)</SectionTitle>
         <Caption>1 = Hardly ever · 3 = Often</Caption>
         {UCLA3.map((q, i) => (
@@ -95,7 +104,7 @@ export default function Phase2({ data, onChange, onNext, onBack }) {
       </Card>
 
       {/* SQI-4 */}
-      <Card>
+      <Card stagger={3}>
         <SectionTitle>😴 Sleep Quality (SQI-4)</SectionTitle>
         <Caption>0 = Good · 3 = Terrible</Caption>
         {SQI4.map((q, i) => (

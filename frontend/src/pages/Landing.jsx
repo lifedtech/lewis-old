@@ -1,54 +1,51 @@
 import styles from './Landing.module.css'
-import { Card, RadioGroup, SelectField, SliderField, PrimaryBtn } from '../components/ui.jsx'
+import { PrimaryBtn } from '../components/ui.jsx'
 
-export default function Landing({ data, onChange, onNext }) {
+export default function Landing({ onNext }) {
   return (
-    <div className={styles.wrap}>
-      {/* Hero */}
-      <div className={styles.hero}>
-        <div className={styles.heroIcon}>🌿</div>
-        <h1>How are you actually doing?</h1>
-        <p>
-          A warm, honest check-in across 9 dimensions of your wellbeing.
-          Takes about 5–8 minutes. No clinical labels. No judgment.
-        </p>
+    <div className={styles.container}>
+
+      {/* Concentric circle visual — behind everything */}
+      <div className={styles.circles} aria-hidden="true">
+        <div className={styles.circle} style={{ '--delay': '0s',   '--size': '600px' }} />
+        <div className={styles.circle} style={{ '--delay': '1s',   '--size': '470px' }} />
+        <div className={styles.circle} style={{ '--delay': '2s',   '--size': '350px' }} />
+        <div className={styles.circle} style={{ '--delay': '3s',   '--size': '240px' }} />
+        <div className={styles.circleSolid}                                            />
       </div>
 
-      {/* Logistics */}
-      <Card>
-        <SliderField
-          label="How many minutes do you have right now?"
-          name="time_avail"
-          min={1} max={15}
-          value={data.time_avail ?? 5}
-          onChange={onChange}
-          leftLabel="1 min"
-          rightLabel="15 min"
-        />
-        <SelectField
-          label="Where are you completing this?"
-          name="env"
-          options={['Anywhere', 'Desk', 'Outside']}
-          value={data.env ?? 'Anywhere'}
-          onChange={onChange}
-        />
-      </Card>
+      {/* Hero */}
+      <div className={styles.hero}>
 
-      <Card>
-        <RadioGroup
-          label="How would you describe arriving here today?"
-          name="arrival"
-          options={['😤 Overwhelmed', '😔 Low & flat', '😰 Anxious & tense', '😐 Going through motions', '🙂 Okay, curious', '✨ Actually pretty good']}
-          value={data.arrival}
-          onChange={onChange}
-        />
-      </Card>
+        {/* Greeting */}
+        <p className={styles.greeting}>Meet</p>
 
-      <div className={styles.footer}>
-        <PrimaryBtn onClick={onNext} disabled={!data.arrival} full>
-          Begin Assessment →
-        </PrimaryBtn>
-        {!data.arrival && <p className={styles.hint}>Select how you're arriving to continue</p>}
+        {/* LEWIS — the focal point */}
+        <h1 className={styles.brand}>LEWIS</h1>
+
+        {/* Full name ribbon */}
+        <p className={styles.fullName}>
+          Life &amp; Wellbeing Intelligence System
+        </p>
+
+        {/* Divider line */}
+        <div className={styles.rule} />
+
+        {/* One-liner */}
+        <p className={styles.tagline}>
+          A science-backed, AI-powered check-in across<br />
+          9 dimensions of your wellbeing.
+        </p>
+
+        {/* CTA */}
+        <div className={styles.cta}>
+          <button className={styles.ctaBtn} onClick={onNext}>
+            Begin Wellbeing Analysis
+            <span className={styles.ctaArrow}>→</span>
+          </button>
+          <p className={styles.ctaMeta}>No signup · Anonymous · ~5 mins</p>
+        </div>
+
       </div>
     </div>
   )

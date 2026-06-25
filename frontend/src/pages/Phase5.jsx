@@ -1,15 +1,30 @@
+import styles from './Phase.module.css'
 import { Card, SectionTitle, RadioGroup } from '../components/ui.jsx'
 import NavButtons from './NavButtons.jsx'
 
 export default function Phase5({ data, onChange, onNext, onBack }) {
   return (
-    <div>
-      <Card>
+    <div className={styles.phaseWrap}>
+
+      <div className={styles.phaseHeader}>
+        <h2 className={styles.phaseTitle}>Environment & Financial Context</h2>
+        <p className={styles.phaseSub}>
+          Your physical and financial environment shapes wellbeing in ways that are often invisible.
+        </p>
+      </div>
+
+      <Card stagger={0}>
         <SectionTitle>🏡 Physical Environment</SectionTitle>
         <RadioGroup
           label="How does your physical environment feel right now?"
           name="phys_env"
-          options={['Chaotic / stressful', 'Cramped or uncomfortable', 'Neutral', 'Comfortable', 'Calm and restorative']}
+          options={[
+            'Chaotic / stressful',
+            'Cramped or uncomfortable',
+            'Neutral',
+            'Comfortable',
+            'Calm and restorative',
+          ]}
           value={data.phys_env}
           onChange={onChange}
         />
@@ -22,7 +37,7 @@ export default function Phase5({ data, onChange, onNext, onBack }) {
         />
       </Card>
 
-      <Card>
+      <Card stagger={1}>
         <SectionTitle>💰 Financial & Environmental Context</SectionTitle>
         <RadioGroup
           label="How does thinking about your finances feel right now?"
@@ -41,7 +56,13 @@ export default function Phase5({ data, onChange, onNext, onBack }) {
         <RadioGroup
           label="How are finances organised in your household?"
           name="fin_org"
-          options={['Shared / joint', 'Mainly my responsibility', 'Partner manages', 'Independent', 'Complicated']}
+          options={[
+            'Shared / joint',
+            'Mainly my responsibility',
+            'Partner manages',
+            'Independent',
+            'Complicated',
+          ]}
           value={data.fin_org}
           onChange={onChange}
         />
@@ -54,7 +75,7 @@ export default function Phase5({ data, onChange, onNext, onBack }) {
         />
       </Card>
 
-      <Card>
+      <Card stagger={2}>
         <SectionTitle>🌐 World Context</SectionTitle>
         <RadioGroup
           label="Are there things going on in the world around you — not just your personal life — affecting how you feel?"

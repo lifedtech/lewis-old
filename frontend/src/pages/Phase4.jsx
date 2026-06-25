@@ -1,4 +1,8 @@
-import { Card, SectionTitle, Caption, SliderField, RadioGroup, Divider } from '../components/ui.jsx'
+import styles from './Phase.module.css'
+import {
+  Card, SectionTitle, Caption,
+  SliderField, RadioGroup, Divider,
+} from '../components/ui.jsx'
 import NavButtons from './NavButtons.jsx'
 
 const BURNOUT = [
@@ -23,8 +27,16 @@ export default function Phase4({ data, onChange, onNext, onBack }) {
   const get = (key, def) => data[key] ?? def
 
   return (
-    <div>
-      <Card>
+    <div className={styles.phaseWrap}>
+
+      <div className={styles.phaseHeader}>
+        <h2 className={styles.phaseTitle}>Body, Burnout & Nourishment</h2>
+        <p className={styles.phaseSub}>
+          Your biological and workload baselines — these drive more than most people realise.
+        </p>
+      </div>
+
+      <Card stagger={0}>
         <SectionTitle>🔥 Burnout & Workload</SectionTitle>
         <Caption>0 = Optimal · 4 = Severely depleted</Caption>
         {BURNOUT.map((q, i) => (
@@ -34,7 +46,7 @@ export default function Phase4({ data, onChange, onNext, onBack }) {
         ))}
       </Card>
 
-      <Card>
+      <Card stagger={1}>
         <SectionTitle>🥗 Nutrition & Hydration</SectionTitle>
         <Caption>0 = Optimal · 4 = Severely depleted</Caption>
         {NUTRITION.map((q, i) => (
@@ -44,7 +56,7 @@ export default function Phase4({ data, onChange, onNext, onBack }) {
         ))}
       </Card>
 
-      <Card>
+      <Card stagger={2}>
         <SectionTitle>🏃 Physical Activity</SectionTitle>
         <Caption>0 = Optimal · 4 = Severely sedentary</Caption>
         {PHYSICAL.map((q, i) => (
@@ -54,7 +66,7 @@ export default function Phase4({ data, onChange, onNext, onBack }) {
         ))}
       </Card>
 
-      <Card>
+      <Card stagger={3}>
         <SectionTitle>🧩 Intellectual & Cultural Belonging</SectionTitle>
         <RadioGroup
           label="When did you last do something that genuinely stretched your mind?"
@@ -75,13 +87,15 @@ export default function Phase4({ data, onChange, onNext, onBack }) {
           label="There are traditions or shared ways of living I feel part of."
           name="traditions"
           min={0} max={4} value={get('traditions', 2)}
-          onChange={onChange} leftLabel="Strongly disagree" rightLabel="Strongly agree"
+          onChange={onChange}
+          leftLabel="Strongly disagree" rightLabel="Strongly agree"
         />
         <SliderField
           label="In the communities I'm part of, I can be myself."
           name="authenticity"
           min={0} max={4} value={get('authenticity', 2)}
-          onChange={onChange} leftLabel="Strongly disagree" rightLabel="Strongly agree"
+          onChange={onChange}
+          leftLabel="Strongly disagree" rightLabel="Strongly agree"
         />
       </Card>
 

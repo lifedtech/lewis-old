@@ -1,0 +1,89 @@
+.wrap {
+  margin-bottom: 1.8rem;
+  padding: 1.1rem 1.25rem;
+  background: rgba(255,255,255,0.55);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.index {
+  position: absolute;
+  top: -10px;
+  left: 1rem;
+  background: var(--lewis-teal);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.question {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--lewis-dark);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  font-family: 'Inter', sans-serif;
+}
+
+.scale {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  margin-bottom: 0.4rem;
+}
+
+.btn {
+  flex: 1;
+  min-width: 0;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.8);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: border-color 0.15s, background 0.15s;
+  max-width: 52px;
+}
+.btn:hover {
+  border-color: var(--lewis-teal);
+  background: rgba(0,176,155,0.06);
+}
+.btnActive {
+  background: linear-gradient(135deg, var(--lewis-teal), var(--lewis-mint));
+  border-color: transparent;
+  box-shadow: 0 3px 12px rgba(0,176,155,0.3);
+}
+
+.num {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--lewis-dark);
+  font-family: 'Inter', sans-serif;
+}
+.btnActive .num { color: white; }
+
+.tick {
+  font-size: 0.55rem;
+  color: var(--lewis-teal);
+}
+.btnActive .tick { color: rgba(255,255,255,0.8); }
+
+.edgeLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  padding: 0 2px;
+}

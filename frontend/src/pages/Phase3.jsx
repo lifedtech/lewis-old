@@ -1,3 +1,4 @@
+import styles from './Phase.module.css'
 import { Card, SectionTitle, Caption, SliderField } from '../components/ui.jsx'
 import NavButtons from './NavButtons.jsx'
 
@@ -15,7 +16,7 @@ const GSE = [
 ]
 
 const CFPB = [
-  'Because of my money situation, I feel I\'ll never have the things I want in life.',
+  "Because of my money situation, I feel I'll never have the things I want in life.",
   'I am just getting by financially.',
   'I am concerned that the money I have won\'t last.',
   'I have money left over at the end of the month.',
@@ -37,9 +38,17 @@ export default function Phase3({ data, onChange, onNext, onBack }) {
   const get = (key, def) => data[key] ?? def
 
   return (
-    <div>
-      <Card>
-        <SectionTitle>⚡ Accomplishment & Agency (Self-Efficacy Scale)</SectionTitle>
+    <div className={styles.phaseWrap}>
+
+      <div className={styles.phaseHeader}>
+        <h2 className={styles.phaseTitle}>Agency, Finances & Flourishing</h2>
+        <p className={styles.phaseSub}>
+          How you feel about your capacity to act, your money, and your sense of meaning.
+        </p>
+      </div>
+
+      <Card stagger={0}>
+        <SectionTitle>⚡ Accomplishment & Agency (Self-Efficacy)</SectionTitle>
         <Caption>0 = Not at all true · 4 = Exactly true</Caption>
         {GSE.map((q, i) => (
           <SliderField
@@ -55,9 +64,12 @@ export default function Phase3({ data, onChange, onNext, onBack }) {
         ))}
       </Card>
 
-      <Card>
+      <Card stagger={1}>
         <SectionTitle>💰 Financial Wellness (CFPB Scale)</SectionTitle>
-        <Caption>Money affects wellbeing for almost everyone — answer as honestly as feels comfortable. &nbsp; 0 = Strongly disagree · 4 = Strongly agree</Caption>
+        <Caption>
+          Money affects wellbeing for almost everyone — answer as honestly as feels comfortable.
+          · 0 = Strongly disagree · 4 = Strongly agree
+        </Caption>
         {CFPB.map((q, i) => (
           <SliderField
             key={i}
@@ -72,7 +84,7 @@ export default function Phase3({ data, onChange, onNext, onBack }) {
         ))}
       </Card>
 
-      <Card>
+      <Card stagger={2}>
         <SectionTitle>🌱 Purpose & Flourishing (Diener Scale)</SectionTitle>
         <Caption>0 = Strongly disagree · 4 = Strongly agree</Caption>
         {FLOURISHING.map((q, i) => (

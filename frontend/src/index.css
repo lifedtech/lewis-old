@@ -1,29 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --green:   #6CC24A; /* Pantone 360 C */
-  --teal:    #00B398; /* Pantone 3275 C */
-  --dark:    #1a2e30;
-  --grey:    #f0f0f0;
-  --white:   #ffffff;
-  --text:    #2d3a3b;
-  --muted:   #808285; /* CMYK 0 0 0 60 */
-  --border:  #e2e8f0;
-  --radius:  12px;
-  --shadow:  0 4px 20px rgba(0,0,0,0.08);
+  /* ── Brand tokens (prompt-specified names) ── */
+  --lewis-teal:   #00B09B;
+  --lewis-mint:   #78C652;
+  --lewis-cream:  #FDF8F0;
+  --lewis-dark:   #1A2E30;
+
+  /* ── Extended palette ── */
+  --sage:      #78C652;
+  --sage-lt:   #a8d5a2;
+  --sage-dk:   #4e8c4a;
+  --teal:      #00B09B;
+  --teal-dk:   #008f7e;
+  --mint-pale: #b2dfdb;
+  --cream:     #FDF8F0;
+  --warm:      #F5F0E8;
+  --sand:      #E8DCC8;
+  --blush:     #F2E8E0;
+  --amber:     #D4956A;
+  --dark:      #1A2E30;
+  --text:      #2d4042;
+  --muted:     #6b8082;
+  --border:    #dde8d4;
+  --white:     #ffffff;
+  --radius:    16px;
+  --radius-sm: 10px;
+  --shadow:    0 4px 24px rgba(26,46,48,0.08);
+  --shadow-lg: 0 8px 40px rgba(26,46,48,0.14);
+  --shadow-glow: 0 0 28px rgba(0,176,155,0.22);
+
+  /* ── Chart greens ── */
+  --c1: #00B09B; --c2: #78C652; --c3: #4e8c4a;
+  --c4: #b2dfdb; --c5: #5b9e94; --c6: #d4e8c2;
+  --c7: #95c78f; --c8: #3a7a50; --c9: #c8e6c9;
 }
 
-html { font-size: 16px; }
+html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
-  background: var(--grey);
+  background: var(--cream);
   color: var(--text);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1,h2,h3,h4,h5 { font-weight: 700; color: var(--dark); }
-p { line-height: 1.6; }
-button { font-family: 'Roboto', sans-serif; cursor: pointer; }
-input, select, textarea { font-family: 'Roboto', sans-serif; }
+
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: var(--dark);
+}
+p { line-height: 1.7; }
+button { font-family: 'Inter', sans-serif; cursor: pointer; }
+input, select, textarea { font-family: 'Inter', sans-serif; }
+
+/* ── Staggered card entrance keyframe (used by all phases) ── */
+@keyframes cardSlideUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--warm); }
+::-webkit-scrollbar-thumb { background: var(--sage-lt); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal); }

@@ -1,31 +1,49 @@
 import styles from './ProgressBar.module.css'
 
 const PHASES = [
-  'Context', 'Emotional', 'Agency', 'Body', 'Environment', 'Preferences'
+  { label: 'Context',   icon: '🌍' },
+  { label: 'Emotional', icon: '🌤' },
+  { label: 'Agency',    icon: '⚡' },
+  { label: 'Body',      icon: '🌿' },
+  { label: 'World',     icon: '🏡' },
+  { label: 'Reflect',   icon: '🔮' },
 ]
 
 export default function ProgressBar({ step }) {
-  // step 1-6 = phases, 0 = landing, 7 = results
   if (step === 0 || step === 7) return null
   const pct = (step / 6) * 100
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.labels}>
-        {PHASES.map((label, i) => (
-          <span
-            key={label}
-            className={`${styles.label} ${i + 1 === step ? styles.active : ''} ${i + 1 < step ? styles.done : ''}`}
-          >
-            <span className={styles.dot}>{i + 1 < step ? '✓' : i + 1}</span>
-            <span className={styles.labelText}>{label}</span>
-          </span>
-        ))}
+      <div className={styles.steps}>
+        {PHASES.map((phase, i) => {
+          const num   = i + 1
+          const done  = num < step
+          const active = num === step
+
+          return (
+            <div key={phase.label} className={`${styles.step} ${active ? styles.stepActive : ''} ${done ? styles.stepDone : ''}`}>
+              <div className={styles.dot}>
+                {done ? <span className={styles.check}>✓</span> : <span>{phase.icon}</span>}
+              </div>
+              <span className={styles.label}>{phase.label}</span>
+            </div>
+          )
+        })}
       </div>
+
       <div className={styles.track}>
-        <div className={styles.fill} style={{ width: `${pct}%` }} />
+        <div
+          className={styles.fill}
+          style={{ width: `${pct}%` }}
+        />
+        <div
+          className={styles.glow}
+          style={{ left: `${pct}%` }}
+        />
       </div>
-      <p className={styles.stepText}>Phase {step} of 6</p>
+
+      <p className={styles.stepText}>Phase {step} of 6 — {PHASES[step - 1]?.label}</p>
     </div>
   )
 }

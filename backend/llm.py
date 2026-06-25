@@ -1,10 +1,16 @@
 # llm.py
+import os
+import logging
+# pyrefly: ignore [missing-import]
 from openai import OpenAI
+from dotenv import load_dotenv
 
+load_dotenv()
+ 
 # We set the base_url to Groq to test Llama-3 for free. 
 # When you launch, you just change this URL to your RunPod Serverless endpoint!
 client = OpenAI(
-    api_key="REDACTED_GROQ_API_KEY", 
+    api_key=os.getenv("GROQ_API_KEY"), 
     base_url="https://api.groq.com/openai/v1"
 )
 
@@ -14,16 +20,13 @@ def generate_user_narrative(diagnostic_data: dict) -> str:
     """
     
     system_prompt = """
-    You are the LEWIS Engine, an empathetic, highly intelligent wellbeing AI. 
-    You are speaking directly to the user.
-    
-    Your goal is to translate the clinical JSON data provided into a warm, validating, 
-    and conversational short paragraph (maximum 3 to 4 sentences).
+    Generate an empathetic, highly intelligent wellbeing summary addressed directly to the user.
     
     RULES:
-    1. Acknowledge their Primary Root Driver with empathy (do not sound clinical).
-    2. Gently introduce their prescribed Micro-Habit.
+    1. Acknowledge the user's Primary Root Driver with empathy (do not sound clinical).
+    2. Gently introduce the prescribed Micro-Habit.
     3. Do NOT list raw scores or numbers. Treat them like a human, not a patient.
+    4. CRITICAL: Do NOT use first-person pronouns ("I", "me", "my", "we", "us"). Do NOT refer to yourself as an AI or a system. Use objective framing or active gerunds.
     """
     
     # We turn the dictionary into a string so the AI can read it
@@ -42,4 +45,5 @@ def generate_user_narrative(diagnostic_data: dict) -> str:
         return response.choices[0].message.content
         
     except Exception as e:
-        return f"AI Generation Error: {str(e)}"
+        logging.error(f"LLM Generation Error: {str(e)}")
+        return "High traffic is currently preventing the generation of your AI narrative. Please try again later."

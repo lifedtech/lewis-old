@@ -1,0 +1,86 @@
+.title { font-family: 'Playfair Display', serif; font-size: 1.45rem; color: var(--lewis-dark); margin-bottom: 0.4rem; }
+.sub   { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; font-family: 'Inter', sans-serif; }
+
+/* Affect Canvas */
+.affectWrap {
+  position: relative;
+  width: 100%; padding-bottom: 66%;
+  background: rgba(255,255,255,0.65); border-radius: 16px;
+  border: 1.5px solid var(--border); cursor: crosshair;
+  overflow: hidden; margin-bottom: 0.5rem;
+}
+.axH { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--border); }
+.axV { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--border); }
+.axTop    { position: absolute; top: 6px;  left: 50%; transform: translateX(-50%); font-size: 0.65rem; color: var(--muted); font-family: 'Inter', sans-serif; }
+.axBottom { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; color: var(--muted); font-family: 'Inter', sans-serif; }
+.axLeft   { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font-size: 0.65rem; color: var(--muted); font-family: 'Inter', sans-serif; }
+.axRight  { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 0.65rem; color: var(--muted); font-family: 'Inter', sans-serif; }
+.q1 { position: absolute; top: 10%; left: 10%; font-size: 0.62rem; color: rgba(192,57,43,0.5); font-family: 'Inter', sans-serif; }
+.q2 { position: absolute; top: 10%; right: 10%; font-size: 0.62rem; color: rgba(0,176,155,0.5); font-family: 'Inter', sans-serif; }
+.q3 { position: absolute; bottom: 10%; left: 10%; font-size: 0.62rem; color: rgba(100,100,100,0.5); font-family: 'Inter', sans-serif; }
+.q4 { position: absolute; bottom: 10%; right: 10%; font-size: 0.62rem; color: rgba(120,198,82,0.5); font-family: 'Inter', sans-serif; }
+.marker {
+  position: absolute;
+  transform: translate(-50%,-50%);
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--lewis-teal); border: 3px solid white;
+  box-shadow: 0 2px 12px rgba(0,176,155,0.4);
+  pointer-events: none;
+}
+
+/* Body map */
+.bodyMapWrap { position: relative; width: 100px; height: 200px; margin: 0 auto 1rem; }
+.silhouette  { width: 100%; height: 100%; }
+.zoneBtn {
+  position: absolute; background: rgba(0,176,155,0.12);
+  border: 1.5px dashed rgba(0,176,155,0.3);
+  border-radius: 8px; cursor: pointer;
+  transition: background 0.15s;
+}
+.zoneBtn:hover { background: rgba(0,176,155,0.2); }
+.zoneActive   { background: rgba(0,176,155,0.35) !important; border-color: var(--lewis-teal) !important; }
+.zoneChips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.5rem; min-height: 28px; }
+.zoneChip  { background: rgba(0,176,155,0.12); border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 600; color: var(--lewis-teal); font-family: 'Inter', sans-serif; }
+.noZone    { font-size: 0.75rem; color: var(--muted); font-family: 'Inter', sans-serif; }
+
+/* Tension scale */
+.tensionRow { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; justify-content: center; }
+.tensionBtn {
+  width: 44px; height: 44px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: rgba(255,255,255,0.8);
+  font-size: 0.875rem; font-weight: 700; cursor: pointer;
+  font-family: 'Inter', sans-serif; color: var(--lewis-dark);
+  transition: border-color 0.15s;
+}
+.tensionBtn:hover { border-color: var(--lewis-teal); }
+.tensionActive {
+  background: linear-gradient(135deg, var(--lewis-teal), var(--lewis-mint));
+  border-color: transparent; color: white;
+  box-shadow: 0 3px 10px rgba(0,176,155,0.25);
+}
+
+/* Breathing */
+.breathWrap { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; text-align: center; }
+.breathCircle {
+  width: 160px; height: 160px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,176,155,0.2) 0%, rgba(0,176,155,0.05) 100%);
+  border: 3px solid rgba(0,176,155,0.3);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 40px rgba(0,176,155,0.15);
+}
+.breathLabel { font-size: 0.875rem; font-weight: 600; color: var(--lewis-teal); font-family: 'Inter', sans-serif; }
+.breathTimer { font-size: 2rem; font-weight: 800; color: var(--lewis-teal); font-family: 'Inter', sans-serif; }
+.breathDone  { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+.doneCheck {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--lewis-teal); color: white;
+  font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+}
+.breathInsight { font-size: 0.875rem; color: var(--lewis-teal); font-weight: 600; text-align: center; margin-top: 0.5rem; font-family: 'Inter', sans-serif; }
+.startBtn {
+  background: linear-gradient(135deg, var(--lewis-teal), var(--lewis-mint));
+  color: white; border: none; border-radius: 12px;
+  padding: 0.85rem 2.5rem; font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(0,176,155,0.28);
+  font-family: 'Inter', sans-serif;
+}

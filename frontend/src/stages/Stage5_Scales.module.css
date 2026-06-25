@@ -1,0 +1,142 @@
+/* Stage 5 — Validated Measurements */
+
+.title { font-family: 'Playfair Display', serif; font-size: 1.45rem; color: var(--lewis-dark); margin-bottom: 0.4rem; }
+.sub   { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.75rem; line-height: 1.6; font-family: 'Inter', sans-serif; }
+
+/* ── 5.1 Sort zones ─────────────────────────────────── */
+.zones {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 600px) {
+  .zones { grid-template-columns: 1fr; }
+}
+
+.zone {
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 0.75rem;
+  min-height: 130px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s, background 0.2s;
+}
+.zone:hover { border-color: var(--zc, var(--lewis-teal)); background: rgba(255,255,255,0.75); }
+
+.zoneLabel {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+  font-family: 'Inter', sans-serif;
+}
+.zonePile { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+/* ── Draggable cards ── */
+.card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.75rem;
+  background: rgba(253,248,240,0.95);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--lewis-dark);
+  cursor: grab;
+  user-select: none;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 2px 8px rgba(26,46,48,0.06);
+  transition: box-shadow 0.15s;
+}
+.card:active { cursor: grabbing; }
+
+/* ── Unplaced row ── */
+.unplacedWrap { margin-bottom: 1.25rem; }
+.unplacedLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+  font-family: 'Inter', sans-serif;
+}
+.unplacedRow { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.tapFallback { font-size: 0.72rem; color: var(--muted); font-family: 'Inter', sans-serif; margin-bottom: 1.25rem; }
+
+/* ── 5.2 Scale groups ─────────────────────────────── */
+.scaleGroup {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.scaleGroupTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--lewis-dark);
+  margin-bottom: 0.25rem;
+}
+.scaleCaption {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── 5.3 Deep dive ─────────────────────────────────── */
+.ddQ {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--lewis-dark);
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+}
+.chipRow { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.75rem; }
+.chip {
+  padding: 0.55rem 1rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.8);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--lewis-dark);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.15s, background 0.15s;
+}
+.chip:hover { border-color: var(--lewis-teal); background: rgba(0,176,155,0.05); }
+.chipActive {
+  border-color: var(--lewis-teal);
+  background: rgba(0,176,155,0.1);
+  color: var(--lewis-teal);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,176,155,0.18);
+}
+
+/* ── Textarea ─────────────────────────────────────── */
+.textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  background: rgba(255,255,255,0.8);
+  color: var(--lewis-dark);
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  resize: vertical;
+  margin-bottom: 1.75rem;
+  transition: border-color 0.15s;
+  outline: none;
+}
+.textarea:focus { border-color: var(--lewis-teal); box-shadow: 0 0 0 3px rgba(0,176,155,0.1); }

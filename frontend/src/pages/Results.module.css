@@ -1,123 +1,423 @@
-.wrap { animation: fadeIn 0.5s ease; }
+/* ══════════════════════════════════════════════════════
+   Results — 900px constrained, warm + grain, premium
+   ══════════════════════════════════════════════════════ */
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  animation: fadeUp 0.5s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-.hero {
-  background: linear-gradient(135deg, var(--teal) 0%, var(--green) 100%);
-  border-radius: 20px;
-  padding: 2rem;
-  color: white;
+/* ── Loading ─────────────────────────────────────────── */
+.loadingWrap {
+  min-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
   text-align: center;
+  padding: 2rem;
+}
+
+.loadingCanvas {
+  display: block;
+  opacity: 0.85;
+}
+
+.loadingLeaf {
+  font-size: 2rem;
+  margin-top: -1.6rem;
+  animation: pulse 2.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 2px 8px rgba(0,176,155,0.15)); }
+  50%       { transform: scale(1.14); filter: drop-shadow(0 6px 20px rgba(0,176,155,0.35)); }
+}
+
+.loadingTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--lewis-dark);
+  min-height: 1.8rem;
+}
+
+.loadingDots {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+}
+.loadingDot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.4s;
+}
+.loadingDotActive { background: var(--lewis-teal); }
+
+/* ── Error ───────────────────────────────────────────── */
+.errorBox {
+  background: rgba(253,248,240,0.7);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.errorIcon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.errorBox h3 { font-size: 1.15rem; margin-bottom: 0.6rem; }
+.errorBox p  { font-size: 0.875rem; color: var(--text); margin-bottom: 0.4rem; }
+.errorHint   { color: var(--muted) !important; font-size: 0.8rem !important; }
+.errorBtn    { margin-top: 1.5rem; display: flex; justify-content: center; }
+
+/* ── Hero ────────────────────────────────────────────── */
+.hero {
+  text-align: center;
+  padding: 2.5rem 1rem 1.75rem;
   margin-bottom: 1.5rem;
 }
-.heroIcon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-.hero h1 { color: white; font-size: 1.7rem; }
-.hero p  { color: rgba(255,255,255,0.85); font-size: 0.9rem; margin-top: 0.25rem; }
+.heroLeaf {
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 0.65rem;
+  animation: sway 5s ease-in-out infinite;
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(-4deg) scale(1); }
+  50%       { transform: rotate(4deg) scale(1.06); }
+}
+.heroTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--lewis-dark);
+  margin-bottom: 0.35rem;
+}
+.heroSub {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+}
 
-/* Narrative */
+/* ── Narrative Card — premium glassmorphism ──────────── */
 .narrativeCard {
-  background: white;
+  position: relative;
+  overflow: hidden;
+  background: rgba(253, 248, 240, 0.55);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
   border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 1.25rem;
-  box-shadow: var(--shadow);
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  border-left: 4px solid var(--teal);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow:
+    0 8px 40px rgba(26,46,48,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.65);
+  margin-bottom: 1.5rem;
+  padding: 2.2rem 2rem;
 }
-.narrativeIcon { font-size: 1.8rem; flex-shrink: 0; }
-.narrativeCard h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--teal); }
-.narrativeText { line-height: 1.7; color: var(--text); font-size: 0.95rem; }
 
-/* Root Driver */
-.driverCard {
-  background: linear-gradient(135deg, var(--teal), var(--green));
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 1.25rem;
-  color: white;
-  box-shadow: 0 4px 20px rgba(0,179,152,0.3);
+/* Subtle film grain over the narrative card */
+.narrativeGrain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px;
 }
-.driverLabel { font-size: 0.82rem; font-weight: 700; opacity: 0.85; margin-bottom: 0.5rem; }
-.driverText { font-size: 1.1rem; font-weight: 700; }
 
-/* Habit */
-.habitCard {
-  background: white;
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 1.25rem;
-  box-shadow: var(--shadow);
-  border-left: 4px solid var(--green);
+/* Left teal accent bar */
+.narrativeAccent {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--lewis-teal), var(--lewis-mint));
+  border-radius: 4px 0 0 4px;
 }
-.habitBadge {
-  display: inline-block;
-  background: var(--green);
-  color: white;
-  font-size: 0.75rem;
+
+.narrativeInner { position: relative; }
+
+.narrativeEyebrow {
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  margin-bottom: 0.6rem;
-}
-.habitHeader h3 { font-size: 1.05rem; color: var(--dark); margin: 0; }
-.habitAction {
-  background: var(--grey);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--text);
-  line-height: 1.6;
+  color: var(--lewis-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.9rem;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Dimensions */
-.dimsCard {
-  background: white;
+.narrativeText {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--lewis-dark);
+  font-style: italic;
+  border: none;
+  margin: 0;
+  padding: 0;
+  quotes: none;
+}
+
+/* ── Root Driver ─────────────────────────────────────── */
+.driverCard {
+  background: linear-gradient(135deg,
+    rgba(0,176,155,0.08) 0%,
+    rgba(120,198,82,0.08) 100%);
+  border: 1.5px solid rgba(0,176,155,0.22);
   border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 1.25rem;
-  box-shadow: var(--shadow);
+  padding: 1.3rem 1.6rem;
+  margin-bottom: 1.4rem;
+  backdrop-filter: blur(8px);
 }
-.dimsCard h3 { margin-bottom: 1.25rem; }
-.dimList { display: flex; flex-direction: column; gap: 1rem; }
-.dimRow { display: flex; align-items: center; gap: 0.75rem; }
-.dimIcon { font-size: 1.3rem; width: 28px; text-align: center; flex-shrink: 0; }
-.dimInfo { flex: 1; }
-.dimTop { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
-.dimLabel { font-size: 0.85rem; font-weight: 700; color: var(--dark); }
-.dimScore { font-size: 0.82rem; font-weight: 700; }
-.dimTrack { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
-.dimFill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.driverPill {
+  display: inline-block;
+  background: var(--lewis-teal);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.22rem 0.75rem;
+  border-radius: 14px;
+  margin-bottom: 0.65rem;
+  letter-spacing: 0.04em;
+  font-family: 'Inter', sans-serif;
+}
+.driverText {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--lewis-dark);
+  line-height: 1.5;
+  font-family: 'Playfair Display', serif;
+}
 
-/* Loading */
-.loading {
+/* ── Habit ───────────────────────────────────────────── */
+.habitCard {
+  background: rgba(253,248,240,0.65);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-start;
+}
+.habitLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+.habitIcon { font-size: 1.5rem; }
+.habitTag {
+  background: rgba(0,176,155,0.12);
+  color: var(--lewis-teal);
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+}
+.habitTitle {
+  font-size: 1rem;
+  margin-bottom: 0.45rem;
+  color: var(--lewis-dark);
+}
+.habitAction {
+  font-size: 0.875rem;
+  color: var(--text);
+  line-height: 1.65;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Generic section wrapper ─────────────────────────── */
+.section {
+  background: rgba(253,248,240,0.62);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: var(--shadow);
+  padding: 1.6rem 1.75rem;
+  margin-bottom: 1.5rem;
+}
+.sectionHead {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--lewis-dark);
+  margin-bottom: 0.3rem;
+}
+.sectionDesc {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 1.35rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Chart sections get a grain overlay ─────────────── */
+.chartSection { position: relative; overflow: hidden; }
+
+.chartGrain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+.chartWrap  { position: relative; z-index: 2; overflow: hidden; }
+
+/* ── Progress Ring Cards ─────────────────────────────── */
+.ringsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.ringCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255,255,255,0.5);
+  border-radius: 14px;
+  padding: 1.1rem 1rem 0.9rem;
+  border: 1px solid var(--border);
+  flex: 1;
+  min-width: 140px;
+  max-width: 170px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.ringCard:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.ringSvgWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ringCenter {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ringScore {
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.03em;
+}
+
+.ringMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
   text-align: center;
-  padding: 5rem 2rem;
+}
+.ringIcon  { font-size: 1.05rem; }
+.ringLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--lewis-dark);
+  font-family: 'Inter', sans-serif;
+}
+.ringBand {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  letter-spacing: 0.03em;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Chart tooltip ───────────────────────────────────── */
+.chartTip {
+  background: rgba(253,248,240,0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  box-shadow: 0 4px 16px rgba(26,46,48,0.12);
+}
+.chartTipLabel {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0.1rem;
+}
+.chartTipVal {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+}
+.chartTipUnit {
+  font-size: 0.72rem;
+  font-weight: 400;
   color: var(--muted);
 }
-.loading p { margin-top: 1.5rem; font-size: 0.95rem; }
-.spinner {
-  width: 48px; height: 48px;
-  border: 4px solid var(--border);
-  border-top-color: var(--teal);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto;
+
+/* ── Detailed dim bars ───────────────────────────────── */
+.dimList { display: flex; flex-direction: column; gap: 1rem; }
+
+.dimRow {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0.75rem;
+  align-items: center;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Error */
-.errorBox {
-  background: white;
-  border-radius: var(--radius);
-  padding: 2rem;
-  box-shadow: var(--shadow);
-  border-left: 4px solid #f97316;
-  text-align: center;
+@media (max-width: 460px) {
+  .dimRow { grid-template-columns: 1fr; }
 }
-.errorBox h3 { color: #f97316; margin-bottom: 0.75rem; }
-.errorBox p { color: var(--muted); margin-bottom: 0.5rem; }
 
-.resetRow { text-align: center; margin: 1rem 0 2.5rem; }
+.dimLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.dimIcon  { font-size: 1rem; flex-shrink: 0; }
+.dimLabel {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+}
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.dimRight  {}
+.dimTrack  {
+  height: 8px;
+  background: rgba(26,46,48,0.07);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+.dimFill   { height: 100%; border-radius: 4px; }
+.dimMeta   { display: flex; justify-content: space-between; align-items: center; }
+.dimScore  { font-size: 0.76rem; font-weight: 700; font-family: 'Inter', sans-serif; }
+.dimBand   {
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 0.1rem 0.45rem;
+  border-radius: 10px;
+  letter-spacing: 0.02em;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Reset row ───────────────────────────────────────── */
+.resetRow {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0 3rem;
+}

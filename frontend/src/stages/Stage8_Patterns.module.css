@@ -1,0 +1,146 @@
+/* Stage 8 — Patterns (Energy Arc + Stress Clusters) */
+
+.title { font-family: 'Playfair Display', serif; font-size: 1.45rem; color: var(--lewis-dark); margin-bottom: 0.4rem; }
+.sub   { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.75rem; line-height: 1.6; font-family: 'Inter', sans-serif; }
+
+/* ── 8.1 Energy Arc ───────────────────────────────── */
+.arcWrap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 540px) {
+  .arcWrap { grid-template-columns: repeat(2, 1fr); }
+}
+
+.arcZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.arcBar {
+  width: 36px;
+  height: 100px;
+  background: var(--border);
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+.arcFill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-radius: 18px;
+}
+
+.arcIcon  { font-size: 1.3rem; }
+.arcLabel { font-size: 0.75rem; font-weight: 600; color: var(--lewis-dark); font-family: 'Inter', sans-serif; }
+.arcHours { font-size: 0.62rem; color: var(--muted); font-family: 'Inter', sans-serif; }
+
+.arcBtns { display: flex; flex-direction: column; gap: 0.25rem; width: 100%; }
+.arcBtn {
+  padding: 0.3rem 0.4rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.7);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+  text-align: center;
+}
+.arcBtn:hover { border-color: var(--lewis-teal); color: var(--lewis-dark); background: rgba(0,176,155,0.05); }
+.arcBtnActive { font-weight: 700; }
+
+/* ── 8.2 Stress Clusters ─────────────────────────── */
+.clusters { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.5rem; }
+
+.cluster { border-radius: 14px; overflow: hidden; border: 1.5px solid var(--border); }
+.clusterHead {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255,255,255,0.75);
+  cursor: pointer;
+  text-align: left;
+  border: none;
+  transition: background 0.15s;
+}
+.clusterHead:hover { background: rgba(0,176,155,0.04); }
+.clusterHeadOpen   { background: rgba(0,176,155,0.06); }
+
+.clusterEmoji  { font-size: 1.2rem; flex-shrink: 0; }
+.clusterLabel  { flex: 1; font-size: 0.875rem; font-weight: 600; color: var(--lewis-dark); font-family: 'Inter', sans-serif; }
+.clusterCount  {
+  background: var(--lewis-teal); color: white;
+  font-size: 0.65rem; font-weight: 700;
+  border-radius: 100px; padding: 0.1rem 0.45rem;
+  font-family: 'Inter', sans-serif;
+}
+.clusterChevron { font-size: 0.65rem; color: var(--muted); margin-left: 0.25rem; }
+
+.clusterItems {
+  display: flex; flex-wrap: wrap; gap: 0.45rem;
+  padding: 0.75rem 1rem 0.9rem;
+  border-top: 1px solid var(--border);
+  background: rgba(253,248,240,0.7);
+  overflow: hidden;
+}
+.clusterItem {
+  padding: 0.4rem 0.85rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.85);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--lewis-dark);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+}
+.clusterItem:hover { border-color: var(--lewis-teal); background: rgba(0,176,155,0.05); }
+.clusterItemActive {
+  border-color: var(--lewis-teal);
+  background: rgba(0,176,155,0.12);
+  color: var(--lewis-teal);
+  font-weight: 700;
+}
+
+/* Cycle opt-in row */
+.clusterOptIn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1.5px dashed var(--border);
+  background: rgba(255,255,255,0.5);
+}
+.clusterOptEmoji { font-size: 1.2rem; flex-shrink: 0; }
+.clusterOptLabel { font-size: 0.875rem; font-weight: 600; color: var(--lewis-dark); font-family: 'Inter', sans-serif; }
+.clusterOptNote  { font-size: 0.78rem; color: var(--muted); font-family: 'Inter', sans-serif; }
+
+.optInBtn {
+  margin-left: auto;
+  padding: 0.4rem 1rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--lewis-teal);
+  background: rgba(0,176,155,0.08);
+  color: var(--lewis-teal);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s;
+}
+.optInBtn:hover { background: rgba(0,176,155,0.18); }

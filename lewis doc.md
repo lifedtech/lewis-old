@@ -37,26 +37,19 @@ The goal is to provide actionable insights for personal health tracking, coachin
 
 ```
 lifed-LEWIS/
-├── backend/             # FastAPI backend application (the brain)
-│   ├── main.py          # Application configuration, Pydantic models & endpoints
-│   ├── scoring.py       # 9D scoring logic & cascade driver engine
-│   ├── content.py       # Catalog of habits and routing algorithm
-│   └── llm.py           # Groq Llama-3 AI narrative generation wrapper
-├── frontend/            # React/Vite web application (user interface)
-│   ├── src/             # React source files (App.jsx, pages, components)
-│   ├── package.json     # Node.js dependencies and script configuration
-│   └── index.html       # SPA HTML entrypoint
-├── lewis doc.md         # Project documentation (this file)
-├── workflow_uml.md      # UML sequence and activity flow diagrams
-└── .venv/               # Python virtual environment (dependencies)
+├── main.py              # FastAPI application & endpoint definitions
+├── scoring.py           # Psychological assessment scoring algorithms
+├── .venv/               # Python virtual environment (dependencies)
+├── __pycache__/         # Python bytecode cache
+└── lewis doc.md            # This documentation file
 ```
 
-### Folder Descriptions
+### File Descriptions
 
-| Directory | Purpose |
-|-----------|---------|
-| **backend/** | Python backend hosting the FastAPI server, core scoring matrix calculations, and LLM communication |
-| **frontend/** | React frontend application serving the 9-Phase check-in wizard and Results page |
+| File | Purpose |
+|------|---------|
+| **main.py** | Core application file containing FastAPI setup, CORS middleware, data models, and endpoint handlers |
+| **scoring.py** | Scoring logic for PSS-10 calculation and cascade root driver analysis |
 
 ---
 
@@ -70,56 +63,33 @@ lifed-LEWIS/
 
 ### System Flow
 
-```mermaid
-graph TD
-    %% Styling
-    classDef frontend fill:#eefaf7,stroke:#00B09B,stroke-width:2px,color:#1a2e30;
-    classDef backend fill:#fdfcf7,stroke:#78C652,stroke-width:2px,color:#1a2e30;
-    classDef ai fill:#f2f5fa,stroke:#4A90E2,stroke-width:2px,color:#1a2e30;
-    classDef output fill:#f9f5ff,stroke:#9B5DE5,stroke-width:2px,color:#1a2e30;
-
-    subgraph "Phase 1: Input Collection (React Web Frontend)"
-        UI[User Interface / Sliders]:::frontend --> |"9D Inputs (WHO-5, PSS-10, UCLA-3, SQI, GSE-10, CFPB-5, Diener, BWI, NHI)"| Gather[Gather Answers & Logistics]:::frontend
-        Logistics[Logistics:<br>- Time Available<br>- Current Environment<br>- Arrival Word]:::frontend --> Gather
-        Gather -->|"POST /assessment/full (JSON)"| API[FastAPI Endpoint]:::backend
-    end
-
-    subgraph "Phase 2: Core Processing & Scoring (FastAPI Backend)"
-        API --> |"Pydantic Validation"| Validator[FullAssessmentInput Model]:::backend
-        Validator --> Scoring[Scoring & Normalization Engine]:::backend
-        
-        subgraph "Scoring Metrics (Normalized to 0-100)"
-            Scoring --> |"Raw Sum * 4"| WHO5[WHO-5: Wellbeing]:::backend
-            Scoring --> |"Reverse Score & Norm"| PSS10[PSS-10: Stress Load]:::backend
-            Scoring --> |"Scale Normalization"| Others[UCLA-3, SQI, PAI, FSI, PMI, BWI, NHI]:::backend
-        end
-        
-        WHO5 & PSS10 & Others --> Cascade[9D Cascade Matrix Analysis]:::backend
-        
-        subgraph "Cascade Calculations"
-            Cascade --> Deficit[Wellbeing Deficit = 100 - WHO5]:::backend
-            Cascade --> |"Apply Systemic Influence Weights"| Weights["Calculate Pressures:<br>- Stress * 0.80<br>- Sleep * 0.90<br>- Wellbeing Deficit * 0.50<br>- ...others"]:::backend
-            Weights --> Max["Find Max Pressure"]:::backend
-        end
-        
-        Max --> |"Primary Root Driver"| Router[Habit Router (route_content)]:::backend
-        Router --> |"Filters by Time & Environment"| Prescribe[Selected Micro-Habit]:::backend
-    end
-
-    subgraph "Phase 3: AI Narration Generation (llm.py)"
-        Max & Prescribe --> |"Diagnostic Package"| Package[JSON Context:<br>- primary_root_driver<br>- prescribed_habit<br>- action_steps]:::backend
-        Package --> |"Empathetic System Prompt"| LLM[Groq OpenAI Client]:::ai
-        LLM --> |"Model: llama-3.1-8b-instant"| Groq[Generate Empathetic Narrative]:::ai
-        Groq --> |"3-4 Warm Sentences"| ResponseBuilder[Build Final API JSON Response]:::backend
-    end
-
-    subgraph "Phase 4: Output Rendering (React Web Frontend)"
-        ResponseBuilder --> |"HTTP Response (JSON)"| UI_Display[UI Rendering]:::output
-        UI_Display --> |"Empathetic Paragraph"| DisplayNarrative[Personal Narrative Card]:::output
-        UI_Display --> |"Linear Gradient Banner"| DisplayDriver[Primary Root Driver Card]:::output
-        UI_Display --> |"Action Steps Info Box"| DisplayHabit[Micro-Habit Prescription Card]:::output
-        UI_Display --> |"Progress Bars (0-100)"| DisplayScores[9 Dimension Scores Progress Bars]:::output
-    end
+```
+┌─────────────────────┐
+│   Client Request    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────────────────────┐
+│   FastAPI Server (main.py)          │
+│ - Input validation (Pydantic)       │
+│ - CORS middleware                   │
+└──────────┬──────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────┐
+│   Scoring Engine (scoring.py)       │
+│ - WHO-5 calculation                 │
+│ - PSS-10 with reverse scoring       │
+│ - Cascade matrix analysis           │
+└──────────┬──────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────┐
+│   JSON Response to Client           │
+│ - Assessment scores                 │
+│ - Normalized metrics                │
+│ - Root driver analysis              │
+└─────────────────────────────────────┘
 ```
 
 ---
@@ -259,79 +229,91 @@ Normalized Score = (Total Score / 40) × 100
 
 ## Response Generation Logic
 
-The scoring engine in [scoring.py](file:///e:/lifed-LEWIS%20-%20Copy/backend/scoring.py) processes raw assessment questionnaire answers across 9 health and wellbeing dimensions, normalizes each dimension to a standard 0-100 scale, and computes the primary root driver using a weighted influence cascade matrix.
+### WHO-5 Score Calculation
 
-### 1. WHO-5 (World Health Organization Wellbeing Index)
-- **Inputs**: 5 questions, rated 0–5 (where higher indicates better wellbeing).
-- **Calculation**:
-  1. Sum the 5 raw scores (Max: 25).
-  2. Scale to 0-100 by multiplying by 4:
-     $$\text{Wellbeing Score} = \text{Raw Sum} \times 4$$
-- **Classification Bands**:
-  - **70+**: Thriving
-  - **55-69**: Steady
-  - **40-54**: Stretched
-  - **<40**: Asking for care
+```
+Step 1: Sum the 5 scores
+  Raw Sum = score1 + score2 + score3 + score4 + score5
+  Example: 4 + 3 + 5 + 2 + 3 = 17
 
-### 2. PSS-10 (Perceived Stress Scale)
-- **Inputs**: 10 questions, rated 0–4 (where higher indicates higher stress).
-- **Calculation**:
-  1. Reverse-score questions 4, 5, 7, and 8 (indices 3, 4, 6, 7):
-     $$\text{Score}_{\text{flipped}} = 4 - \text{Score}_{\text{original}}$$
-  2. Sum all raw scores (Max: 40).
-  3. Normalize to a 0-100 scale:
-     $$\text{Normalized Stress} = \left(\frac{\text{Total Score}}{40}\right) \times 100$$
+Step 2: Scale to 0-100
+  Scaled Score = Raw Sum × 4
+  Example: 17 × 4 = 68
 
-### 3. UCLA-3 (Loneliness & Connection Index)
-- **Inputs**: 3 questions, rated 1–3 (where higher indicates higher isolation).
-- **Calculation**:
-  1. Sum the 3 raw scores (Range: 3 to 9).
-  2. Normalize to a 0-100 scale:
-     $$\text{Normalized Loneliness} = \left(\frac{\text{Raw Sum} - 3}{6}\right) \times 100$$
+Step 3: Classify into Well-being Band
+  if Scaled Score >= 70    → "Thriving"
+  if Scaled Score >= 55    → "Steady"
+  if Scaled Score >= 40    → "Stretched"
+  else                     → "Asking for care"
+  
+  Example: 68 → "Steady"
+```
 
-### 4. SQI-4 (Sleep Quality Index)
-- **Inputs**: 4 questions, rated 0–3 (where higher indicates worse sleep).
-- **Calculation**:
-  1. Sum the 4 raw scores (Max: 12).
-  2. Normalize to a 0-100 scale:
-     $$\text{Normalized Sleep Deficit} = \left(\frac{\text{Raw Sum}}{12}\right) \times 100$$
+### PSS-10 Score Calculation
 
-### 5. Standard 3-Question Scales (PAI, FSI, PMI, BWI, NHI)
-Used to calculate scores for the remaining five dimensions: Physical Activity Index (PAI), Financial Stability Index (FSI), Purpose Meaning Index (PMI), Burnout Workload Index (BWI), and Nutrition Hydration Index (NHI).
-- **Inputs**: 3 questions, rated 0–4 (where higher indicates worse baseline/higher pressure).
-- **Calculation**:
-  1. Sum the 3 raw scores (Max: 12).
-  2. Normalize to a 0-100 scale:
-     $$\text{Normalized Score} = \left(\frac{\text{Raw Sum}}{12}\right) \times 100$$
+```
+Step 1: Identify questions to reverse (4, 5, 7, 8)
+  These are array indices: 3, 4, 6, 7
 
----
+Step 2: Apply reverse scoring
+  For indices [3, 4, 6, 7]:
+    Flipped Score = 4 - Original Score
+  For other indices:
+    Keep original score
 
-### 6. Cascade Matrix (Root Driver Analysis)
-Instead of returning a simple highest score, the core engine runs a weighted cascade matrix in `calculate_root_driver` to determine which dimension causes the most system-wide pressure.
+Example input: [2, 1, 3, 2, 1, 2, 3, 2, 1, 2]
+After reverse-scoring:
+  Index 0: 2 (no flip)
+  Index 1: 1 (no flip)
+  Index 2: 3 (no flip)
+  Index 3: 4-2 = 2 (flip)
+  Index 4: 4-1 = 3 (flip)
+  Index 5: 2 (no flip)
+  Index 6: 4-3 = 1 (flip)
+  Index 7: 4-2 = 2 (flip)
+  Index 8: 1 (no flip)
+  Index 9: 2 (no flip)
+  
+Step 3: Sum all scores
+  Total Raw Score = 2 + 1 + 3 + 2 + 3 + 2 + 1 + 2 + 1 + 2 = 19
 
-1. **Calculate Wellbeing Deficit**:
-   $$\text{Wellbeing Deficit} = 100 - \text{WHO-5 Scaled Score}$$
+Step 4: Normalize to 0-100 scale
+  Normalized Score = (Total Score / 40) × 100
+  Example: (19 / 40) × 100 = 47.5
+```
 
-2. **Compute Pressure Scores**:
-   Each normalized score (representing a deficit or load) is multiplied by its systemic influence weight:
+### Cascade Matrix (Root Driver Analysis)
 
-   | Dimension | Weight | Meaning / Impact |
-   |-----------|--------|------------------|
-   | **Chronic Sleep & Recovery Deficit** | `0.90` | High biological impact on systemic baseline |
-   | **Social Isolation & Disconnection** | `0.85` | High psychological driver of mental distress |
-   | **Burnout & Workload** | `0.85` | High pressure exceeding active recovery capacity |
-   | **Stress Load (PSS-10)** | `0.80` | High day-to-day cognitive and emotional impact |
-   | **Financial Stress** | `0.75` | High impact on long-term cognitive bandwidth |
-   | **Physical Sedentary Behavior** | `0.70` | Moderate biological and baseline impact |
-   | **Lack of Purpose/Meaning** | `0.65` | Baseline driver of systemic apathy |
-   | **Nutritional/Hydration Deficits** | `0.60` | Lower physical baseline and systemic energy |
-   | **Low Emotional Wellbeing** | `0.50` | Feedback loop driver |
+The cascade matrix determines whether **stress is driving low well-being** or **low well-being is exacerbating stress**.
 
-3. **Determine Root Driver**:
-   The engine evaluates all weighted pressures and returns the text label corresponding to the **maximum calculated pressure value**:
-   $$\text{Root Driver} = \operatorname{argmax}(\text{Pressures})$$
+```
+Step 1: Calculate Well-being Deficit
+  Wellbeing Deficit = 100 - WHO5_Scaled_Score
+  Example: 100 - 68 = 32
 
----
+Step 2: Define Influence Weights
+  Weight Stress→Wellbeing = 0.8 (stress has high impact on well-being)
+  Weight Wellbeing→Stress = 0.5 (poor well-being moderately increases stress)
+
+Step 3: Calculate Cascade Pressures
+  Stress-Driven Pressure = PSS10_Normalized × Weight_Stress_on_Wellbeing
+  Example: 47.5 × 0.8 = 38
+
+  Wellbeing-Driven Pressure = Wellbeing_Deficit × Weight_Wellbeing_on_Stress
+  Example: 32 × 0.5 = 16
+
+Step 4: Determine Root Driver
+  if Stress-Driven Pressure > Wellbeing-Driven Pressure:
+    → "Stress Load is the primary driver of current state."
+  
+  elif Wellbeing-Driven Pressure > Stress-Driven Pressure:
+    → "Low Emotional Wellbeing is exacerbating stress."
+  
+  else:
+    → "Co-occurring dimensions (Feedback Loop)."
+  
+  Example: 38 > 16 → "Stress Load is the primary driver"
+```
 
 ---
 
@@ -391,9 +373,7 @@ pip install fastapi uvicorn pydantic python-multipart
 ```
 
 ### Step 4: Run the Server
-Navigate to the `backend` folder first:
 ```bash
-cd backend
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -403,33 +383,6 @@ The API will be available at: `http://localhost:8000`
 FastAPI automatically generates interactive documentation:
 - **Swagger UI**: `http://localhost:8000/docs`
 - **ReDoc**: `http://localhost:8000/redoc`
-
----
-
-### React Frontend Setup (frontend)
-
-The frontend is built using React, Vite, and modular CSS.
-
-#### Prerequisites
-- Node.js (v18 or higher recommended)
-- npm (Node Package Manager)
-
-#### Step 1: Navigate to the Frontend Directory
-```bash
-cd frontend
-```
-
-#### Step 2: Install Node Dependencies
-```bash
-npm install
-```
-
-#### Step 3: Run the Development Server
-```bash
-npm run dev
-```
-
-The frontend application will be hosted at `http://localhost:5173`. Make sure the FastAPI backend is running simultaneously on `http://localhost:8000` for API request routing.
 
 ---
 
