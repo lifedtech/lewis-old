@@ -13,15 +13,27 @@ load_dotenv()
 
 app = FastAPI(title="LEWIS 9D Core Engine + AI")
 
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+# Parse FRONTEND_URL to support multiple origins separated by commas
+raw_frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+frontend_urls = [url.strip() for url in raw_frontend_url.split(",")]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[frontend_url],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Fallback to allow all if "*" is in the list
+if "*" in frontend_urls:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False, # Credentials must be false if origins is *
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=frontend_urls,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 class PulseInput(BaseModel):
     who5: List[int] = Field(..., description="Exactly 5 scores")
