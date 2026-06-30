@@ -24,11 +24,12 @@ export default function MirrorScreen() {
           })
         }
 
-        let url = 'http://127.0.0.1:8000/assessment/full'
+        const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+        let url = `${API_BASE}/assessment/full`
         let payload = {}
 
         if (door === 'pulse') {
-          url = 'http://127.0.0.1:8000/pulse/calculate'
+          url = `${API_BASE}/pulse/calculate`
           payload = {
             who5: mapToIndices(who5, WHO5_SCALE, 5, 'w'),
             life_stability: 'steady',
