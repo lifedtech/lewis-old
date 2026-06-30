@@ -14,7 +14,7 @@ load_dotenv()
 app = FastAPI(title="LEWIS 9D Core Engine + AI")
 
 raw_frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
-frontend_urls = [url.strip() for url in raw_frontend_url.split(",")]
+frontend_urls = [url.strip().rstrip('/') for url in raw_frontend_url.split(",")]
 
 if "*" in frontend_urls:
     app.add_middleware(
