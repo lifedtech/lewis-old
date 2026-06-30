@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-from scoring import calculate_pss10, calculate_ucla3, calculate_sqi, calculate_standard_3q, calculate_root_driver
+from scoring import calculate_pss10, calculate_ucla3, calculate_gse, calculate_promis, calculate_cfpb5, calculate_root_driver
 from content import route_content
-from llm import generate_user_narrative
+from llm import generate_user_narrative, generate_pulse_narrative
 
 import os
 from dotenv import load_dotenv
@@ -13,16 +13,14 @@ load_dotenv()
 
 app = FastAPI(title="LEWIS 9D Core Engine + AI")
 
-# Parse FRONTEND_URL to support multiple origins separated by commas
 raw_frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 frontend_urls = [url.strip() for url in raw_frontend_url.split(",")]
 
-# Fallback to allow all if "*" is in the list
 if "*" in frontend_urls:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
-        allow_credentials=False, # Credentials must be false if origins is *
+        allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
     )
@@ -45,17 +43,20 @@ class PulseInput(BaseModel):
 class FullAssessmentInput(BaseModel):
     who5: List[int] = Field(..., description="Exactly 5 scores (0-5)")
     pss10: List[int] = Field(..., description="Exactly 10 scores (0-4)")
-    ucla3: List[int] = Field(..., description="Exactly 3 scores (1-3)")
-    sqi: List[int] = Field(..., description="Exactly 4 scores (0-3)")
-    pai3: List[int] = Field(default=[2, 2, 2], description="Exactly 3 scores (0-4) - Physical")
-    fsi3: List[int] = Field(default=[2, 2, 2], description="Exactly 3 scores (0-4) - Financial")
-    pmi3: List[int] = Field(default=[2, 2, 2], description="Exactly 3 scores (0-4) - Purpose")
-    bwi3: List[int] = Field(default=[2, 2, 2], description="Exactly 3 scores (0-4) - Burnout")
-    nhi3: List[int] = Field(default=[2, 2, 2], description="Exactly 3 scores (0-4) - Nutrition")
+    ucla3: List[int] = Field(..., description="Exactly 3 scores (0-2)")
+    gse: List[int] = Field(..., description="Exactly 10 scores (0-3)")
+    promis: List[int] = Field(..., description="Exactly 4 scores (0-4)")
+    cfpb5: List[int] = Field(..., description="Exactly 5 scores (0-4)")
     max_time_available: int = Field(default=5)
     current_environment: str = Field(default="Anywhere")
-    # Optional: raw scores map passed directly from the React store
     scores: dict = Field(default={})
+    active_pressures: List[str] = Field(default=[])
+    priority_rank: List[str] = Field(default=[])
+    arrival_word: Optional[str] = None
+    friction: Optional[str] = None
+    somatic_load: Optional[str] = None
+    body_awareness: Optional[str] = None
+    flags: List[str] = Field(default=[])
 
 @app.get("/")
 def read_root():
@@ -68,19 +69,47 @@ def calculate_pulse(payload: PulseInput):
     elif scaled_score >= 55: band = "Steady"
     elif scaled_score >= 40: band = "Stretched"
     else:                    band = "Asking for care"
-    return {"status": "success", "metrics": {"who5_scaled_score": scaled_score, "wellbeing_band": band}}
+    
+    diagnostic_package = {
+        "primary_root_driver": "Unknown (Pulse Check)",
+        "prescribed_habit": "Mindful Check-in",
+        "action_steps": "Take a moment to breathe and observe your state.",
+        "context": f"User is in {band} band with score {scaled_score}. Priorities: {', '.join(payload.priority_rank[:3])}. Pressures: {', '.join(payload.active_pressures)}."
+    }
+    
+    ai_message = generate_pulse_narrative(diagnostic_package)
+    
+    # Estimate other domains based on overall wellbeing and pressures to populate the radar chart
+    base_est = max(10, scaled_score - 10)
+    
+    return {
+        "status": "success", 
+        "metrics": {"who5_scaled_score": scaled_score, "wellbeing_band": band},
+        "ai_narrative": ai_message,
+        "cascade_analysis": {"primary_root_driver": "General Stress (Pulse Estimate)"},
+        "bright_spot": "Overall Adaptability",
+        "prescription": {
+            "habit_title": "Mindful Check-in",
+            "micro_action": "Take a moment to breathe and observe your state."
+        },
+        "dimensions": {
+            "emotional_wellbeing": scaled_score,
+            "stress_load": 100 - base_est, # API returns stress, frontend inverts it
+            "connection_isolation": 100 - (base_est + 5),
+            "agency_efficacy": base_est + 10,
+            "purpose_meaning": base_est + 5,
+            "financial_stress": 100 - (base_est - 5)
+        }
+    }
 
 @app.post("/assessment/full")
 def calculate_full_assessment(payload: FullAssessmentInput):
     try:
         pss10_res = calculate_pss10(payload.pss10)
         ucla3_res = calculate_ucla3(payload.ucla3)
-        sqi_res   = calculate_sqi(payload.sqi)
-        pai_res   = calculate_standard_3q(payload.pai3)
-        fsi_res   = calculate_standard_3q(payload.fsi3)
-        pmi_res   = calculate_standard_3q(payload.pmi3)
-        bwi_res   = calculate_standard_3q(payload.bwi3)
-        nhi_res   = calculate_standard_3q(payload.nhi3)
+        gse_res = calculate_gse(payload.gse)
+        promis_res = calculate_promis(payload.promis)
+        cfpb5_res = calculate_cfpb5(payload.cfpb5)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -90,18 +119,43 @@ def calculate_full_assessment(payload: FullAssessmentInput):
         who5=who5_scaled,
         pss10=pss10_res["normalized_score"],
         ucla3=ucla3_res["normalized_score"],
-        sqi=sqi_res["normalized_score"],
-        pai=pai_res["normalized_score"],
-        fsi=fsi_res["normalized_score"],
-        pmi=pmi_res["normalized_score"],
-        bwi=bwi_res["normalized_score"],
-        nhi=nhi_res["normalized_score"],
+        gse=gse_res["normalized_score"],
+        promis=promis_res["normalized_score"],
+        cfpb5=cfpb5_res["normalized_score"],
     )
 
     recommended_habit = route_content(root_driver, payload.max_time_available, payload.current_environment)
 
+    # Calculate Bright Spot (Highest relative wellness score)
+    wellness_scores = {
+        "Overall Wellbeing": who5_scaled,
+        "Emotional & Mental": 100 - pss10_res["normalized_score"],
+        "Relationships & Social": 100 - ucla3_res["normalized_score"],
+        "Accomplishment & Agency": gse_res["normalized_score"],
+        "Meaning & Spiritual": promis_res["normalized_score"],
+        "Financial Wellness": 100 - cfpb5_res["normalized_score"]
+    }
+    bright_spot = max(wellness_scores, key=wellness_scores.get)
+
     diagnostic_package = {
-        "primary_root_driver": root_driver,
+        "explicit_dimension_scores": {
+            "Overall Wellbeing (WHO5)": who5_scaled,
+            "Emotional & Mental": 100 - pss10_res["normalized_score"],
+            "Relationships & Social": 100 - ucla3_res["normalized_score"],
+            "Accomplishment & Agency": gse_res["normalized_score"],
+            "Meaning & Spiritual": promis_res["normalized_score"],
+            "Financial Wellness": 100 - cfpb5_res["normalized_score"]
+        },
+        "calculated_root_driver": root_driver,
+        "context_inputs": {
+            "arrival_word": payload.arrival_word,
+            "active_pressures": payload.active_pressures,
+            "priority_rank": payload.priority_rank,
+            "friction": payload.friction,
+            "somatic_load": payload.somatic_load,
+            "body_awareness": payload.body_awareness,
+        },
+        "validation_flags": payload.flags,
         "prescribed_habit": recommended_habit["title"],
         "action_steps": recommended_habit["action"],
     }
@@ -111,6 +165,7 @@ def calculate_full_assessment(payload: FullAssessmentInput):
     return {
         "status": "success",
         "cascade_analysis": {"primary_root_driver": root_driver},
+        "bright_spot": bright_spot,
         "ai_narrative": ai_message,
         "prescription": {
             "habit_title": recommended_habit["title"],
@@ -120,11 +175,8 @@ def calculate_full_assessment(payload: FullAssessmentInput):
             "emotional_wellbeing":  who5_scaled,
             "stress_load":          pss10_res["normalized_score"],
             "connection_isolation": ucla3_res["normalized_score"],
-            "sleep_recovery":       sqi_res["normalized_score"],
-            "physical_activity":    pai_res["normalized_score"],
-            "financial_peace":      fsi_res["normalized_score"],
-            "purpose_meaning":      pmi_res["normalized_score"],
-            "burnout_workload":     bwi_res["normalized_score"],
-            "nutrition_hydration":  nhi_res["normalized_score"],
+            "agency_efficacy":      gse_res["normalized_score"],
+            "purpose_meaning":      promis_res["normalized_score"],
+            "financial_stress":     cfpb5_res["normalized_score"],
         },
     }
