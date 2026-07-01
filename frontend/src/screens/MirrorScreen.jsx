@@ -8,7 +8,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import ReactMarkdown from 'react-markdown'
 
 export default function MirrorScreen() {
-  const { who5, pss10, ucla3, gse, promis, cfpb5_1, cfpb5_2, door, setDoor, setScreen, lifePressures, priorities } = useLewisStore()
+  const store = useLewisStore()
   
   const [loading, setLoading] = useState(true)
   const [analysis, setAnalysis] = useState(null)
@@ -18,42 +18,93 @@ export default function MirrorScreen() {
     async function fetchAnalysis() {
       try {
         const mapToIndices = (stateObj, scaleArr, count, prefix) => {
+          if (!stateObj) return Array(count).fill(0)
           return Array.from({ length: count }).map((_, i) => {
             const answer = stateObj[`${prefix}${i+1}`]
             return scaleArr.indexOf(answer) !== -1 ? scaleArr.indexOf(answer) : 0
           })
         }
 
+        const mapLikertToIntegers = (obj) => {
+          if (!obj) return {}
+          const mapping = {
+            "Strongly Disagree": 1,
+            "Disagree": 2,
+            "Neutral": 4,
+            "Agree": 6,
+            "Strongly Agree": 7
+          }
+          const res = {}
+          Object.keys(obj).forEach(key => {
+            res[key] = mapping[obj[key]] !== undefined ? mapping[obj[key]] : 4
+          })
+          return res
+        }
+
         const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
         let url = `${API_BASE}/assessment/full`
         let payload = {}
 
-        if (door === 'pulse') {
-          url = `${API_BASE}/pulse/calculate`
-          payload = {
-            who5: mapToIndices(who5, WHO5_SCALE, 5, 'w'),
-            life_stability: 'steady',
-            active_pressures: lifePressures,
-            priority_rank: priorities,
-          }
-        } else {
-          payload = {
-            who5: mapToIndices(who5, WHO5_SCALE, 5, 'w'),
-            pss10: mapToIndices(pss10, PSS10_SCALE, 10, 'p'),
-            ucla3: mapToIndices(ucla3, UCLA3_SCALE, 3, 'u'),
-            gse: mapToIndices(gse, GSE_SCALE, 10, 'g'),
-            promis: mapToIndices(promis, PROMIS_SCALE, 4, 'pr'),
-            cfpb5: [
-              CFPB5_1_SCALE.indexOf(cfpb5_1['c1']) || 0,
-              CFPB5_1_SCALE.indexOf(cfpb5_1['c2']) || 0,
-              CFPB5_1_SCALE.indexOf(cfpb5_1['c3']) || 0,
-              CFPB5_2_SCALE.indexOf(cfpb5_2['c4']) || 0,
-              CFPB5_2_SCALE.indexOf(cfpb5_2['c5']) || 0,
-            ],
-            active_pressures: lifePressures,
-            priority_rank: priorities,
-            flags: []
-          }
+        // Simplified index mapping since some new scales don't have constants yet. 
+        // Real implementation would ensure values are passed cleanly.
+        
+        payload = {
+          who5: mapToIndices(store.who5, WHO5_SCALE, 5, 'w'),
+          pss10: mapToIndices(store.pss10, PSS10_SCALE, 10, 'p'),
+          ucla3: mapToIndices(store.ucla3, UCLA3_SCALE, 3, 'u'),
+          gse: mapToIndices(store.gse, GSE_SCALE, 10, 'g'),
+          promis: mapToIndices(store.promis, PROMIS_SCALE, 4, 'pr'),
+          // Assume cfpb5, diener, swls are passed as dicts
+          cfpb5: mapToIndices(store.cfpb5, [...CFPB5_1_SCALE, ...CFPB5_2_SCALE], 5, 'c'),
+          diener: mapLikertToIntegers(store.diener),
+          ins: store.ins || null,
+          swls: mapLikertToIntegers(store.swls),
+          
+          ageCategory: store.ageCategory,
+          gender: store.gender,
+          identityRoles: store.identityRoles,
+          lifeStability: store.lifeStability,
+          active_pressures: store.activePressures,
+          bodyMovement: store.bodyMovement,
+          sleepQuality: store.sleepQuality,
+          bodyContext: store.bodyContext || [],
+          relationalContext: store.relationalContext,
+          priority_rank: store.priorities,
+          arrival_word: store.arrivalState,
+          financialPulse: store.financialPulse || {},
+          environmentalPulse: store.environmentalPulse || {},
+          intellectualPulse: store.intellectualPulse,
+          culturalBelonging: store.culturalBelonging || {},
+          bodyRhythm: store.bodyRhythm || {},
+          
+          bodyMapZones: store.bodyMapZones,
+          dayRhythmMap: store.dayRhythmMap,
+          breathingBefore: store.breathingBefore,
+          breathingAfter: store.breathingAfter,
+          nervousSystemState: store.nervousSystemState,
+          body_awareness: store.bodyAwareness,
+          
+          lifeLandscape: store.lifeLandscape || {},
+          adaptiveDeepDives: store.adaptiveDeepDives,
+          brightSpotCheck: store.brightSpotCheck,
+          priorityTensionCheck: store.priorityTensionCheck,
+          
+          everydaySharing: store.everydaySharing,
+          externalConditions: store.externalConditions,
+          priorAttempts: store.priorAttempts,
+          aspirationLandscape: store.aspirationLandscape,
+          supportPreferences: store.supportPreferences,
+          plannerReadiness: store.plannerReadiness,
+          valuesCheck: store.valuesCheck,
+          financialAspiration: store.financialAspiration,
+          
+          energyArc: store.energyArc,
+          stressPatternClusters: store.stressPatternClusters,
+          recoveryResponsiveness: store.recoveryResponsiveness,
+          cumulativeLoad: store.cumulativeLoad,
+          soundPreference: store.soundPreference,
+          quickChoices: store.quickChoices,
+          flags: []
         }
 
         const response = await fetch(url, {
@@ -74,7 +125,7 @@ export default function MirrorScreen() {
       }
     }
     fetchAnalysis()
-  }, [door])
+  }, []) // Removed door dependency
 
   if (loading) {
     return (
@@ -228,9 +279,6 @@ export default function MirrorScreen() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <p className="mirror-text" style={{ textAlign: 'center', marginTop: '16px', fontSize: '13px', opacity: 0.6 }}>
-              {door === 'pulse' && "Estimated from Pulse check-in."}
-            </p>
           </div>
         </>
       )}
@@ -252,21 +300,6 @@ export default function MirrorScreen() {
         </ReactMarkdown>
       </div>
 
-      {door === 'pulse' && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '40px' }}>
-          <p className="mirror-text" style={{ textAlign: 'center', marginBottom: '16px' }}>Ready to turn these estimates into exact measurements?</p>
-          <button 
-            className="btn-primary" 
-            onClick={() => {
-              setDoor('full')
-              setScreen('scales') // This will kick them right into the PSS-10 scales
-            }}
-          >
-            Take the Full LEWIS Assessment
-          </button>
-        </div>
-      )}
-      
       <p className="closing-line">LEWIS reflects. It never diagnoses.</p>
 
     </motion.section>

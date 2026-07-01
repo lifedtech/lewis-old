@@ -22,7 +22,7 @@ export default function MindGamesScreen() {
   }
 
   const handleNext = () => {
-    setScreen('breathe')
+    setScreen('delayDiscounting')
   }
 
   const getDotStyle = () => {

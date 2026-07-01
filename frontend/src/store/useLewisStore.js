@@ -1,17 +1,25 @@
 import { create } from 'zustand'
 
 export const useLewisStore = create((set) => ({
-  currentScreen: 'welcome',
+  currentScreen: 'landing',
   setScreen: (screenName) => set({ currentScreen: screenName }),
 
-  // User Profile & Stage 1
+  // Pre-Stage & Stage 0
   isOver18: null,
+  sensoryCalibrationDone: false,
+  
+  // Stage 1 Context
   name: '',
   ageCategory: '',
   gender: '',
-  profession: '',
-  roles: [],
-  lifePressures: [],
+  identityRoles: [],
+  lifeStability: 50, // 0-100 slider
+  activePressures: [],
+  bodyMovement: '',
+  sleepQuality: '',
+  bodyContext: [],
+  who5: {},
+  relationalContext: '',
   priorities: [
     'Physical ease & recovery',
     'Emotional calm & mental health',
@@ -23,6 +31,67 @@ export const useLewisStore = create((set) => ({
     'Intellectual growth & curiosity',
     'Environment & belonging'
   ],
+  arrivalState: '',
+  financialPulse: {},
+  environmentalPulse: {},
+  intellectualPulse: '',
+  culturalBelonging: {},
+  bodyRhythm: {},
+  sensoryPauseDone: false,
+  
+  // Stage 2 Attention
+  attentionDriftDone: false,
+
+  // Stage 3 Nervous System
+  affect: { x: null, y: null },
+  setAffect: (x, y) => set({ affect: { x, y } }),
+  bodyMapZones: [],
+  dayRhythmMap: [], 
+  breathingBefore: '',
+  breathingAfter: '',
+  nervousSystemState: '',
+  bodyAwareness: '',
+
+  // Stage 4 Maze
+  mazeCompletionTime: null,
+
+  // Stage 5 Domains
+  lifeLandscape: { depleted: [], okay: [], strength: [] },
+  pss10: {},
+  ucla3: {},
+  gse: {},
+  promis: {},
+  cfpb5: {},
+  diener: {},
+  ins: null, 
+  swls: {},
+  adaptiveDeepDives: {}, 
+  brightSpotCheck: '',
+  priorityTensionCheck: '',
+
+  // Stage 6 Sharing
+  everydaySharing: {},
+
+  // Stage 7 Context
+  externalConditions: {},
+  priorAttempts: '',
+  aspirationLandscape: '',
+  supportPreferences: [],
+  plannerReadiness: '',
+  valuesCheck: [],
+  financialAspiration: '',
+
+  // Stage 8 Stress
+  energyArc: { morning: '', afternoon: '', evening: '', night: '' },
+  stressPatternClusters: [],
+  recoveryResponsiveness: '',
+  cumulativeLoad: {},
+
+  // Stage 9 Sensory
+  soundPreference: '',
+  quickChoices: {},
+
+  // Generic helpers
   setProfileField: (field, value) => set({ [field]: value }),
 
   toggleArrayItem: (field, value) => set((s) => {
@@ -30,48 +99,17 @@ export const useLewisStore = create((set) => ({
     return { [field]: arr.includes(value) ? arr.filter(i => i !== value) : [...arr, value] }
   }),
 
-  // Path selection
-  door: null, // 'pulse' or 'full'
-  setDoor: (doorVal) => set({ door: doorVal }),
-
-  // Stage 5 Measurement Spine
-  who5: {},
-  pss10: {},
-  ucla3: {},
-  gse: {},
-  promis: {},
-  cfpb5_1: {},
-  cfpb5_2: {},
-  
   setScaleAnswer: (scaleName, qId, val) => set((s) => ({
     [scaleName]: { ...s[scaleName], [qId]: val }
   })),
 
-  // Checkbox/chips (legacy prototype)
-  chips: [],
-  toggleChip: (chipText) => set((s) => {
-    const arr = s.chips.includes(chipText)
-      ? s.chips.filter(c => c !== chipText)
-      : [...s.chips, chipText]
-    return { chips: arr }
-  }),
-
-  // Somatic
-  settled: null,
-  setSettled: (val) => set({ settled: val }),
-  affect: { x: null, y: null },
-  setAffect: (x, y) => set({ affect: { x, y } }),
+  updateObjectField: (objName, key, val) => set((s) => ({
+    [objName]: { ...s[objName], [key]: val }
+  })),
 
   reset: () => set({
-    currentScreen: 'welcome',
+    currentScreen: 'landing',
     isOver18: null,
-    name: '',
-    ageCategory: '',
-    gender: '',
-    profession: '',
-    door: null,
-    who5: {},
-    chips: [],
-    settled: null,
+    // reset rest to initial...
   })
 }))

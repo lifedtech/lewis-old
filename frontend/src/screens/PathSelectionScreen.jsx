@@ -10,7 +10,7 @@ export default function PathSelectionScreen() {
   }
 
   return (
-    <motion.section 
+    <motion.section
       className="screen active"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -23,7 +23,7 @@ export default function PathSelectionScreen() {
       <p className="sub" style={{ textAlign: 'center' }}>How deep would you like to go today?</p>
 
       <div className="choice-stack">
-        <button 
+        <button
           className={`choice-card ${door === 'pulse' ? 'selected' : ''}`}
           onClick={() => setDoor('pulse')}
         >
@@ -33,7 +33,7 @@ export default function PathSelectionScreen() {
           </div>
           <p className="choice-desc">A first reading — not the full picture.</p>
         </button>
-        <button 
+        <button
           className={`choice-card ${door === 'full' ? 'selected' : ''}`}
           onClick={() => setDoor('full')}
         >
@@ -46,8 +46,8 @@ export default function PathSelectionScreen() {
       </div>
 
       <div className="spacer"></div>
-      <button 
-        className="btn-primary" 
+      <button
+        className="btn-primary"
         disabled={!door}
         onClick={handleBegin}
         style={{ alignSelf: 'center' }}

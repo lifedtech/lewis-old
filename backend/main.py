@@ -33,6 +33,8 @@ else:
         allow_headers=["*"],
     )
 
+from typing import List, Optional, Dict, Any
+
 class PulseInput(BaseModel):
     who5: List[int] = Field(..., description="Exactly 5 scores")
     life_stability: str
@@ -41,21 +43,74 @@ class PulseInput(BaseModel):
     arrival_word: Optional[str] = None
 
 class FullAssessmentInput(BaseModel):
+    # Core valid scales
     who5: List[int] = Field(..., description="Exactly 5 scores (0-5)")
     pss10: List[int] = Field(..., description="Exactly 10 scores (0-4)")
     ucla3: List[int] = Field(..., description="Exactly 3 scores (0-2)")
     gse: List[int] = Field(..., description="Exactly 10 scores (0-3)")
     promis: List[int] = Field(..., description="Exactly 4 scores (0-4)")
     cfpb5: List[int] = Field(..., description="Exactly 5 scores (0-4)")
-    max_time_available: int = Field(default=5)
-    current_environment: str = Field(default="Anywhere")
-    scores: dict = Field(default={})
+    
+    # New valid scales
+    diener: Optional[Dict[str, int]] = Field(default={})
+    ins: Optional[int] = Field(default=None)
+    swls: Optional[Dict[str, int]] = Field(default={})
+
+    # Stage 1 Context
+    ageCategory: Optional[str] = None
+    gender: Optional[str] = None
+    identityRoles: List[str] = Field(default=[])
+    lifeStability: Optional[int] = None
     active_pressures: List[str] = Field(default=[])
+    bodyMovement: Optional[str] = None
+    sleepQuality: Optional[str] = None
+    bodyContext: List[str] = Field(default=[])
+    relationalContext: Optional[str] = None
     priority_rank: List[str] = Field(default=[])
     arrival_word: Optional[str] = None
+    financialPulse: Dict[str, Any] = Field(default={})
+    environmentalPulse: Dict[str, Any] = Field(default={})
+    intellectualPulse: Optional[str] = None
+    culturalBelonging: Dict[str, Any] = Field(default={})
+    bodyRhythm: Dict[str, Any] = Field(default={})
+
+    # Stage 3
+    bodyMapZones: List[str] = Field(default=[])
+    dayRhythmMap: List[int] = Field(default=[])
+    breathingBefore: Optional[str] = None
+    breathingAfter: Optional[str] = None
+    nervousSystemState: Optional[str] = None
+    body_awareness: Optional[str] = None
+
+    # Stage 5
+    lifeLandscape: Dict[str, List[str]] = Field(default={})
+    adaptiveDeepDives: Dict[str, Any] = Field(default={})
+    brightSpotCheck: Optional[str] = None
+    priorityTensionCheck: Optional[str] = None
+
+    # Stage 6 & 7
+    everydaySharing: Dict[str, Any] = Field(default={})
+    externalConditions: Dict[str, Any] = Field(default={})
+    priorAttempts: Optional[str] = None
+    aspirationLandscape: Optional[str] = None
+    supportPreferences: List[str] = Field(default=[])
+    plannerReadiness: Optional[str] = None
+    valuesCheck: List[str] = Field(default=[])
+    financialAspiration: Optional[str] = None
+
+    # Stage 8 & 9
+    energyArc: Dict[str, str] = Field(default={})
+    stressPatternClusters: List[str] = Field(default=[])
+    recoveryResponsiveness: Optional[str] = None
+    cumulativeLoad: Dict[str, Any] = Field(default={})
+    soundPreference: Optional[str] = None
+    quickChoices: Dict[str, Any] = Field(default={})
+
+    # Legacy fields mapping
+    max_time_available: int = Field(default=5)
+    current_environment: str = Field(default="Anywhere")
     friction: Optional[str] = None
     somatic_load: Optional[str] = None
-    body_awareness: Optional[str] = None
     flags: List[str] = Field(default=[])
 
 @app.get("/")
@@ -110,6 +165,13 @@ def calculate_full_assessment(payload: FullAssessmentInput):
         gse_res = calculate_gse(payload.gse)
         promis_res = calculate_promis(payload.promis)
         cfpb5_res = calculate_cfpb5(payload.cfpb5)
+        
+        # Optional new scales scoring
+        from scoring import calculate_diener, calculate_ins, calculate_swls
+        diener_res = calculate_diener(list(payload.diener.values())) if payload.diener and len(payload.diener) == 8 else None
+        ins_res = calculate_ins([payload.ins]) if payload.ins is not None else None
+        swls_res = calculate_swls(list(payload.swls.values())) if payload.swls and len(payload.swls) == 5 else None
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -135,6 +197,9 @@ def calculate_full_assessment(payload: FullAssessmentInput):
         "Meaning & Spiritual": promis_res["normalized_score"],
         "Financial Wellness": 100 - cfpb5_res["normalized_score"]
     }
+    if diener_res: wellness_scores["Intellectual & Growth"] = diener_res["normalized_score"]
+    if ins_res: wellness_scores["Environmental & Cultural"] = ins_res["normalized_score"]
+    
     bright_spot = max(wellness_scores, key=wellness_scores.get)
 
     diagnostic_package = {
@@ -144,16 +209,29 @@ def calculate_full_assessment(payload: FullAssessmentInput):
             "Relationships & Social": 100 - ucla3_res["normalized_score"],
             "Accomplishment & Agency": gse_res["normalized_score"],
             "Meaning & Spiritual": promis_res["normalized_score"],
-            "Financial Wellness": 100 - cfpb5_res["normalized_score"]
+            "Financial Wellness": 100 - cfpb5_res["normalized_score"],
+            "Intellectual & Growth (Diener)": diener_res["normalized_score"] if diener_res else None,
+            "Environmental (INS)": ins_res["normalized_score"] if ins_res else None,
+            "Life Satisfaction (SWLS)": swls_res["normalized_score"] if swls_res else None,
         },
         "calculated_root_driver": root_driver,
         "context_inputs": {
-            "arrival_word": payload.arrival_word,
+            "ageCategory": payload.ageCategory,
+            "identityRoles": payload.identityRoles,
+            "lifeStability": payload.lifeStability,
             "active_pressures": payload.active_pressures,
             "priority_rank": payload.priority_rank,
-            "friction": payload.friction,
-            "somatic_load": payload.somatic_load,
-            "body_awareness": payload.body_awareness,
+            "arrival_word": payload.arrival_word,
+            "bodyMovement": payload.bodyMovement,
+            "sleepQuality": payload.sleepQuality,
+            "bodyMapZones": payload.bodyMapZones,
+            "dayRhythmMap": payload.dayRhythmMap,
+            "nervousSystemState": payload.nervousSystemState,
+            "adaptiveDeepDives": payload.adaptiveDeepDives,
+            "everydaySharing": payload.everydaySharing,
+            "externalConditions": payload.externalConditions,
+            "stressPatternClusters": payload.stressPatternClusters,
+            "energyArc": payload.energyArc,
         },
         "validation_flags": payload.flags,
         "prescribed_habit": recommended_habit["title"],

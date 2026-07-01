@@ -1,0 +1,83 @@
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { useLewisStore } from '../store/useLewisStore.js'
+
+export default function Stage1_0AboutScreen() {
+  const { setScreen, setProfileField, ageCategory, gender } = useLewisStore()
+  const [name, setName] = useState('')
+
+  const handleNext = () => {
+    if (name) setProfileField('name', name)
+    setScreen('stage1_1Identity')
+  }
+
+  const ageGroups = ['18-24', '25-34', '35-44', '45-54', '55-64', '65+']
+  const sexes = ['Female', 'Male', 'Intersex', 'Prefer not to say']
+
+  return (
+    <motion.div
+      className="screen-container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+    >
+      <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
+        <h1 className="headline">About You</h1>
+        <p className="sub">Let's set up your profile.</p>
+        
+        <div className="form-container" style={{ margin: '2rem auto' }}>
+          <div className="form-group">
+            <label>What would you like to be called?</label>
+            <input 
+              type="text" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="input-field" 
+              placeholder="Your name"
+            />
+          </div>
+
+          <div className="form-group" style={{ marginTop: '1rem' }}>
+            <label>Which age group are you in?</label>
+            <div className="chip-grid" style={{ justifyContent: 'flex-start' }}>
+              {ageGroups.map(group => (
+                <button
+                  key={group}
+                  onClick={() => setProfileField('ageCategory', group)}
+                  className={`chip ${ageCategory === group ? 'selected' : ''}`}
+                >
+                  {group}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="form-group" style={{ marginTop: '1rem' }}>
+            <label>What is your sex?</label>
+            <div className="chip-grid" style={{ justifyContent: 'flex-start' }}>
+              {sexes.map(sex => (
+                <button
+                  key={sex}
+                  onClick={() => setProfileField('gender', sex)}
+                  className={`chip ${gender === sex ? 'selected' : ''}`}
+                >
+                  {sex}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="button-group" style={{ marginTop: '2rem' }}>
+          <button 
+            className="btn-primary" 
+            onClick={handleNext}
+            disabled={!ageCategory || !gender}
+          >
+            Continue
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  )
+}

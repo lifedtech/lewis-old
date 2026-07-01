@@ -1,5 +1,28 @@
 # scoring.py
 
+def calculate_who5(scores: list[int]) -> dict:
+    if len(scores) != 5: raise ValueError("WHO-5 requires exactly 5 scores.")
+    total_score = sum(scores)
+    # 5 items on a 6-point scale (0-5). Max score is 25.
+    return {"raw_score": total_score, "normalized_score": round((total_score / 25) * 100, 1)}
+
+def calculate_diener(scores: list[int]) -> dict:
+    if len(scores) != 8: raise ValueError("Diener Flourishing requires exactly 8 scores.")
+    total_score = sum(scores)
+    # 8 items on a 1-7 scale. Min 8, Max 56.
+    return {"raw_score": total_score, "normalized_score": round(((total_score - 8) / 48) * 100, 1)}
+
+def calculate_ins(scores: list[int]) -> dict:
+    if len(scores) != 1: raise ValueError("INS requires exactly 1 score.")
+    # 1 item on a 1-7 scale. Min 1, Max 7.
+    return {"raw_score": scores[0], "normalized_score": round(((scores[0] - 1) / 6) * 100, 1)}
+
+def calculate_swls(scores: list[int]) -> dict:
+    if len(scores) != 5: raise ValueError("SWLS requires exactly 5 scores.")
+    total_score = sum(scores)
+    # 5 items on a 1-7 scale. Min 5, Max 35.
+    return {"raw_score": total_score, "normalized_score": round(((total_score - 5) / 30) * 100, 1)}
+
 def calculate_pss10(scores: list[int]) -> dict:
     if len(scores) != 10: raise ValueError("PSS-10 requires exactly 10 scores.")
     total_score = sum((4 - score) if i in [3, 4, 6, 7] else score for i, score in enumerate(scores))
