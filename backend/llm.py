@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
  
-# We set the base_url to Groq to test Llama-3 for free. 
+# We set the base_url to Hugging Face's Inference API to test Llama-3. 
 # When you launch, you just change this URL to your RunPod Serverless endpoint!
 client = OpenAI(
-    api_key=os.getenv("GROQ_API_KEY"), 
-    base_url="https://api.groq.com/openai/v1"
+    api_key=os.getenv("HUGGINGFACE_API_KEY"), 
+    base_url="https://api-inference.huggingface.co/v1/"
 )
 
 def generate_user_narrative(diagnostic_data: dict) -> str:
@@ -52,7 +52,7 @@ def generate_user_narrative(diagnostic_data: dict) -> str:
 
     try:
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="meta-llama/Meta-Llama-3.1-8B-Instruct",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"Here is the user's JSON payload. Construct the report: {user_context}"}
@@ -86,7 +86,7 @@ def generate_pulse_narrative(diagnostic_data: dict) -> str:
 
     try:
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="meta-llama/Meta-Llama-3.1-8B-Instruct",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"Here is the user's Pulse data. Write a short narrative: {user_context}"}
