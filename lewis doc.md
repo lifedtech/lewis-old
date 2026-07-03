@@ -17,7 +17,7 @@
 
 ## Overview
 
-**LEWIS Core Engine** (The Lifed Everyday Wellbeing Intelligence System) is a FastAPI-based backend service designed to assess, analyze, and track human well-being and stress levels across 9 dimensions of life. The system integrates standard, validated psychological assessment instruments with a weighted cascade root driver matrix and AI-powered narrative generators (Llama 3.1 via Groq) to deliver hyper-personalized "Insight Reports" and small micro-habit prescriptions.
+**LEWIS Core Engine** (The Lifed Everyday Wellbeing Intelligence System) is a FastAPI-based backend service designed to assess, analyze, and track human well-being and stress levels across 9 dimensions of life. The system integrates standard, validated psychological assessment instruments with a weighted cascade root driver matrix and AI-powered narrative generators (Llama 3.1 via Hugging Face) to deliver hyper-personalized "Insight Reports" and small micro-habit prescriptions.
 
 ---
 
@@ -42,7 +42,7 @@ lifed-LEWIS/
 │   ├── llm.py               # AI narrative generation and Llama-3 integrations
 │   ├── tests/
 │   │   └── test_scoring.py  # Unit tests for scoring logic
-│   ├── .env                 # Environment configurations (GROQ_API_KEY, FRONTEND_URL)
+│   ├── .env                 # Environment configurations (HUGGINGFACE_API_KEY, FRONTEND_URL)
 │   ├── .env.example         # Example env configuration
 │   ├── .gitignore           # Backend file ignore list
 │   └── requirements.txt     # Python dependency list
@@ -72,7 +72,7 @@ lifed-LEWIS/
 - **Backend Framework**: FastAPI
 - **Web Server**: ASGI-compatible (Uvicorn)
 - **Language**: Python 3.7+
-- **AI Engine**: Llama-3.1-8b-instant (via Groq API client)
+- **AI Engine**: meta-llama/Meta-Llama-3.1-8B-Instruct (via Hugging Face Inference API)
 - **Frontend Core**: React + Vite (Vanilla CSS styling)
 - **State Management**: Zustand (`useLewisStore.js`)
 
@@ -231,7 +231,7 @@ The system selects the maximum impact score as the **Primary Root Driver** and m
 
 ## AI Narrative System
 
-LEWIS generates summaries using Groq. The engine utilizes Llama-3.1-8b-instant to build the reports.
+LEWIS generates summaries using Hugging Face. The engine utilizes meta-llama/Meta-Llama-3.1-8B-Instruct to build the reports.
 
 ### Strict Voice & Language Charter
 - **Perspective**: Always refer to the user in the second person ("you"). Never use "I" or the system "we".
@@ -342,7 +342,8 @@ For the full assessment, the AI generates an output split into:
 3. **Configure Environment Variables**:
    Create a `.env` file inside `backend/` with:
    ```env
-   GROQ_API_KEY=your_groq_api_key_here
+   GROQ_API_KEY=REDACTED_GROQ_API_KEY
+   HUGGINGFACE_API_KEY=your_huggingface_api_key_here
    FRONTEND_URL=http://localhost:5173
    ```
 4. **Run the Server**:
