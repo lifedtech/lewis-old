@@ -110,7 +110,8 @@ export default function Stage4MazeScreen() {
             border: '1px solid rgba(246, 240, 230, 0.09)',
             boxShadow: '0 30px 60px -20px rgba(0, 0, 0, 0.55)',
             width: '280px',
-            height: '280px'
+            height: '280px',
+            margin: '0 auto'
           }}
         >
           {maze.map((row, r) => (

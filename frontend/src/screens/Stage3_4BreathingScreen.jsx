@@ -109,11 +109,14 @@ export default function Stage3_4BreathingScreen() {
               </svg>
               <motion.div 
                 className="orb orb--lg"
+                initial={{ x: "-50%", y: "-50%" }}
                 animate={{ 
+                  x: "-50%", 
+                  y: "-50%",
                   scale: phase < CYCLE / 2 ? [1, 1.25] : [1.25, 1],
                 }}
                 transition={{ duration: CYCLE / 2, ease: "easeInOut" }}
-                style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                style={{ position: 'absolute', top: '50%', left: '50%' }}
               />
             </div>
             

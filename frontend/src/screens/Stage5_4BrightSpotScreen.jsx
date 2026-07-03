@@ -50,8 +50,8 @@ export default function Stage5_4BrightSpotScreen() {
         </div>
         
         <div className="button-group" style={{ marginTop: '2rem' }}>
-          <button className="btn-primary" onClick={handleNext} disabled={!brightSpotCheck || !brightSpotCheck.trim()}>
-            Continue
+          <button className="btn-primary" onClick={handleNext}>
+            {brightSpotCheck && brightSpotCheck.trim() ? 'Continue' : 'Skip'}
           </button>
         </div>
       </div>
