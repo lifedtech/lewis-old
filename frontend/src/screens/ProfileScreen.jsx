@@ -33,73 +33,74 @@ export default function ProfileScreen() {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.4 }}
-      style={{ display: 'flex' }}
+      style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}
     >
-      <p className="eyebrow" style={{ textAlign: 'center' }}>Step {step + 2}</p>
-      
       <AnimatePresence mode="wait">
-        {step === 0 && (
-          <motion.div key="step0" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="q-card">
-            <h1 className="q-text" style={{textAlign:'center', marginBottom:'16px'}}>A little about you</h1>
-            <p className="q-caption" style={{textAlign:'center'}}>This helps LEWIS personalize your reflection.</p>
-            <div className="form-container">
-              <div className="form-group">
-                <label>First Name</label>
-                <input type="text" className="input-field" placeholder="How should we call you?" value={name} onChange={(e) => setProfileField('name', e.target.value)} />
-              </div>
-              <div className="form-group">
-                <label>Which age group are you in? (Optional)</label>
-                <select className="input-field" value={ageCategory} onChange={(e) => setProfileField('ageCategory', e.target.value)}>
-                  <option value="" disabled>Select your age group</option>
-                  <option value="18-24">18 - 24</option>
-                  <option value="25-34">25 - 34</option>
-                  <option value="35-44">35 - 44</option>
-                  <option value="45-54">45 - 54</option>
-                  <option value="55-64">55 - 64</option>
-                  <option value="65+">65+</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>What is your sex? (Optional)</label>
-                <select className="input-field" value={gender} onChange={(e) => setProfileField('gender', e.target.value)}>
-                  <option value="" disabled>Select your sex</option>
-                  <option value="Female">Female</option>
-                  <option value="Male">Male</option>
-                  <option value="Intersex">Intersex</option>
-                  <option value="Prefer not to say">Prefer not to say</option>
-                </select>
-              </div>
+        <motion.div 
+          key={step} 
+          initial={{opacity:0}} 
+          animate={{opacity:1}} 
+          exit={{opacity:0}} 
+          className="split-layout"
+        >
+          <div className="split-left">
+            <div className="orb orb--hero" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="24" fill="#6B7280" />
+                <path d="M33 24L18 32.6603L18 15.3397L33 24Z" fill="white" />
+              </svg>
             </div>
-            <button className="btn-primary" disabled={!isDemoComplete} onClick={handleNext} style={{marginTop: '24px', display: 'block', margin: '24px auto 0'}}>Continue</button>
-          </motion.div>
-        )}
+          </div>
+          
+          <div className="split-right">
+            {step === 0 && (
+              <div className="form-content">
+                <h1 className="hero-text">Hey Bud !<br/>What should I call you ?</h1>
+                <input 
+                  type="text" 
+                  className="hero-input" 
+                  placeholder="type your name" 
+                  value={name} 
+                  onChange={(e) => setProfileField('name', e.target.value)} 
+                />
+                <button className="btn-hero" disabled={!isDemoComplete} onClick={handleNext}>NEXT</button>
+              </div>
+            )}
 
-        {step === 1 && (
-          <motion.div key="step1" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="q-card">
-            <h1 className="q-text" style={{textAlign:'center', marginBottom:'16px'}}>Which of these describes you right now?</h1>
-            <p className="q-caption" style={{textAlign:'center'}}>Select all that apply.</p>
-            <MultiSelectGrid options={ROLES_OPTIONS} selected={roles} onChange={(opt) => toggleArrayItem('roles', opt)} />
-            <button className="btn-primary" disabled={!isRolesComplete} onClick={handleNext} style={{marginTop: '24px', display: 'block', margin: '24px auto 0'}}>Continue</button>
-          </motion.div>
-        )}
+            {step === 1 && (
+              <div className="form-content">
+                <h1 className="hero-text" style={{fontSize: '32px'}}>Which of these describes you right now?</h1>
+                <p className="q-caption" style={{textAlign:'left'}}>Select all that apply.</p>
+                <div style={{ marginTop: '16px' }}>
+                  <MultiSelectGrid options={ROLES_OPTIONS} selected={roles} onChange={(opt) => toggleArrayItem('roles', opt)} />
+                </div>
+                <button className="btn-hero" disabled={!isRolesComplete} onClick={handleNext} style={{marginTop: '24px'}}>NEXT</button>
+              </div>
+            )}
 
-        {step === 2 && (
-          <motion.div key="step2" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="q-card">
-            <h1 className="q-text" style={{textAlign:'center', marginBottom:'16px'}}>What's pressing on you most right now?</h1>
-            <p className="q-caption" style={{textAlign:'center'}}>Select all that apply.</p>
-            <MultiSelectGrid options={PRESSURES_OPTIONS} selected={lifePressures} onChange={(opt) => toggleArrayItem('lifePressures', opt)} />
-            <button className="btn-primary" disabled={!isPressuresComplete} onClick={handleNext} style={{marginTop: '24px', display: 'block', margin: '24px auto 0'}}>Continue</button>
-          </motion.div>
-        )}
+            {step === 2 && (
+              <div className="form-content">
+                <h1 className="hero-text" style={{fontSize: '32px'}}>What's pressing on you most right now?</h1>
+                <p className="q-caption" style={{textAlign:'left'}}>Select all that apply.</p>
+                <div style={{ marginTop: '16px' }}>
+                  <MultiSelectGrid options={PRESSURES_OPTIONS} selected={lifePressures} onChange={(opt) => toggleArrayItem('lifePressures', opt)} />
+                </div>
+                <button className="btn-hero" disabled={!isPressuresComplete} onClick={handleNext} style={{marginTop: '24px'}}>NEXT</button>
+              </div>
+            )}
 
-        {step === 3 && (
-          <motion.div key="step3" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="q-card">
-            <h1 className="q-text" style={{textAlign:'center', marginBottom:'16px'}}>Drag these into the order that matters most to you right now.</h1>
-            <p className="q-caption" style={{textAlign:'center'}}>1 = Most important, 9 = Least important</p>
-            <DraggableList items={priorities} setItems={(newOrder) => setProfileField('priorities', newOrder)} />
-            <button className="btn-primary" onClick={handleNext} style={{marginTop: '24px', display: 'block', margin: '24px auto 0'}}>Continue</button>
-          </motion.div>
-        )}
+            {step === 3 && (
+              <div className="form-content">
+                <h1 className="hero-text" style={{fontSize: '32px'}}>Drag these into the order that matters most.</h1>
+                <p className="q-caption" style={{textAlign:'left'}}>1 = Most important, 9 = Least important</p>
+                <div style={{ marginTop: '16px' }}>
+                  <DraggableList items={priorities} setItems={(newOrder) => setProfileField('priorities', newOrder)} />
+                </div>
+                <button className="btn-hero" onClick={handleNext} style={{marginTop: '24px'}}>NEXT</button>
+              </div>
+            )}
+          </div>
+        </motion.div>
       </AnimatePresence>
     </motion.section>
   )
