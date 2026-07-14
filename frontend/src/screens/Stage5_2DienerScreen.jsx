@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import { AGREEMENT_5 } from '../constants/scales.js'
 
 export default function Stage5_2DienerScreen() {
   const { setScreen, setScaleAnswer, diener } = useLewisStore()
@@ -61,12 +62,12 @@ export default function Stage5_2DienerScreen() {
               <div className="likert-container">
                 <p className="likert-prompt">{`${step + 1}/8. ${questions[step].prompt}`}</p>
                 <div className="likert-options">
-                  {["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"].map(opt => {
+                  {AGREEMENT_5.map(opt => {
                     const qId = questions[step].id
                     return (
-                      <button 
-                        key={opt} 
-                        onClick={() => handleSelect(qId, opt)} 
+                      <button
+                        key={opt}
+                        onClick={() => handleSelect(qId, opt)}
                         className={`likert-btn ${diener?.[qId] === opt ? 'selected' : ''}`}
                       >
                         {opt}
@@ -80,7 +81,7 @@ export default function Stage5_2DienerScreen() {
         </div>
         
         <div className="button-group" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <button className="btn-primary" onClick={handleNext}>
+          <button className="btn-primary" onClick={handleNext} disabled={!diener?.[questions[step].id]}>
             {step < 7 ? 'Next' : 'Continue'}
           </button>
           {step > 0 && (

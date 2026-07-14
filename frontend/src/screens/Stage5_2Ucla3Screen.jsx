@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import { UCLA3_SCALE } from '../constants/scales.js'
 
 export default function Stage5_2Ucla3Screen() {
   const { setScreen, setScaleAnswer, ucla3 } = useLewisStore()
@@ -57,7 +58,7 @@ export default function Stage5_2Ucla3Screen() {
               <div className="likert-container">
                 <p className="likert-prompt">{`${step + 1}/3. ${questions[step].prompt}`}</p>
                 <div className="likert-options">
-                  {["Hardly Ever", "Some of the time", "Often"].map(opt => {
+                  {UCLA3_SCALE.map(opt => {
                     const qId = questions[step].id
                     return (
                       <button 
@@ -76,7 +77,7 @@ export default function Stage5_2Ucla3Screen() {
         </div>
         
         <div className="button-group" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <button className="btn-primary" onClick={handleNext}>
+          <button className="btn-primary" onClick={handleNext} disabled={!ucla3?.[questions[step].id]}>
             {step < 2 ? 'Next' : 'Continue'}
           </button>
           {step > 0 && (

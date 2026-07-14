@@ -1,120 +1,37 @@
 import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
-import { 
-  WHO5_SCALE, PSS10_SCALE, UCLA3_SCALE, GSE_SCALE, PROMIS_SCALE, CFPB5_1_SCALE, CFPB5_2_SCALE 
-} from '../constants/scales.js'
+import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
 
 export default function MirrorScreen() {
-  const store = useLewisStore()
-  
+  const setScreen = useLewisStore((s) => s.setScreen)
+
   const [loading, setLoading] = useState(true)
   const [analysis, setAnalysis] = useState(null)
   const [error, setError] = useState(null)
+  const [missing, setMissing] = useState(null)
 
   useEffect(() => {
     async function fetchAnalysis() {
       try {
-        const mapToIndices = (stateObj, scaleArr, count, prefix) => {
-          if (!stateObj) return Array(count).fill(0)
-          return Array.from({ length: count }).map((_, i) => {
-            const answer = stateObj[`${prefix}${i+1}`]
-            return scaleArr.indexOf(answer) !== -1 ? scaleArr.indexOf(answer) : 0
-          })
-        }
-
-        const mapLikertToIntegers = (obj) => {
-          if (!obj) return {}
-          const mapping = {
-            "Strongly Disagree": 1,
-            "Disagree": 2,
-            "Neutral": 4,
-            "Agree": 6,
-            "Strongly Agree": 7
-          }
-          const res = {}
-          Object.keys(obj).forEach(key => {
-            res[key] = mapping[obj[key]] !== undefined ? mapping[obj[key]] : 4
-          })
-          return res
+        const { payload, missing } = buildFullAssessmentPayload(useLewisStore.getState())
+        if (missing.length > 0) {
+          setMissing(missing)
+          setLoading(false)
+          return
         }
 
         const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-        let url = `${API_BASE}/assessment/full`
-        let payload = {}
-
-        // Simplified index mapping since some new scales don't have constants yet. 
-        // Real implementation would ensure values are passed cleanly.
-        
-        payload = {
-          who5: mapToIndices(store.who5, WHO5_SCALE, 5, 'w'),
-          pss10: mapToIndices(store.pss10, PSS10_SCALE, 10, 'p'),
-          ucla3: mapToIndices(store.ucla3, UCLA3_SCALE, 3, 'u'),
-          gse: mapToIndices(store.gse, GSE_SCALE, 10, 'g'),
-          promis: mapToIndices(store.promis, PROMIS_SCALE, 4, 'pr'),
-          // Assume cfpb5, diener, swls are passed as dicts
-          cfpb5: mapToIndices(store.cfpb5, [...CFPB5_1_SCALE, ...CFPB5_2_SCALE], 5, 'c'),
-          diener: mapLikertToIntegers(store.diener),
-          ins: store.ins || null,
-          swls: mapLikertToIntegers(store.swls),
-          
-          ageCategory: store.ageCategory,
-          gender: store.gender,
-          identityRoles: store.identityRoles,
-          lifeStability: store.lifeStability,
-          active_pressures: store.activePressures,
-          bodyMovement: store.bodyMovement,
-          sleepQuality: store.sleepQuality,
-          bodyContext: store.bodyContext || [],
-          relationalContext: store.relationalContext,
-          priority_rank: store.priorities,
-          arrival_word: store.arrivalState,
-          financialPulse: store.financialPulse || {},
-          environmentalPulse: store.environmentalPulse || {},
-          intellectualPulse: store.intellectualPulse,
-          culturalBelonging: store.culturalBelonging || {},
-          bodyRhythm: store.bodyRhythm || {},
-          
-          bodyMapZones: store.bodyMapZones,
-          dayRhythmMap: store.dayRhythmMap,
-          breathingBefore: store.breathingBefore,
-          breathingAfter: store.breathingAfter,
-          nervousSystemState: store.nervousSystemState,
-          body_awareness: store.bodyAwareness,
-          
-          lifeLandscape: store.lifeLandscape || {},
-          adaptiveDeepDives: store.adaptiveDeepDives,
-          brightSpotCheck: store.brightSpotCheck,
-          priorityTensionCheck: store.priorityTensionCheck,
-          
-          everydaySharing: store.everydaySharing,
-          externalConditions: store.externalConditions,
-          priorAttempts: store.priorAttempts,
-          aspirationLandscape: store.aspirationLandscape,
-          supportPreferences: store.supportPreferences,
-          plannerReadiness: store.plannerReadiness,
-          valuesCheck: store.valuesCheck,
-          financialAspiration: store.financialAspiration,
-          
-          energyArc: store.energyArc,
-          stressPatternClusters: store.stressPatternClusters,
-          recoveryResponsiveness: store.recoveryResponsiveness,
-          cumulativeLoad: store.cumulativeLoad,
-          soundPreference: store.soundPreference,
-          quickChoices: store.quickChoices,
-          flags: []
-        }
-
-        const response = await fetch(url, {
+        const response = await fetch(`${API_BASE}/assessment/full`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         })
 
         if (!response.ok) throw new Error('Failed to fetch analysis')
-        
+
         const data = await response.json()
         setAnalysis(data)
         setLoading(false)
@@ -125,12 +42,32 @@ export default function MirrorScreen() {
       }
     }
     fetchAnalysis()
-  }, []) // Removed door dependency
+  }, [])
 
   if (loading) {
     return (
       <motion.section className="screen active" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <p className="q-text" style={{ textAlign: 'center' }}>LEWIS is synthesizing your results...</p>
+      </motion.section>
+    )
+  }
+
+  if (missing) {
+    return (
+      <motion.section className="screen active" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+        <p className="eyebrow" style={{ textAlign: 'center' }}>Almost there</p>
+        <h1 className="headline" style={{ textAlign: 'center' }}>A few check-ins still need answers.</h1>
+        <p className="sub" style={{ textAlign: 'center', maxWidth: '480px', marginBottom: '24px' }}>
+          LEWIS only reflects what you actually shared — unanswered questions are
+          never guessed or filled in for you.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', maxWidth: '360px' }}>
+          {missing.map((m) => (
+            <button key={m.screen} className="btn-primary" style={{ width: '100%' }} onClick={() => setScreen(m.screen)}>
+              Finish: {m.label}
+            </button>
+          ))}
+        </div>
       </motion.section>
     )
   }
@@ -149,14 +86,25 @@ export default function MirrorScreen() {
   let sortedData = []
   
   if (dims) {
-    chartData = [
-      { subject: 'Wellbeing', A: dims.emotional_wellbeing, fullMark: 100 },
-      { subject: 'Calm', A: 100 - dims.stress_load, fullMark: 100 },
-      { subject: 'Connection', A: 100 - dims.connection_isolation, fullMark: 100 },
-      { subject: 'Agency', A: dims.agency_efficacy, fullMark: 100 },
-      { subject: 'Meaning', A: dims.purpose_meaning, fullMark: 100 },
-      { subject: 'Financial Peace', A: 100 - dims.financial_stress, fullMark: 100 },
+    const dimKeys = [
+      { key: 'emotional', label: 'Wellbeing' },
+      { key: 'calm', label: 'Calm' },
+      { key: 'relationships', label: 'Connection' },
+      { key: 'accomplishment', label: 'Agency' },
+      { key: 'meaning', label: 'Meaning' },
+      { key: 'financial', label: 'Financial Peace' },
+      { key: 'growth', label: 'Growth' },
+      { key: 'environment', label: 'Nature' },
+      { key: 'physical', label: 'Physical' },
+      { key: 'energy', label: 'Energy' }
     ]
+    
+    dimKeys.forEach(({ key, label }) => {
+      if (dims[key] && dims[key].score !== null) {
+        chartData.push({ subject: label, A: dims[key].score, fullMark: 100 })
+      }
+    })
+
     sortedData = [...chartData].sort((a, b) => b.A - a.A)
   }
 
@@ -178,6 +126,24 @@ export default function MirrorScreen() {
     >
       <p className="eyebrow" style={{ textAlign: 'center' }}>The Mirror</p>
       <h1 className="headline" style={{ marginBottom: '40px' }}>Your systemic overview.</h1>
+
+      {/* Care note first: safety renders before everything else (INV-06/08) */}
+      {analysis?.safety?.care_note && (
+        <div className="mirror-card care-note-card" style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '24px',
+          marginBottom: '32px',
+          border: '1px solid var(--lavender)',
+          background: 'linear-gradient(135deg, rgba(167,139,250,0.12) 0%, rgba(21,21,26,0.9) 100%)',
+          borderRadius: '16px'
+        }}>
+          <p className="mirror-label bright" style={{ color: 'var(--lavender)', marginBottom: '12px' }}>A note of care</p>
+          <p className="mirror-text" style={{ fontSize: '15px', lineHeight: '1.7', color: '#e2e8f0', margin: 0 }}>
+            {analysis.safety.care_note}
+          </p>
+        </div>
+      )}
 
       {dims && (
         <>
@@ -296,7 +262,7 @@ export default function MirrorScreen() {
             strong: ({node, ...props}) => <strong style={{ color: 'var(--text-main)', fontWeight: 600 }} {...props} />
           }}
         >
-          {analysis?.ai_narrative}
+          {analysis?.narrative}
         </ReactMarkdown>
       </div>
 

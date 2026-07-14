@@ -7,7 +7,9 @@ export default function PreStage0AgeScreen() {
 
   const handleNext = (isOver18) => {
     setProfileField('isOver18', isOver18)
-    setScreen('stage1_0About')
+    // Under-18: hard stop. The assessment is designed and validated for
+    // adults only — minors never proceed into data collection.
+    setScreen(isOver18 ? 'stage1_0About' : 'ageStop')
   }
 
   return (

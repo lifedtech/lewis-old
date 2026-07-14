@@ -1,260 +1,300 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from typing import List, Optional
-
-from scoring import calculate_pss10, calculate_ucla3, calculate_gse, calculate_promis, calculate_cfpb5, calculate_root_driver
-from content import route_content
-from llm import generate_user_narrative, generate_pulse_narrative
+# main.py — the LEWIS API.
+#
+# Pipeline for /assessment/full:
+#   validate input -> age gate -> score instruments -> build dimensions
+#   -> safety flags -> leverage (suppressed in gentle mode) -> habit
+#   -> Road A deterministic report (always) -> optional Road B voicing
+#   -> validator (fail-closed to Road A) -> response.
+#
+# Nothing is persisted server-side: answers live only for the lifetime of
+# the request.
 
 import os
+import logging
+from typing import Annotated, Any, Dict, List, Optional
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field, StringConstraints
 from dotenv import load_dotenv
+
+from scoring import (
+    calculate_who5, calculate_pss10, calculate_ucla3, calculate_gse,
+    calculate_promis, calculate_cfpb5, calculate_diener, calculate_ins,
+    calculate_swls, calculate_ph, calculate_en, build_dimensions, bright_spot, calculate_leverage,
+    band_for,
+)
+from safety import evaluate_safety
+from content import route_content
+from narrative import build_road_a, NERVOUS_SYSTEM_PHRASES, BODY_ZONE_LABELS
+from validator import validate_narrative
+from llm import generate_road_b, generate_pulse_road_b
+from security import GuardrailMiddleware
+
 load_dotenv()
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+logger = logging.getLogger("lewis.api")
 
-app = FastAPI(title="LEWIS 9D Core Engine + AI")
+app = FastAPI(title="LEWIS Core Engine", version="1.1")
 
-raw_frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
-frontend_urls = [url.strip().rstrip('/') for url in raw_frontend_url.split(",")]
+# --- CORS: explicit origins only; a wildcard is never honored -----------------
+_raw_origins = os.getenv("FRONTEND_URL", "http://localhost:5173")
+_origins = [u.strip().rstrip("/") for u in _raw_origins.split(",") if u.strip()]
+if "*" in _origins:
+    logger.critical("Wildcard CORS origin rejected; using localhost dev origins instead. Set FRONTEND_URL explicitly.")
+    _origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
-if "*" in frontend_urls:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=False,
-        allow_methods=["*"],
-        allow_headers=["*"],
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
+)
+app.add_middleware(GuardrailMiddleware)
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.exception("Unhandled error on %s", request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Something went wrong on our side. Your answers were not stored."},
     )
-else:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=frontend_urls,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
 
-from typing import List, Optional, Dict, Any
+
+# --- Input schemas -------------------------------------------------------------
+
+Score05 = Annotated[int, Field(ge=0, le=5)]
+Score04 = Annotated[int, Field(ge=0, le=4)]
+Score03 = Annotated[int, Field(ge=0, le=3)]
+Score02 = Annotated[int, Field(ge=0, le=2)]
+Score14 = Annotated[int, Field(ge=1, le=4)]
+Score17 = Annotated[int, Field(ge=1, le=7)]
+ShortText = Annotated[str, StringConstraints(max_length=300)]
+LongText = Annotated[str, StringConstraints(max_length=2000)]
+
 
 class PulseInput(BaseModel):
-    who5: List[int] = Field(..., description="Exactly 5 scores")
-    life_stability: str
-    active_pressures: List[str]
-    priority_rank: List[str]
-    arrival_word: Optional[str] = None
+    who5: List[Score05] = Field(..., min_length=5, max_length=5)
+    life_stability: Optional[ShortText] = None
+    active_pressures: List[ShortText] = Field(default=[], max_length=20)
+    priority_rank: List[ShortText] = Field(default=[], max_length=12)
+    arrival_word: Optional[ShortText] = None
+
 
 class FullAssessmentInput(BaseModel):
-    # Core valid scales
-    who5: List[int] = Field(..., description="Exactly 5 scores (0-5)")
-    pss10: List[int] = Field(..., description="Exactly 10 scores (0-4)")
-    ucla3: List[int] = Field(..., description="Exactly 3 scores (0-2)")
-    gse: List[int] = Field(..., description="Exactly 10 scores (0-3)")
-    promis: List[int] = Field(..., description="Exactly 4 scores (0-4)")
-    cfpb5: List[int] = Field(..., description="Exactly 5 scores (0-4)")
-    
-    # New valid scales
-    diener: Optional[Dict[str, int]] = Field(default={})
-    ins: Optional[int] = Field(default=None)
-    swls: Optional[Dict[str, int]] = Field(default={})
+    # LEWIS scores adults only. The frontend hard-stops minors before any
+    # data is collected; this is the server-side backstop for direct calls.
+    is_over_18: bool
 
-    # Stage 1 Context
-    ageCategory: Optional[str] = None
-    gender: Optional[str] = None
-    identityRoles: List[str] = Field(default=[])
-    lifeStability: Optional[int] = None
-    active_pressures: List[str] = Field(default=[])
-    bodyMovement: Optional[str] = None
-    sleepQuality: Optional[str] = None
-    bodyContext: List[str] = Field(default=[])
-    relationalContext: Optional[str] = None
-    priority_rank: List[str] = Field(default=[])
-    arrival_word: Optional[str] = None
+    # SPINE instruments (0-based option indices; see scoring.py)
+    who5: List[Score05] = Field(..., min_length=5, max_length=5)
+    pss10: List[Score04] = Field(..., min_length=10, max_length=10)
+    ucla3: List[Score02] = Field(..., min_length=3, max_length=3)
+    gse: List[Score14] = Field(..., min_length=10, max_length=10)
+    promis: List[Score04] = Field(..., min_length=4, max_length=4)
+    cfpb5: List[Score04] = Field(..., min_length=5, max_length=5)
+
+    # Optional instruments (published 1-7 anchors)
+    diener: Optional[List[Score17]] = Field(default=None, min_length=8, max_length=8)
+    ins: Optional[Score17] = None
+    swls: Optional[List[Score17]] = Field(default=None, min_length=5, max_length=5)
+
+    # Context (meaning only — none of this can move a score)
+    ageCategory: Optional[ShortText] = None
+    gender: Optional[ShortText] = None
+    identityRoles: List[ShortText] = Field(default=[], max_length=20)
+    lifeStability: Optional[int] = Field(default=None, ge=0, le=100)
+    active_pressures: List[ShortText] = Field(default=[], max_length=20)
+    bodyMovement: Optional[ShortText] = None
+    sleepQuality: Optional[ShortText] = None
+    bodyContext: List[ShortText] = Field(default=[], max_length=20)
+    relationalContext: Optional[ShortText] = None
+    priority_rank: List[ShortText] = Field(default=[], max_length=12)
+    arrival_word: Optional[ShortText] = None
     financialPulse: Dict[str, Any] = Field(default={})
     environmentalPulse: Dict[str, Any] = Field(default={})
-    intellectualPulse: Optional[str] = None
+    intellectualPulse: Optional[ShortText] = None
     culturalBelonging: Dict[str, Any] = Field(default={})
     bodyRhythm: Dict[str, Any] = Field(default={})
-
-    # Stage 3
-    bodyMapZones: List[str] = Field(default=[])
-    dayRhythmMap: List[int] = Field(default=[])
-    breathingBefore: Optional[str] = None
-    breathingAfter: Optional[str] = None
-    nervousSystemState: Optional[str] = None
-    body_awareness: Optional[str] = None
-
-    # Stage 5
-    lifeLandscape: Dict[str, List[str]] = Field(default={})
+    bodyMapZones: List[ShortText] = Field(default=[], max_length=12)
+    dayRhythmMap: List[int] = Field(default=[], max_length=48)
+    breathingBefore: Optional[ShortText] = None
+    breathingAfter: Optional[ShortText] = None
+    nervousSystemState: Optional[ShortText] = None
+    body_awareness: Optional[LongText] = None
+    lifeLandscape: Dict[str, List[ShortText]] = Field(default={})
     adaptiveDeepDives: Dict[str, Any] = Field(default={})
-    brightSpotCheck: Optional[str] = None
-    priorityTensionCheck: Optional[str] = None
-
-    # Stage 6 & 7
+    brightSpotCheck: Optional[LongText] = None
+    priorityTensionCheck: Optional[LongText] = None
     everydaySharing: Dict[str, Any] = Field(default={})
     externalConditions: Dict[str, Any] = Field(default={})
-    priorAttempts: Optional[str] = None
-    aspirationLandscape: Optional[str] = None
-    supportPreferences: List[str] = Field(default=[])
-    plannerReadiness: Optional[str] = None
-    valuesCheck: List[str] = Field(default=[])
-    financialAspiration: Optional[str] = None
-
-    # Stage 8 & 9
-    energyArc: Dict[str, str] = Field(default={})
-    stressPatternClusters: List[str] = Field(default=[])
-    recoveryResponsiveness: Optional[str] = None
+    priorAttempts: Optional[LongText] = None
+    aspirationLandscape: Optional[LongText] = None
+    supportPreferences: List[ShortText] = Field(default=[], max_length=12)
+    plannerReadiness: Optional[ShortText] = None
+    valuesCheck: List[ShortText] = Field(default=[], max_length=20)
+    financialAspiration: Optional[LongText] = None
+    energyArc: Dict[str, ShortText] = Field(default={})
+    stressPatternClusters: List[ShortText] = Field(default=[], max_length=20)
+    recoveryResponsiveness: Optional[ShortText] = None
     cumulativeLoad: Dict[str, Any] = Field(default={})
-    soundPreference: Optional[str] = None
+    soundPreference: Optional[ShortText] = None
     quickChoices: Dict[str, Any] = Field(default={})
+    max_time_available: int = Field(default=5, ge=1, le=120)
+    current_environment: ShortText = Field(default="Anywhere")
+    flags: List[ShortText] = Field(default=[], max_length=10)
 
-    # Legacy fields mapping
-    max_time_available: int = Field(default=5)
-    current_environment: str = Field(default="Anywhere")
-    friction: Optional[str] = None
-    somatic_load: Optional[str] = None
-    flags: List[str] = Field(default=[])
+
+# --- Endpoints -----------------------------------------------------------------
 
 @app.get("/")
 def read_root():
-    return {"status": "success", "message": "LEWIS 9D Core Engine is Online"}
+    return {"status": "success", "message": "LEWIS Core Engine is online"}
+
 
 @app.post("/pulse/calculate")
 def calculate_pulse(payload: PulseInput):
-    scaled_score = sum(payload.who5) * 4
-    if scaled_score >= 70:   band = "Thriving"
-    elif scaled_score >= 55: band = "Steady"
-    elif scaled_score >= 40: band = "Stretched"
-    else:                    band = "Asking for care"
-    
-    diagnostic_package = {
-        "primary_root_driver": "Unknown (Pulse Check)",
-        "prescribed_habit": "Mindful Check-in",
-        "action_steps": "Take a moment to breathe and observe your state.",
-        "context": f"User is in {band} band with score {scaled_score}. Priorities: {', '.join(payload.priority_rank[:3])}. Pressures: {', '.join(payload.active_pressures)}."
+    who5_res = calculate_who5(payload.who5)
+    scaled = who5_res["normalized_score"]
+    band = band_for(scaled)
+
+    road_a_text = (
+        f"Thank you for checking in. Overall, your everyday wellbeing sits in the "
+        f"{band} band right now."
+        + (f' You arrived feeling "{payload.arrival_word}", and that word matters.'
+           if payload.arrival_word else "")
+        + " Whatever this moment holds, a short check-in like this is a real act of "
+          "self-respect. Take one slow breath before you move on with your day."
+    )
+
+    narrative_text, source = road_a_text, "road_a"
+    voicing = {
+        "wellbeing_band": band,
+        "arrival_word": payload.arrival_word,
+        "top_priorities": payload.priority_rank[:3],
+        "active_pressures": payload.active_pressures[:6],
     }
-    
-    ai_message = generate_pulse_narrative(diagnostic_package)
-    
-    # Estimate other domains based on overall wellbeing and pressures to populate the radar chart
-    base_est = max(10, scaled_score - 10)
-    
+    road_b = generate_pulse_road_b(voicing)
+    if road_b:
+        ok, reasons = validate_narrative(road_b)
+        # Pulse texts are intentionally short; skip the length floor.
+        length_only = [r for r in reasons if not r.startswith("too short")]
+        if not length_only:
+            narrative_text, source = road_b, "road_b"
+        else:
+            logger.warning("Pulse Road B rejected: %s", "; ".join(length_only))
+
     return {
-        "status": "success", 
-        "metrics": {"who5_scaled_score": scaled_score, "wellbeing_band": band},
-        "ai_narrative": ai_message,
-        "cascade_analysis": {"primary_root_driver": "General Stress (Pulse Estimate)"},
-        "bright_spot": "Overall Adaptability",
-        "prescription": {
-            "habit_title": "Mindful Check-in",
-            "micro_action": "Take a moment to breathe and observe your state."
-        },
-        "dimensions": {
-            "emotional_wellbeing": scaled_score,
-            "stress_load": 100 - base_est, # API returns stress, frontend inverts it
-            "connection_isolation": 100 - (base_est + 5),
-            "agency_efficacy": base_est + 10,
-            "purpose_meaning": base_est + 5,
-            "financial_stress": 100 - (base_est - 5)
-        }
+        "status": "success",
+        "schema_version": "1.1",
+        "metrics": {"wellbeing_band": band},
+        "narrative": narrative_text,
+        "narrative_source": source,
     }
+
 
 @app.post("/assessment/full")
 def calculate_full_assessment(payload: FullAssessmentInput):
+    if payload.is_over_18 is not True:
+        raise HTTPException(
+            status_code=403,
+            detail="LEWIS is designed for adults. The assessment is not available for people under 18.",
+        )
+
     try:
+        who5_res = calculate_who5(payload.who5)
         pss10_res = calculate_pss10(payload.pss10)
         ucla3_res = calculate_ucla3(payload.ucla3)
         gse_res = calculate_gse(payload.gse)
         promis_res = calculate_promis(payload.promis)
         cfpb5_res = calculate_cfpb5(payload.cfpb5)
-        
-        # Optional new scales scoring
-        from scoring import calculate_diener, calculate_ins, calculate_swls
-        diener_res = calculate_diener(list(payload.diener.values())) if payload.diener and len(payload.diener) == 8 else None
+        diener_res = calculate_diener(payload.diener) if payload.diener else None
         ins_res = calculate_ins([payload.ins]) if payload.ins is not None else None
-        swls_res = calculate_swls(list(payload.swls.values())) if payload.swls and len(payload.swls) == 5 else None
+        swls_res = calculate_swls(payload.swls) if payload.swls else None
+        ph_res = calculate_ph(payload.sleepQuality, payload.bodyMovement, payload.who5)
+        en_res = calculate_en(payload.who5)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
 
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    dimensions = build_dimensions({
+        "emotional": who5_res["normalized_score"],
+        "calm": pss10_res["normalized_score"],          # already inverted
+        "relationships": ucla3_res["normalized_score"],  # already inverted
+        "accomplishment": gse_res["normalized_score"],
+        "meaning": promis_res["normalized_score"],
+        "financial": cfpb5_res["normalized_score"],      # already inverted
+        "growth": diener_res["normalized_score"] if diener_res else None,
+        "environment": ins_res["normalized_score"] if ins_res else None,
+        "physical": ph_res["normalized_score"] if ph_res else None,
+        "energy": en_res["normalized_score"] if en_res else None,
+    })
 
-    who5_scaled = sum(payload.who5) * 4
+    safety = evaluate_safety(who5_res["normalized_score"], dimensions)
+    leverage = None if safety["gentle_mode"] else calculate_leverage(dimensions)
+    bright_key = bright_spot(dimensions)
 
-    root_driver = calculate_root_driver(
-        who5=who5_scaled,
-        pss10=pss10_res["normalized_score"],
-        ucla3=ucla3_res["normalized_score"],
-        gse=gse_res["normalized_score"],
-        promis=promis_res["normalized_score"],
-        cfpb5=cfpb5_res["normalized_score"],
+    habit = route_content(
+        leverage["dimension"] if leverage else None,
+        payload.max_time_available,
+        payload.current_environment,
+        gentle=safety["gentle_mode"],
     )
 
-    recommended_habit = route_content(root_driver, payload.max_time_available, payload.current_environment)
-
-    # Calculate Bright Spot (Highest relative wellness score)
-    wellness_scores = {
-        "Overall Wellbeing": who5_scaled,
-        "Emotional & Mental": 100 - pss10_res["normalized_score"],
-        "Relationships & Social": 100 - ucla3_res["normalized_score"],
-        "Accomplishment & Agency": gse_res["normalized_score"],
-        "Meaning & Spiritual": promis_res["normalized_score"],
-        "Financial Wellness": 100 - cfpb5_res["normalized_score"]
+    context = {
+        "arrival_word": payload.arrival_word,
+        "priority_rank": payload.priority_rank,
+        "active_pressures": payload.active_pressures,
+        "nervousSystemState": payload.nervousSystemState,
+        "bodyMapZones": payload.bodyMapZones,
+        "sleepQuality": payload.sleepQuality,
     }
-    if diener_res: wellness_scores["Intellectual & Growth"] = diener_res["normalized_score"]
-    if ins_res: wellness_scores["Environmental & Cultural"] = ins_res["normalized_score"]
-    
-    bright_spot = max(wellness_scores, key=wellness_scores.get)
 
-    diagnostic_package = {
-        "explicit_dimension_scores": {
-            "Overall Wellbeing (WHO5)": who5_scaled,
-            "Emotional & Mental": 100 - pss10_res["normalized_score"],
-            "Relationships & Social": 100 - ucla3_res["normalized_score"],
-            "Accomplishment & Agency": gse_res["normalized_score"],
-            "Meaning & Spiritual": promis_res["normalized_score"],
-            "Financial Wellness": 100 - cfpb5_res["normalized_score"],
-            "Intellectual & Growth (Diener)": diener_res["normalized_score"] if diener_res else None,
-            "Environmental (INS)": ins_res["normalized_score"] if ins_res else None,
-            "Life Satisfaction (SWLS)": swls_res["normalized_score"] if swls_res else None,
-        },
-        "calculated_root_driver": root_driver,
-        "context_inputs": {
-            "ageCategory": payload.ageCategory,
-            "identityRoles": payload.identityRoles,
-            "lifeStability": payload.lifeStability,
-            "active_pressures": payload.active_pressures,
-            "priority_rank": payload.priority_rank,
+    road_a_text = build_road_a(dimensions, leverage, bright_key, safety, context, habit)
+    narrative_text, source = road_a_text, "road_a"
+
+    # Road B voicing: skipped entirely in gentle mode (safety overrides all),
+    # and only ever shown after passing the validator.
+    if not safety["gentle_mode"]:
+        voicing = {
             "arrival_word": payload.arrival_word,
-            "bodyMovement": payload.bodyMovement,
-            "sleepQuality": payload.sleepQuality,
-            "bodyMapZones": payload.bodyMapZones,
-            "dayRhythmMap": payload.dayRhythmMap,
-            "nervousSystemState": payload.nervousSystemState,
-            "adaptiveDeepDives": payload.adaptiveDeepDives,
-            "everydaySharing": payload.everydaySharing,
-            "externalConditions": payload.externalConditions,
-            "stressPatternClusters": payload.stressPatternClusters,
-            "energyArc": payload.energyArc,
-        },
-        "validation_flags": payload.flags,
-        "prescribed_habit": recommended_habit["title"],
-        "action_steps": recommended_habit["action"],
-    }
-
-    ai_message = generate_user_narrative(diagnostic_package)
+            "dimension_bands": {
+                d["label"]: d["band"] for d in dimensions.values() if d["band"] is not None
+            },
+            "unscored_areas": [d["label"] for d in dimensions.values() if d["score"] is None],
+            "bright_spot": dimensions[bright_key]["label"] if bright_key else None,
+            "leverage_note": leverage["headline"] if leverage else None,
+            "top_priority": payload.priority_rank[0] if payload.priority_rank else None,
+            "active_pressures": payload.active_pressures[:6],
+            "nervous_system_pattern": NERVOUS_SYSTEM_PHRASES.get(payload.nervousSystemState or ""),
+            "body_tension_zones": [
+                BODY_ZONE_LABELS[z] for z in payload.bodyMapZones if z in BODY_ZONE_LABELS
+            ],
+            "sleep_quality": payload.sleepQuality,
+            "energy_arc": payload.energyArc,
+            "small_habit": {"title": habit["title"], "action": habit["action"]},
+        }
+        road_b_text = generate_road_b(voicing)
+        if road_b_text:
+            ok, reasons = validate_narrative(road_b_text)
+            if ok:
+                narrative_text, source = road_b_text, "road_b"
+            else:
+                logger.warning("Road B rejected by validator: %s", "; ".join(reasons))
 
     return {
         "status": "success",
-        "cascade_analysis": {"primary_root_driver": root_driver},
-        "bright_spot": bright_spot,
-        "ai_narrative": ai_message,
-        "prescription": {
-            "habit_title": recommended_habit["title"],
-            "micro_action": recommended_habit["action"],
-        },
-        "dimensions": {
-            "emotional_wellbeing":  who5_scaled,
-            "stress_load":          pss10_res["normalized_score"],
-            "connection_isolation": ucla3_res["normalized_score"],
-            "agency_efficacy":      gse_res["normalized_score"],
-            "purpose_meaning":      promis_res["normalized_score"],
-            "financial_stress":     cfpb5_res["normalized_score"],
-        },
+        "schema_version": "1.1",
+        "dimensions": dimensions,
+        "leverage": leverage,
+        "bright_spot": (
+            {"dimension": bright_key, "label": dimensions[bright_key]["label"]}
+            if bright_key else None
+        ),
+        "safety": {"flags": safety["flags"], "care_note": safety["care_note"]},
+        "prescription": {"habit_title": habit["title"], "micro_action": habit["action"]},
+        "narrative": narrative_text,
+        "narrative_source": source,
     }

@@ -342,7 +342,7 @@ For the full assessment, the AI generates an output split into:
 3. **Configure Environment Variables**:
    Create a `.env` file inside `backend/` with:
    ```env
-   GROQ_API_KEY=REDACTED_GROQ_API_KEY
+   GROQ_API_KEY=your_groq_api_key_here
    HUGGINGFACE_API_KEY=your_huggingface_api_key_here
    FRONTEND_URL=http://localhost:5173
    ```

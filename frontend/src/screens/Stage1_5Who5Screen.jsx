@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import { WHO5_SCALE } from '../constants/scales.js'
 
 export default function Stage1_5Who5Screen() {
   const { setScreen, setProfileField, toggleArrayItem, setScaleAnswer, updateObjectField, who5 } = useLewisStore()
@@ -60,7 +61,7 @@ export default function Stage1_5Who5Screen() {
                 </p>
                 <p className="q-caption">Over the last two weeks...</p>
                 <div className="scale-grid">
-                  {["At no time", "Some of the time", "Less than half the time", "More than half the time", "Most of the time", "All of the time"].map(opt => {
+                  {WHO5_SCALE.map(opt => {
                     const qId = `q${step}`
                     return (
                       <button 
@@ -80,7 +81,7 @@ export default function Stage1_5Who5Screen() {
         </div>
         
         <div className="button-group" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <button className="btn-primary" onClick={handleNext}>
+          <button className="btn-primary" onClick={handleNext} disabled={!who5?.[`q${step}`]}>
             {step < 4 ? 'Next' : 'Continue'}
           </button>
           {step > 0 && (

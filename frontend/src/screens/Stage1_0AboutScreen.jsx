@@ -22,11 +22,11 @@ export default function Stage1_0AboutScreen() {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <h1 className="headline">About You</h1>
-        <p className="sub">Let's set up your profile.</p>
+        <h1 className="headline" style={{ marginBottom: '4px' }}>About You</h1>
+        <p className="sub" style={{ marginBottom: '10px' }}>Let's set up your profile.</p>
         
-        <div className="form-container" style={{ margin: '2rem auto' }}>
-          <div className="form-group">
+        <div className="form-container" style={{ margin: '0.5rem auto', gap: '12px' }}>
+          <div className="form-group" style={{ textAlign: 'center' }}>
             <label>What would you like to be called?</label>
             <input 
               type="text" 
@@ -37,9 +37,9 @@ export default function Stage1_0AboutScreen() {
             />
           </div>
 
-          <div className="form-group" style={{ marginTop: '1rem' }}>
-            <label>Which age group are you in?</label>
-            <div className="chip-grid" style={{ justifyContent: 'flex-start' }}>
+          <div className="form-group" style={{ textAlign: 'center' }}>
+            <label>Which age group are you in? (Optional)</label>
+            <div className="chip-grid" style={{ gap: '8px' }}>
               {ageGroups.map(group => (
                 <button
                   key={group}
@@ -52,9 +52,9 @@ export default function Stage1_0AboutScreen() {
             </div>
           </div>
 
-          <div className="form-group" style={{ marginTop: '1rem' }}>
-            <label>What is your sex?</label>
-            <div className="chip-grid" style={{ justifyContent: 'flex-start' }}>
+          <div className="form-group" style={{ textAlign: 'center' }}>
+            <label>What is your sex? (Optional)</label>
+            <div className="chip-grid" style={{ gap: '8px' }}>
               {sexes.map(sex => (
                 <button
                   key={sex}
@@ -68,11 +68,10 @@ export default function Stage1_0AboutScreen() {
           </div>
         </div>
         
-        <div className="button-group" style={{ marginTop: '2rem' }}>
+        <div className="button-group" style={{ marginTop: '1rem' }}>
           <button 
             className="btn-primary" 
             onClick={handleNext}
-            disabled={!ageCategory || !gender}
           >
             Continue
           </button>

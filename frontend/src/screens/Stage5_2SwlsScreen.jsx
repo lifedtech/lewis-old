@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import { AGREEMENT_5 } from '../constants/scales.js'
 
 export default function Stage5_2SwlsScreen() {
   const { setScreen, setScaleAnswer, swls } = useLewisStore()
@@ -58,7 +59,7 @@ export default function Stage5_2SwlsScreen() {
               <div className="likert-container">
                 <p className="likert-prompt">{`${step + 1}/5. ${questions[step].prompt}`}</p>
                 <div className="likert-options">
-                  {["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"].map(opt => {
+                  {AGREEMENT_5.map(opt => {
                     const qId = questions[step].id
                     return (
                       <button 
@@ -77,7 +78,7 @@ export default function Stage5_2SwlsScreen() {
         </div>
         
         <div className="button-group" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <button className="btn-primary" onClick={handleNext}>
+          <button className="btn-primary" onClick={handleNext} disabled={!swls?.[questions[step].id]}>
             {step < 4 ? 'Next' : 'Continue'}
           </button>
           {step > 0 && (

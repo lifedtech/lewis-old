@@ -4,6 +4,8 @@ import { useLewisStore } from './store/useLewisStore.js'
 
 import LandingScreen from './screens/LandingScreen.jsx'
 import PreStage0AgeScreen from './screens/PreStage0AgeScreen.jsx'
+import AgeStopScreen from './screens/AgeStopScreen.jsx'
+import Background3D from './components/Background3D.jsx'
 import Stage1_0AboutScreen from './screens/Stage1_0AboutScreen.jsx'
 import Stage1_1IdentityScreen from './screens/Stage1_1IdentityScreen.jsx'
 import Stage1_2StabilityScreen from './screens/Stage1_2StabilityScreen.jsx'
@@ -59,6 +61,7 @@ import MirrorScreen from './screens/MirrorScreen.jsx'
 const SCREENS = {
   landing: LandingScreen,
   preStage0Age: PreStage0AgeScreen,
+  ageStop: AgeStopScreen, // terminal screen — deliberately not in SCREEN_ORDER
   stage1_0About: Stage1_0AboutScreen,
   stage1_1Identity: Stage1_1IdentityScreen,
   stage1_2Stability: Stage1_2StabilityScreen,
@@ -174,49 +177,23 @@ export default function App() {
 
   const currentIndex = SCREEN_ORDER.indexOf(currentScreen)
 
-  // Atmospheric mouse follow (desktop)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 24
-      const y = (e.clientY / window.innerHeight - 0.5) * 24
-      setMousePos({ x, y })
-    }
-    const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const fine = window.matchMedia('(pointer: fine)')
-
-    if (!mql.matches && fine.matches) {
-      document.addEventListener('mousemove', handleMouseMove)
-    }
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-    }
-  }, [])
-
   return (
     <>
-      <div
-        className="atmosphere"
-        style={{
-          '--mx': `${mousePos.x}px`,
-          '--my': `${mousePos.y}px`
-        }}
-      >
-        <div className="blob-3"></div>
-      </div>
-      <div className="grain"></div>
+      <Background3D />
 
-      <div className="app-shell">
-        <header className="app-header">
-          <div className="wordmark">LEWIS<span>BY LIFED</span></div>
-          <div className="header-right">
-            <span className="proto-tag">prototype 1.1</span>
-            <div className="mini-orb" aria-hidden="true"></div>
-          </div>
-        </header>
+      <div className="app-shell" style={currentScreen === 'landing' ? { padding: 0 } : {}}>
+        {currentScreen !== 'landing' && (
+          <header className="app-header">
+            <div className="wordmark">LEWIS<span>BY LIFED</span></div>
+            <div className="header-right">
+              <span className="proto-tag">prototype 1.1</span>
+              <div className="mini-orb" aria-hidden="true"></div>
+            </div>
+          </header>
+        )}
 
-        {/* Premium Stage Progress Indicator */}
-        {(() => {
+        {/* Premium Stage Progress Indicator (hidden on terminal screens) */}
+        {currentScreen !== 'landing' && currentIndex !== -1 && (() => {
           const STAGE_START_SCREENS = [
             'landing',           // Stage 0
             'stage1_1Identity',   // Stage 1
@@ -315,12 +292,16 @@ export default function App() {
                 {STAGE_START_SCREENS.map((screenId, idx) => {
                   const active = idx <= stageInfo.num
                   const current = idx === stageInfo.num
+                  // Only stages already reached are clickable — jumping
+                  // forward would skip questions and submit empty answers.
+                  const reachable = idx <= stageInfo.num
                   return (
                     <button
                       key={idx}
-                      onClick={() => setScreen(screenId)}
-                      title={`Stage ${idx}: ${STAGE_NAMES[idx]}`}
-                      aria-label={`Jump to Stage ${idx}`}
+                      onClick={() => reachable && setScreen(screenId)}
+                      disabled={!reachable}
+                      title={reachable ? `Stage ${idx}: ${STAGE_NAMES[idx]}` : `Stage ${idx} (not yet reached)`}
+                      aria-label={reachable ? `Return to Stage ${idx}` : `Stage ${idx} not yet reached`}
                       style={{
                         background: 'none',
                         border: 'none',
@@ -329,7 +310,7 @@ export default function App() {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        cursor: 'pointer',
+                        cursor: reachable ? 'pointer' : 'default',
                         outline: 'none'
                       }}
                     >

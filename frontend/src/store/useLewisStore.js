@@ -1,13 +1,15 @@
 import { create } from 'zustand'
 
-export const useLewisStore = create((set) => ({
+// Every piece of journey state lives here, so reset() can restore all of
+// it in one call. Defaults use fresh objects/arrays per call (a shared
+// constant would leak mutations across resets).
+const initialState = () => ({
   currentScreen: 'landing',
-  setScreen: (screenName) => set({ currentScreen: screenName }),
 
   // Pre-Stage & Stage 0
   isOver18: null,
   sensoryCalibrationDone: false,
-  
+
   // Stage 1 Context
   name: '',
   ageCategory: '',
@@ -38,15 +40,14 @@ export const useLewisStore = create((set) => ({
   culturalBelonging: {},
   bodyRhythm: {},
   sensoryPauseDone: false,
-  
+
   // Stage 2 Attention
   attentionDriftDone: false,
 
   // Stage 3 Nervous System
   affect: { x: null, y: null },
-  setAffect: (x, y) => set({ affect: { x, y } }),
   bodyMapZones: [],
-  dayRhythmMap: [], 
+  dayRhythmMap: [],
   breathingBefore: '',
   breathingAfter: '',
   nervousSystemState: '',
@@ -63,9 +64,9 @@ export const useLewisStore = create((set) => ({
   promis: {},
   cfpb5: {},
   diener: {},
-  ins: null, 
+  ins: null,
   swls: {},
-  adaptiveDeepDives: {}, 
+  adaptiveDeepDives: {},
   brightSpotCheck: '',
   priorityTensionCheck: '',
 
@@ -90,6 +91,14 @@ export const useLewisStore = create((set) => ({
   // Stage 9 Sensory
   soundPreference: '',
   quickChoices: {},
+})
+
+export const useLewisStore = create((set) => ({
+  ...initialState(),
+
+  setScreen: (screenName) => set({ currentScreen: screenName }),
+
+  setAffect: (x, y) => set({ affect: { x, y } }),
 
   // Generic helpers
   setProfileField: (field, value) => set({ [field]: value }),
@@ -107,9 +116,6 @@ export const useLewisStore = create((set) => ({
     [objName]: { ...s[objName], [key]: val }
   })),
 
-  reset: () => set({
-    currentScreen: 'landing',
-    isOver18: null,
-    // reset rest to initial...
-  })
+  // Full wipe: every answer and context field back to its default.
+  reset: () => set(initialState()),
 }))
