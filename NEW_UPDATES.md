@@ -26,6 +26,10 @@ The 10,000-profile synthetic seed corpus (`doc/lewis_10000_scores.xlsx`, new spe
 - Initial implementation of the Layer-4 pattern engine (LWI, texture patterns, portrait selection) wired into `/assessment/full`; the response now carries `patterns` and the selected portrait feeds the similarity state (portrait/stress_pattern keys are accepted but not yet used by the vector — vocab alignment with the corpus labels is the next step).
 - Frontend gains `Stage7_8FrictionScreen` in the journey (start of the friction-taxonomy intake, gap F4).
 
+## 6. UI & docs
+- **Breathing orb centered** (`Stage3_4BreathingScreen.jsx`): the `.orb` CSS keyframe animation was overriding framer-motion's inline `translate(-50%,-50%)` every frame, pinning the orb's corner at the ring's center. Now centered via `inset: 0; margin: auto` (transform-free, size-independent) with the CSS animation disabled so the phase-synced framer scale drives the breathe pulse.
+- **`learning_doc.md` and `lewis doc.md` rewritten for v1.2.0**: both still described the pre-v1.1.0 system (Llama 3.1 via Hugging Face, "Cascade Matrix"/"root driver", old payload/response shapes). They now document the actual engine: Road A/B + validator, W-matrix leverage, safety lattice, similarity corpus, pattern engine, current API schema and env vars.
+
 ## Known decisions deliberately NOT made silently (need product sign-off)
 - EM composite: locked spec defines EM = 0.80·invPSS10 + 0.20·WHO5-mood (stress inside EM, no standalone "calm"); backend keeps emotional=WHO-5 + calm=PSS-10 as separate dimensions.
 - Missing corpus companions: `lewis_10000_profiles.jsonl` / `lewis_10000_reports.jsonl` are named in the Dataset Summary but absent from `doc/` — needed for report-QA benchmarking.

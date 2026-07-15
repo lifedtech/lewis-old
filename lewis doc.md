@@ -6,28 +6,38 @@
 3. [Project Structure](#project-structure)
 4. [Architecture](#architecture)
 5. [Assessment Instruments](#assessment-instruments)
-6. [API Endpoints](#api-endpoints)
-7. [Response & scoring Logic](#response-and-scoring-logic)
-8. [AI Narrative System](#ai-narrative-system)
-9. [Data Models](#data-models)
-10. [Installation & Setup](#installation--setup)
-11. [Usage Examples](#usage-examples)
+6. [Dimensions & Bands](#dimensions--bands)
+7. [API Endpoints](#api-endpoints)
+8. [Scoring & Analysis Logic](#scoring--analysis-logic)
+9. [Safety & Guardrails](#safety--guardrails)
+10. [Similarity Corpus Engine](#similarity-corpus-engine)
+11. [Narrative System (Road A / Road B)](#narrative-system-road-a--road-b)
+12. [Data Models](#data-models)
+13. [Installation & Setup](#installation--setup)
+14. [Usage Example](#usage-example)
 
 ---
 
 ## Overview
 
-**LEWIS Core Engine** (The Lifed Everyday Wellbeing Intelligence System) is a FastAPI-based backend service designed to assess, analyze, and track human well-being and stress levels across 9 dimensions of life. The system integrates standard, validated psychological assessment instruments with a weighted cascade root driver matrix and AI-powered narrative generators (Llama 3.1 via Hugging Face) to deliver hyper-personalized "Insight Reports" and small micro-habit prescriptions.
+**LEWIS Core Engine** (The Lifed Everyday Wellbeing Intelligence System) is a FastAPI backend + React frontend that delivers a **non-clinical wellbeing reflection** across nine life dimensions. A deterministic scoring spine (validated psychological instruments → 0–100 scores → band words) feeds a W-matrix **leverage engine**, a **pattern engine**, a **similarity corpus**, and a two-road narrative system: a deterministic report (Road A) that is always complete, optionally re-voiced by an LLM (Road B, Nemotron via NVIDIA NIM) behind a fail-closed validator.
+
+Nothing is persisted server-side: answers live only for the lifetime of the request.
+
+The locked product specifications live in `doc/` (Scoring Constitution, Layer 3–6 specs, Narrative Generation System, Safety & Guardrails, Similarity Mapping, Open Items Resolutions, and the 10,000-profile Dataset Summary). This file is a code-level companion; the specs are the source of truth.
 
 ---
 
 ## Project Purpose
 
-LEWIS helps users understand and improve their well-being by:
-1. **Multi-Dimensional Assessment**: Measuring emotional, physical, cognitive, social, and financial domains.
-2. **Root Cause Analysis**: Computing which dimensions exert the most systemic pressure using a weighted cascade matrix.
-3. **AI Narratives**: Generating structured, compassionate, and non-clinical insight summaries.
-4. **Behavioral Prescriptions**: Routing users to actionable micro-habits based on their primary root drivers, available time, and environment.
+LEWIS helps users understand and care for their wellbeing by:
+1. **Multi-dimensional reflection** — nine dimensions plus a stress/calm overlay, all in wellbeing polarity (higher is better), spoken to users only as compassionate band words.
+2. **Leverage, not root cause** — a 9×9 influence matrix identifies where a small change goes furthest, always framed as a *connection*, never a cause or diagnosis.
+3. **Deterministic-first narratives** — every user gets a complete report with the LLM switched off; the LLM only adds voice.
+4. **Small-habit prescriptions** — one free micro-habit matched to the leverage point, time available, and environment; a grounding habit whenever safety fires.
+5. **Similarity context** — each completion is mapped against a 10k synthetic seed corpus (state-only) for coarse-position context, with infrastructure ready for real, consenting profiles.
+
+LEWIS is **not** a diagnostic, screening, or risk-scoring tool, and its language rules enforce that at every layer.
 
 ---
 
@@ -36,32 +46,33 @@ LEWIS helps users understand and improve their well-being by:
 ```
 lifed-LEWIS/
 ├── backend/
-│   ├── main.py              # FastAPI application, route handlers & Pydantic models
-│   ├── scoring.py           # Scoring algorithms for all 9 core and optional scales
-│   ├── content.py           # Habit recommendation catalog and routing logic
-│   ├── llm.py               # AI narrative generation and Llama-3 integrations
-│   ├── tests/
-│   │   └── test_scoring.py  # Unit tests for scoring logic
-│   ├── .env                 # Environment configurations (HUGGINGFACE_API_KEY, FRONTEND_URL)
-│   ├── .env.example         # Example env configuration
-│   ├── .gitignore           # Backend file ignore list
-│   └── requirements.txt     # Python dependency list
+│   ├── main.py              # FastAPI app: endpoints, Pydantic models, pipeline order
+│   ├── scoring.py           # Instrument scoring, bands, bright spot, W-matrix leverage engine
+│   ├── corpus.py            # Similarity engine over the 10k seed corpus (state-only k-NN)
+│   ├── pattern.py           # Layer-4 pattern engine (LWI, texture patterns, portraits)
+│   ├── narrative.py         # Road A: deterministic report renderer
+│   ├── llm.py               # Road B: LLM voicing via NVIDIA NIM (fail-open to Road A)
+│   ├── validator.py         # Fail-closed language validator for every Road B output
+│   ├── safety.py            # Distress flags + gentle mode
+│   ├── security.py          # GuardrailMiddleware: rate limit, body cap, security headers
+│   ├── content.py           # SMALL-habit catalog + routing
+│   ├── data/
+│   │   └── lewis_10000_scores.csv   # canonical 10k synthetic seed corpus
+│   ├── tests/               # pytest suite (66 tests incl. corpus regression)
+│   ├── .env                 # NVIDIA_API_KEY, FRONTEND_URL, LEWIS_* switches
+│   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx          # Frontend screen routing
-│   │   ├── screens/         # Interactive UI screens (Pre-stages, Stages 1-10)
-│   │   └── store/
-│   │       └── useLewisStore.js # State management for assessment responses
-│   ├── build_screens.py      # Automated screens build/generator script
-│   ├── create_screens.py     # Screens generation template tool
-│   ├── standardize_screens.py# Styles/layout standardizer for JSX screens
-│   ├── fix_syntax.py         # Syntax fix utility script for JSX styles
-│   ├── fix_syntax2.py        # Margin fix utility script for buttons
-│   ├── eslint.config.js      # JS lint rules
-│   ├── package.json          # Node dependencies
-│   ├── vite.config.js        # Vite config
-│   └── .gitignore            # Frontend file ignore list
-└── lewis doc.md             # This documentation file
+│   │   ├── App.jsx          # SCREENS map + SCREEN_ORDER — the only routing truth
+│   │   ├── screens/         # PreStage0Age … Stage10 → MirrorScreen (results)
+│   │   ├── lib/payload.js   # buildFullAssessmentPayload → API schema
+│   │   └── store/useLewisStore.js   # Zustand store (full reset supported)
+│   ├── package.json / vite.config.js / eslint.config.js
+│   └── .env                 # VITE_API_URL
+├── doc/                     # Locked product specs + 10k dataset (source of truth)
+├── NEW_UPDATES.md           # Versioned changelog (currently v1.2.0)
+├── learning_doc.md          # Developer onboarding guide
+└── lewis doc.md             # This file
 ```
 
 ---
@@ -69,192 +80,209 @@ lifed-LEWIS/
 ## Architecture
 
 ### Technology Stack
-- **Backend Framework**: FastAPI
-- **Web Server**: ASGI-compatible (Uvicorn)
-- **Language**: Python 3.7+
-- **AI Engine**: meta-llama/Meta-Llama-3.1-8B-Instruct (via Hugging Face Inference API)
-- **Frontend Core**: React + Vite (Vanilla CSS styling)
-- **State Management**: Zustand (`useLewisStore.js`)
+- **Backend**: FastAPI, Pydantic, Uvicorn, Python 3.13
+- **AI Engine**: `nvidia/nemotron-3-super-120b-a12b` via NVIDIA NIM (OpenAI-compatible SDK) — a reasoning model; budgets cover thinking + answer, truncated output is discarded
+- **Frontend**: React + Vite, Zustand, Framer Motion, vanilla CSS
 
 ### System Flow
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                 React Client (Frontend)                 │
-│  - Captures 9D inputs, contextual fields, and physical  │
-└──────────┬──────────────────────────────────────────────┘
-           │
-           ▼ POST /assessment/full
-┌─────────────────────────────────────────────────────────┐
-│               FastAPI Backend (main.py)                 │
-│  - Parses & validates payload via Pydantic              │
-└──────────┬──────────────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────────────────────────┐
-│               Scoring Engine (scoring.py)               │
-│  - Scores scales: WHO-5, PSS-10, UCLA-3, GSE, PROMIS,   │
-│    CFPB-5, Diener, INS, SWLS                            │
-│  - Inverts stress/loneliness scales for wellness metrics│
-│  - Runs Cascade Matrix to select Primary Root Driver    │
-└──────────┬──────────────────────────────────────────────┘
-           │
-           ├─────────────────────────┐
-           ▼                         ▼
-┌──────────────────────┐   ┌──────────────────────────────┐
-│ Content Router       │   │ LLM Narrative (llm.py)       │
-│ - Recommends Habit   │   │ - Generates Insight Report   │
-│   based on driver,   │   │   (6-Movement layout)        │
-│   time & environment │   │ - Enforces Non-Clinical charter│
-└──────────┬───────────┘   └─────────┬────────────────────┘
-           │                         │
-           └────────────┬────────────┘
-                        │
-                        ▼ JSON Response
-┌─────────────────────────────────────────────────────────┐
-│ - Wellness/Stress Scores & Selected Root Driver         │
-│ - Prescribed Habit & Micro-action steps                 │
-│ - Deeply empathetic Llama-3 AI Insight Narrative        │
-└─────────────────────────────────────────────────────────┘
+React client
+  └─ POST /assessment/full  (is_over_18 required — 403 otherwise)
+       │
+       ▼
+Scoring (scoring.py)             WHO-5, PSS-10*, UCLA-3*, GSE, PROMIS,
+  instruments → 0–100            CFPB-5*, Diener, INS, SWLS (*inverted at
+  wellbeing polarity             source) + PH/EN composites → bands
+       │
+       ▼
+Safety (safety.py)               severe depletion / all-low → GENTLE MODE:
+  overrides everything           no leverage, no Road B, grounding habit,
+       │                         care note rendered first
+       ▼
+Leverage (scoring.py)            W-matrix engine: L(i)·(out − 0.7·in)·bonus
+  connection, never cause        gates: score ≤ 55, 25% separation → pair
+       │
+       ▼
+Patterns (pattern.py)            LWI, texture patterns, portrait
+Similarity (corpus.py)           state-only k-NN vs 10k corpus → position
+       │                         words + neutral priors
+       ▼
+Road A (narrative.py)            complete deterministic report — always
+Road B (llm.py) → validator.py   optional voicing; fail-closed to Road A
+       │
+       ▼
+JSON response: dimensions (+position), leverage, bright_spot, safety,
+prescription, narrative (+source), similarity, patterns, portrait
 ```
 
 ---
 
 ## Assessment Instruments
 
-LEWIS utilizes standard validated scales alongside customized context fields:
+All scores are normalized to 0–100 **wellbeing polarity** (higher = better). Distress instruments are inverted at the source — no downstream re-inversion.
 
-### Core Validated Scales
-1. **WHO-5 (World Health Organization Well-Being Index)**: Measures overall emotional well-being. (5 items, 0-5 scale. Max Raw: 25. Scaled: Raw * 4).
-2. **PSS-10 (Perceived Stress Scale)**: Measures stress load. (10 items, 0-4 scale. Q4, Q5, Q7, Q8 reverse-scored. Max Raw: 40. Normalized: `(Raw/40) * 100`).
-3. **UCLA-3 (Three-Item Loneliness Scale)**: Measures social isolation & disconnection. (3 items, 0-2 scale. Max Raw: 6. Normalized: `(Raw/6) * 100`).
-4. **GSE (General Self-Efficacy Scale)**: Measures agency and efficacy. (10 items, 0-3 scale. Max Raw: 30. Normalized: `(Raw/30) * 100`).
-5. **PROMIS (Meaning and Purpose Scale)**: Measures meaning, purpose, and spiritual outlook. (4 items, 0-4 scale. Max Raw: 16. Normalized: `(Raw/16) * 100`).
-6. **CFPB-5 (Consumer Financial Protection Bureau - Well-being Scale)**: Measures financial stress and security. (5 items, 0-4 scale. Scores mapped specifically to identify financial stress points. Max Raw: 20. Normalized: `(Raw/20) * 100`).
+### Core (required)
+1. **WHO-5** — emotional wellbeing. 5 items, 0–5. `raw × 4`.
+2. **PSS-10** — stress → **Calm** overlay. 10 items, 0–4 (items 4,5,7,8 positively stated). `100 − (raw/40 × 100)` (inverted).
+3. **UCLA-3** — loneliness → **Relationships**. 3 items, 0–2. `100 − (raw/6 × 100)` (inverted).
+4. **GSE** — agency. 10 items on the **published 1–4 anchors**. `((raw − 10) / 30) × 100`.
+5. **PROMIS Meaning & Purpose (4a)** — 4 items, 0–4. `(raw/16) × 100`.
+6. **CFPB-5** — financial wellbeing. 5 items, 0–4. `100 − (raw/20 × 100)` (inverted).
 
-### Optional Expanded Scales
-7. **Diener Flourishing Scale**: Measures intellectual growth, self-esteem, and relationship quality. (8 items, 1-7 scale. Min Raw: 8, Max Raw: 56. Normalized: `((Raw - 8) / 48) * 100`).
-8. **INS (Inclusion of Nature in Self)**: Measures connection to the surrounding environment and nature. (1 item, 1-7 scale. Min Raw: 1, Max Raw: 7. Normalized: `((Raw - 1) / 6) * 100`).
-9. **SWLS (Satisfaction with Life Scale)**: Measures cognitive evaluation of life satisfaction. (5 items, 1-7 scale. Min Raw: 5, Max Raw: 35. Normalized: `((Raw - 5) / 30) * 100`).
+### Optional
+7. **Diener Flourishing** — growth. 8 items, 1–7. `((raw − 8) / 48) × 100`.
+8. **INS** — nature connectedness. 1 item, 1–7. `((raw − 1) / 6) × 100`.
+9. **SWLS** — life satisfaction. 5 items, 1–7. `((raw − 5) / 30) × 100`. Logged as an external-validity check only — it is not a dimension.
+
+### Composites (no dedicated instrument)
+- **PH (Physical Ease)** — weighted mean of sleep quality (0.35), body movement (0.30), WHO-5 "rested" (0.20), WHO-5 "vigour" (0.15); weights renormalize when a component is skipped.
+- **EN (Energy & Engagement)** — mean of WHO-5 items 3 and 5, scaled to 0–100.
+
+---
+
+## Dimensions & Bands
+
+| Key | Spec code | Label | Source |
+|---|---|---|---|
+| `emotional` | EM | Emotional Wellbeing | WHO-5 |
+| `calm` | — | Stress & Calm | PSS-10 (overlay; not a W dimension) |
+| `relationships` | RS | Connection & Relationships | UCLA-3 |
+| `accomplishment` | AC | Agency & Accomplishment | GSE |
+| `meaning` | MS | Meaning & Purpose | PROMIS |
+| `financial` | FW | Financial Peace | CFPB-5 |
+| `growth` | IG | Growth & Flourishing | Diener FS |
+| `environment` | EC | Nature & Environment | INS |
+| `physical` | PH | Physical Ease | Composite |
+| `energy` | EN | Energy & Engagement | Composite |
+
+**Bands (locked vocabulary):** **Thriving** ≥ 70 · **Steady** 55–69.9 · **Strained** 40–54.9 · **Depleted** < 40. Users are never shown a number in narrative text — only band words and coarse-position words.
 
 ---
 
 ## API Endpoints
 
-### 1. Health Check
-- **Endpoint**: `GET /`
-- **Response**:
-  ```json
-  {"status": "success", "message": "LEWIS 9D Core Engine is Online"}
-  ```
+### 1. Health Check — `GET /`
+```json
+{"status": "success", "message": "LEWIS Core Engine is online"}
+```
 
-### 2. Quick Pulse Assessment
-- **Endpoint**: `POST /pulse/calculate`
-- **Description**: Fast check-in evaluating overall well-being band (WHO-5) alongside environment, arrival word, and primary stressors. Automatically uses LLM to generate a warm, concise pulse summary.
-- **Request Payload**: See [Data Models](#data-models).
-- **Response**:
-  ```json
-  {
-    "status": "success",
-    "metrics": {
-      "who5_scaled_score": 68,
-      "wellbeing_band": "Steady"
-    },
-    "ai_narrative": "A warm, 1-2 paragraph description that validates your state...",
-    "cascade_analysis": {
-      "primary_root_driver": "General Stress (Pulse Estimate)"
-    },
-    "bright_spot": "Overall Adaptability",
-    "prescription": {
-      "habit_title": "Mindful Check-in",
-      "micro_action": "Take a moment to breathe and observe your state."
-    },
-    "dimensions": {
-      "emotional_wellbeing": 68,
-      "stress_load": 42,
-      "connection_isolation": 37,
-      "agency_efficacy": 68,
-      "purpose_meaning": 63,
-      "financial_stress": 52
-    }
-  }
-  ```
+### 2. Quick Pulse — `POST /pulse/calculate`
+WHO-5-based check-in with an optional LLM-voiced reflection.
+```json
+{
+  "status": "success",
+  "schema_version": "1.1",
+  "metrics": {"wellbeing_band": "Steady"},
+  "narrative": "…",
+  "narrative_source": "road_b"
+}
+```
 
-### 3. Full Comprehensive Assessment
-- **Endpoint**: `POST /assessment/full`
-- **Description**: Receives the complete inputs from all stages (psychological scales + physical context + environmental details). Performs multi-dimensional scoring, selects a root driver and bright spot, and triggers Llama 3.1 to write a multi-stage Insight Report.
-- **Request Payload**: See [Data Models](#data-models).
-- **Response**:
-  ```json
-  {
-    "status": "success",
-    "cascade_analysis": {
-      "primary_root_driver": "Stress Load is the primary driver of the current state."
-    },
-    "bright_spot": "Accomplishment & Agency",
-    "ai_narrative": "Detailed 6-Movement Insight Report...",
-    "prescription": {
-      "habit_title": "Box Breathing Reset",
-      "micro_action": "Inhale for 4s, hold for 4s, exhale for 4s, hold for 4s. Repeat 3 times."
-    },
-    "dimensions": {
-      "emotional_wellbeing": 68.0,
-      "stress_load": 47.5,
-      "connection_isolation": 33.3,
-      "agency_efficacy": 80.0,
-      "purpose_meaning": 75.0,
-      "financial_stress": 40.0
-    }
-  }
-  ```
+### 3. Full Assessment — `POST /assessment/full`
+Requires `is_over_18: true` (403 otherwise). Response shape:
+```json
+{
+  "status": "success",
+  "schema_version": "1.1",
+  "dimensions": {
+    "emotional": {"label": "Emotional Wellbeing", "short": "Emotional",
+                   "score": 48.0, "band": "Strained", "source": "WHO-5",
+                   "position": "lower"},
+    "...": "…all 10 keys; unscored optional dimensions carry score/band null…"
+  },
+  "leverage": {
+    "dimension": "financial", "label": "Financial Peace",
+    "headline": "Financial pressure is the area most closely linked…",
+    "framing": "This is a connection drawn from your answers today — not a cause, and not a verdict.",
+    "secondary": null, "secondary_label": null
+  },
+  "bright_spot": {"dimension": "meaning", "label": "Meaning & Purpose"},
+  "safety": {"flags": [], "care_note": null},
+  "prescription": {"habit_title": "The Micro-Budget Check", "micro_action": "…"},
+  "narrative": "…the report text…",
+  "narrative_source": "road_a | road_b",
+  "similarity": {
+    "corpus_version": "synthetic_seed_v1",
+    "corpus_is_synthetic": true,
+    "matched": true,
+    "neighbours": 40,
+    "effectiveness_priors": {},
+    "priors_note": "neutral — synthetic seed corpus carries no real outcomes"
+  },
+  "patterns": ["…pattern-engine outputs…"],
+  "portrait": {"id": "…", "label": "…"}
+}
+```
+Notes: `leverage` is `null` for balanced profiles and in gentle mode. `secondary` is set when the top two leverage candidates are within 25% (named as a pair). `position` is the corpus tercile word (`lower`/`middle`/`higher`); `calm` has no position (not a corpus dimension).
 
 ---
 
-## Response and Scoring Logic
+## Scoring & Analysis Logic
 
-### Scale Normalization
-All scale scores are normalized to a consistent `0-100` range to allow comparison across different answer scales (e.g., 0-5, 0-4, 1-7).
-- **Inverted Scoring**: For scales measuring negative conditions (stress, isolation, financial stress), the raw values are computed as stress metrics. For the **Bright Spot** analysis, these are inverted: `Wellness Score = 100 - Normalized Score`.
+### Bright Spot
+The highest-scoring scored dimension — always named first in the report (strength before struggle).
 
-### The Cascade Matrix (Root Driver)
-The engine evaluates the primary driver of systemic pressure by applying custom weights based on how different dimensions affect the overall human system:
-- **Stress-Driven Impact** = `PSS-10 Normalized * 0.80`
-- **Social Isolation Impact** = `UCLA-3 Normalized * 0.85`
-- **Financial Stress Impact** = `CFPB-5 Normalized * 0.75`
-- **Agency Deficit Impact** = `(100 - GSE Normalized) * 0.70`
-- **Purpose Deficit Impact** = `(100 - PROMIS Normalized) * 0.65`
-- **Emotional Wellbeing Deficit** = `(100 - WHO-5 Normalized) * 0.50`
+### The W-Matrix Leverage Engine
+Among currently-low dimensions, LEWIS names the one that behaves as a net **source** of lowness under the v1 influence prior W (9×9 directed matrix, Resolutions C1):
 
-The system selects the maximum impact score as the **Primary Root Driver** and matches it to the content router for habit prescription.
+```
+L(i)        = (100 − score(i)) / 100
+Leverage(i) = L(i) · (Σⱼ W[i][j]·L(j) − 0.7·Σⱼ W[j][i]·L(j)) · PressureBonus(i)
+```
+
+- **Lowness gate**: only dimensions with score ≤ 55 can be named; a balanced profile gets no leverage point.
+- **Separation gate**: if the top two are within 25%, both are named as a pair — never a false single winner.
+- **Pressure bonus**: ×1.25 when a named active pressure corroborates the dimension (money/health/relationship/energy keywords; work pressure deliberately unmapped).
+- `calm` is not a leverage candidate (stress has no standing W dimension in the locked spec).
+- **Validation**: the engine reproduces the 10,000-profile corpus generator on all 10,000 rows; a 500-row regression test pins this permanently.
+
+### Pattern Engine (first cut)
+`pattern.py` computes the LWI (overall reading + shape), texture patterns (stress load, recovery), and selects a state **portrait**; results ship in the response as `patterns` + `portrait` and feed the report's texture.
 
 ---
 
-## AI Narrative System
+## Safety & Guardrails
 
-LEWIS generates summaries using Hugging Face. The engine utilizes meta-llama/Meta-Llama-3.1-8B-Instruct to build the reports.
+- **Age gate**: the frontend hard-stops self-identified minors before any data collection; the API independently rejects `is_over_18 != true` with 403.
+- **Gentle mode** (`safety.py`): severe depletion or an all-low profile suppresses the leverage engine and Road B entirely, routes the grounding habit, and returns a `care_note` the UI renders above all other content.
+- **Language validator** (`validator.py`): every Road B output is scanned (banned clinical lexicon, numbers, structure) and discarded on any failure — the deterministic Road A report ships instead.
+- **Transport guardrails** (`security.py`): per-IP rate limiting, request body cap, security headers; CORS wildcard origins are rejected (set `FRONTEND_URL` explicitly).
+- **No persistence**: answers are never stored server-side.
 
-### Strict Voice & Language Charter
-- **Perspective**: Always refer to the user in the second person ("you"). Never use "I" or the system "we".
-- **Agentless Description**: Refer to LEWIS in the third person, descriptively only. (e.g. "LEWIS uses, draws on, checks"). Never use mental-state verbs for the system (e.g., "LEWIS thinks you are, believes, knows, notices").
-- **Non-Clinical Line**: Do not diagnose, screen, or treat.
-- **Banned Lexicon**: Banned words include: *diagnosis, disorder, depression, anxiety, clinical, patient, symptom, treatment, burnout (as a condition), cortisol, hormone, vagal tone*.
-- **Compassionate Anchoring**: Always normalize low scores by acknowledging that needing care is a normal part of the human experience.
+---
 
-### 6-Movement Insight Report Structure
-For the full assessment, the AI generates an output split into:
-1. **The Mirror**: Reflects the user's arrival state and word.
-2. **Your Bright Spot**: Focuses on their highest wellness score to foster positive reinforcement.
-3. **Your Wellbeing Landscape**: A concise narrative outlining the overall dimension balance.
-4. **Your Nervous System & Physicality**: Integrates sleep quality, physical movement, day rhythms, and body map tension zones.
-5. **The Connections**: Discusses the root driver hypothesis and links it to identity roles, active pressures, and life stability.
-6. **Patterns Worth Noticing**: Surfaces flagged details such as relational guarding, sharing hesitations, or priorities.
-7. **Your Path Forward**: A hopeful wrap-up guiding the user to their prescribed small micro-habit.
+## Similarity Corpus Engine
+
+`corpus.py` implements V1 (rule-based) of the Similarity-Mapping spec over the 10,000-profile synthetic seed corpus:
+
+- **State-only vector**: 9 dimension scores + leverage + nervous-system state + readiness + support preference. **Demographics and safety flags can never enter the vector** — the builder raises `ValueError` (enforced by tests).
+- **Similarity**: `0.50·score_sim + 0.20·state_sim + 0.15·friction_sim + 0.15·pref_sim`, block weights renormalizing over what a live user can populate.
+- **k-NN**: k = 40, k_min = 30 floor, similarity floor 0.50 (env-tunable via `LEWIS_SIM_K`, `LEWIS_SIM_K_MIN`, `LEWIS_SIM_FLOOR`); below the floor it falls back to archetype-level context instead of thin-matching.
+- **Neutral priors**: every corpus row is `is_synthetic` — no outcome claim is ever drawn from synthetic rows, so `effectiveness_priors` stays `{}` until real consenting profiles accrue.
+- **Coarse positions**: per-dimension corpus terciles produce `lower/middle/higher` words for the report — numbers never leave the backend.
+
+---
+
+## Narrative System (Road A / Road B)
+
+**Road A** (`narrative.py`) — the deterministic report, always rendered: mirror/arrival, bright spot, banded landscape, body & energy, connections (leverage), patterns, path forward + habit. Passes the same validator Road B is held to.
+
+**Road B** (`llm.py`) — optional voicing by Nemotron via NVIDIA NIM. It receives **bands and context only** (never raw scores or instrument names) and re-voices the report. Every failure path — missing key, timeout, truncation (`finish_reason=length`), validator rejection, gentle mode — falls back to Road A. `narrative_source` in the response tells you which shipped.
+
+### Voice & Language Charter (enforced in prompt + validator)
+- Second person ("you"); LEWIS in third person, descriptively; never "I"/"we"; no mental-state verbs for the system.
+- Non-clinical: no diagnosis/screening/risk words (banned lexicon enforced).
+- **No numbers, scores, percentages, or instrument names** — band words only (Thriving, Steady, Strained, Depleted).
+- Coarse positions voiced only as words ("in the lower part of the range seen across many check-ins") — never a number, rank, percentile, or named-group comparison.
+- Normalising framing for depleted areas; strength named before struggle.
+- Prompt-injection defense: JSON payload is data, never instructions.
 
 ---
 
 ## Data Models
 
-### PulseInput (Pydantic Model)
+### PulseInput
 ```json
 {
   "who5": [3, 4, 2, 5, 4],
@@ -265,115 +293,84 @@ For the full assessment, the AI generates an output split into:
 }
 ```
 
-### FullAssessmentInput (Pydantic Model)
+### FullAssessmentInput (key fields)
 ```json
 {
-  "who5": [4, 3, 5, 2, 3],
+  "is_over_18": true,
+
+  "who5":  [4, 3, 5, 2, 3],
   "pss10": [2, 1, 3, 2, 1, 2, 3, 2, 1, 2],
   "ucla3": [1, 2, 0],
-  "gse": [3, 2, 3, 2, 3, 2, 3, 2, 3, 2],
+  "gse":   [3, 2, 3, 2, 3, 2, 3, 2, 3, 2],
   "promis": [4, 3, 4, 3],
   "cfpb5": [2, 1, 3, 2, 1],
-  "diener": {"q1": 6, "q2": 5, "q3": 6, "q4": 5, "q5": 6, "q6": 5, "q7": 6, "q8": 7},
+
+  "diener": [6, 5, 6, 5, 6, 5, 6, 7],
   "ins": 5,
-  "swls": {"q1": 5, "q2": 6, "q3": 5, "q4": 4, "q5": 5},
+  "swls": [5, 6, 5, 4, 5],
+
   "ageCategory": "25-34",
-  "gender": "Non-binary",
   "identityRoles": ["parent", "engineer"],
-  "lifeStability": 3,
   "active_pressures": ["work", "time-management"],
   "bodyMovement": "moderate",
   "sleepQuality": "poor",
-  "bodyContext": ["neck tension"],
-  "relationalContext": "guarded",
   "priority_rank": ["health", "career"],
   "arrival_word": "overwhelmed",
-  "financialPulse": {},
-  "environmentalPulse": {},
-  "intellectualPulse": "seeking learning opportunities",
-  "culturalBelonging": {},
-  "bodyRhythm": {},
-  "bodyMapZones": ["shoulders", "neck"],
-  "dayRhythmMap": [1, 2, 1, 0, 1],
-  "breathingBefore": "fast",
-  "breathingAfter": "calm",
-  "nervousSystemState": "activated",
-  "body_awareness": "moderate",
-  "lifeLandscape": {},
-  "adaptiveDeepDives": {},
-  "brightSpotCheck": "mindfulness",
-  "priorityTensionCheck": "high friction",
-  "everydaySharing": {},
-  "externalConditions": {},
-  "priorAttempts": "tried breathing exercises before",
-  "aspirationLandscape": "long term focus",
-  "supportPreferences": ["independent"],
-  "plannerReadiness": "high",
-  "valuesCheck": ["growth", "stability"],
-  "financialAspiration": "savings buffer",
-  "energyArc": {"morning": "low", "evening": "high"},
-  "stressPatternClusters": ["physical stress", "work pressure"],
-  "recoveryResponsiveness": "slow",
-  "cumulativeLoad": {},
-  "soundPreference": "nature sounds",
-  "quickChoices": {},
+  "bodyMapZones": ["neck", "gut"],
+  "breathingBefore": "Shallow & Fast",
+  "breathingAfter": "More settled",
+  "nervousSystemState": "sympathetic",
+  "supportPreferences": ["gentle"],
+  "plannerReadiness": "one_thing",
   "max_time_available": 5,
-  "current_environment": "Desk",
-  "flags": []
+  "current_environment": "Anywhere"
 }
 ```
+Notes: `is_over_18` is **required**. `diener`/`swls` are **arrays** (1–7 anchors). `gse` uses the published **1–4** anchors. Context fields shape tone and texture only — they can never move a score.
 
 ---
 
 ## Installation & Setup
 
-### Backend Setup
-1. **Create Virtual Environment**:
-   ```bash
-   cd backend
-   python -m venv .venv
-   .venv\Scripts\activate # On Windows
-   source .venv/bin/activate # On macOS/Linux
-   ```
-2. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. **Configure Environment Variables**:
-   Create a `.env` file inside `backend/` with:
-   ```env
-   GROQ_API_KEY=your_groq_api_key_here
-   HUGGINGFACE_API_KEY=your_huggingface_api_key_here
-   FRONTEND_URL=http://localhost:5173
-   ```
-4. **Run the Server**:
-   ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
-   ```
-5. **Swagger UI**: Visit `http://localhost:8000/docs` to test endpoints.
+### Backend
+```bash
+cd backend
+python -m venv ..\.venv && ..\.venv\Scripts\activate   # Windows
+pip install -r requirements.txt
+```
+Create `backend/.env`:
+```env
+NVIDIA_API_KEY=your_nvidia_nim_key          # omit to run Road A only
+FRONTEND_URL=http://localhost:5173          # explicit origins; wildcard rejected
+# Optional switches:
+# LEWIS_ENABLE_LLM=false
+# LEWIS_LLM_MODEL=nvidia/nemotron-3-super-120b-a12b
+# LEWIS_LLM_REPORT_MAX_TOKENS=8000  LEWIS_LLM_PULSE_MAX_TOKENS=3000
+# LEWIS_SIM_K=40  LEWIS_SIM_K_MIN=30  LEWIS_SIM_FLOOR=0.50
+```
+Run and test:
+```bash
+uvicorn main:app --reload --port 8000       # Swagger at /docs
+python -m pytest tests -q                   # 66 tests
+```
 
-### Frontend Setup
-1. **Install Node Packages**:
-   ```bash
-   cd frontend
-   npm install
-   ```
-2. **Configure Host**:
-   Ensure `vite.config.js` is set to talk to the backend port.
-3. **Run Dev Client**:
-   ```bash
-   npm run dev
-   ```
+### Frontend
+```bash
+cd frontend
+npm install
+# frontend/.env → VITE_API_URL=http://localhost:8000
+npm run dev                                 # localhost:5173
+```
 
 ---
 
-## Usage Examples
+## Usage Example
 
-### Example Curl Request: Full Assessment
 ```bash
 curl -X POST "http://localhost:8000/assessment/full" \
   -H "Content-Type: application/json" \
   -d '{
+    "is_over_18": true,
     "who5": [4, 3, 5, 2, 3],
     "pss10": [2, 1, 3, 2, 1, 2, 3, 2, 1, 2],
     "ucla3": [1, 2, 0],
@@ -387,5 +384,5 @@ curl -X POST "http://localhost:8000/assessment/full" \
 
 ---
 
-**Last Updated**: July 2026  
-**Status**: Active Development  
+**Last Updated**: 15 July 2026 (backend v1.2.0)
+**Status**: Active development — pilot-readiness gates tracked in `NEW_UPDATES.md`
