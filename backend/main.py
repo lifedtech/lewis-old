@@ -285,7 +285,12 @@ def calculate_full_assessment(payload: FullAssessmentInput):
             "readiness": payload.plannerReadiness,
             "support_preference": payload.supportPreferences[0] if payload.supportPreferences else None,
             "portrait": portrait["id"] if portrait else None,
-            "stress_pattern": next((p["id"] for p in patterns if p["id"] == "stress_load_pattern"), None)
+            # The classified label ("Wired & hard to switch off"), which
+            # corpus.py maps to the corpus vocab (wired/flat/foggy/cycle/settled).
+            "stress_pattern": next(
+                (p["label"] for p in patterns if p["id"] == "stress_load_pattern"), None
+            ),
+            "recovery": payload.recoveryResponsiveness,
         },
     )
     for key in dimensions:

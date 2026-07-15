@@ -65,11 +65,29 @@ class TestStateVectorInvariants:
         vec = build_state_vector(FULL_SCORES, {"readiness": "extremely keen"})
         assert vec["readiness"] is None
 
+    def test_portrait_accepts_id_or_display_label(self):
+        # pattern.py speaks ids; the corpus CSV stores display labels — both
+        # normalise to the id (mapping confirmed vs lewis_10000_profiles.jsonl).
+        by_id = build_state_vector(FULL_SCORES, {"portrait": "low_tank"})
+        by_label = build_state_vector(FULL_SCORES, {"portrait": "Running on a low tank"})
+        assert by_id["portrait"] == by_label["portrait"] == "low_tank"
+
+    def test_stress_pattern_label_maps_to_corpus_vocab(self):
+        vec = build_state_vector(FULL_SCORES, {
+            "stress_pattern": "Wired & hard to switch off",
+            "recovery": "still_tired",
+        })
+        assert vec["stress_pattern"] == "wired"
+        assert vec["recovery"] == "still_tired"
+
 
 class TestMapping:
     def _state(self):
         return {"leverage": "PH", "nervous_system_state": "sympathetic",
-                "readiness": "one_thing", "support_preference": "gentle"}
+                "readiness": "one_thing", "support_preference": "gentle",
+                "portrait": "low_tank",
+                "stress_pattern": "Wired & hard to switch off",
+                "recovery": "still_tired"}
 
     def test_full_profile_matches(self):
         result = map_to_corpus(FULL_SCORES, self._state())

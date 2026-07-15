@@ -30,9 +30,12 @@ The 10,000-profile synthetic seed corpus (`doc/lewis_10000_scores.xlsx`, new spe
 - **Breathing orb centered** (`Stage3_4BreathingScreen.jsx`): the `.orb` CSS keyframe animation was overriding framer-motion's inline `translate(-50%,-50%)` every frame, pinning the orb's corner at the ring's center. Now centered via `inset: 0; margin: auto` (transform-free, size-independent) with the CSS animation disabled so the phase-synced framer scale drives the breathe pulse.
 - **`learning_doc.md` and `lewis doc.md` rewritten for v1.2.0**: both still described the pre-v1.1.0 system (Llama 3.1 via Hugging Face, "Cascade Matrix"/"root driver", old payload/response shapes). They now document the actual engine: Road A/B + validator, W-matrix leverage, safety lattice, similarity corpus, pattern engine, current API schema and env vars.
 
+## 7. Corpus companion files landed & similarity state block completed (F5 — resolved, 15 July)
+- `doc/lewis_10000_profiles.jsonl` (enriched objects) and `doc/lewis_10000_reports.jsonl` (Road-A reports) added and fully cross-validated: 10,000 rows each, ids/scores/leverage/portraits/distress 100% consistent with the scores table, all rows `is_synthetic`, zero minor-flagged rows. Only QA nit: 885 reports contain a digit — all from one program name ("7-session Sleep & Recovery Reset"), a duration, not a score.
+- The profiles file confirmed the portrait id↔label map (`low_tank` ↔ "Running on a low tank"), unblocking the similarity **state block**: `corpus.py` now matches on the spec's full state_sim set — portrait + leverage + stress pattern + recovery — with pattern.py's reflective labels normalised to corpus vocab. Fixed `main.py` passing the constant `"stress_load_pattern"` instead of the classified label; `recoveryResponsiveness` now feeds the vector. 68 tests pass.
+
 ## Known decisions deliberately NOT made silently (need product sign-off)
 - EM composite: locked spec defines EM = 0.80·invPSS10 + 0.20·WHO5-mood (stress inside EM, no standalone "calm"); backend keeps emotional=WHO-5 + calm=PSS-10 as separate dimensions.
-- Missing corpus companions: `lewis_10000_profiles.jsonl` / `lewis_10000_reports.jsonl` are named in the Dataset Summary but absent from `doc/` — needed for report-QA benchmarking.
 - No fine-tuning on the corpus: circular synthetic data; the constitution restricts learning to soft priors and wording.
 
 ---

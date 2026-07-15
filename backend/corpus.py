@@ -57,6 +57,31 @@ NERVOUS_SYSTEM_MAP = {
 READINESS_VALUES = {"focused", "full", "one_thing", "overwhelmed", "committed"}
 READINESS_ALIASES = {"7day": "full", "7-day": "full", "one thing": "one_thing"}
 SUPPORT_VALUES = {"structure", "gentle", "challenge", "stories", "alone", "fragile"}
+RECOVERY_VALUES = {"recovered", "somewhat", "still_tired", "anxious_at_rest"}
+
+# The 8 state portraits: pattern.py speaks ids; the corpus CSV stores the
+# display labels (id<->label mapping confirmed against lewis_10000_profiles.jsonl).
+PORTRAIT_LABEL_TO_ID = {
+    "steady ground": "steady_ground",
+    "carrying a lot right now": "carrying_a_lot",
+    "resourced and stretched": "resourced_stretched",
+    "connected at a distance": "connected_at_distance",
+    "running on a low tank": "low_tank",
+    "at a crossroads": "crossroads",
+    "depleted across the board": "depleted_field",
+    "holding it together": "holding_together",
+}
+PORTRAIT_IDS = set(PORTRAIT_LABEL_TO_ID.values())
+
+# stress_load_pattern reflective labels -> corpus stress_pattern ids.
+STRESS_LABEL_TO_ID = {
+    "wired & hard to switch off": "wired",
+    "flat & depleted": "flat",
+    "foggy & scattered": "foggy",
+    "rhythm-linked": "cycle",
+    "settled": "settled",
+}
+STRESS_VALUES = set(STRESS_LABEL_TO_ID.values())
 
 _lock = threading.Lock()
 _corpus = None  # list of row dicts, or [] when the CSV is unavailable
@@ -70,6 +95,16 @@ def _normalise(value: str | None, vocab: set, aliases: dict | None = None) -> st
     if aliases:
         v = aliases.get(v, v)
     return v if v in vocab else None
+
+
+def _normalise_labelled(value: str | None, label_map: dict, vocab: set) -> str | None:
+    """Accept either the internal id ('wired') or the reflective display
+    label ('Wired & hard to switch off'); anything else is skipped."""
+    if not value:
+        return None
+    v = str(value).strip().lower()
+    return label_map.get(v) or (v.replace("-", "_").replace(" ", "_")
+                                if v.replace("-", "_").replace(" ", "_") in vocab else None)
 
 
 def _load() -> list:
@@ -98,7 +133,9 @@ def _load() -> list:
                 "scores": scores,
                 "leverage": r.get("leverage_primary") or None,
                 "portrait": r.get("portrait") or None,
+                "portrait_id": PORTRAIT_LABEL_TO_ID.get((r.get("portrait") or "").strip().lower()),
                 "stress_pattern": r.get("stress_pattern") or None,
+                "recovery": r.get("recovery") or None,
                 "nervous_system_state": r.get("nervous_system_state") or None,
                 "readiness": r.get("readiness") or None,
                 "support_preference": r.get("support_preference") or None,
@@ -169,6 +206,9 @@ def build_state_vector(dim_scores: dict, state: dict) -> dict:
     return {
         "scores": {c: dim_scores.get(c) for c in SPEC_CODES},
         "leverage": state.get("leverage"),
+        "portrait": _normalise_labelled(state.get("portrait"), PORTRAIT_LABEL_TO_ID, PORTRAIT_IDS),
+        "stress_pattern": _normalise_labelled(state.get("stress_pattern"), STRESS_LABEL_TO_ID, STRESS_VALUES),
+        "recovery": _normalise(state.get("recovery"), RECOVERY_VALUES),
         "nervous_system_state": _normalise(state.get("nervous_system_state"),
                                            set(NERVOUS_SYSTEM_MAP.values()), NERVOUS_SYSTEM_MAP),
         "readiness": _normalise(state.get("readiness"), READINESS_VALUES, READINESS_ALIASES),
@@ -181,9 +221,15 @@ def _similarity(vec: dict, row: dict) -> float | None:
     blocks["score"] = _score_similarity(vec["scores"], row["scores"])
     if blocks["score"] is None:
         return None  # too few scored dimensions to claim similarity at all
-    # `leverage` may legitimately be None on both sides (a steady profile);
-    # treat it as a comparable value, not a missing one.
-    blocks["state"] = 1.0 if vec["leverage"] == row["leverage"] else 0.0
+    # The spec's state_sim set: portrait, leverage, stress pattern, recovery.
+    # `leverage` may legitimately be None on both sides (a steady profile),
+    # so it is compared through a sentinel rather than skipped as missing.
+    blocks["state"] = _match_block([
+        (vec["leverage"] or "(none)", row["leverage"] or "(none)"),
+        (vec["portrait"], row["portrait_id"]),
+        (vec["stress_pattern"], row["stress_pattern"]),
+        (vec["recovery"], row["recovery"]),
+    ])
     blocks["friction"] = _match_block([(vec["nervous_system_state"], row["nervous_system_state"])])
     blocks["pref"] = _match_block([
         (vec["readiness"], row["readiness"]),
