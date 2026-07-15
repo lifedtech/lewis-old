@@ -107,16 +107,15 @@ export default function Stage3_4BreathingScreen() {
                   style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%', transition: 'stroke-dashoffset 1s linear' }}
                 ></circle>
               </svg>
-              <motion.div 
+              <motion.div
                 className="orb orb--lg"
-                initial={{ x: "-50%", y: "-50%" }}
-                animate={{ 
-                  x: "-50%", 
-                  y: "-50%",
-                  scale: phase < CYCLE / 2 ? [1, 1.25] : [1.25, 1],
-                }}
+                animate={{ scale: phase < CYCLE / 2 ? [1, 1.25] : [1.25, 1] }}
                 transition={{ duration: CYCLE / 2, ease: "easeInOut" }}
-                style={{ position: 'absolute', top: '50%', left: '50%' }}
+                // inset+margin centering needs no transform, so it can't be
+                // clobbered by transform animations; the CSS .orb "breathe"
+                // keyframes are disabled because they'd override the phase-
+                // synced framer scale (CSS animations beat inline styles).
+                style={{ position: 'absolute', inset: 0, margin: 'auto', animation: 'none' }}
               />
             </div>
             
