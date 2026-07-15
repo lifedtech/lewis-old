@@ -1,0 +1,259 @@
+LEWIS — State Portraits, Norm Positioning & the Enriched Object (Layer 4)
+Purpose:
+ Complete the inference layer. Take the Person Object (scores, Layer 3) and the pattern engine output (Layer 4 patterns) and produce the 
+Enriched Object
+ the report reads — by adding (A) 
+norm positioning
+, (B) a 
+state portrait
+, (C) 
+leverage coherence + disclosure gating
+, then (D) emitting the object.
+Governed by the Scoring Constitution.
+ This layer's two temptations are the ones it must resist: a percentile becoming a ranking that shames, and a portrait becoming a 
+type
+ that labels. Both are forbidden. Everything here is 
+a snapshot of right now
+, changeable, traceable to the person's own answers.
+Person Object ──┐
+                ├─► A. Norm positioning ─► B. State portrait ─► C. Disclosure gating ─► D. Enriched Object ─► (Layer 5 report)
+Pattern engine ─┘
+PART A · Norm positioning — "where you stand among people in a similar life stage"
+Purpose.
+ Turn an absolute 0–100 into gentle relative context, so "Steady" means something — without ever becoming a competitive rank.
+Element
+Decision
+Norm cell
+age_band × sex × region
+ (Resolutions A1)
+Method
+percentile of the person's score within the matched cell distribution
+Pre-pilot source
+seeded synthetic distribution from the 
+C
+/
+W
+ corpus, tagged 
+"early estimate"
+ until real data exists 
+⚑
+Stability (B11)
+N ≥ 100 stable · 30–99 "early estimate" · < 30 → step down the fallback ladder
+Fallback ladder
+(age×sex×region) → (age×sex×national) → (age×national) → universal
+; if even universal is thin → 
+suppress the percentile, speak in bands only
+Display rule
+coarse buckets, not a precise number
+: "in the lower range / around the middle / in the higher range" for people in a similar life stage
+Suppression
+sensitive/safety-flagged dimensions are 
+never
+ shown competitively; a suppressed cell shows the band word alone
+Rationale.
+ A precise "62nd percentile" invites ranking anxiety and false precision the data can't bear; a coarse "around the middle, for people in a similar stage" gives orientation without a verdict. Suppress-never-fake holds: a thin cell yields a band, not a guessed percentile.
+def position(score, cell, corpus):
+    dist, N = corpus.distribution(cell)              # walks the fallback ladder internally
+    if N < 30: return {"bucket": None, "shown": False, "reason": "thin_cell"}
+    pct = percentile(score, dist)
+    bucket = "lower range" if pct < 33 else "around the middle" if pct < 67 else "higher range"
+    tag = "stable" if N >= 100 else "early_estimate"
+    return {"bucket": bucket, "shown": True, "cell_used": dist.cell, "confidence": tag}
+Example
+ — PH score 21, cell (35–44 × male × south-metro), N = 140 → percentile ≈ 12 → 
+"in the lower range"
+, stable. Report: "your physical reserves are in the lower range for people at a similar stage — and that's exactly where a small change pays off most." (Orientation, not a grade.)
+PART B · State portraits — the whole-person snapshot
+A portrait is a STATE, never a type.
+ It is built from this sitting's scores and patterns, it is explicitly "where you are 
+right now
+," and it will look different when things shift. LEWIS never assigns a fixed personality, never a clinical category. Every portrait is traceable to specific conditions (no horoscope vagueness) and opens the report with recognition before any depletion.
+Selection — priority-ordered, safety-first (first match wins; safety always overlays)
+#
+Portrait (reflective)
+Entry conditions
+Opening register
+Leverage emphasis
+1
+Depleted across the board
+all dims < 40 
+OR
+ distress 
+signpost
+gentlest; support precedes everything
+smallest possible single move
+2
+Carrying a lot right now
+recovery_load
+ = "Carrying a lot" 
+AND
+ ≥ 2 dims < 55
+gentle, validating the load
+down-regulation before any "do more"
+3
+Running on a low tank
+PH 
+and
+ EN below Steady 
+AND
+ leverage = PH (body→energy)
+warm, hopeful — names the connection
+the body as the lever
+4
+At a crossroads
+purpose_in_pain
+ fired 
+OR
+ (MS/AC low 
+and
+ ranked top-3)
+reflective, meaning-forward
+the valued-but-stretched area
+5
+Connected at a distance
+RS below Steady 
+OR
+ 
+social_connection.guarding
+tender, non-judging
+one small reach toward connection
+6
+Holding it together
+self-report/gestalt high 
+but
+ ENRICH signals lower (Mask/Contradiction)
+gentle, permission to not be fine
+the gap between shown and felt
+7
+Resourced and stretched
+LWI ≥ Steady 
+and
+ uneven (≥ 1 strength 
+and
+ ≥ 1 below-Steady)
+affirming — strength first, then the one area
+the single clear low
+8
+Steady ground
+LWI ≥ Steady 
+and
+ even (sd < 12)
+warm, momentum-building
+build on what's working
+Rationale.
+ Ordering is safety-first: the most depleted and the masking states are caught before the cheerful ones, so no one in trouble is met with "you're doing great overall." The portrait is the report's first act of 
+being seen
+ — which is what earns the right to say the harder things later.
+PORTRAITS = [depleted_field, carrying_a_lot, low_tank, crossroads,
+             connected_at_distance, holding_together, resourced_stretched, steady_ground]
+def state_portrait(scores, patterns, lwi, safety):
+    for p in PORTRAITS:                              # priority order; safety-first
+        if p.entry(scores, patterns, lwi, safety):
+            return {"id": p.id, "label": p.label, "opening": p.opening(scores, patterns),
+                    "is_state_not_type": True, "traceable_to": p.evidence(scores, patterns)}
+    return steady_ground.as_default()
+Example
+ — Sourav: PH 21 & EN 47 below Steady, leverage = PH, not all-low, no distress signpost → 
+Running on a low tank
+: "Most of your life is standing strong — your sense of meaning, your relationships, your self-belief. What's asking for care is underneath it: your body and your energy. And those two tend to move together." (Strength named first; the body→energy 
+connection
+ named, never a cause.)
+PART C · Leverage coherence + disclosure gating
+C1 · Leverage coherence
+Cross-check the computed leverage point against the person's 
+felt
+ sense before the report speaks it firmly.
+def leverage_coherence(leverage, gestalt_gap, priority_tension, tension_confirmed):
+    agrees_felt   = gestalt_gap[leverage.primary] < 20            # their sort agrees it's low
+    agrees_valued = priority_tension and priority_tension.dimension == leverage.primary
+    if tension_confirmed == "Not quite": return "soften"          # they disagreed → offer, don't assert
+    if agrees_felt or agrees_valued:     return "plain"
+    return "offer"                                                # computed but unconfirmed → invite
+plain
+ — "your body is where effort goes furthest right now."
+offer/soften
+ — "this 
+may
+ be where it starts — does that land as true?"
+C2 · Disclosure gating (what the report may assert)
+Three inputs decide the voice of every statement:
+Source
+Gate
+Dimension confidence
+Assert ≥ 0.75 · Offer 0.50–0.75 · Withhold < 0.50
+Pattern confidence
+measurement
+ → may state · 
+reflection
+ → "worth a gentle look, nothing more"
+Safety flags
+always asserted
+, regardless of confidence (Constitution Article X) — they override the gates upward, never downward
+def disclosure_plan(enriched):
+    plan = {}
+    for d, dim in enriched.dimensions.items():
+        plan[d] = "assert" if dim.confidence>=0.75 else "offer" if dim.confidence>=0.50 else "withhold"
+    for p in enriched.patterns:
+        plan[p.id] = "state" if p.confidence=="measurement" else "gentle_reflection"
+    for f in enriched.safety.fired():
+        plan[f] = "assert"                          # safety cannot be down-ranked
+    plan["leverage"] = enriched.leverage.coherence  # plain | offer | soften
+    return plan
+Example
+ — EM confidence 0.86 → 
+assert
+ ("stress is running high"); PH confidence 0.67 → 
+offer
+ ("your body seems to be the place to start — does that feel right?"); 
+stress_load_pattern
+ is a 
+reflection
+ → "a way to notice, not a finding"; distress note fired → 
+asserted
+ warmly regardless of any confidence.
+PART D · The Enriched Object (handoff to Layer 5)
+The single contract the report consumes. It carries scores 
+plus
+ their relative position, the patterns, the portrait, the coherence/disclosure decisions, and safety — nothing raw.
+{
+  "completion": { "mode": "full" },
+  "lwi": { "mean": 66.8, "band": "Steady", "shape": "uneven",
+           "spread": {"min":21,"max":84,"sd":18}, "sanity_flag": false },
+  "dimensions": {
+    "PH": { "score":21, "band":"Running on empty", "confidence":0.67,
+            "position":{"bucket":"lower range","shown":true,"confidence":"stable"} },
+    "EM": { "score":72, "band":"Strong", "confidence":0.86,
+            "position":{"bucket":"around the middle","shown":true} }
+    /* …seven more… */
+  },
+  "patterns": [
+    {"id":"recovery_load","label":"Carrying a lot","confidence":"reflection","connects":["PH","EM"]},
+    {"id":"stress_load_pattern","label":"Wired & hard to switch off","confidence":"reflection"},
+    {"id":"energy_rhythm","label":"Evening riser","sleep_onset_disruptor":true,"confidence":"reflection"},
+    {"id":"bright_spot","dimension":"MS","tier":"genuine","confidence":"measurement"}
+  ],
+  "portrait": { "id":"low_tank", "label":"Running on a low tank",
+                "is_state_not_type": true,
+                "traceable_to": ["PH<55","EN<55","leverage=PH"] },
+  "leverage": { "primary":"PH", "downstream":["EN"], "coherence":"offer", "is_pair":false },
+  "disclosure_plan": { "PH":"offer","EM":"assert","leverage":"offer",
+                       "stress_load_pattern":"gentle_reflection","distress":"assert" },
+  "norms": { "cell_used":"35-44|male|south-metro", "cell_confidence":"stable" },
+  "safety": { "minor":false, "cultural_safety":{"fired":false},
+              "distress":{"tier":"note"}, "disordered_eating":{"fired":false} },
+  "handoff": { "lead_with":"down-regulation", "primary_focus":"PH", "habit_sizing":"tiny" }
+}
+Status
+Locked & buildable now:
+ the norm-positioning method + coarse-bucket display + fallback/suppression; the eight state portraits with priority-ordered, safety-first selection; leverage coherence; the disclosure-gating mechanism; the Enriched Object schema.
+⚑ Needs pilot/expert validation:
+ the synthetic norm distributions (replaced by real cell data post-pilot); the portrait entry thresholds (especially the Mask/"holding it together" detection, the hardest and most consequential to get right); the percentile bucket cutpoints (33/67); and the 
+sd < 12
+ "even" cutoff for Steady Ground.
+The two tests this layer must pass:
+ 
+Does the percentile orient, or rank-and-shame?
+ and 
+Does the portrait describe a moment, or label a person?
+ If either drifts toward judgment, it is rewritten until it returns to gentle, changeable, traceable reflection.
+Next link: Layer 5 — the Insight Report. How the Enriched Object becomes the words a person reads: section grammar, the Road A deterministic spine, the Road B generative warmth overlay, and the report's visual/diagram concepts.

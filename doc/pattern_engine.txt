@@ -1,0 +1,781 @@
+LEWIS — Composite Indexes & Pattern Engine
+Purpose:
+ The layer that turns nine dimension scores into a 
+connected picture
+ — composite indexes, texture patterns, and modulating layers. It sits between Layer 3 (scores) and Layer 5 (report), and its one job is to 
+explain how dimensions relate, never to diagnose why one is low.
+Governed by the Scoring Constitution.
+ Two rules dominate this layer:
+Reflective, never clinical.
+ Internal engineering IDs may be technical; every 
+output label
+ a person could ever see is warm, plain, and non-diagnostic. No pattern names a condition, a hormone, or a cause.
+Connection, not causation.
+ A pattern says "your energy looks tied to how your body's been resting" — never "your low energy is 
+because of
+ X." The leverage estimate is "where effort goes furthest," not a root cause.
+Naming map (internal ID → reflective output label)
+#
+Internal ID
+Reflective output label (what a person may see)
+1
+LWI
+"Your overall reflection"
+2
+recovery_load
+"How much you've been carrying"
+3
+stress_load_pattern
+"How stress tends to show up for you"
+4
+energy_rhythm
+"The shape of your day's energy"
+5
+somatic_load
+"How your body's been holding things"
+6
+social_connection
+"How your social world feels"
+7
+purpose_in_pain
+"What matters most is asking for care"
+8
+agency_gap
+"The space between wanting and doing"
+9
+financial_strain
+"How money's been sitting with you"
+10
+environmental_depletion
+"How your surroundings feel"
+11
+curiosity_depletion
+"How alive your curiosity feels"
+12
+stability_urgency
+(internal modulator — expressed as tone, no label)
+13
+bright_spot
+"Where you're standing strong"
+14
+priority_tension
+"What you care about vs how it feels right now"
+15
+suggestion_readiness
+(internal modulator — expressed as plan size)
+Object output (every pattern stores the same shape)
+{ "id":"stress_load_pattern", "label":"Wired & hard to switch off",
+  "fired":true, "strength":"moderate",            // none|weak|moderate|strong
+  "confidence":"reflection",                       // measurement | reflection (most are reflections)
+  "evidence_fields":["stress_cluster","ans.portrait","energy_arc"],
+  "connects":["EM","PH"], "safety":null }
+confidence
+ is binary by design here:
+ 
+measurement
+ (computed from SPINE scores — the structural layers) vs 
+reflection
+ (everything ENRICH-sourced — surfaced gently, "worth a look, nothing more"). This single tag stops a soft pattern from ever speaking as a hard finding.
+GROUP A · Composite indexes
+1 · LWI — "Your overall reflection"
+Field
+Spec
+Purpose
+One gentle whole-life reading, immediately qualified by its spread — never a wellness "grade."
+Variables
+the nine final dimension scores + their confidences; WHO-5 overall + SWLS (sanity)
+Formula
+LWI.mean = mean(9 scores)
+; 
+LWI.spread = {min,max,sd}
+; 
+LWI.shape
+ from spread
+Weighting
+equal weights
+ (v1, transparent); a confidence-weighted shadow runs for QA only
+Output label
+band word only (Running on empty / Under pressure / Steady / Strong) + a spread line
+Confidence
+measurement
+; system-confidence rollup; large |mean − WHO5·4| ≥ 15 → "early read" frame
+Report
+opens the report, then immediately names the shape: "steady overall — with two areas asking for attention"
+Recommendation
+does 
+not
+ drive recommendations (leverage does); sets whole-report compassion
+Safety
+all-low (Depleted Field) → gentlest framing + safety reinforcement
+def lwi(scores, confs, who5_overall):
+    mean = avg(scores); sd = stdev(scores)
+    shape = "even" if sd < 12 else "uneven"          # uneven → a strength + a struggle coexist
+    sanity = abs(mean - who5_overall) >= 15
+    return {"mean":mean, "band":band(mean), "spread":{"min":min(scores),"max":max(scores),"sd":sd},
+            "shape":shape, "sanity_flag":sanity, "confidence":"measurement"}
+Example
+ — nine scores (21,72,47,83,84,80,75,79,70): mean 
+66.8 → Steady
+, sd ≈ 18 → 
+uneven
+ → report says "steady overall, but your body and energy are asking for care." Sanity: |66.8−52|=14.8 < 15 → holds.
+2 · 
+recovery_load
+ — "How much you've been carrying"
+Field
+Spec
+Purpose
+A coarse reflection of how much the system is carrying and how well rest restores — 
+not
+ an allostatic-load measurement.
+Variables
+cumulative_load_inventory
+ (8.4, raw 0–30) · 
+recovery_responsiveness
+ (8.3) · 
+somatic_load
+ (texture)
+Formula
+load_n = raw/30
+; 
+recovery_f = {recovered 0, somewhat .33, still-tired .66, anxious-at-rest 1.0}
+; 
+index = 0.6·load_n + 0.4·recovery_f
+Weighting
+0.6 cumulative · 0.4 recovery responsiveness
+Output label
+Light load / Moderate load / Carrying a lot (≥ .66)
+Confidence
+reflection
+ (coarse, self-report) — always "a way to notice," never a health check
+Report
+sets compassion: "you've been carrying a lot lately, and rest hasn't fully restored you"
+Recommendation
+heavy + poor recovery → 
+contra-indicator
+ on high-commitment programs; lead with down-regulation
+Safety
+heavy load + persistent low mood → gentle distress consideration (Article X)
+def recovery_load(cum_raw, recovery):
+    load_n = cum_raw/30
+    rf = {"recovered":0,"somewhat":.33,"still_tired":.66,"anxious_at_rest":1.0}[recovery]
+    idx = 0.6*load_n + 0.4*rf
+    label = "Light load" if idx<.34 else "Moderate load" if idx<.66 else "Carrying a lot"
+    return {"label":label, "index":idx, "confidence":"reflection",
+            "contra_high_commitment": (label=="Carrying a lot" and rf>=.66)}
+Example
+ — cumulative raw 17 (.57) + recovery "anxious_at_rest" (1.0) → 
+0.6·.57+0.4·1.0 = .742
+ → 
+Carrying a lot
+ → high-commitment programs gated out, down-regulation first.
+GROUP B · Texture patterns (how things show up)
+3 · 
+stress_load_pattern
+ — "How stress tends to show up for you"
+Field
+Spec
+Purpose
+Describe the 
+shape
+ of stress, as an experiential reflection — explicitly 
+not
+ a cortisol phenotype or diagnosis.
+Variables
+stress_cluster
+ (8.2, primary) · 
+rhythm_inputs
+ (1.13, corroborates) · 
+energy_arc
+ (8.1) · 
+ans.portrait
+ · EM
+Formula/rule
+rule-based label from cluster selections, corroborated by arc shape + nervous-system state
+Weighting
+8.2 primary; 1.13 only corroborates (raises confidence on agreement); 8.1/portrait inform
+Output label
+Wired & hard to switch off · Flat & depleted · Foggy & scattered · Rhythm-linked · Settled
+Confidence
+reflection
+ (heuristic experiential) — "a reflection to help you notice, not a test"
+Report
+names it as something to notice, never as a state of the body's chemistry
+Recommendation
+Wired→down-regulation · Flat→gentle activation · Foggy→focus+rest · Rhythm-linked→rhythm-aware
+Safety
+Flat & depleted + low mood → gentle distress consideration
+def stress_load(clusters, portrait, arc, prior_1_13):
+    label = classify(clusters)                       # Surge|Flatline|Fog|Cycle|Settled
+    label = corroborate(label, portrait, arc)        # nudge classification, not override
+    conf  = "reflection"; strength = "strong" if prior_1_13==label else "moderate"
+    return reflective(label), strength, conf
+Example
+ — clusters = Surge tiles ("racing thoughts","hard to switch off","light sleep") + portrait "activated" → 
+Wired & hard to switch off
+ → plan opens with calming.
+4 · 
+energy_rhythm
+ — "The shape of your day's energy"
+Field
+Spec
+Purpose
+Where energy rises and falls across the day, and whether evenings/nights climb (a known wind-down disruptor).
+Variables
+energy_arc_pattern
+ + 
+irregularity
+ (8.1) · 
+energy_arc
+/
+stress_arc
+ (3.3) · 
+evening_stress
+Formula/rule
+classify shape from 4-zone High/Med/Low; flag evening- or night-high
+Weighting
+8.1 primary (4 clean zones); 3.3 sketch corroborates
+Output label
+Morning-led · Afternoon dip · Evening riser · Up-and-down (no steady pattern)
+Confidence
+reflection
+Report
+"your energy tends to climb in the evening, which can make winding down harder"
+Recommendation
+evening/night-high → wind-down + sleep anchor; up-and-down → a steadying routine anchor
+Safety
+none specific
+def energy_rhythm(zones, irregular, evening_stress):
+    shape = "Up-and-down" if irregular else peak_zone_label(zones)
+    sleep_onset_flag = zones["evening"]=="High" or zones["night"]=="High" or evening_stress
+    return {"label":shape, "sleep_onset_disruptor":sleep_onset_flag, "confidence":"reflection"}
+Example
+ — Evening "High", Night "Med", stress climbs at night → 
+Evening riser
+ + wind-down disruptor → sleep anchor recommended.
+5 · 
+somatic_load
+ — "How your body's been holding things"
+Field
+Spec
+Purpose
+Where the body holds tension, and whether the person is tuned in to it — externalised body signal, 
+not
+ a medical reading.
+Variables
+tension_map
+ + 
+load_index
+ (3.2) · 
+body_awareness_confidence
+ (3.6) · 
+body_flags
+ (1.4C)
+Formula/rule
+load level from tap count/spread; 
+body-signal gap
+ = high tension + low awareness
+Weighting
+3.2 primary; 3.6 drives the gap reflection only
+Output label
+Body feels easy · Some tension held · Carrying a lot in the body (+ "and not always noticing it")
+Confidence
+reflection
+Report
+"your shoulders and gut are holding a lot — and it's easy to miss when it builds slowly"
+Recommendation
+body-based down-regulation; gentle body-awareness practice if a gap shows
+Safety
+chronic-pain flag → 
+never
+ medical advice; pain + high load → gentle "worth checking with someone"
+def somatic_load(load_index, awareness, body_flags):
+    label = {"low":"Body feels easy","mod":"Some tension held","high":"Carrying a lot in the body"}[load_index]
+    signal_gap = (load_index=="high" and awareness in {"not_very","rarely"})
+    return {"label":label, "body_signal_gap":signal_gap, "confidence":"reflection",
+            "safety": "gentle_referral" if ("chronic_pain" in body_flags and load_index=="high") else None}
+Example
+ — high load, awareness "medium", no chronic pain → 
+Carrying a lot in the body
+, no gap, no referral.
+GROUP C · Dimension-connection patterns
+These are where the engine 
+explains how dimensions relate.
+ Each fires from SPINE scores + the leverage engine, so most are 
+measurement
+-confidence — but they describe 
+connection and meaning
+, never cause.
+6 · 
+social_connection
+ — "How your social world feels"
+Field
+Spec
+Purpose
+Whether connection is nourishing, strained, or guarded — and which way to route social support.
+Variables
+RS score (UCLA-3) · 
+relational_context
+ (1.6) · 
+sharing_pattern
+ (6, reflection)
+Formula/rule
+RS band × relational_context texture; 
+guardedness reflection
+ = high RS but markedly guarded sharing
+Weighting
+RS (SPINE) primary; relational_context for texture; sharing reflection-only (never scores)
+Output label
+Connected & supported · Connected but stretched · More alone than you'd like · Held at a distance
+Confidence
+measurement
+ (RS) + 
+reflection
+ (overlay)
+Report
+routes social suggestions: deepen connection 
+vs
+ balance-and-boundaries
+Recommendation
+isolated → low-effort connection habit; tension/family-pressure → boundary support
+Safety
+relationship strain + distress → support precedes suggestions
+def social_connection(RS, rel_ctx, sharing):
+    base = band_to_social(RS)                         # Connected.../More alone...
+    guarding = (RS>=70 and sharing=="guarded")        # one gentle openness reflection
+    route = "boundaries" if rel_ctx in {"tension","family_pressure"} else "deepen"
+    return {"label":texture(base,rel_ctx), "guarding_reflection":guarding, "route":route}
+Example
+ — RS 83 + relational_context "connected" + open sharing → 
+Connected & supported
+, no guarding, route = deepen.
+7 · 
+purpose_in_pain
+ — "What matters most is asking for care"
+Field
+Spec
+Purpose
+The recognition that a top-valued area is also where the person feels most stretched — validating, not alarming.
+Variables
+priority_rank
+ (1.7) · the nine scores · 
+tension_confirmed
+ (5.5)
+Formula/rule
+fires when a 
+top-3 priority
+ is also a 
+bottom-tier dimension
+ (score < 55); confirmed at 5.5
+Weighting
+gap = priority_weight(rank) × lowness(score)
+Output label
+"You ranked [Meaning] as what matters most — and it's where you feel most stretched right now."
+Confidence
+measurement
+ (structural) — strengthened by the user's own "Yes" at 5.5
+Report
+the recognition moment, in the person's confirmed words; never asserts over a "Not quite"
+Recommendation
+directs the plan toward the valued-but-depleted area with extra care
+Safety
+none specific (validating by design)
+def purpose_in_pain(priority_rank, scores, confirmed):
+    cands = [(d, prio_w(priority_rank,d)*low(scores[d]))
+             for d in dims if rank_top3(priority_rank,d) and scores[d]<55]
+    if not cands: return None
+    d,strength = max(cands, key=lambda x:x[1])
+    firmness = {"Yes":"plain","Partly":"soft","Not quite":"withhold"}[confirmed]
+    return {"dimension":d, "strength":strength, "report_firmness":firmness}
+Example
+ — ranks Connection #2, RS 38 (Depleted), confirmed "Yes" → fires plainly: "the connection you value most is the part feeling thinnest — and that's worth meeting gently."
+8 · 
+agency_gap
+ — "The space between wanting and doing"
+Field
+Spec
+Purpose
+A reflection of the distance between intention and momentum — kind, never "you're failing."
+Variables
+AC score (GSE) · AC deep-dive flags ("feel stuck","can't follow through","not in control") · 
+aspiration_distance
+ (7.3) · 
+trajectory
+Formula/rule
+fires when AC < 55 
+and
+ (large aspiration distance 
+or
+ an AC flag)
+Weighting
+AC (SPINE) primary; flags + aspiration for texture only
+Output label
+Steady momentum · A little stuck · A wide gap between where you are and where you'd like to be
+Confidence
+measurement
+ (AC) + 
+reflection
+ (overlay)
+Report
+names the stuck feeling without blame; pairs with the leverage point
+Recommendation
+tiny win-generating habits + follow-through scaffolding, friction-matched
+Safety
+persistent low + hopeless flags → gentle distress consideration
+def agency_gap(AC, flags, aspiration_distance, trajectory):
+    if AC>=55: return {"label":"Steady momentum"}
+    wide = aspiration_distance=="large" or any(f in flags for f in STUCK_FLAGS)
+    label = "A wide gap..." if wide else "A little stuck"
+    return {"label":label, "urgency": "higher" if trajectory=="worse" else "normal"}
+Example
+ — AC 35 + "feel stuck" flag + large aspiration gap, worsening → 
+wide gap
+, higher urgency → tiny, anchored win first.
+9 · 
+financial_strain
+ — "How money's been sitting with you"
+Field
+Spec
+Purpose
+How money pressure is weighing — framed with the same normalising care as the screens, never shaming.
+Variables
+FW score (CFPB) · 
+financial_stress
+/
+control
+ (1.9) · 
+income_regularity
+ · FW flags · 
+friction=Money
+Formula/rule
+strain texture = FW band qualified by financial_stress/control/flags; FW score stays 
+universal
+Weighting
+FW (SPINE) primary and 
+untouched
+; context only frames the 
+words
+, never the number
+Output label
+At ease with money · Some pressure, manageable · Money's weighing on you · Money's a real strain
+Confidence
+measurement
+ (FW 0.75) + 
+reflection
+ (texture)
+Report
+carries the mandatory normalising care ("money affects almost everyone")
+Recommendation
+money-friction or low FW → 
+free path first
+ (hard gate); no-cost options surfaced
+Safety
+"high anxiety affecting daily life" → gentle support; 
+never
+ financial advice
+def financial_strain(FW, fin_stress, fin_control, flags):
+    base = band_to_money(FW)
+    if fin_stress=="high_anxiety_daily": base = escalate(base)   # framing only, FW unchanged
+    money_gate = (FW<55 or "money_friction" in flags)            # free-path-first
+    return {"label":base, "free_path_first":money_gate, "score_unchanged":True}
+Example
+ — FW 75 (a strength), named pressure was workload not money → 
+At ease with money
+; no gate. 
+(Shows the engine refusing to invent strain where the score is healthy.)
+10 · 
+environmental_depletion
+ — "How your surroundings feel"
+Field
+Spec
+Purpose
+Whether space and belonging restore or drain — including cultural belonging.
+Variables
+EC score (INS+cultural) · 
+environment_quality
+ · 
+nature_access
+ · EC flags · 
+cultural_safety
+ flag
+Formula/rule
+depletion texture from EC band + environment (stressful/chaotic/no-control) + low nature + flags
+Weighting
+EC (SPINE) primary; context texture only
+Output label
+Restorative surroundings · Neutral · Draining more than restoring · Out of place
+Confidence
+measurement
+ (EC 0.70) + 
+reflection
+Report
+nature-dose + belonging framing
+Recommendation
+nature-dose (~2h/week) · small space changes · belonging connection; cultural-safety → matched
+Safety
+cultural_safety
+ flag → cultural-safety framing; contra-indicator on mismatched programs
+def environmental_depletion(EC, env_quality, nature_access, cultural_safety):
+    label = band_to_env(EC)
+    if env_quality in {"stressful","chaotic","no_control"}: label = escalate(label)  # framing
+    return {"label":label, "nature_dose": nature_access in {"rarely","no"},
+            "cultural_safety": cultural_safety}
+Example
+ — EC 45 + environment "stressful" + nature "rarely" → 
+Draining more than restoring
+ + nature-dose suggestion.
+11 · 
+curiosity_depletion
+ — "How alive your curiosity feels"
+Field
+Spec
+Purpose
+Whether the mind feels stretched or flat — distinguishing 
+depletion
+ from disinterest.
+Variables
+IG score (Flourishing) · 
+intellectual_last_engagement
+ (1.11 recency) · IG flags ("too drained","standing still")
+Formula/rule
+texture from IG band + recency; "no space"/"can't remember" → depletion, not disinterest
+Weighting
+IG (SPINE) primary; recency texture only (never scores — Constitution)
+Output label
+Curious & engaged · Coasting · Running dry · No space for it right now
+Confidence
+measurement
+ (IG 0.85) + 
+reflection
+Report
+separates "too drained to be curious" from "not interested" — a kindness that changes the suggestion
+Recommendation
+drained → rest first; depleted-but-willing → micro-curiosity, gentle stretch
+Safety
+none specific
+def curiosity_depletion(IG, recency, flags):
+    label = band_to_curiosity(IG)
+    drained = ("too_drained" in flags) or recency=="no_space"
+    if IG<55 and drained: label = "Running dry"          # depletion framing, not disinterest
+    return {"label":label, "lead_with_rest":drained}
+Example
+ — IG 50 + "too drained" flag + recency "no space" → 
+Running dry
+ → rest before any "learn something new."
+GROUP D · Modulating layers (set tone, size, and what surfaces)
+12 · 
+stability_urgency
+ — 
+(internal modulator)
+Field
+Spec
+Purpose
+Set the whole report's 
+compassion
+ and 
+intensity
+, and per-dimension 
+urgency
+ — from life turbulence + trajectory.
+Variables
+life_stability
+ (1.2) · 
+trajectory
+ (5.3) · 
+active_pressures
+ · 
+recovery_load
+ · 
+support_preference
+Formula/rule
+compassion
+ = f(turbulence, fragile-pref, heavy load); 
+urgency(dim)
+ ↑ if trajectory worsening
+Weighting
+life_stability primary; "fragile right now" 
+forces
+ gentlest; trajectory raises urgency only
+Output label
+none user-facing — expressed entirely through tone and pacing
+Confidence
+n/a (CONTEXT modulator, never a score)
+Report
+sets register globally; the lattice of Article XII
+Recommendation
+caps intensity; paces the stack
+Safety
+"fragile" or turbulent + distress → gentlest mode + support first
+def stability_urgency(stability, trajectory, support_pref, recovery_load):
+    compassion = "gentlest" if support_pref=="fragile" or stability=="very_turbulent" \
+                 or recovery_load=="Carrying a lot" else "warm" if stability in {"unsettled","mixed"} else "standard"
+    urgency = {d: ("higher" if trajectory[d]=="worse" else "normal") for d in low_dims}
+    return {"compassion":compassion, "urgency":urgency}     # tone only
+Example
+ — stability "unsettled" + two dimensions worsening + recovery "Carrying a lot" → 
+gentlest
+ compassion, capped intensity, higher urgency on the two falling dimensions.
+13 · 
+bright_spot
+ — "Where you're standing strong"
+Field
+Spec
+Purpose
+Start from strength (approach motivation) — a real one, a steady foothold, or honest naming when there's none.
+Variables
+the nine scores · optional 
+bright_spot
+ free text (5.4)
+Formula/rule
+pick top dimension; tier by score: 
+≥55
+ genuine · 
+40–54
+ modest foothold · 
+all<40
+ honest naming
+Weighting
+highest score; ties → higher confidence, then higher priority rank
+Output label
+"[Dimension] is a real strength right now" / "your steadiest ground" / honest no-strength naming
+Confidence
+measurement
+ (structural)
+Report
+opens 
+before
+ any depletion; the all-low tier reinforces gentlest framing
+Recommendation
+frames the strength as a resource to draw on
+Safety
+all-low tier reinforces safety routing
+def bright_spot(scores, confs, priority_rank, free_text):
+    top = argmax_tiebreak(scores, confs, priority_rank)
+    s = scores[top]
+    tier = "genuine" if s>=55 else "modest" if s>=40 else "none"
+    return {"dimension": top if tier!="none" else None, "tier":tier, "why": free_text}
+Example
+ — top = MS 84 → 
+genuine
+: "your sense of meaning is a real strength — a place we can start from."
+14 · 
+priority_tension
+ — "What you care about vs how it feels right now"
+Field
+Spec
+Purpose
+The interaction layer that 
+surfaces and confirms
+ the purpose-in-pain gap, and lets the person's answer set how firmly the report speaks it.
+Variables
+priority_rank
+ (1.7) · the nine scores · 
+tension_confirmed
+ (5.5)
+Formula/rule
+identify max 
+priority × lowness
+ gap; surface at 5.5 only when a top priority is bottom-scoring
+Weighting
+gap = priority_weight × lowness
+; confirmation modulates firmness
+Output label
+"You ranked [X] highest — and it's also where things feel hardest. Does that feel right?"
+Confidence
+measurement
+; firm on "Yes", soft on "Partly", withheld on "Not quite"
+Report
+speaks the tension only in the confirmed framing — respect over assertion
+Recommendation
+directs care to the valued-depleted area
+Safety
+none specific
+def priority_tension(priority_rank, scores, confirmed):
+    gap = max((prio_w(priority_rank,d)*low(scores[d]), d) for d in dims if scores[d]<55, default=None)
+    if not gap or not rank_top(priority_rank, gap[1]): return None
+    return {"dimension":gap[1], "surface": True,
+            "firmness": {"Yes":"plain","Partly":"soft","Not quite":"withhold"}[confirmed]}
+Note — 7 vs 14.
+ 
+purpose_in_pain
+ is the 
+detected pattern
+ (the structural fact + its meaning); 
+priority_tension
+ is the 
+interaction layer
+ (the 5.5 surfacing + the user's confirmation that governs report firmness). One detects; one decides how to speak it.
+Example
+ — ranks Energy #3, EN 32 (Depleted), confirmed "Yes" → surfaced plainly in the energy narrative.
+15 · 
+suggestion_readiness
+ — 
+(internal modulator)
+Field
+Spec
+Purpose
+How much plan the person can receive right now — sizes the recommendation stack.
+Variables
+planner_readiness
+ (7.6) · 
+support_preference
+ (7.4) · 
+prior_attempts
+/
+effectiveness
+ (7.2) · 
+self_regulation_lean
+ (9b) · 
+nervous_system_state
+ · 
+recovery_load
+Formula/rule
+base tier from planner_readiness; 
+state/load/prior may only 
+reduce
+ the size, never increase it
+Weighting
+planner_readiness primary; safety-toward-gentleness on every modifier
+Output label
+none user-facing — expressed as how much plan appears
+Confidence
+n/a (CONTEXT modulator)
+Report
+determines stack size: always a tiny free anchor; +program only if ready
+Recommendation
+tiny anchor always · focused practice if "one thing" · full plan if "7-day" · 
+never more than signalled
+Safety
+"too overwhelmed" / fragile / collapsed state → 
+only
+ the tiny anchor
+def suggestion_readiness(planner, support_pref, prior, state, recovery_load):
+    base = {"7day":3,"one_thing":2,"overwhelmed":1}[planner]      # stack size
+    if state in {"activated","collapsed"} or recovery_load=="Carrying a lot": base = min(base,2)
+    if support_pref=="fragile" or planner=="overwhelmed": base = 1
+    why_different = (prior=="didnt_stick")                        # "tiny on purpose this time"
+    return {"stack_size":base, "shrink_with_why": why_different}  # 1=anchor only,2=+practice,3=+program
+Example
+ — planner "I'd love a 7-day plan" (3) but state "activated" → reduced to 
+2
+ (gentle program, not intensive); prior "didn't stick" → "tiny on purpose" framing; tiny anchor always leads.
+How the layer flows into the report and recommendations
+scores (L3) → indexes (1,2) set whole-report compassion
+            → texture patterns (3,4,5) add "how it shows up" reflections
+            → connection patterns (6–11) explain how dimensions relate + the leverage point
+            → bright_spot (13) opens from strength
+            → purpose_in_pain (7) / priority_tension (14) surface the recognition moment
+            → stability_urgency (12) + suggestion_readiness (15) size and pace the plan
+            → every pattern carries {connects[], confidence, safety} into the Enriched Object
+Locked & buildable now:
+ all 15 rules, the reflective labels, the measurement-vs-reflection confidence tag, the safety boundaries, the pseudocode.
+⚑ Needs expert/pilot validation:
+ the stress-cluster/energy-rhythm classification thresholds; the 
+recovery_load
+ 0.6/0.4 split and its band cutpoints; the 
+priority × lowness
+ gap weights; the somatic load-index buckets; and every pattern's strength thresholds — all pilot-tuned, all currently coarse-by-design so they stay honest reflections rather than false precision.
+The test every pattern must pass:
+ 
+Does it explain how things connect, or claim why something is low?
+ If it claims a cause, it's rewritten until it only describes a connection — that is what keeps this engine reflective, not diagnostic.
