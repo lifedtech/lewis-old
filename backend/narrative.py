@@ -12,15 +12,15 @@
 BAND_PHRASES = {
     "Thriving": "is a genuine resource for you right now",
     "Steady": "is holding steady",
-    "Stretched": "is stretched and asking for a little attention",
-    "Asking for care": "is asking for real care at the moment",
+    "Strained": "is under real pressure and asking for a little attention",
+    "Depleted": "is running close to empty and asking for real care at the moment",
 }
 
 BRIGHT_SPOT_LINES = {
     "Thriving": "It stands out as something that is genuinely working — a foundation the rest can lean on.",
     "Steady": "It is your most stable ground right now — a quiet strength worth protecting.",
-    "Stretched": "Even in a stretched season, it is holding up better than the rest — that resilience counts.",
-    "Asking for care": "Even in a heavy season, it is holding more than the rest — and that is worth acknowledging.",
+    "Strained": "Even in a strained season, it is holding up better than the rest — that resilience counts.",
+    "Depleted": "Even in a heavy season, it is holding more than the rest — and that is worth acknowledging.",
 }
 
 NERVOUS_SYSTEM_PHRASES = {
@@ -70,7 +70,7 @@ def _landscape_section(dimensions: dict) -> str:
     lines = ["## Your Wellbeing Landscape\n"]
     for _, d in scored:
         lines.append(f"- **{d['label']}** {BAND_PHRASES[d['band']]}.")
-    if any(d["band"] in ("Stretched", "Asking for care") for _, d in scored):
+    if any(d["band"] in ("Strained", "Depleted") for _, d in scored):
         lines.append(
             "\nAlmost everyone has areas that ask for care — that is the "
             "human norm, not a problem with you."

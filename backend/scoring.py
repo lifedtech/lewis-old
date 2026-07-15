@@ -14,9 +14,9 @@
 
 BAND_THRIVING = 70
 BAND_STEADY = 55
-BAND_STRETCHED = 40
+BAND_STRAINED = 40
 
-BANDS = ("Thriving", "Steady", "Stretched", "Asking for care")
+BANDS = ("Thriving", "Steady", "Strained", "Depleted")
 
 
 def band_for(score: float) -> str:
@@ -24,9 +24,9 @@ def band_for(score: float) -> str:
         return "Thriving"
     if score >= BAND_STEADY:
         return "Steady"
-    if score >= BAND_STRETCHED:
-        return "Stretched"
-    return "Asking for care"
+    if score >= BAND_STRAINED:
+        return "Strained"
+    return "Depleted"
 
 
 def _check(scores, n, lo, hi, name):
@@ -196,32 +196,70 @@ def bright_spot(dimensions: dict) -> str | None:
     return max(scored, key=scored.get)
 
 
-# --- Leverage engine ---------------------------------------------------------
+# --- Leverage engine (Layer 3 §9: the W-matrix primary-leverage engine) -------
 #
-# Replaces the former "root driver". LEWIS reports a CONNECTION, not a
-# cause: the dimension that, among the areas currently below Steady, is
-# most closely linked with the rest of the picture. If nothing is below
-# the gate, there is no leverage point — a balanced profile is reported
-# as balanced, never assigned a fabricated "driver".
+# LEWIS reports a CONNECTION, not a cause: among the areas currently low,
+# the one that behaves as a net *source* of lowness under the v1 influence
+# prior W (Open Items Resolutions, Part C1). The lowest score is often a
+# consequence, not the place to start.
+#
+#   L(i)        = (100 − score(i)) / 100
+#   Leverage(i) = L(i) · (Σⱼ W[i][j]·L(j) − 0.7·Σⱼ W[j][i]·L(j)) · PressureBonus(i)
+#
+# Guardrails: lowness gate L(i) ≥ 0.45 (score ≤ 55) — nothing is named on a
+# balanced profile; separation gate — a top-two within 25% is named as a
+# pair, never a false single winner. "calm" (PSS-10) is not a W dimension:
+# in the locked spec stress feeds the EM composite rather than standing
+# alone, so it can colour the report but never carries leverage.
 
-LEVERAGE_GATE = 55  # only dimensions below Steady are candidates
+SPEC_CODE_TO_KEY = {
+    "PH": "physical", "EM": "emotional", "EN": "energy",
+    "RS": "relationships", "MS": "meaning", "AC": "accomplishment",
+    "FW": "financial", "IG": "growth", "EC": "environment",
+}
+KEY_TO_SPEC_CODE = {v: k for k, v in SPEC_CODE_TO_KEY.items()}
 
-LEVERAGE_WEIGHTS = {
-    "relationships":  0.85,
-    "calm":           0.80,
-    "financial":      0.75,
-    "accomplishment": 0.70,
-    "meaning":        0.65,
-    "emotional":      0.50,
+# v1 literature-prior influence matrix W[i][j]: row i drives column j.
+# 0 none · 0.2 weak · 0.4 moderate · 0.6 strong · 0.8 very strong.
+W_MATRIX = {
+    "PH": {"EM": 0.5, "EN": 0.8, "RS": 0.2, "MS": 0.1, "AC": 0.3, "FW": 0.0, "IG": 0.2, "EC": 0.0},
+    "EM": {"PH": 0.5, "EN": 0.6, "RS": 0.4, "MS": 0.3, "AC": 0.4, "FW": 0.2, "IG": 0.4, "EC": 0.1},
+    "EN": {"PH": 0.2, "EM": 0.3, "RS": 0.3, "MS": 0.2, "AC": 0.5, "FW": 0.2, "IG": 0.4, "EC": 0.1},
+    "RS": {"PH": 0.1, "EM": 0.5, "EN": 0.3, "MS": 0.4, "AC": 0.2, "FW": 0.1, "IG": 0.2, "EC": 0.3},
+    "MS": {"PH": 0.1, "EM": 0.4, "EN": 0.4, "RS": 0.3, "AC": 0.4, "FW": 0.1, "IG": 0.3, "EC": 0.2},
+    "AC": {"PH": 0.1, "EM": 0.3, "EN": 0.4, "RS": 0.2, "MS": 0.3, "FW": 0.4, "IG": 0.3, "EC": 0.1},
+    "FW": {"PH": 0.2, "EM": 0.6, "EN": 0.3, "RS": 0.4, "MS": 0.2, "AC": 0.3, "IG": 0.2, "EC": 0.2},
+    "IG": {"PH": 0.0, "EM": 0.2, "EN": 0.3, "RS": 0.2, "MS": 0.4, "AC": 0.3, "FW": 0.1, "EC": 0.1},
+    "EC": {"PH": 0.3, "EM": 0.4, "EN": 0.2, "RS": 0.3, "MS": 0.2, "AC": 0.1, "FW": 0.1, "IG": 0.2},
+}
+
+LEVERAGE_GATE = 55            # score ≤ 55 ⇔ L ≥ 0.45: candidate to be named
+LOWNESS_GATE = 0.45
+INFLOW_PENALTY = 0.7
+SEPARATION_RATIO = 0.25       # top-two within 25% → name the pair
+PRESSURE_BONUS = 1.25
+
+# Conservative keyword map from named active pressures (input 1.3) to the
+# dimension whose leverage they corroborate. Workload/deadline pressure is
+# deliberately unmapped: per the spec's worked trace, work stress is not
+# personal-finance stress.
+PRESSURE_KEYWORDS = {
+    "FW": ("money", "financ", "debt", "rent", "bill", "income", "loan"),
+    "PH": ("health", "body", "pain", "sleep", "illness", "injury"),
+    "RS": ("relationship", "family", "partner", "friend", "lonel", "marriage"),
+    "EN": ("energy", "exhaust", "tired", "fatigue", "burn"),
 }
 
 LEVERAGE_HEADLINES = {
-    "relationships":  "Connection is the area most closely linked with the rest of your current picture. When connection gets a little care, the surrounding areas often ease alongside it.",
-    "calm":           "Day-to-day stress load is the area most closely linked with the rest of your current picture. Small moments of decompression tend to give the other areas more room.",
-    "financial":      "Financial pressure is the area most closely linked with the rest of your current picture. Even small steps toward clarity here often free up attention everywhere else.",
-    "accomplishment": "Your sense of agency is the area most closely linked with the rest of your current picture. One small, fully-yours win at a time tends to loosen the whole pattern.",
-    "meaning":        "Meaning and purpose is the area most closely linked with the rest of your current picture. Reconnecting with one thing that matters to you can quietly lift the rest.",
+    "physical":       "Body and recovery is the area most closely linked with the rest of your current picture. When rest gets even a little easier, the areas that run on it tend to ease too.",
     "emotional":      "Everyday emotional wellbeing is the area most closely linked with the rest of your current picture. Gentle, consistent care here tends to steady the other areas too.",
+    "energy":         "Everyday energy is the area most closely linked with the rest of your current picture. Small, kind changes to how energy is spent and restored tend to ripple outward.",
+    "relationships":  "Connection is the area most closely linked with the rest of your current picture. When connection gets a little care, the surrounding areas often ease alongside it.",
+    "meaning":        "Meaning and purpose is the area most closely linked with the rest of your current picture. Reconnecting with one thing that matters to you can quietly lift the rest.",
+    "accomplishment": "Your sense of agency is the area most closely linked with the rest of your current picture. One small, fully-yours win at a time tends to loosen the whole pattern.",
+    "financial":      "Financial pressure is the area most closely linked with the rest of your current picture. Even small steps toward clarity here often free up attention everywhere else.",
+    "growth":         "Curiosity and growth is the area most closely linked with the rest of your current picture. A little unhurried space for what interests you tends to feed the rest.",
+    "environment":    "Your surroundings are the area most closely linked with the rest of your current picture. Small changes to the spaces you live in tend to give everything else more room.",
 }
 
 LEVERAGE_FRAMING = (
@@ -229,18 +267,62 @@ LEVERAGE_FRAMING = (
 )
 
 
-def calculate_leverage(dimensions: dict) -> dict | None:
-    candidates = {}
-    for key, weight in LEVERAGE_WEIGHTS.items():
+def _pressure_matches(code: str, active_pressures: list[str] | None) -> bool:
+    if not active_pressures:
+        return False
+    keywords = PRESSURE_KEYWORDS.get(code, ())
+    for pressure in active_pressures:
+        text = str(pressure).lower()
+        if any(k in text for k in keywords):
+            return True
+    return False
+
+
+def calculate_leverage(dimensions: dict, active_pressures: list[str] | None = None) -> dict | None:
+    # Continuous lowness for every scored W dimension; unscored dimensions
+    # neither drive nor receive (skip-renormalisation convention, A6).
+    lowness = {}
+    for code, key in SPEC_CODE_TO_KEY.items():
         entry = dimensions.get(key)
-        if entry and entry["score"] is not None and entry["score"] < LEVERAGE_GATE:
-            candidates[key] = (100 - entry["score"]) * weight
-    if not candidates:
+        if entry and entry["score"] is not None:
+            lowness[code] = (100.0 - entry["score"]) / 100.0
+
+    scores = {}
+    for code, L_i in lowness.items():
+        if L_i < LOWNESS_GATE:
+            continue  # not low enough to lead with
+        out_to_low = sum(W_MATRIX[code][j] * lowness[j] for j in lowness if j != code)
+        in_from_low = sum(W_MATRIX[j][code] * lowness[j] for j in lowness if j != code)
+        bonus = PRESSURE_BONUS if _pressure_matches(code, active_pressures) else 1.0
+        scores[code] = L_i * (out_to_low - INFLOW_PENALTY * in_from_low) * bonus
+
+    if not scores:
         return None
-    top = max(candidates, key=candidates.get)
-    return {
-        "dimension": top,
-        "label": dimensions[top]["label"],
-        "headline": LEVERAGE_HEADLINES[top],
+
+    ranked = sorted(scores, key=scores.get, reverse=True)
+    top = ranked[0]
+    top_key = SPEC_CODE_TO_KEY[top]
+
+    # Separation gate: a runner-up within 25% of the winner is named as a
+    # pair — the engine refuses to crown a false single winner.
+    secondary_key = None
+    if len(ranked) > 1:
+        second = ranked[1]
+        if scores[top] > 0 and (scores[top] - scores[second]) <= SEPARATION_RATIO * abs(scores[top]):
+            secondary_key = SPEC_CODE_TO_KEY[second]
+
+    result = {
+        "dimension": top_key,
+        "label": dimensions[top_key]["label"],
+        "headline": LEVERAGE_HEADLINES[top_key],
         "framing": LEVERAGE_FRAMING,
+        "secondary": secondary_key,
+        "secondary_label": dimensions[secondary_key]["label"] if secondary_key else None,
     }
+    if secondary_key:
+        result["headline"] = (
+            f"{dimensions[top_key]['label']} and {dimensions[secondary_key]['label'].lower()} "
+            "are moving together as the areas most closely linked with the rest of your current "
+            "picture. Care for either tends to ease both."
+        )
+    return result

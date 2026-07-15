@@ -138,8 +138,8 @@ class TestContentRouting:
         assert route_content(None, 5, "Anywhere") == MAINTENANCE_HABIT
 
     def test_every_leverage_dimension_has_a_habit(self):
-        from scoring import LEVERAGE_WEIGHTS
-        for key in LEVERAGE_WEIGHTS:
+        from scoring import LEVERAGE_HEADLINES
+        for key in LEVERAGE_HEADLINES:
             habit = route_content(key, 60, "Anywhere")
             assert habit["title"] != GROUNDING_HABIT["title"], key
 

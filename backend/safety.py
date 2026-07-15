@@ -15,7 +15,7 @@ import os
 # WHO-5 scaled score at or below this signals deep depletion.
 SEVERE_DEPLETION_THRESHOLD = 28
 
-# A dimension below this is in the "Asking for care" band.
+# A dimension below this is in the "Depleted" band.
 LOW_BAND_THRESHOLD = 40
 
 SUPPORT_POINTER = os.getenv("LEWIS_SUPPORT_URL", "findahelpline.com")

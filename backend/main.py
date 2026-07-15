@@ -23,8 +23,10 @@ from scoring import (
     calculate_who5, calculate_pss10, calculate_ucla3, calculate_gse,
     calculate_promis, calculate_cfpb5, calculate_diener, calculate_ins,
     calculate_swls, calculate_ph, calculate_en, build_dimensions, bright_spot, calculate_leverage,
-    band_for,
+    band_for, KEY_TO_SPEC_CODE, SPEC_CODE_TO_KEY,
 )
+from corpus import map_to_corpus
+from pattern import run_pattern_engine
 from safety import evaluate_safety
 from content import route_content
 from narrative import build_road_a, NERVOUS_SYSTEM_PHRASES, BODY_ZONE_LABELS
@@ -233,7 +235,9 @@ def calculate_full_assessment(payload: FullAssessmentInput):
     })
 
     safety = evaluate_safety(who5_res["normalized_score"], dimensions)
-    leverage = None if safety["gentle_mode"] else calculate_leverage(dimensions)
+    leverage = None if safety["gentle_mode"] else calculate_leverage(
+        dimensions, active_pressures=payload.active_pressures
+    )
     bright_key = bright_spot(dimensions)
 
     habit = route_content(
@@ -242,6 +246,51 @@ def calculate_full_assessment(payload: FullAssessmentInput):
         payload.current_environment,
         gentle=safety["gentle_mode"],
     )
+
+    context_dict = {
+        "cumulativeLoad_raw": payload.lifeStability, # Approximation
+        "recoveryResponsiveness": payload.recoveryResponsiveness,
+        "stressPatternClusters": payload.stressPatternClusters,
+        "nervousSystemState": payload.nervousSystemState,
+        "dayRhythmMap_zones": {}, # Approximated
+        "body_awareness": payload.body_awareness,
+        "flags": payload.flags,
+        "relationalContext": payload.relationalContext,
+        "priority_rank": payload.priority_rank,
+        "culturalBelonging": payload.culturalBelonging,
+        "lifeStability_str": payload.lifeStability,
+        "supportPreference": payload.supportPreferences[0] if payload.supportPreferences else None,
+        "brightSpotCheck": payload.brightSpotCheck,
+        "priorityTensionCheck_confirmed": payload.priorityTensionCheck,
+        "plannerReadiness": payload.plannerReadiness,
+    }
+    scores_dict = {k: v["score"] for k, v in dimensions.items()}
+    patterns, portrait = run_pattern_engine(
+        scores_dict,
+        who5_res["normalized_score"],
+        context_dict,
+        safety,
+        leverage["dimension"] if leverage else None
+    )
+
+    # Similarity mapping (V1): state-only, read-only over the assessment.
+    # Scores, bands, leverage, and safety are already final at this point —
+    # the corpus can only add coarse-position words and (once real consenting
+    # profiles exist) soft ranking priors. Never demographics, never safety.
+    similarity = map_to_corpus(
+        {code: dimensions[key]["score"] for code, key in SPEC_CODE_TO_KEY.items()},
+        {
+            "leverage": KEY_TO_SPEC_CODE.get(leverage["dimension"]) if leverage else None,
+            "nervous_system_state": payload.nervousSystemState,
+            "readiness": payload.plannerReadiness,
+            "support_preference": payload.supportPreferences[0] if payload.supportPreferences else None,
+            "portrait": portrait["id"] if portrait else None,
+            "stress_pattern": next((p["id"] for p in patterns if p["id"] == "stress_load_pattern"), None)
+        },
+    )
+    for key in dimensions:
+        code = KEY_TO_SPEC_CODE.get(key)
+        dimensions[key]["position"] = similarity["positions"].get(code) if code else None
 
     context = {
         "arrival_word": payload.arrival_word,
@@ -266,6 +315,13 @@ def calculate_full_assessment(payload: FullAssessmentInput):
             "unscored_areas": [d["label"] for d in dimensions.values() if d["score"] is None],
             "bright_spot": dimensions[bright_key]["label"] if bright_key else None,
             "leverage_note": leverage["headline"] if leverage else None,
+            # Coarse positions vs the reference corpus — words only, and the
+            # prompt + validator both forbid turning them into numbers.
+            "coarse_positions": {
+                d["label"]: d["position"]
+                for d in dimensions.values()
+                if d.get("position") is not None
+            },
             "top_priority": payload.priority_rank[0] if payload.priority_rank else None,
             "active_pressures": payload.active_pressures[:6],
             "nervous_system_pattern": NERVOUS_SYSTEM_PHRASES.get(payload.nervousSystemState or ""),
@@ -297,4 +353,14 @@ def calculate_full_assessment(payload: FullAssessmentInput):
         "prescription": {"habit_title": habit["title"], "micro_action": habit["action"]},
         "narrative": narrative_text,
         "narrative_source": source,
+        "similarity": {
+            "corpus_version": similarity["corpus_version"],
+            "corpus_is_synthetic": similarity["corpus_is_synthetic"],
+            "matched": similarity["matched"],
+            "neighbours": similarity["neighbours"],
+            "effectiveness_priors": similarity["effectiveness_priors"],
+            "priors_note": similarity["priors_note"],
+        },
+        "patterns": patterns,
+        "portrait": portrait,
     }

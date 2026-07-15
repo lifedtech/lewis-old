@@ -1,3 +1,38 @@
+# LEWIS Core Engine - Updates (Version 1.2.0 - 14 July 2026)
+
+The 10,000-profile synthetic seed corpus (`doc/lewis_10000_scores.xlsx`, new spec set of 14 July) is now wired into the engine. Full analysis + plan: artifact "The 10,000-Profile Corpus: Analysis & Implementation Plan".
+
+## 1. Spec-exact W-matrix leverage engine (`backend/scoring.py`)
+- The flat 6-dimension weight table is replaced by the locked Layer-3 §9 engine over the full v1 influence matrix W (Resolutions C1): `Leverage(i) = L(i)·(Σ W[i][j]·L(j) − 0.7·Σ W[j][i]·L(j)) · PressureBonus(i)`, lowness gate L ≥ 0.45 (score ≤ 55, now inclusive — matching the corpus), separation gate (top-two within 25% → named as a pair via new `secondary`/`secondary_label` fields), ×1.25 pressure bonus from `active_pressures` (conservative keyword map; workload deliberately unmapped per the spec's worked trace).
+- Physical, Energy, Growth and Environment can now win leverage (previously impossible; the corpus says PH wins 25.4% of the time). `calm` (PSS-10) is no longer a leverage candidate — in the locked spec stress feeds the EM composite rather than standing alone.
+- **Validated against the corpus generator: 10,000/10,000 rows reproduced** (97.3% exact; the remaining 2.7% are exactly the rows where the generator's unrecorded pressure bonus fired — verified case-by-case). A 500-row regression test now guards this.
+- `content.py` gains SMALL habits for the newly reachable `physical` (h4) and `energy` (h5) leverage dimensions.
+
+## 2. Similarity corpus engine, V1 rule-based (`backend/corpus.py`, new)
+- Loads `backend/data/lewis_10000_scores.csv` (canonical CSV generated from the xlsx; the byte-different but content-identical `doc/lewis_10000_scores(1).xlsx` duplicate was removed). Stdlib-only, ~90 ms warm per request including the 10k k-NN.
+- Implements the locked V1 spec: state-only vector, block similarity `0.50·score + 0.20·state + 0.15·friction + 0.15·pref` (weights renormalise over the blocks a live user can populate), k-NN k=40, k_min=30 floor, SIM_FLOOR 0.50 (all env-tunable), fallback to archetype-level context below the floor.
+- **Hard invariants enforced in code + tests**: demographics and safety flags raise `ValueError` if they ever reach the vector; effectiveness priors are neutral (`{}`) because every corpus row is `is_synthetic` — no outcome claim is ever drawn from synthetic rows. The engine is read-only over scores/bands/leverage/safety.
+- Coarse-position service: per-dimension corpus terciles → `lower/middle/higher` words only.
+
+## 3. Report wiring (`main.py`, `llm.py`)
+- Every scored W dimension in the response now carries a `position` word; the response gains a `similarity` block (corpus version, synthetic flag, matched/neighbour count, neutral priors + note).
+- Road-B voicing receives `coarse_positions` and a new prompt rule: positions may be voiced only as words ("in the lower/middle/higher part of the range seen across many check-ins"), never a number/rank/percentile. Road A is untouched and remains complete without the LLM.
+- Verified live: Road A path 200 in ~90 ms warm; Road B path returns `narrative_source: road_b`, digit-free, using the allowed range wording. All 66 backend tests pass (17 new in `tests/test_corpus.py` + leverage W-matrix tests).
+
+## 4. Band vocabulary aligned to the locked spec (F3 — decided)
+- `band_for` now returns **Thriving / Steady / Strained / Depleted** (thresholds unchanged: 70/55/40), matching the corpus and the Layer-3 spec. All consumers updated together: `narrative.py` BAND_PHRASES/BRIGHT_SPOT_LINES, the Road-B prompt band words in `llm.py`, and the band boundary tests.
+
+## 5. Pattern engine, first cut (`backend/pattern.py`, new)
+- Initial implementation of the Layer-4 pattern engine (LWI, texture patterns, portrait selection) wired into `/assessment/full`; the response now carries `patterns` and the selected portrait feeds the similarity state (portrait/stress_pattern keys are accepted but not yet used by the vector — vocab alignment with the corpus labels is the next step).
+- Frontend gains `Stage7_8FrictionScreen` in the journey (start of the friction-taxonomy intake, gap F4).
+
+## Known decisions deliberately NOT made silently (need product sign-off)
+- EM composite: locked spec defines EM = 0.80·invPSS10 + 0.20·WHO5-mood (stress inside EM, no standalone "calm"); backend keeps emotional=WHO-5 + calm=PSS-10 as separate dimensions.
+- Missing corpus companions: `lewis_10000_profiles.jsonl` / `lewis_10000_reports.jsonl` are named in the Dataset Summary but absent from `doc/` — needed for report-QA benchmarking.
+- No fine-tuning on the corpus: circular synthetic data; the constitution restricts learning to soft priors and wording.
+
+---
+
 # LEWIS Core Engine - Updates (Version 1.1.1 - 14 July 2026)
 
 Follow-up pass completing the frontend integration that v1.1.0 left unwired:
