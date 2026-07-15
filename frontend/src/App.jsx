@@ -49,6 +49,7 @@ import Stage7_4SupportScreen from './screens/Stage7_4SupportScreen.jsx'
 import Stage7_5PlannerScreen from './screens/Stage7_5PlannerScreen.jsx'
 import Stage7_6ValuesScreen from './screens/Stage7_6ValuesScreen.jsx'
 import Stage7_7FinancialAspScreen from './screens/Stage7_7FinancialAspScreen.jsx'
+import Stage7_8FrictionScreen from './screens/Stage7_8FrictionScreen.jsx'
 import Stage8_1EnergyArcScreen from './screens/Stage8_1EnergyArcScreen.jsx'
 import Stage8_2StressPatternScreen from './screens/Stage8_2StressPatternScreen.jsx'
 import Stage8_3RecoveryScreen from './screens/Stage8_3RecoveryScreen.jsx'
@@ -105,6 +106,7 @@ const SCREENS = {
   stage7_5Planner: Stage7_5PlannerScreen,
   stage7_6Values: Stage7_6ValuesScreen,
   stage7_7FinancialAsp: Stage7_7FinancialAspScreen,
+  stage7_8Friction: Stage7_8FrictionScreen,
   stage8_1EnergyArc: Stage8_1EnergyArcScreen,
   stage8_2StressPattern: Stage8_2StressPatternScreen,
   stage8_3Recovery: Stage8_3RecoveryScreen,
@@ -161,6 +163,7 @@ const SCREEN_ORDER = [
   'stage7_5Planner',
   'stage7_6Values',
   'stage7_7FinancialAsp',
+  'stage7_8Friction',
   'stage8_1EnergyArc',
   'stage8_2StressPattern',
   'stage8_3Recovery',

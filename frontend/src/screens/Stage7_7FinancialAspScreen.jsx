@@ -6,7 +6,7 @@ export default function Stage7_7FinancialAspScreen() {
   const { setScreen, setProfileField, financialAspiration } = useLewisStore()
 
   const handleNext = () => {
-    setScreen('stage8_1EnergyArc')
+    setScreen('stage7_8Friction')
   }
 
   const handleChange = (e) => {
