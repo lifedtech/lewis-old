@@ -1,0 +1,477 @@
+/* report.css — the LEWIS Insight Report, rendered as A4 "paper" pages.
+   Screen: framed light pages inside the dark app.
+   Print: exact A4 sheets, one report page per sheet, app chrome hidden.
+
+   Band palette (validated with the dataviz six-checks validator, light
+   surface #fcfcfb: lightness band, chroma floor, CVD separation and
+   normal-vision floor all PASS; the amber contrast WARN is relieved
+   because every band mark always carries its band word as text and the
+   nine-area table is a full table view of the same data):
+     Running on empty  #B0492F
+     Under pressure    #D89C4A
+     Steady            #3F6FB0
+     Strong            #2F7D3F
+*/
+
+.ir-root {
+  --ir-paper: #fcfcfb;
+  --ir-ink: #23262a;
+  --ir-sub: #55595e;
+  --ir-mute: #8a8f94;
+  --ir-hairline: #e4e1da;
+  --ir-tint: #f5f2ec;
+  --ir-tint-deep: #efeae0;
+  --ir-accent: #8a5a3b;
+  --ir-empty: #B0492F;
+  --ir-pressure: #D89C4A;
+  --ir-steady: #3F6FB0;
+  --ir-strong: #2F7D3F;
+  --ir-serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  --ir-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.ir-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ir-toolbar .ir-toolbar-note {
+  font-family: var(--ir-sans);
+  font-size: 13px;
+  color: var(--text-mute, #9aa0a6);
+}
+
+.ir-download-btn {
+  font-family: var(--ir-sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--dawn, #e67b5e);
+  background: linear-gradient(135deg, rgba(230, 123, 94, 0.9), rgba(200, 90, 60, 0.9));
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.ir-download-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(230, 123, 94, 0.35); }
+
+/* ------------------------------------------------------------------ */
+/* The page                                                            */
+/* ------------------------------------------------------------------ */
+
+.ir-page {
+  background: var(--ir-paper);
+  color: var(--ir-ink);
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  padding: 42px 48px 34px;
+  font-family: var(--ir-serif);
+  font-size: 13.5px;
+  line-height: 1.62;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 1040px;
+}
+
+.ir-page-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--ir-sans);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ir-mute);
+  border-bottom: 1px solid var(--ir-hairline);
+  padding-bottom: 8px;
+  margin-bottom: 22px;
+}
+
+.ir-page-foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--ir-sans);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ir-mute);
+  border-top: 1px solid var(--ir-hairline);
+  padding-top: 8px;
+  margin-top: 26px;
+}
+.ir-page-body { flex: 1 0 auto; }
+
+.ir-eyebrow {
+  font-family: var(--ir-sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ir-accent);
+  margin: 0 0 6px;
+}
+
+.ir-title {
+  font-family: var(--ir-serif);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.15;
+  margin: 0 0 10px;
+  color: var(--ir-ink);
+}
+
+.ir-subtitle {
+  font-size: 13.5px;
+  color: var(--ir-sub);
+  font-style: italic;
+  margin: 0 0 22px;
+  max-width: 60ch;
+}
+
+/* ------------------------------------------------------------------ */
+/* Blocks                                                              */
+/* ------------------------------------------------------------------ */
+
+.ir-para { margin: 0 0 14px; color: var(--ir-ink); }
+.ir-para-lead {
+  display: block;
+  font-family: var(--ir-sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ir-accent);
+  margin-bottom: 4px;
+}
+
+.ir-callout {
+  border: 1px solid var(--ir-hairline);
+  border-left: 3px solid var(--ir-accent);
+  background: var(--ir-tint);
+  border-radius: 3px;
+  padding: 14px 18px;
+  margin: 0 0 16px;
+}
+.ir-callout-label {
+  font-family: var(--ir-sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ir-accent);
+  margin: 0 0 6px;
+}
+.ir-callout-body { margin: 0; color: var(--ir-ink); }
+.ir-callout.synthesis { border-left-color: var(--ir-steady); }
+.ir-callout.synthesis .ir-callout-label { color: var(--ir-steady); }
+.ir-callout.care { border-left-color: var(--ir-empty); background: #f8efeb; }
+.ir-callout.care .ir-callout-label { color: var(--ir-empty); }
+.ir-callout.free { border-left-color: var(--ir-strong); background: #eef4ee; }
+.ir-callout.free .ir-callout-label { color: var(--ir-strong); }
+.ir-callout.footer {
+  border: none;
+  border-top: 1px solid var(--ir-hairline);
+  background: none;
+  border-radius: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--ir-mute);
+  font-style: italic;
+  padding: 12px 6px 0;
+}
+
+.ir-cards { display: grid; gap: 12px; margin: 0 0 16px; }
+.ir-cards.cols-1 { grid-template-columns: 1fr; }
+.ir-cards.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.ir-cards.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.ir-cards.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+.ir-card {
+  border: 1px solid var(--ir-hairline);
+  border-radius: 3px;
+  padding: 12px 14px;
+  background: #fff;
+}
+.ir-card-label {
+  font-family: var(--ir-sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ir-accent);
+  margin: 0 0 5px;
+}
+.ir-card-title {
+  font-family: var(--ir-serif);
+  font-size: 15.5px;
+  margin: 0 0 5px;
+  color: var(--ir-ink);
+}
+.ir-card-body { margin: 0; font-size: 12.5px; color: var(--ir-sub); }
+
+/* Band words strip (page 2) */
+.ir-bandwords { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 4px 0 16px; }
+.ir-bandword { border: 1px solid var(--ir-hairline); border-radius: 3px; padding: 10px 12px; background: #fff; }
+.ir-bandword-name {
+  font-family: var(--ir-sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+}
+.ir-bandword-gloss { font-size: 11.5px; color: var(--ir-sub); }
+
+.ir-band-chip { width: 10px; height: 10px; border-radius: 2px; flex: 0 0 auto; }
+
+/* Bands list: name + four-step bar + word */
+.ir-bands { margin: 0 0 16px; }
+.ir-bands-title {
+  font-family: var(--ir-sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ir-accent);
+  margin: 0 0 8px;
+}
+.ir-band-row {
+  display: grid;
+  grid-template-columns: 1fr 96px 130px;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--ir-hairline);
+  font-size: 12.5px;
+}
+.ir-band-steps { display: flex; gap: 3px; }
+.ir-band-step { width: 20px; height: 8px; border-radius: 2px; background: var(--ir-tint-deep); }
+.ir-band-word { font-family: var(--ir-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-align: right; }
+
+/* Tables */
+.ir-table-wrap { margin: 0 0 16px; overflow-x: auto; }
+.ir-table-title {
+  font-family: var(--ir-sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ir-accent);
+  margin: 0 0 8px;
+}
+.ir-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ir-table th {
+  font-family: var(--ir-sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ir-mute);
+  text-align: left;
+  padding: 6px 10px 6px 0;
+  border-bottom: 1px solid var(--ir-ink);
+}
+.ir-table td {
+  padding: 7px 10px 7px 0;
+  border-bottom: 1px solid var(--ir-hairline);
+  vertical-align: top;
+  color: var(--ir-sub);
+}
+.ir-table td:first-child { color: var(--ir-ink); font-weight: 500; white-space: nowrap; }
+
+/* Wheel */
+.ir-wheel { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: center; margin: 0 0 16px; }
+.ir-wheel svg { width: 100%; height: auto; }
+.ir-wheel-note { font-size: 11px; color: var(--ir-mute); font-style: italic; margin-top: 6px; }
+.ir-wheel-center-band { font-family: var(--ir-sans); font-weight: 700; }
+
+/* Day curve, load bar, body map */
+.ir-daycurve { border: 1px solid var(--ir-hairline); border-radius: 3px; background: #fff; padding: 14px 16px 10px; margin: 0 0 14px; }
+.ir-daycurve svg { width: 100%; height: auto; display: block; }
+.ir-viz-note { font-size: 10.5px; color: var(--ir-mute); font-style: italic; margin: 6px 0 0; }
+
+.ir-loadbar { border: 1px solid var(--ir-hairline); border-radius: 3px; background: #fff; padding: 12px 16px; margin: 0 0 14px; }
+.ir-loadbar-track { display: flex; gap: 4px; margin: 8px 0 6px; }
+.ir-loadbar-seg { flex: 1; height: 10px; border-radius: 2px; background: var(--ir-tint-deep); }
+.ir-loadbar-labels { display: flex; justify-content: space-between; font-family: var(--ir-sans); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ir-mute); }
+.ir-loadbar-labels .active { color: var(--ir-ink); font-weight: 700; }
+
+.ir-bodymap { border: 1px solid var(--ir-hairline); border-radius: 3px; background: #fff; padding: 12px 16px; margin: 0 0 14px; }
+.ir-bodymap-zones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.ir-bodymap-zone {
+  font-family: var(--ir-sans);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--ir-empty);
+  color: var(--ir-empty);
+  background: #faf1ee;
+}
+
+/* Flow (page 10) */
+.ir-flow { margin: 0 0 16px; }
+.ir-flow-steps { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 10px; align-items: stretch; }
+.ir-flow-steps.n1 { grid-template-columns: 1fr; }
+.ir-flow-steps.n2 { grid-template-columns: 1fr auto 1fr; }
+.ir-flow-step { border: 1px solid var(--ir-hairline); border-radius: 3px; background: #fff; padding: 12px 14px; }
+.ir-flow-arrow { align-self: center; color: var(--ir-mute); font-size: 18px; }
+.ir-flow-tag { font-family: var(--ir-sans); font-size: 9px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ir-accent); margin: 0 0 4px; }
+.ir-flow-area { font-family: var(--ir-serif); font-size: 15px; margin: 0 0 4px; }
+.ir-flow-text { font-size: 11.5px; color: var(--ir-sub); margin: 0; }
+.ir-flow-first {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  background: var(--ir-tint);
+  border-radius: 3px;
+  font-style: italic;
+  text-align: center;
+  color: var(--ir-ink);
+}
+
+/* Closer-look area block */
+.ir-area { margin: 0 0 18px; }
+.ir-area-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--ir-ink);
+  padding-bottom: 5px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.ir-area-name { font-family: var(--ir-serif); font-size: 16.5px; }
+.ir-area-band {
+  font-family: var(--ir-sans);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-left: 10px;
+}
+.ir-area-stance { font-size: 11px; color: var(--ir-mute); font-style: italic; }
+.ir-area-para { margin: 0 0 8px; font-size: 12.5px; color: var(--ir-sub); }
+.ir-area-para b { color: var(--ir-ink); font-weight: 600; }
+
+/* Practice (page 11) */
+.ir-practice { border: 1px solid var(--ir-strong); border-radius: 3px; overflow: hidden; margin: 0 0 16px; background: #fff; }
+.ir-practice-tag {
+  font-family: var(--ir-sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--ir-strong);
+  padding: 7px 16px;
+}
+.ir-practice-title { font-family: var(--ir-serif); font-size: 24px; margin: 12px 16px 10px; }
+.ir-practice-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--ir-hairline); }
+.ir-practice-col { padding: 12px 16px; border-right: 1px solid var(--ir-hairline); }
+.ir-practice-col:last-child { border-right: none; }
+.ir-practice-col-label { font-family: var(--ir-sans); font-size: 9px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ir-strong); margin: 0 0 5px; }
+.ir-practice-col-text { font-size: 12px; color: var(--ir-sub); margin: 0; }
+
+/* Supports (page 12) */
+.ir-supports { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 0 16px; }
+.ir-support { border: 1px solid var(--ir-hairline); border-radius: 3px; background: #fff; padding: 12px 14px; }
+.ir-support-tag { font-family: var(--ir-sans); font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ir-steady); margin: 0 0 5px; }
+.ir-support-title { font-family: var(--ir-serif); font-size: 15.5px; margin: 0 0 5px; }
+.ir-support-body { font-size: 12px; color: var(--ir-sub); margin: 0 0 8px; }
+.ir-support-why { font-size: 12px; color: var(--ir-ink); margin: 0; padding: 8px 10px; background: var(--ir-tint); border-radius: 3px; }
+
+/* Program (page 13) */
+.ir-program { border: 1px solid var(--ir-hairline); border-radius: 3px; background: #fff; padding: 14px 16px; margin: 0 0 14px; }
+.ir-program-tag { font-family: var(--ir-sans); font-size: 9px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ir-accent); margin: 0 0 4px; }
+.ir-program-title { font-family: var(--ir-serif); font-size: 18px; margin: 0 0 8px; }
+.ir-program-section { margin: 0 0 8px; font-size: 12.5px; color: var(--ir-sub); }
+.ir-program-section b { color: var(--ir-ink); font-weight: 600; display: block; font-size: 10px; font-family: var(--ir-sans); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 3px; }
+
+/* Seven days */
+.ir-sevendays td:first-child { width: 30px; text-align: center; font-family: var(--ir-sans); font-weight: 700; }
+
+/* Cover (page 1) */
+.ir-cover { justify-content: center; text-align: center; }
+.ir-cover .ir-page-body { display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+.ir-cover-brand { font-family: var(--ir-sans); font-size: 11px; font-weight: 700; letter-spacing: 0.34em; text-transform: uppercase; color: var(--ir-accent); }
+.ir-cover-kicker { font-family: var(--ir-sans); font-size: 9.5px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--ir-mute); margin-top: 26px; }
+.ir-cover-title { font-family: var(--ir-serif); font-size: 44px; line-height: 1.08; margin: 14px 0; }
+.ir-cover-sub { font-size: 14.5px; color: var(--ir-sub); font-style: italic; max-width: 52ch; margin: 0 auto 22px; }
+.ir-cover-prepared { font-family: var(--ir-sans); font-size: 12px; letter-spacing: 0.08em; color: var(--ir-ink); margin-bottom: 4px; }
+.ir-cover-private { font-size: 11.5px; color: var(--ir-mute); font-style: italic; margin-bottom: 30px; }
+.ir-cover .ir-cards { text-align: left; max-width: 640px; margin: 0 auto 16px; }
+.ir-cover .ir-callout.footer { max-width: 640px; margin: 20px auto 0; }
+
+/* ------------------------------------------------------------------ */
+/* Print: exact A4, report only                                        */
+/* ------------------------------------------------------------------ */
+
+@page { size: A4 portrait; margin: 0; }
+
+@media print {
+  body.ir-printing { background: #fff !important; }
+  body.ir-printing * { visibility: hidden; }
+  body.ir-printing .ir-root, body.ir-printing .ir-root * { visibility: visible; }
+  body.ir-printing .ir-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    gap: 0;
+  }
+  body.ir-printing .ir-toolbar { display: none !important; }
+  .ir-page {
+    width: 210mm;
+    min-height: 296mm;
+    margin: 0 auto;
+    padding: 14mm 16mm 10mm;
+    box-shadow: none;
+    border-radius: 0;
+    page-break-after: always;
+    break-after: page;
+    font-size: 11.5pt;
+  }
+  .ir-page:last-child { page-break-after: auto; }
+  .ir-title { font-size: 24pt; }
+  .ir-cover-title { font-size: 34pt; }
+  .ir-page, .ir-card, .ir-callout, .ir-practice, .ir-support, .ir-program {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .ir-card, .ir-callout, .ir-area, .ir-support, .ir-program, .ir-flow-step,
+  .ir-table-wrap, .ir-practice, .ir-bands, .ir-daycurve, .ir-loadbar, .ir-bodymap {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* Small screens */
+@media (max-width: 720px) {
+  .ir-page { padding: 26px 20px 22px; min-height: 0; }
+  .ir-cards.cols-2, .ir-cards.cols-3, .ir-cards.cols-4 { grid-template-columns: 1fr; }
+  .ir-bandwords { grid-template-columns: repeat(2, 1fr); }
+  .ir-wheel { grid-template-columns: 1fr; }
+  .ir-flow-steps, .ir-flow-steps.n2 { grid-template-columns: 1fr; }
+  .ir-flow-arrow { transform: rotate(90deg); justify-self: center; }
+  .ir-supports { grid-template-columns: 1fr; }
+  .ir-practice-cols { grid-template-columns: 1fr; }
+  .ir-practice-col { border-right: none; border-bottom: 1px solid var(--ir-hairline); }
+  .ir-band-row { grid-template-columns: 1fr 84px 110px; }
+  .ir-cover-title { font-size: 32px; }
+}

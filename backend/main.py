@@ -11,6 +11,7 @@
 
 import os
 import logging
+from datetime import date
 from typing import Annotated, Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Request
@@ -33,6 +34,9 @@ from narrative import build_road_a, NERVOUS_SYSTEM_PHRASES, BODY_ZONE_LABELS
 from validator import validate_narrative
 from llm import generate_road_b, generate_pulse_road_b
 from security import GuardrailMiddleware
+from enrich import build_enriched_object
+from insight_report import build_insight_report
+from report_gate import check_report
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -90,6 +94,10 @@ class FullAssessmentInput(BaseModel):
     # LEWIS scores adults only. The frontend hard-stops minors before any
     # data is collected; this is the server-side backstop for direct calls.
     is_over_18: bool
+
+    # Report cover only (context, never scoring). Both optional.
+    name: Optional[ShortText] = None
+    location: Optional[ShortText] = None
 
     # SPINE instruments (0-based option indices; see scoring.py)
     who5: List[Score05] = Field(..., min_length=5, max_length=5)
@@ -304,16 +312,39 @@ def calculate_full_assessment(payload: FullAssessmentInput):
         "nervousSystemState": payload.nervousSystemState,
         "bodyMapZones": payload.bodyMapZones,
         "sleepQuality": payload.sleepQuality,
+        "recoveryResponsiveness": payload.recoveryResponsiveness,
     }
 
-    road_a_text = build_road_a(dimensions, leverage, bright_key, safety, context, habit)
+    road_a_text = build_road_a(dimensions, leverage, bright_key, safety, context, habit,
+                               patterns=patterns, portrait=portrait)
     narrative_text, source = road_a_text, "road_a"
 
     # Road B voicing: skipped entirely in gentle mode (safety overrides all),
     # and only ever shown after passing the validator.
     if not safety["gentle_mode"]:
+        stress_p = next((p for p in patterns if p and p.get("id") == "stress_load_pattern"), None)
+        tension_p = next((p for p in patterns if p and p.get("id") == "priority_tension"), None)
+        readiness_p = next((p for p in patterns if p and p.get("id") == "suggestion_readiness"), None)
         voicing = {
             "arrival_word": payload.arrival_word,
+            # State portrait and reflection patterns: describe how things
+            # show up, never why. Road B must frame them as reflections.
+            "portrait": portrait["label"] if portrait else None,
+            "stress_reflection": (
+                stress_p["label"] if stress_p and stress_p.get("label") != "Settled" else None
+            ),
+            "priority_tension": (
+                {
+                    "area": dimensions[tension_p["dimension"]]["label"],
+                    "firmness": tension_p.get("firmness", "plain"),
+                }
+                if tension_p and tension_p.get("dimension") in dimensions
+                and tension_p.get("firmness") != "withhold" else None
+            ),
+            "plan_size": readiness_p.get("stack_size") if readiness_p else None,
+            "keep_it_tiny_because_prior_attempts_didnt_stick": (
+                bool(readiness_p.get("shrink_with_why")) if readiness_p else False
+            ),
             "dimension_bands": {
                 d["label"]: d["band"] for d in dimensions.values() if d["band"] is not None
             },
@@ -345,9 +376,59 @@ def calculate_full_assessment(payload: FullAssessmentInput):
             else:
                 logger.warning("Road B rejected by validator: %s", "; ".join(reasons))
 
+    # --- Insight Report (Rulebook v3.0): enriched object -> 16-page spine ---
+    # The enriched object is the only input to generation; the self-check
+    # gate re-verifies the contract before the document leaves the server.
+    today = date.today()
+    friction_phrases = {
+        "money_friction": "money pressure",
+        "chronic_pain": "physical discomfort",
+        "feel_stuck": "feeling stuck",
+        "cant_follow_through": "follow through being hard",
+        "not_in_control": "time being out of your control",
+        "too_drained": "being too drained for anything new",
+        "standing_still": "a season of standing still",
+    }
+    friction = next(
+        (friction_phrases[f] for f in payload.flags if f in friction_phrases), None
+    )
+    report_context = {
+        "name": payload.name,
+        "location": payload.location,
+        "date": f"{today.day} {today.strftime('%B %Y')}",
+        "arrival_word": payload.arrival_word,
+        "priority_rank": payload.priority_rank,
+        "priority_confirmed": payload.priorityTensionCheck,
+        "active_pressures": payload.active_pressures,
+        "body_zones": payload.bodyMapZones,
+        "sleep_quality": payload.sleepQuality,
+        "recovery": payload.recoveryResponsiveness,
+        "nervous_system": payload.nervousSystemState,
+        "stress_clusters": payload.stressPatternClusters,
+        "energy_arc": payload.energyArc,
+        "breathing_before": payload.breathingBefore,
+        "breathing_after": payload.breathingAfter,
+        "support_preference": payload.supportPreferences[0] if payload.supportPreferences else None,
+        "sound_preference": payload.soundPreference,
+        "friction": friction,
+        "prior_attempts": payload.priorAttempts,
+    }
+    enriched = build_enriched_object(
+        dimensions, leverage, bright_key, safety, patterns, portrait, habit,
+        report_context,
+    )
+    insight_report = build_insight_report(enriched)
+    gate_issues = check_report(insight_report)
+    if gate_issues:
+        # The deterministic spine should never fail the gate; if it does,
+        # that is a template defect worth loud logging, and the report of
+        # record still ships (it is the only report there is).
+        logger.error("Insight report gate issues: %s", "; ".join(gate_issues))
+
     return {
         "status": "success",
         "schema_version": "1.1",
+        "insight_report": insight_report,
         "dimensions": dimensions,
         "leverage": leverage,
         "bright_spot": (

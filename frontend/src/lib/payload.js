@@ -100,6 +100,7 @@ export function buildFullAssessmentPayload(store) {
   }
 
   Object.assign(payload, {
+    name: store.name || null,
     ageCategory: store.ageCategory,
     gender: store.gender,
     identityRoles: store.identityRoles,
@@ -140,7 +141,9 @@ export function buildFullAssessmentPayload(store) {
     cumulativeLoad: store.cumulativeLoad,
     soundPreference: store.soundPreference,
     quickChoices: store.quickChoices,
-    flags: [],
+    // Friction flags from Stage 7.8 (previously dropped on the floor);
+    // 'none' is a UI-only sentinel the backend has no use for.
+    flags: (store.flags || []).filter((f) => f !== 'none'),
   })
 
   return { payload, missing }

@@ -7,11 +7,11 @@
 
 CONTENT_CATALOG = [
     {"id": "h1", "dimension": "calm", "title": "Box Breathing Reset", "time_required_min": 1, "environment": "Anywhere",
-     "action": "Inhale for 4s, hold for 4s, exhale for 4s, hold for 4s. Repeat 3 times."},
+     "action": "Inhale for four counts, hold for four, exhale for four, hold for four. Repeat three times."},
     {"id": "h2", "dimension": "relationships", "title": "The One-Text Pulse", "time_required_min": 1, "environment": "Anywhere",
      "action": "Send a simple message to an old friend: 'Hey, just saw something that reminded me of you!'"},
     {"id": "h3", "dimension": "emotional", "title": "The Wins Audit", "time_required_min": 3, "environment": "Desk",
-     "action": "Write down exactly 3 micro-wins that went well today."},
+     "action": "Write down exactly three micro-wins that went well today."},
     {"id": "h4", "dimension": "physical", "title": "The One-Exhale Anchor", "time_required_min": 1, "environment": "Anywhere",
      "action": "Once in bed tonight, take one long, slow exhale — just one. That's the whole thing."},
     {"id": "h5", "dimension": "energy", "title": "The Evening Wind-Down", "time_required_min": 2, "environment": "Anywhere",
@@ -32,7 +32,7 @@ GROUNDING_HABIT = {
     "id": "h0",
     "dimension": None,
     "title": "Universal Grounding Sequence",
-    "action": "Take 3 slow, deep diaphragmatic breaths. That is enough for today.",
+    "action": "Take three slow, deep diaphragmatic breaths. That is enough for today.",
     "time_required_min": 1,
     "environment": "Anywhere",
 }
@@ -41,7 +41,7 @@ MAINTENANCE_HABIT = {
     "id": "h11",
     "dimension": None,
     "title": "The Anchor Walk",
-    "action": "Take a 5-minute walk and name three things you notice along the way. Keep what works, working.",
+    "action": "Take a five-minute walk and name three things you notice along the way. Keep what works, working.",
     "time_required_min": 5,
     "environment": "Anywhere",
 }

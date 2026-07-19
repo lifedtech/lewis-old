@@ -130,6 +130,87 @@ class TestRoadA:
         assert "not yet have enough signal" in text.lower() or "does not yet have enough signal" in text
 
 
+class TestRoadAPatternWeaving:
+    """The reworked report: portrait, patterns, and readiness reach the text."""
+
+    def _build(self, patterns=None, portrait=None, leverage=None, gentle=False,
+               context_extra=None):
+        dims = _dims(financial=30.0)
+        lev = leverage if leverage is not None else calculate_leverage(dims)
+        safety = {"flags": ["all_low"] if gentle else [], "care_note": "note" if gentle else None,
+                  "gentle_mode": gentle}
+        context = {"arrival_word": "tired", "priority_rank": [], "active_pressures": [],
+                   "nervousSystemState": "sympathetic", "bodyMapZones": [], "sleepQuality": ""}
+        context.update(context_extra or {})
+        return build_road_a(dims, None if gentle else lev, bright_spot(dims), safety,
+                            context, GROUNDING_HABIT if gentle else MAINTENANCE_HABIT,
+                            patterns=patterns, portrait=portrait)
+
+    def test_portrait_opens_the_report(self):
+        text = self._build(portrait={"id": "carrying_a_lot", "label": "Carrying a lot right now"})
+        assert "carrying a lot lately" in text.lower()
+        assert text.index("carrying a lot lately") < text.index("What's working")
+
+    def test_stress_reflection_carries_the_caveat(self):
+        patterns = [{"id": "stress_load_pattern", "label": "Wired & hard to switch off",
+                     "confidence": "reflection"}]
+        text = self._build(patterns=patterns,
+                           context_extra={"recoveryResponsiveness": "still_tired"})
+        assert "wired & hard to switch off" in text.lower()
+        assert "rest hasn't been fully restoring you" in text
+        assert "a reflection to notice, not a test" in text.lower()
+
+    def test_priority_tension_spoken_when_fired(self):
+        patterns = [{"id": "priority_tension", "dimension": "financial",
+                     "surface": True, "firmness": "plain"}]
+        text = self._build(patterns=patterns)
+        assert "matters most right now" in text
+        assert "financial peace" in text.lower()
+
+    def test_priority_tension_withheld_on_not_quite(self):
+        patterns = [{"id": "priority_tension", "dimension": "financial",
+                     "surface": True, "firmness": "withhold"}]
+        text = self._build(patterns=patterns)
+        assert "matters most right now" not in text
+
+    def test_seven_days_sized_by_readiness(self):
+        tiny = self._build(patterns=[{"id": "suggestion_readiness", "stack_size": 1,
+                                      "shrink_with_why": False}])
+        assert "only goal is gentleness" in tiny
+        fuller = self._build(patterns=[{"id": "suggestion_readiness", "stack_size": 3,
+                                        "shrink_with_why": False}])
+        assert "second gentle practice" in fuller
+
+    def test_didnt_stick_shrinks_the_ask(self):
+        text = self._build(patterns=[{"id": "suggestion_readiness", "stack_size": 2,
+                                      "shrink_with_why": True}])
+        assert "almost too small to fail" in text
+
+    def test_sit_with_question_matches_leverage(self):
+        text = self._build()  # leverage lands on financial (only low dim)
+        assert "money worry" in text
+
+    def test_no_digits_anywhere(self):
+        import re as _re
+        patterns = [{"id": "stress_load_pattern", "label": "Wired & hard to switch off"},
+                    {"id": "suggestion_readiness", "stack_size": 2, "shrink_with_why": True}]
+        text = self._build(patterns=patterns,
+                           portrait={"id": "steady_ground", "label": "Steady ground"})
+        assert not _re.search(r"\d", text), "raw numbers must never reach the report"
+
+    def test_reworked_report_passes_validator(self):
+        patterns = [{"id": "stress_load_pattern", "label": "Wired & hard to switch off"},
+                    {"id": "priority_tension", "dimension": "financial",
+                     "surface": True, "firmness": "plain"},
+                    {"id": "suggestion_readiness", "stack_size": 1, "shrink_with_why": True}]
+        for portrait_id, label in [("steady_ground", "Steady ground"),
+                                   ("low_tank", "Running on a low tank"),
+                                   ("depleted_field", "Depleted across the board")]:
+            ok, reasons = validate_narrative(
+                self._build(patterns=patterns, portrait={"id": portrait_id, "label": label}))
+            assert ok, (portrait_id, reasons)
+
+
 class TestContentRouting:
     def test_gentle_always_grounds(self):
         assert route_content("financial", 60, "Anywhere", gentle=True) == GROUNDING_HABIT

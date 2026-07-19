@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"e:/lifed-LEWIS/.venv/Scripts/python.exe\" -m pytest tests -q)",
+      "Bash(python -c \"import pypdf; print\\('pypdf', pypdf.__version__\\)\")",
+      "Bash(python -c \"import fitz; print\\('pymupdf'\\)\")",
+      "Bash(python -c \"import pdfplumber; print\\('pdfplumber'\\)\")",
+      "Bash(pip install *)",
+      "Bash(python -c \"import pypdf; print\\('ok', pypdf.__version__\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(python -)",
+      "Bash(node scripts/validate_palette.js \"#B0492F,#D89C4A,#50749E,#3E7C46\" --mode light)"
+    ]
+  }
+}

@@ -4,6 +4,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
+import InsightReport from '../report/InsightReport.jsx'
 
 export default function MirrorScreen() {
   const setScreen = useLewisStore((s) => s.setScreen)
@@ -249,22 +250,29 @@ export default function MirrorScreen() {
         </>
       )}
 
-      {/* The LLM Insight Report Rendered as Markdown */}
-      <div className="mirror-card ai-report-content" style={{ marginBottom: '40px' }}>
-        <ReactMarkdown
-          components={{
-            h1: ({node, ...props}) => <h2 className="mirror-label notice" style={{ marginTop: '32px', marginBottom: '16px', fontSize: '16px' }} {...props} />,
-            h2: ({node, ...props}) => <h3 className="mirror-title" style={{ marginTop: '24px', marginBottom: '12px', fontSize: '18px' }} {...props} />,
-            p: ({node, ...props}) => <p className="mirror-text" style={{ marginBottom: '16px', lineHeight: '1.6' }} {...props} />,
-            ul: ({node, ...props}) => <ul style={{ listStyleType: 'disc', paddingLeft: '20px', marginBottom: '16px', color: 'var(--text-sub)' }} {...props} />,
-            li: ({node, ...props}) => <li style={{ marginBottom: '8px' }} {...props} />,
-            blockquote: ({node, ...props}) => <blockquote style={{ borderLeft: '4px solid var(--dawn)', paddingLeft: '16px', fontStyle: 'italic', color: 'var(--text-main)', background: 'var(--panel-border)', padding: '12px 16px', borderRadius: '4px', marginBottom: '16px' }} {...props} />,
-            strong: ({node, ...props}) => <strong style={{ color: 'var(--text-main)', fontWeight: 600 }} {...props} />
-          }}
-        >
-          {analysis?.narrative}
-        </ReactMarkdown>
-      </div>
+      {/* The full 16-page Insight Report (rulebook v3.0), downloadable as PDF.
+          Falls back to the legacy markdown narrative if the report is absent. */}
+      {analysis?.insight_report ? (
+        <div style={{ marginBottom: '40px' }}>
+          <InsightReport report={analysis.insight_report} />
+        </div>
+      ) : (
+        <div className="mirror-card ai-report-content" style={{ marginBottom: '40px' }}>
+          <ReactMarkdown
+            components={{
+              h1: ({node, ...props}) => <h2 className="mirror-label notice" style={{ marginTop: '32px', marginBottom: '16px', fontSize: '16px' }} {...props} />,
+              h2: ({node, ...props}) => <h3 className="mirror-title" style={{ marginTop: '24px', marginBottom: '12px', fontSize: '18px' }} {...props} />,
+              p: ({node, ...props}) => <p className="mirror-text" style={{ marginBottom: '16px', lineHeight: '1.6' }} {...props} />,
+              ul: ({node, ...props}) => <ul style={{ listStyleType: 'disc', paddingLeft: '20px', marginBottom: '16px', color: 'var(--text-sub)' }} {...props} />,
+              li: ({node, ...props}) => <li style={{ marginBottom: '8px' }} {...props} />,
+              blockquote: ({node, ...props}) => <blockquote style={{ borderLeft: '4px solid var(--dawn)', paddingLeft: '16px', fontStyle: 'italic', color: 'var(--text-main)', background: 'var(--panel-border)', padding: '12px 16px', borderRadius: '4px', marginBottom: '16px' }} {...props} />,
+              strong: ({node, ...props}) => <strong style={{ color: 'var(--text-main)', fontWeight: 600 }} {...props} />
+            }}
+          >
+            {analysis?.narrative}
+          </ReactMarkdown>
+        </div>
+      )}
 
       <p className="closing-line">LEWIS reflects. It never diagnoses.</p>
 

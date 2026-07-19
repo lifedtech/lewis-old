@@ -1,0 +1,1352 @@
+{
+ "version": "3.0",
+ "meta": {
+  "name": "Meera Nair",
+  "date": "19 July 2026",
+  "location": "Kochi",
+  "footer": "Private to you · a non-clinical wellbeing reflection",
+  "non_clinical_line": "LEWIS is a private, non-clinical reflection. It reads how life feels across nine areas and suggests what may fit. It does not diagnose, grade, or replace professional care."
+ },
+ "pages": [
+  {
+   "number": 1,
+   "eyebrow": "LIFED · LEWIS · FULL REFLECTION",
+   "title": "Your LEWIS Insight Report",
+   "subtitle": "A whole-person reading of what is holding you, what is stretched, how the pieces move together, and where a small change may travel furthest.",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Prepared for Meera Nair / 19 July 2026 / Kochi",
+     "lead": "YOUR COMPLETE WELLBEING REFLECTION"
+    },
+    {
+     "type": "paragraph",
+     "text": "A private reflection, prepared from your full journey.",
+     "lead": null
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "WHAT THIS REPORT IS",
+       "title": null,
+       "body": "A reflection of how your wellbeing is arranged right now, across nine areas of life, written to be read slowly and returned to."
+      },
+      {
+       "label": "HOW IT WAS BUILT",
+       "title": null,
+       "body": "Your answers were read using established wellbeing measures used in published research. The studies behind each area are listed in the appendix."
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": null,
+     "title": null,
+     "body": "LEWIS is a private, non-clinical reflection. It reads how life feels across nine areas and suggests what may fit. It does not diagnose, grade, or replace professional care.",
+     "variant": "footer"
+    }
+   ]
+  },
+  {
+   "number": 2,
+   "eyebrow": "ORIENTATION",
+   "title": "How to read this reflection",
+   "subtitle": "This report is built to be read slowly. It begins with what is already supporting you, names what is stretched, shows how the two connect, and only then suggests what to try.",
+   "blocks": [
+    {
+     "type": "callout",
+     "label": "THE CENTRAL IDEA",
+     "title": null,
+     "body": "This is a picture of how your wellbeing is arranged right now. It is a season, not a personality type, and not a verdict. A future reflection may look different, because your life can look different.",
+     "variant": "info"
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "FIRST",
+       "title": "Your whole picture",
+       "body": "Nine areas of life are read together, so a strong part of your life is never erased by one difficult stretch, and a difficult stretch is never hidden behind a capable exterior."
+      },
+      {
+       "label": "SECOND",
+       "title": "What moves together",
+       "body": "Some areas rise and fall alongside each other. Noticing which ones travel together helps you find the place where a small effort is likely to reach furthest."
+      },
+      {
+       "label": "THIRD",
+       "title": "The texture of your days",
+       "body": "Your rhythm, your stress pattern, where tension settles in your body, and how the short exercises felt all add colour to the picture."
+      },
+      {
+       "label": "FOURTH",
+       "title": "A right-sized next step",
+       "body": "Suggestions are matched to the area asking for care, what gets in your way, the kind of support you prefer, and how much plan genuinely fits your life this month."
+      }
+     ]
+    },
+    {
+     "type": "bandwords",
+     "items": [
+      {
+       "band": "Running on empty",
+       "gloss": "This area needs the gentlest care right now."
+      },
+      {
+       "band": "Under pressure",
+       "gloss": "Stretched, and asking for attention."
+      },
+      {
+       "band": "Steady",
+       "gloss": "Holding reliably, without strain."
+      },
+      {
+       "band": "Strong",
+       "gloss": "A real strength, and a place to stand."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "These four words are used instead of scores on purpose. A single sitting can place you honestly within a broad range, and a broad range is what this report gives you. A number would suggest a precision that no short reflection can carry, and it would invite you to grade yourself rather than understand yourself.",
+     "lead": null
+    },
+    {
+     "type": "callout",
+     "label": "WHAT THIS REPORT CAN SAY, AND WHAT IT CANNOT",
+     "title": null,
+     "body": "It can say how your wellbeing feels arranged today, which areas seem to travel together, and which small change is most likely to be worth your effort. It cannot say what caused what, how you will feel next month, or anything about your health in a medical sense. Where this report is confident, it speaks plainly. Where it is less certain, it says so rather than pretending.",
+     "variant": "info"
+    },
+    {
+     "type": "callout",
+     "label": "A NOTE ON COMPARISON",
+     "title": null,
+     "body": "You will not find yourself ranked against other people here. Comparison tends to produce anxiety rather than insight, and the honest answer to how do I compare usually needs far more information than one reflection can gather. This report compares you only to yourself, and invites you to do the same when you retake it.",
+     "variant": "info"
+    }
+   ]
+  },
+  {
+   "number": 3,
+   "eyebrow": "YOUR REFLECTION",
+   "title": "Where you are right now",
+   "subtitle": "Running on a low tank. A season, not a type.",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Running on a low tank. This describes your current season, not the kind of person you are.",
+     "lead": "YOUR REFLECTION"
+    },
+    {
+     "type": "paragraph",
+     "text": "You arrived with one word: \"stretched\". The full picture agrees, and locates it. Much of your life is standing on steadier ground than it may feel from the inside. What is asking for care sits underneath: your body, and the energy that runs on it.",
+     "lead": null
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "A PLACE TO STAND",
+       "title": "Relationships & support · Environment & belonging",
+       "body": "Your ground, doing real work. It holds you up."
+      },
+      {
+       "label": "ASKING FOR CARE",
+       "title": "Body & recovery",
+       "body": "Where effort may travel furthest right now. ★ Also what you said matters most"
+      },
+      {
+       "label": "SITS DOWNSTREAM",
+       "title": "Usable energy · Emotional calm",
+       "body": "Often eases as the starting point eases."
+      },
+      {
+       "label": "YOUR FIRST STEP",
+       "title": "The close laptop pause",
+       "body": "Small enough to survive a crowded day."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Your reflection has a distinctly uneven shape, and that unevenness is worth understanding. Relationships & support, Environment & belonging: these are not merely intact. They are doing real, load bearing work, and they are exactly why you keep functioning even when reserves run thin. They are also why the thinness can stay invisible to everyone around you.",
+     "lead": null
+    },
+    {
+     "type": "paragraph",
+     "text": "Underneath that, the pattern in financial steadiness, emotional calm and body and recovery reads stretched. Responsibility has been arriving on schedule. Recovery has not. The result is not simply feeling tired. It is having less usable reserve at the moment you want to begin something, and carrying the day further into the evening than you would choose.",
+     "lead": null
+    },
+    {
+     "type": "paragraph",
+     "text": "This is why the most useful starting point for you is not motivation, and it is not a bigger routine. It is one small, repeatable practice aimed at your body and recovery. If that reads as true to you, caring for it first may let the nearby areas ease on their own.",
+     "lead": null
+    },
+    {
+     "type": "callout",
+     "label": "WHAT MATTERS MOST TO YOU",
+     "title": null,
+     "body": "When asked what matters most right now, you placed physical ease and recovery at the top. It is also an area under real strain, and when that was reflected back to you, you confirmed it fits. That agreement is why this report speaks about it plainly rather than tentatively. The starting point is one you already recognise as yours.",
+     "variant": "info"
+    }
+   ]
+  },
+  {
+   "number": 4,
+   "eyebrow": "THE NINE AREAS",
+   "title": "The shape of your wellbeing",
+   "subtitle": "Nine areas of life, read together. The shape matters more than any single area, because it shows you where your strength is and where your effort is most needed.",
+   "blocks": [
+    {
+     "type": "wheel",
+     "overall": "Steady",
+     "items": [
+      {
+       "name": "Meaning & direction",
+       "band": "Strong",
+       "step": 4
+      },
+      {
+       "name": "Relationships & support",
+       "band": "Strong",
+       "step": 4
+      },
+      {
+       "name": "Environment & belonging",
+       "band": "Strong",
+       "step": 4
+      },
+      {
+       "name": "Curiosity & growth",
+       "band": "Strong",
+       "step": 4
+      },
+      {
+       "name": "Agency & work",
+       "band": "Steady",
+       "step": 3
+      },
+      {
+       "name": "Financial steadiness",
+       "band": "Under pressure",
+       "step": 2
+      },
+      {
+       "name": "Body & recovery",
+       "band": "Under pressure",
+       "step": 2
+      },
+      {
+       "name": "Emotional calm",
+       "band": "Under pressure",
+       "step": 2
+      },
+      {
+       "name": "Usable energy",
+       "band": "Under pressure",
+       "step": 2
+      }
+     ],
+     "note": "Each area grows in four steps only, matching the four words on the previous page."
+    },
+    {
+     "type": "bands",
+     "title": "YOUR AREAS, STRENGTHS FIRST",
+     "items": [
+      {
+       "name": "Meaning & direction",
+       "band": "Strong",
+       "step": 4
+      },
+      {
+       "name": "Relationships & support",
+       "band": "Strong",
+       "step": 4
+      },
+      {
+       "name": "Environment & belonging",
+       "band": "Strong",
+       "step": 4
+      },
+      {
+       "name": "Curiosity & growth",
+       "band": "Strong",
+       "step": 4
+      },
+      {
+       "name": "Agency & work",
+       "band": "Steady",
+       "step": 3
+      },
+      {
+       "name": "Financial steadiness",
+       "band": "Under pressure",
+       "step": 2
+      },
+      {
+       "name": "Body & recovery",
+       "band": "Under pressure",
+       "step": 2
+      },
+      {
+       "name": "Emotional calm",
+       "band": "Under pressure",
+       "step": 2
+      },
+      {
+       "name": "Usable energy",
+       "band": "Under pressure",
+       "step": 2
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "THE OVERALL SHAPE",
+     "title": null,
+     "body": "Steady overall, but uneven. The overall word describes the whole field. It does not cancel the genuine stretch in the areas asking for care. A shape like this usually means your strengths are quietly subsidising the areas that are stretched, which works for a while and is worth noticing before it stops working.",
+     "variant": "info"
+    },
+    {
+     "type": "table",
+     "title": "WHAT EACH AREA COVERS",
+     "columns": [
+      "Area",
+      "Your reading",
+      "What this area is asking about"
+     ],
+     "rows": [
+      [
+       "Meaning & direction",
+       "Strong",
+       "Whether your days connect to something that matters to you, and whether effort feels purposeful"
+      ],
+      [
+       "Relationships & support",
+       "Strong",
+       "Whether you have people you can be open with, and whether connection feels real rather than dutiful"
+      ],
+      [
+       "Environment & belonging",
+       "Strong",
+       "Whether your surroundings ground you, and whether you feel a sense of place where you live"
+      ],
+      [
+       "Curiosity & growth",
+       "Strong",
+       "Whether you still have appetite for learning and exploring, and space to follow it"
+      ],
+      [
+       "Agency & work",
+       "Steady",
+       "Whether your actions feel like they matter, and how far intention travels toward doing"
+      ],
+      [
+       "Financial steadiness",
+       "Under pressure",
+       "How money feels to live with, in terms of control and worry rather than income"
+      ],
+      [
+       "Body & recovery",
+       "Under pressure",
+       "Whether rest restores you, and whether your body has reserve behind its responsibilities"
+      ],
+      [
+       "Emotional calm",
+       "Under pressure",
+       "How much of life feels manageable, and whether the mind settles once the day is done"
+      ],
+      [
+       "Usable energy",
+       "Under pressure",
+       "Whether energy is available at the moments you actually need it"
+      ]
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "WHERE THIS REPORT IS MOST AND LEAST CERTAIN",
+     "title": null,
+     "body": "Most of your areas can be spoken about plainly, because your answers were clear and consistent. Body & recovery and Usable energy are described a little more carefully. They rest on a smaller, more indirect set of questions, so this report offers them as a reading you are invited to test against your own experience rather than as a settled conclusion. You will notice the wording shift accordingly when you reach them.",
+     "variant": "info"
+    }
+   ]
+  },
+  {
+   "number": 5,
+   "eyebrow": "HOW IT CONNECTS",
+   "title": "What seems to move together",
+   "subtitle": "These are areas that appear to rise and fall alongside each other in your reflection. They describe company, not cause. Knowing which areas travel together tells you where a single change is likely to reach more than one place.",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "In short: your body and recovery is the clearest place to begin, usable energy and emotional calm sit close alongside it, your strong areas stand apart as ground you can rely on while the rest steadies.",
+     "lead": "READ AS ONE SENTENCE"
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "THE CLEAREST LINK",
+       "title": "Body & recovery and usable energy",
+       "body": "When body and recovery is stretched, usable energy tends to feel it too. The two appear to move together in your reflection. This is company, not cause: it says where a single change is likely to reach more than one place, and nothing more."
+      },
+      {
+       "label": "THE SECOND LINK",
+       "title": "Body & recovery and emotional calm",
+       "body": "When body and recovery is stretched, emotional calm tends to feel it too. The two appear to move together in your reflection. This is company, not cause: it says where a single change is likely to reach more than one place, and nothing more."
+      },
+      {
+       "label": "YOUR PROTECTIVE GROUND",
+       "title": "Relationships & support and Environment & belonging",
+       "body": "These are genuinely holding, and they are practical resources rather than pleasant extras. They can protect your time, hold you gently accountable, and supply patience with yourself while the rest steadies."
+      },
+      {
+       "label": "WHERE TO BEGIN",
+       "title": "Body & recovery",
+       "body": "The most stretched area is not automatically the best place to start. Here, your body and recovery has the clearest links outward to what else is low, including your emotional calm, which means a small change there is likely to travel further than pushing directly at the lowest point."
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "WORTH HOLDING LIGHTLY",
+     "title": null,
+     "body": "This reflection comes from a single sitting, on a particular day. It can point you toward a useful place to start, but it cannot tell you what caused what. The honest test is whether this pattern shifts when your life shifts, which is exactly what the thirty day experiment later in this report is designed to help you notice.",
+     "variant": "info"
+    }
+   ]
+  },
+  {
+   "number": 6,
+   "eyebrow": "YOUR RHYTHM",
+   "title": "How stress is showing up",
+   "subtitle": "This is a picture of your lived pattern, drawn from your own words and choices. It is not a sleep study or a measurement of anything happening inside your body.",
+   "blocks": [
+    {
+     "type": "daycurve",
+     "points": [
+      {
+       "slot": "Morning",
+       "level": "Med"
+      },
+      {
+       "slot": "Afternoon",
+       "level": "Low"
+      },
+      {
+       "slot": "Evening",
+       "level": "High"
+      },
+      {
+       "slot": "Night",
+       "level": "Med"
+      }
+     ],
+     "note": "Drawn from how you described your own day. A pattern to notice, not a measurement."
+    },
+    {
+     "type": "loadbar",
+     "level": 1,
+     "label": "Light load",
+     "note": "Your accumulated demands, weighed against how well rest has been restoring you."
+    },
+    {
+     "type": "cards",
+     "columns": 3,
+     "items": [
+      {
+       "label": "YOUR STRESS PATTERN",
+       "title": "Wired and hard to switch off",
+       "body": "Drawn from your own description of how pressure has been showing up lately."
+      },
+      {
+       "label": "YOUR BREATHING MINUTE",
+       "title": "A little easier by the end",
+       "body": "A small shift appeared between the start and the end of your breathing minute, when nothing was forced. That is genuinely useful information: gentle settling is available to you when the practice is unforced."
+      },
+      {
+       "label": "YOUR RECOVERY",
+       "title": "Stopping is not yet fully restorative",
+       "body": "Rest is happening, but it has not been fully restoring you."
+      }
+     ]
+    },
+    {
+     "type": "bodymap",
+     "zones": [
+      "jaw and head",
+      "neck and shoulders",
+      "upper back"
+     ],
+     "note": "Where you noticed tension."
+    },
+    {
+     "type": "paragraph",
+     "text": "Your energy is not uniformly low. It moves through the day and lifts again late, and your pressure tends to lift alongside it. That combination is what makes stopping feel strangely effortful: the body is tired, but the day has not fully released you. Evenings then risk becoming a second working day in disguise, filled with planning, scrolling, or problem solving, when what you actually need is a softer landing.",
+     "lead": null
+    },
+    {
+     "type": "paragraph",
+     "text": "Your minute of quiet breathing is part of why your plan is sized the way it is. A modest shift, or none, points to a brief transition rather than a long routine. Small and repeatable will serve you better than ambitious and occasional.",
+     "lead": null
+    },
+    {
+     "type": "paragraph",
+     "text": "Tension clustered around your jaw and head, neck and shoulders and upper back, and you noticed it yourself. That matters. It means you are not disconnected from your body. You are carrying a lot in a body you can still hear, which is good news for how quickly small practices tend to land.",
+     "lead": null
+    },
+    {
+     "type": "callout",
+     "label": "WHY THIS SHAPES WHAT COMES NEXT",
+     "title": null,
+     "body": "Because stopping is not yet fully restorative for you, intensive challenges and high commitment programs are not the right first move, even where they look appealing. The sequence that fits your current pattern is to downshift first, and build later.",
+     "variant": "info"
+    }
+   ]
+  },
+  {
+   "number": 7,
+   "eyebrow": "A CLOSER LOOK · 1 OF 3",
+   "title": "Body & recovery, Emotional calm and Usable energy",
+   "subtitle": "The three areas closest to where you are being asked to begin. They are described together because, in this season, they are moving together.",
+   "blocks": [
+    {
+     "type": "area",
+     "name": "Body & recovery",
+     "band": "Under pressure",
+     "stance": "Offered as a reading to test against your experience",
+     "paras": [
+      {
+       "label": "What this means.",
+       "text": "Your body is holding, but with less margin than it deserves. Rest is happening, and it is only partly doing its job, so reserve is being spent slightly faster than it is being refilled."
+      },
+      {
+       "label": "What is distinctive.",
+       "text": "This is the stage where small changes still land quickly. The pattern has not hardened. A modest, repeatable act of recovery tends to be felt within days rather than weeks."
+      },
+      {
+       "label": "What to watch for.",
+       "text": "Notice the weeks when rest keeps getting traded away for one more useful thing. That trade always looks reasonable in the moment, and it is the main way this area drifts lower."
+      }
+     ]
+    },
+    {
+     "type": "area",
+     "name": "Emotional calm",
+     "band": "Under pressure",
+     "stance": "Spoken plainly, because your answers were consistent",
+     "paras": [
+      {
+       "label": "What this means.",
+       "text": "Your emotional world is not collapsing. It is carrying more activation than ease. Thoughts tend to stay in motion after the practical demands of the day have ended, so your mind keeps working a shift that your calendar says is already over."
+      },
+      {
+       "label": "What is distinctive about your pattern.",
+       "text": "It reads more wired than flat. You can still connect, care, and find meaning in your days. The difficulty is releasing momentum rather than generating it. That distinction matters, because it means gentleness will serve you better than force."
+      },
+      {
+       "label": "What to watch for.",
+       "text": "Notice whether your evenings quietly become a second working day. Planning, scrolling, and solving all feel productive, but when the real need is a softer landing they extend the day rather than closing it."
+      }
+     ]
+    },
+    {
+     "type": "area",
+     "name": "Usable energy",
+     "band": "Under pressure",
+     "stance": "Offered as a reading to test against your experience",
+     "paras": [
+      {
+       "label": "What this means.",
+       "text": "Energy has been present but stretched. Starting takes more than it should, and the day spends you a little faster than it refills you."
+      },
+      {
+       "label": "What is distinctive.",
+       "text": "The pattern reads like timing more than absence. Energy shows up, just not always at the moments you actually need it, which is a far more workable problem."
+      },
+      {
+       "label": "What to test.",
+       "text": "Try placing your most demanding task where your energy naturally rises, and watch whether beginning gets easier. Working with your rhythm is cheaper than overriding it."
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "READING THESE TOGETHER",
+     "title": null,
+     "body": "Emotional calm can be described plainly because your answers there were clear and consistent. Body & recovery and Usable energy are offered a little more carefully, because they rest on a smaller set of questions. This is deliberate. Where the picture is firm, this report says so. Where it is thinner, it says that too, and invites you to be the one who decides whether it fits.",
+     "variant": "synthesis"
+    }
+   ]
+  },
+  {
+   "number": 8,
+   "eyebrow": "A CLOSER LOOK · 2 OF 3",
+   "title": "Meaning & direction, Relationships & support and Agency & work",
+   "subtitle": "The steadier areas carrying you through this season, and how to turn each one from comfort into structure.",
+   "blocks": [
+    {
+     "type": "area",
+     "name": "Meaning & direction",
+     "band": "Strong",
+     "stance": "A genuine strength",
+     "paras": [
+      {
+       "label": "What is working.",
+       "text": "Your work and your care for the people around you still connect to a reason larger than the task list. That coherence is why difficult days feel like part of something for you, rather than merely repetitive."
+      },
+      {
+       "label": "The hidden cost.",
+       "text": "Meaning can make overextension feel noble. When purpose is strong, the body is often asked to subsidise commitments for longer than it can comfortably sustain. That is worth naming plainly, because it is the part most likely to go unnoticed."
+      },
+      {
+       "label": "How to use this strength.",
+       "text": "Let your sense of meaning justify recovery as part of your contribution, rather than as time stolen from it. The question is not whether rest is deserved. It is which form of recovery protects the life you actually value."
+      }
+     ]
+    },
+    {
+     "type": "area",
+     "name": "Relationships & support",
+     "band": "Strong",
+     "stance": "A genuine strength",
+     "paras": [
+      {
+       "label": "What is working.",
+       "text": "You have trusted people with whom openness feels possible, and the way you described sharing agreed with that picture. Connection here reads as emotionally real rather than merely social on paper, which is a meaningful difference."
+      },
+      {
+       "label": "How to use this strength.",
+       "text": "Ask your connections to protect what you are working on, not only to provide comfort afterwards. A simple boundary witnessed by someone close turns support into practical shelter."
+      },
+      {
+       "label": "What not to assume.",
+       "text": "Strong relationships do not mean unlimited availability, yours or theirs. Protecting one evening from obligation can honour your connections better than staying reachable while exhausted."
+      }
+     ]
+    },
+    {
+     "type": "area",
+     "name": "Agency & work",
+     "band": "Steady",
+     "stance": "Holding, and worth protecting",
+     "paras": [
+      {
+       "label": "What is working.",
+       "text": "You retain a workable sense that your actions matter. Tasks get completed, decisions still get made, and the distance between intending and doing is present but not overwhelming."
+      },
+      {
+       "label": "Where the strain shows.",
+       "text": "Transitions cost more than the work itself. Ending, switching roles, and restarting after fatigue read as harder than knowing what to do."
+      },
+      {
+       "label": "What to test.",
+       "text": "Put a visible end of day cue in place before reaching for any productivity technique. If your sense of agency eases as your recovery eases, this report's reading gains support."
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "YOUR STRENGTHS ARE THE PLAN, NOT THE BACKGROUND",
+     "title": null,
+     "body": "It would be easy to read the stronger areas of this report as pleasant context and skip to the problems. That would be a mistake in your case. These are the resources that make any plan survivable. They protect your time, hold you accountable without shame, and supply the patience you will need on the days the plan does not go well. The suggestions ahead deliberately spend these strengths rather than leaving them idle.",
+     "variant": "synthesis"
+    }
+   ]
+  },
+  {
+   "number": 9,
+   "eyebrow": "A CLOSER LOOK · 3 OF 3",
+   "title": "Financial steadiness, Curiosity & growth and Environment & belonging",
+   "subtitle": "The areas that quietly shape what is realistic for you, and what kind of support is likely to fit.",
+   "blocks": [
+    {
+     "type": "area",
+     "name": "Financial steadiness",
+     "band": "Under pressure",
+     "stance": "Spoken plainly, because your answers were consistent",
+     "paras": [
+      {
+       "label": "What this means.",
+       "text": "Money is present as a source of pressure. It is being managed, and the managing is taking real attention and some peace."
+      },
+      {
+       "label": "What is worth knowing.",
+       "text": "The free practices in this report come first, always. Nothing suggested here asks you to spend as a condition of feeling better."
+      },
+      {
+       "label": "What to protect.",
+       "text": "Guard against money worry doing its background hum during rest. A single contained moment for money attention each week tends to quiet the hum more than constant vigilance does."
+      }
+     ]
+    },
+    {
+     "type": "area",
+     "name": "Curiosity & growth",
+     "band": "Strong",
+     "stance": "A genuine strength",
+     "paras": [
+      {
+       "label": "What is working.",
+       "text": "Learning and growth are alive for you right now. New ideas are getting through, and you have been finding space to follow them."
+      },
+      {
+       "label": "How to spend it.",
+       "text": "Curiosity this available is worth aiming at something. Let one thread of interest deepen rather than staying wide, and it will start paying the rest of your life back."
+      },
+      {
+       "label": "What to protect.",
+       "text": "Protect the open space that makes this possible. Exploration is usually the first thing a crowded season deletes, and the deletion is rarely announced."
+      }
+     ]
+    },
+    {
+     "type": "area",
+     "name": "Environment & belonging",
+     "band": "Strong",
+     "stance": "A genuine strength",
+     "paras": [
+      {
+       "label": "What is working.",
+       "text": "Home and a familiar context give you genuine grounding. Your surroundings are not uniformly restorative, and the ground they give you is real and worth counting."
+      },
+      {
+       "label": "How to use this strength.",
+       "text": "Place your first habit exactly at the boundary between your more demanding environment and your restorative one. The setting itself then becomes part of the cue, and you have to remember less."
+      },
+      {
+       "label": "What this means for programs.",
+       "text": "Nearby, small group, culturally comfortable formats will suit you better than anonymous, high intensity experiences. Belonging should reduce the effort a program asks of you, never become another thing to adapt to."
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "HOW THESE SHAPE YOUR PLAN",
+     "title": null,
+     "body": "These areas do not need fixing first. What they do is set the boundaries of what is realistic for you. Your money says the free path is the right path, and every suggestion here respects that. Your curiosity says keep the reading short and honestly interesting. Your belonging says stay close to familiar settings and small groups. Every suggestion in the next pages sits inside those boundaries.",
+     "variant": "synthesis"
+    }
+   ]
+  },
+  {
+   "number": 10,
+   "eyebrow": "YOUR SUGGESTIONS · 1 OF 4",
+   "title": "Your improvement pathway",
+   "subtitle": "A focused plan, deliberately reduced to fit this particular season. Lower intensity is not lower ambition. It is the fit for right now.",
+   "blocks": [
+    {
+     "type": "flow",
+     "steps": [
+      {
+       "tag": "START HERE",
+       "area": "Body & recovery",
+       "text": "Begin where a small change is most likely to travel. Give this area one reliable, repeatable act of care."
+      },
+      {
+       "tag": "MAY RIPPLE TO",
+       "area": "Usable energy",
+       "text": "Often eases as the starting point eases, without being worked on directly."
+      },
+      {
+       "tag": "THEN SUPPORTS",
+       "area": "Emotional calm",
+       "text": "Sits in the same loop, and tends to follow once the first two steady."
+      }
+     ],
+     "first_move": "Your first move: After closing the laptop, pause with both feet supported and take two comfortable breaths, before anything else."
+    },
+    {
+     "type": "callout",
+     "label": "THE SHAPE OF THE RECOMMENDATION",
+     "title": null,
+     "body": "Downshift before building. Begin at the one place where your pressures, your pattern, and your day all meet. Keep the action small enough that a crowded day cannot defeat it. This plan is designed to survive your hardest ordinary day, not to impress your easiest one.",
+     "variant": "info"
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "YOUR FIRST PRIORITY",
+       "title": "Create one reliable seam",
+       "body": "Give your day one repeatable cue it can learn to trust. The aim is not instant change. It is a recognisable transition your body can learn to expect, the way a door learns its own click."
+      },
+      {
+       "label": "YOUR SECOND PRIORITY",
+       "title": "Watch one honest signal",
+       "body": "Track only whether the thing this plan is aimed at feels slightly easier. That is more meaningful than chasing a dramatic difference, and considerably harder to fake."
+      },
+      {
+       "label": "YOUR THIRD PRIORITY",
+       "title": "Use your strengths as structure",
+       "body": "Let what is strong in your life decide what can wait, and let one trusted person witness the experiment. Your strengths become the conditions for change, rather than reasons to keep overextending."
+      },
+      {
+       "label": "YOUR PACING",
+       "title": "Focused, not full",
+       "body": "Your current picture caps how much plan is wise. One anchor plus one optional support is enough. Everything else stays a saved option rather than an obligation."
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "WHAT IMPROVEMENT WOULD LOOK LIKE FOR YOU",
+     "title": null,
+     "body": "The seam you chose feels more distinct from the rest of your day. The thing you are caring for costs slightly less effort than it did. Beginning is a little easier at the moment you choose to begin. You can miss a day without the whole experiment turning into failure. These are things to observe rather than outcomes you are being promised. If the pattern does not move over the next month, that is useful information, and your next reflection should revise the starting point rather than asking you to try harder at the same one.",
+     "variant": "info"
+    },
+    {
+     "type": "callout",
+     "label": "WHY THIS PLAN IS SMALLER THAN YOU MIGHT EXPECT",
+     "title": null,
+     "body": "You told this reflection that time being out of your control is real, and your readings show a season with limited spare capacity. A large plan under those conditions tends to fail in the first crowded week and leave you feeling worse than when you started. A very small plan that survives contact with a real week is worth considerably more than an impressive one you abandon. If it feels almost too easy, it has been sized correctly.",
+     "variant": "synthesis"
+    }
+   ]
+  },
+  {
+   "number": 11,
+   "eyebrow": "YOUR SUGGESTIONS · 2 OF 4",
+   "title": "Your anchor practice",
+   "subtitle": "One practice, described properly. This is the single thing this report would ask you to keep if you kept nothing else.",
+   "blocks": [
+    {
+     "type": "practice",
+     "tag": "YOUR ANCHOR · FREE · ALWAYS FIRST",
+     "title": "The close laptop pause",
+     "cols": [
+      {
+       "label": "WHEN",
+       "text": "The moment your working day ends and you close the laptop or set the work down. This is the exact seam where your work world ends and your home world begins."
+      },
+      {
+       "label": "WHAT YOU DO",
+       "text": "Both feet supported on the floor. Two comfortable breaths. Nothing else, and then you carry on with your evening."
+      },
+      {
+       "label": "WHY IT IS THIS SMALL",
+       "text": "It matches your time pressure, sits precisely where your day has trouble ending, and cannot be defeated by a day that ran long."
+      }
+     ]
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "HOW TO SET IT UP TONIGHT",
+       "title": null,
+       "body": "Place one small object beside your laptop or workspace before you start tomorrow. A cup, a stone, a folded card. Its only job is to catch your eye at closing time. You are not relying on memory or motivation, which are both in short supply at the end of a demanding day. The object matters more than the intention. Intentions are quiet at six in the evening. Objects are not."
+      },
+      {
+       "label": "WHAT IT SHOULD FEEL LIKE",
+       "title": null,
+       "body": "Almost disappointingly small. Two breaths take about ten seconds. You should finish thinking that surely something more is required. That feeling is the design working. A practice you can complete on your most crowded evening is the only kind that will still be there in three weeks."
+      },
+      {
+       "label": "PERMISSIONS, SO THIS STAYS GENTLE",
+       "title": null,
+       "body": "Keep your eyes open if that feels better. Do not force the breath or aim for a particular sensation. If breathing attention feels uncomfortable, skip the breath entirely and simply sit with both feet supported for a moment. That still counts. This is a transition, not a meditation practice. Nothing about it needs to be done correctly."
+      },
+      {
+       "label": "IF YOU FORGET, WHICH YOU WILL",
+       "title": null,
+       "body": "Do it late. Do it in the kitchen. Do it after dinner when you remember. A pause that happens at the wrong time is worth far more than one that did not happen because the right moment passed. Missing a day changes nothing. Missing a day and deciding you have failed changes everything, so decline that second part."
+      }
+     ]
+    },
+    {
+     "type": "sevendays",
+     "title": "YOUR NEXT SEVEN DAYS",
+     "rows": [
+      {
+       "day": "1",
+       "focus": "Make it visible",
+       "action": "Place your cue object beside your workspace. Do the two breath pause once."
+      },
+      {
+       "day": "2",
+       "focus": "Repeat",
+       "action": "Same cue, same tiny action. Deliberately add nothing."
+      },
+      {
+       "day": "3",
+       "focus": "Understand it",
+       "action": "Read the short piece on transitions, after the pause rather than instead of it."
+      },
+      {
+       "day": "4",
+       "focus": "Choose one support",
+       "action": "Try one of the optional supports from the next pages. One, not two."
+      },
+      {
+       "day": "5",
+       "focus": "Protect the boundary",
+       "action": "Tell one trusted person the closing time you are testing this week."
+      },
+      {
+       "day": "6",
+       "focus": "Use what worked",
+       "action": "Repeat whichever version felt lightest. Ease is the signal, not laziness."
+      },
+      {
+       "day": "7",
+       "focus": "Notice",
+       "action": "Ask one question: after the pause, did stopping feel easier, the same, or harder?"
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "WHY AN ENDING, RATHER THAN A BEDTIME ROUTINE",
+     "title": null,
+     "body": "You might reasonably expect a plan about recovery to focus on sleep. Yours does not, and the reason is specific to your pattern. The difficulty is not the late hour itself. It is that your working day never formally ends, so the whole evening carries it. Give the day a real ending and the evening changes shape on its own. Start at bedtime and you are trying to close a day that has already been carried for hours.",
+     "variant": "synthesis"
+    }
+   ]
+  },
+  {
+   "number": 12,
+   "eyebrow": "YOUR SUGGESTIONS · 3 OF 4",
+   "title": "Your optional supports",
+   "subtitle": "Small additions, chosen for your specific pattern. Take one at a time, and only after the anchor is steady. This is a shelf to choose from, not a list to complete.",
+   "blocks": [
+    {
+     "type": "supports",
+     "items": [
+      {
+       "tag": "READ · 4 MINUTES · FREE",
+       "title": "Why transitions work better than commands",
+       "body": "A short piece on why creating a boundary between effort and rest tends to work better than instructing yourself to relax.",
+       "why": "Why this, for you. Your curiosity is available but your time is not, so this is deliberately four minutes rather than a course. Save it for day three, once the anchor itself is established. Understanding a practice after you have felt it tends to make it stick better than reading about it first."
+      },
+      {
+       "tag": "LISTEN · 8 MINUTES · FREE",
+       "title": "A soft layered evening soundscape",
+       "body": "Quiet, undemanding audio to sit alongside your anchor rather than replace it. Headphones optional.",
+       "why": "Why this, for you. You described a mind that stays in motion after the day ends, and for some people a low, undemanding sound gives that motion something to settle against. Use it only if silence keeps your mind busy. If silence already works for you, skip this entirely."
+      },
+      {
+       "tag": "LOOK · 60 SECONDS · OPTIONAL",
+       "title": "A soft gaze reset",
+       "body": "Let your eyes rest on a broad, still view, such as greenery, sky, or water, rather than a close screen. No flashing or patterned motion.",
+       "why": "Why this, for you. Your tension clustered around your jaw and head, neck and shoulders, upper back, which is the area most affected by long periods of close focus. This is the cheapest possible intervention for that particular pattern, and it works well after a long screen block rather than at a fixed time."
+      },
+      {
+       "tag": "CREATE · 5 MINUTES · OPTIONAL",
+       "title": "Draw effort and ease as two lines",
+       "body": "No artistic skill required. Sketch how each moved across your day, then circle one moment where the distance between them narrowed.",
+       "why": "Why this, for you. Once this week is plenty. Your energy and your pressure climb together late in the day, and seeing that on paper often makes the pattern easier to work with than reading about it. Treat it as noticing, not journalling."
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "title": "HOW TO CHOOSE BETWEEN THEM",
+     "columns": [
+      "If this is your situation",
+      "Try this one",
+      "Because"
+     ],
+     "rows": [
+      [
+       "You want to understand the why",
+       "The four minute read",
+       "Answers the question you are actually living, briefly"
+      ],
+      [
+       "Your mind stays busy in the quiet",
+       "The evening soundscape",
+       "Gives restless attention something undemanding to rest on"
+      ],
+      [
+       "Your head and shoulders feel tight by evening",
+       "The soft gaze reset",
+       "Directly addresses the area where your tension collected"
+      ],
+      [
+       "You want to see your own pattern",
+       "The two lines sketch",
+       "Makes your day's shape visible rather than theoretical"
+      ],
+      [
+       "You are already at capacity",
+       "None of them",
+       "The anchor alone is a complete plan. Additions are genuinely optional"
+      ]
+     ]
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "FOR THE EVENING CLIMB",
+       "title": null,
+       "body": "If you must work late, decide the stopping time before you begin rather than during. Deciding while tired reliably produces a later answer than deciding while fresh."
+      },
+      {
+       "label": "FOR THE DIP IN YOUR DAY",
+       "title": null,
+       "body": "Place your most demanding task where your energy naturally sits higher. Scheduling around your own rhythm costs nothing and saves real effort."
+      },
+      {
+       "label": "FOR THE ROLE SWITCH",
+       "title": null,
+       "body": "Change one physical thing when one part of your day ends. Shoes off, a different chair, a window opened. Transitions respond better to physical markers than to intentions."
+      },
+      {
+       "label": "FOR CROWDED WEEKS",
+       "title": null,
+       "body": "Shrink rather than skip. The smallest version of the practice, on the way to the door if needed. The pattern is what you are protecting, not the duration."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "number": 13,
+   "eyebrow": "YOUR SUGGESTIONS · 4 OF 4",
+   "title": "If you would like guided support",
+   "subtitle": "Programs are optional, and they come second. Anything suggested here is suggested because it matches your pattern, not because you need it.",
+   "blocks": [
+    {
+     "type": "callout",
+     "label": "USE THE FREE PATH FIRST",
+     "title": null,
+     "body": "Give the seven day anchor a proper try before booking anything. A program should earn its place by offering what your own practice cannot: protected time, skilled facilitation, a suitable setting, or the accountability of showing up alongside other people.",
+     "variant": "free"
+    },
+    {
+     "type": "callout",
+     "label": "A CLEARLY LABELLED LATER, IF IT FITS",
+     "title": null,
+     "body": "Because money is asking for some care, no paid program leads your plan. The options below are noted for later, if circumstances ease and only if they genuinely fit. Nothing in this report asks you to spend.",
+     "variant": "care"
+    },
+    {
+     "type": "program",
+     "tag": "LATER, IF IT FITS",
+     "title": "Evening wind down practice series",
+     "what": "Four small group, in person sessions of forty five minutes each, in the early evening. Gentle settling, body release, and a repeatable closing ritual that you keep afterwards. No performance tracking of any kind.",
+     "why": "It works on exactly the boundary this report identifies as your starting point, and it teaches the transition rather than asking you to already be calm. The sessions are short, and the early evening timing means you practise the skill at the hour you actually need it.",
+     "check": "Ask whether the sessions build on each other, and whether you keep the practice afterwards. A series that leaves you with a portable habit is worth more than four pleasant evenings."
+    },
+    {
+     "type": "callout",
+     "label": "WHAT WOULD NOT SUIT YOU RIGHT NOW",
+     "title": null,
+     "body": "An intensive residential reset, a high demand challenge, or a tightly scheduled multi day retreat. Your current pattern calls for less activation and lower commitment first. This is not about capability. It is that a demanding program asks for reserves that are better spent steadying the basics, and the most likely result is a good experience followed by a harder week afterwards.",
+     "variant": "info"
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "QUESTIONS WORTH ASKING ANY HOST",
+       "title": null,
+       "body": "Can you explain the full flow, the intensity, and what can be skipped? Does the timetable protect quiet transitions, or does it fill every minute? Are facilitator credentials, safety boundaries, cancellation terms, and accessibility all clear before you pay?"
+      },
+      {
+       "label": "THE ONE QUESTION TEST",
+       "title": null,
+       "body": "Would you still choose it if the program promised you no transformation at all, only a well held experience? If yes, it is probably a good fit. If no, keep your money and keep your anchor."
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "AN HONEST WORD ABOUT FIT",
+     "title": null,
+     "body": "These suggestions describe how well a program matches your pattern. They are not predictions about how you will feel afterwards. A good match makes a good outcome more likely, and no more than that. If a program ever promises you a specific result, treat that promise as a reason for caution rather than confidence.",
+     "variant": "info"
+    }
+   ]
+  },
+  {
+   "number": 14,
+   "eyebrow": "YOUR NEXT MONTH",
+   "title": "A thirty day experiment",
+   "subtitle": "The purpose is to learn something about your own life, not to complete a perfect routine. One repeated cue becomes the spine. Everything else stays optional.",
+   "blocks": [
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "WEEK ONE",
+       "title": "Build the cue",
+       "body": "Use your anchor on at least three days. Record only whether it felt easier, the same, or harder. Three honest days are worth more than seven forced ones."
+      },
+      {
+       "label": "WEEK TWO",
+       "title": "Protect one boundary",
+       "body": "Choose one boundary that serves the anchor and let a trusted person know. Keep the cue even when the boundary slips. The cue is the experiment. The rest is just weather."
+      },
+      {
+       "label": "WEEK THREE",
+       "title": "Add one gentle support",
+       "body": "Choose one optional support, whichever made things simpler in week one. Add only that one. Subtraction is always allowed."
+      },
+      {
+       "label": "WEEK FOUR",
+       "title": "Retake and choose",
+       "body": "Repeat the reflection. Continue the free supports, consider a suitable program, or revise the starting point if the pattern did not move. All of these are useful outcomes."
+      }
+     ]
+    },
+    {
+     "type": "table",
+     "title": "WHAT TO NOTICE, IN FOUR MOMENTS",
+     "columns": [
+      "Moment",
+      "The question",
+      "Your options",
+      "Why it is worth noticing"
+     ],
+     "rows": [
+      [
+       "After the anchor",
+       "How did it feel?",
+       "Easier, same, or harder",
+       "Tests the core idea directly"
+      ],
+      [
+       "Next morning",
+       "How restored do you feel?",
+       "More, unchanged, or less",
+       "Tracks recovery rather than perfection"
+      ],
+      [
+       "First demanding task",
+       "How hard was it to begin?",
+       "Easier, same, or harder",
+       "Tracks usable energy where it counts"
+      ],
+      [
+       "End of the week",
+       "Did the plan fit real life?",
+       "Fit, partly, or did not fit",
+       "Separates whether it works from whether it is doable"
+      ]
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "WHEN TO REFLECT AGAIN",
+     "title": null,
+     "body": "A short check after seven days, and the complete reflection after thirty days or after a program. When you compare, look at direction and lived experience rather than small differences. What you are looking for is a repeatable pattern that also feels true to you. Your before and after pair is what turns this report from a snapshot into a story about your own year.",
+     "variant": "info"
+    },
+    {
+     "type": "cards",
+     "columns": 1,
+     "items": [
+      {
+       "label": "QUESTIONS WORTH CARRYING",
+       "title": null,
+       "body": "What changes when your day has a clear seam in it, even if the workload does not? Which of your strengths best protects this experiment without becoming another demand? What is the smallest form of enough you can recognise in a real week?"
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "ON THE DAYS IT DOES NOT GO WELL",
+     "title": null,
+     "body": "You will miss days. That is expected, and it is built into the design of this plan rather than being a failure of it. A missed day tells you something about fit, which is genuinely useful information. If several days slip, the right response is to make the practice smaller rather than to try harder, and certainly rather than to think less of yourself. The plan should shrink before self judgement grows.",
+     "variant": "synthesis"
+    }
+   ]
+  },
+  {
+   "number": 15,
+   "eyebrow": "ABOUT THIS REFLECTION",
+   "title": "What stands behind this report",
+   "subtitle": "A report that asks for your trust should be equally clear about where it is confident, where it is not, and what happens to what you shared.",
+   "blocks": [
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "HOW YOUR READING WAS FORMED",
+       "title": null,
+       "body": "Each of the nine areas is read using established wellbeing questionnaires that have been tested and used in published research. They ask about how life feels rather than screening for any condition, and your answers were translated into the four broad words used throughout this report. The specific measures behind each area are listed in the appendix."
+      },
+      {
+       "label": "WHAT THE SHORT EXERCISES ADDED",
+       "title": null,
+       "body": "The brief interactive moments, such as the breathing minute and the body map, add texture to the picture. They are sensitive to the kind of day you were having, so they are used to deepen or question what your answers already suggested. They are never used on their own to raise a concern."
+      },
+      {
+       "label": "HOW YOUR LIFE SHAPED THE SUGGESTIONS",
+       "title": null,
+       "body": "What you told this reflection about your roles, your priorities, what gets in your way, and what you have already tried shaped the words in this report and the suggestions in it. Your circumstances change what is recommended to you. They never change how any area was read."
+      },
+      {
+       "label": "WHERE THIS REPORT SPEAKS CAREFULLY",
+       "title": null,
+       "body": "Most of your areas rest on a full set of questions and are described plainly. Body & recovery and Usable energy rest on fewer questions, so they are offered for you to test rather than asserted. That difference in wording is deliberate, and it is worth trusting when you read it."
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "label": "YOUR PRIVACY",
+     "title": null,
+     "body": "This report belongs to you. Your individual answers, your readings, and your suggestions are never shared with an employer, and there is no route in the system for that to happen. Where organisations receive anything at all, it is combined across many people, with small groups withheld entirely so that no individual can be identified. Your name and identifying details are kept out of any pattern the system learns from. Nothing is collected that this reflection does not need.",
+     "variant": "info"
+    },
+    {
+     "type": "cards",
+     "columns": 2,
+     "items": [
+      {
+       "label": "ONE SITTING REFLECTS ONE DAY",
+       "title": null,
+       "body": "This report describes how things feel now. It cannot establish what caused what, and a different week might read differently."
+      },
+      {
+       "label": "THE SHORT EXERCISES ARE NOT TESTS",
+       "title": null,
+       "body": "They are not measures of ability, intelligence, or health, and nothing in them is a medical reading."
+      },
+      {
+       "label": "PROGRAM SUGGESTIONS DESCRIBE FIT",
+       "title": null,
+       "body": "They match your pattern to a design. They are not predictions of benefit, and no outcome is promised anywhere in this report."
+      },
+      {
+       "label": "THIS IS NOT CARE",
+       "title": null,
+       "body": "If something feels persistently heavy, unsafe, painful, or hard to manage, speaking with someone you trust or a qualified professional is a real and worthwhile step."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "The point of this report is not to explain you completely. It is to give you a truer place to begin.",
+     "lead": "THE CLOSING LINE"
+    }
+   ]
+  },
+  {
+   "number": 16,
+   "eyebrow": "APPENDIX",
+   "title": "The science behind your reading",
+   "subtitle": "For readers who would like to know what stands behind each part of this report.",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "For readers who would like to know what stands behind each part of this report. Nothing here is required in order to use your reflection, and none of it changes what your report says.",
+     "lead": null
+    },
+    {
+     "type": "table",
+     "title": "THE MEASURES BEHIND EACH OF THE NINE AREAS",
+     "columns": [
+      "Area",
+      "Established measure used",
+      "What it is designed to capture"
+     ],
+     "rows": [
+      [
+       "Meaning & direction",
+       "PROMIS Meaning and Purpose short form (Salsman et al., 2020)",
+       "Sense of purpose and direction in daily life"
+      ],
+      [
+       "Relationships & support",
+       "Three item loneliness scale (Hughes et al., 2004), read toward connection",
+       "Felt closeness and availability of trusted others"
+      ],
+      [
+       "Environment & belonging",
+       "Connection to nature measure (Schultz, 2002) with belonging questions",
+       "Sense of place, grounding, and cultural belonging"
+      ],
+      [
+       "Curiosity & growth",
+       "Flourishing Scale (Diener et al., 2010)",
+       "Engagement, learning, and a sense of growth"
+      ],
+      [
+       "Agency & work",
+       "General Self Efficacy Scale (Schwarzer and Jerusalem, 1995)",
+       "Belief that one's actions can achieve intended results"
+      ],
+      [
+       "Financial steadiness",
+       "Financial Well Being Scale (Consumer Financial Protection Bureau, 2017)",
+       "How money feels to live with, beyond income alone"
+      ],
+      [
+       "Emotional calm",
+       "Wellbeing mood questions (Topp et al., 2015) with the Perceived Stress Scale (Cohen et al., 1983)",
+       "How far demands have felt beyond one's capacity to respond"
+      ],
+      [
+       "Body & recovery",
+       "Rest and vigour questions from the WHO-5 (Topp et al., 2015) with sleep and activity questions",
+       "Whether rest restores, and whether reserve is present"
+      ],
+      [
+       "Usable energy",
+       "Vigour and interest questions from the WHO-5 (Topp et al., 2015)",
+       "Availability of energy and engagement across the day"
+      ]
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "These measures were chosen because they are published, widely used, and freely available, and because they ask about wellbeing rather than screening for illness. Their wording is never altered. Research practice treats short measures like these as indicating a broad range rather than a precise value, which is why this report speaks in four broad words rather than scores.",
+     "lead": null
+    },
+    {
+     "type": "callout",
+     "label": "THE RESEARCH BEHIND THE CONNECTIONS DESCRIBED IN YOUR REPORT",
+     "title": null,
+     "body": "The idea that effort carries a cost into the next day unless recovery follows it comes from research on work and recovery (Meijman and Mulder, 1998). The observation that strain in one area of life tends to spread into neighbouring areas, while intact strengths slow that spread, comes from work on personal resources (Hobfoll, 1989). Difficulty mentally switching off is one of the most consistently studied patterns in this field, and is associated with poorer rest and lower next morning energy across many studies (Sonnentag and Fritz, 2007; 2015). The reason your report treats the short interactive exercises as texture rather than evidence is that single session tasks are known to be informative about a day and unreliable about a person (Hedge, Powell and Sumner, 2018).",
+     "variant": "info"
+    },
+    {
+     "type": "callout",
+     "label": "THE RESEARCH BEHIND YOUR SUGGESTED PRACTICES",
+     "title": null,
+     "body": "Practices tied to a specific cue, in the form of after one thing I do another, are consistently more likely to be carried out than intentions alone (Gollwitzer, 1999; Gollwitzer and Sheeran, 2006). Habits form through repetition in a stable setting, and in the best known field study a single missed day made no measurable difference to that process (Lally et al., 2010), which is why this report treats missed days as ordinary. Slow, comfortable breathing is associated with greater self reported calm in reviews of breathing research (Zaccaro et al., 2018). Deliberate boundaries between work and home are associated with easier evening disengagement (Ashforth et al., 2000; Kreiner et al., 2009). Responding to lapses with self kindness rather than self criticism predicts returning to a practice sooner (Neff, 2003). Calm listening is associated with lower self reported stress (de Witte et al., 2020). Brief views of greenery are associated with restored attention (Lee et al., 2015; Kaplan, 1995). Brief drawing offers a short term mood lift, working as gentle distraction (Drake and Winner, 2012).",
+     "variant": "info"
+    },
+    {
+     "type": "callout",
+     "label": "THE RESEARCH BEHIND THE PROGRAMS SUGGESTED TO YOU",
+     "title": null,
+     "body": "Courses that teach recovery skills have been tested directly. In a randomised trial, a recovery training program improved participants' recovery experiences, their reported sleep quality, and their sense of wellbeing (Hahn et al., 2011). Reviews of gentle, breath led movement report lower perceived stress across studies (Sharma, 2014). For low energy seasons, a randomised trial found low intensity activity increased energy and reduced fatigue (Puetz et al., 2008). Spending around two hours a week in nature is associated with good self reported health and wellbeing (White et al., 2019).",
+     "variant": "info"
+    },
+    {
+     "type": "callout",
+     "label": "HOW TO READ ANY OF THIS",
+     "title": null,
+     "body": "Every study named here describes patterns across groups of people, which is the honest currency of wellbeing research. They are good reasons to expect that a practice or a program design is worth your time. They are not predictions about you specifically, and no finding here promises you a result. That distinction is the difference between evidence and marketing, and this report tries to stay firmly on the evidence side of it.",
+     "variant": "info"
+    },
+    {
+     "type": "callout",
+     "label": null,
+     "title": null,
+     "body": "Prepared for Meera Nair · 19 July 2026 · Kochi · A private, non-clinical wellbeing reflection  ·  LIFED",
+     "variant": "footer"
+    }
+   ]
+  }
+ ]
+}

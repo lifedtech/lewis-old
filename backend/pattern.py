@@ -295,14 +295,19 @@ def evaluate_portraits(scores_dict, patterns, lwi_data, safety_dict, leverage_di
 
 def run_pattern_engine(scores_dict, who5_overall, context, safety_dict, leverage_dim):
     patterns = []
-    
+
+    # The intake speaks polyvagal vocabulary (ventral/sympathetic/dorsal);
+    # the pattern rules and corpus speak state vocabulary.
+    ns_map = {"ventral": "grounded", "sympathetic": "activated", "dorsal": "collapsed"}
+    ns_state = ns_map.get(context.get("nervousSystemState"), context.get("nervousSystemState"))
+
     lwi = lwi_pattern(scores_dict, who5_overall)
     patterns.append(lwi)
-    
+
     rec_load = recovery_load_pattern(context.get("cumulativeLoad_raw"), context.get("recoveryResponsiveness"))
     patterns.append(rec_load)
-    
-    slp = stress_load_pattern(context.get("stressPatternClusters", []), context.get("nervousSystemState"), None)
+
+    slp = stress_load_pattern(context.get("stressPatternClusters", []), ns_state, None)
     patterns.append(slp)
     
     er = energy_rhythm_pattern(context.get("dayRhythmMap_zones", {}), False, False)
@@ -338,7 +343,7 @@ def run_pattern_engine(scores_dict, who5_overall, context, safety_dict, leverage
     pt = priority_tension_pattern(context.get("priority_rank", []), scores_dict, context.get("priorityTensionCheck_confirmed"))
     if pt: patterns.append(pt)
     
-    sr = suggestion_readiness_pattern(context.get("plannerReadiness", "one_thing"), context.get("supportPreference"), "none", context.get("nervousSystemState"), rec_load["label"])
+    sr = suggestion_readiness_pattern(context.get("plannerReadiness", "one_thing"), context.get("supportPreference"), "none", ns_state, rec_load["label"])
     patterns.append(sr)
     
     portrait = evaluate_portraits(scores_dict, patterns, lwi, safety_dict, leverage_dim)
