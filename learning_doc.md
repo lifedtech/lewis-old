@@ -20,7 +20,8 @@ LEWIS (The Lifed Everyday Wellbeing Intelligence System) is a full-stack, **non-
 - **Vanilla CSS** (`index.css`).
 
 **Backend:**
-- **FastAPI + Pydantic + Uvicorn** — strict input validation; nothing is persisted server-side.
+- **FastAPI + Pydantic + Uvicorn** — strict input validation and pipeline processing.
+- **Supabase Cloud + Local SQLite Fallback (`auth.py`)** — dual-mode database engine. Uses PostgreSQL (`lewis_` table namespace) when `DATABASE_URL`/`SUPABASE_URL` are present, with fallback to SQLite (`lewis_users.db`) / memory mode.
 - **OpenAI SDK pointed at NVIDIA NIM** (`llm.py`) — model `nvidia/nemotron-3-super-120b-a12b`, a *reasoning* model: token budgets must cover thinking + answer, and truncated responses are discarded.
 - **Stdlib-only corpus engine** (`corpus.py`) — csv/math/heapq; no pandas at runtime.
 
@@ -33,7 +34,9 @@ LEWIS (The Lifed Everyday Wellbeing Intelligence System) is a full-stack, **non-
 - **`src/store/useLewisStore.js`** — global state.
 
 ### Backend (`/backend`)
-- **`main.py`** — the API (`/pulse/calculate`, `/assessment/full`) and the pipeline order: validate → age gate → score → dimensions → safety → leverage → patterns/portrait → similarity → habit → Road A → optional Road B → validator → response.
+- **`main.py`** — the API (`/pulse/calculate`, `/assessment/full`, `/auth/*`, `/analytics/onboarding`) and the pipeline order: validate → age gate → score → dimensions → safety → leverage → patterns/portrait → similarity → habit → Road A → optional Road B → validator → response.
+- **`auth.py`** — User registration/login, session tokens, zero-PII report de-identification (`ANON-SUBJ-...`), and Supabase PostgreSQL / REST API database integration.
+- **`db/supabase_schema.sql`** — Isolated PostgreSQL database schema (`lewis_users`, `lewis_sessions`, `lewis_user_report_vault`, `lewis_anonymized_insight_reports`) and `lewis_onboarding_analytics_summary` view for the Onboarding system.
 - **`scoring.py`** — instrument normalization (all wellbeing-polarity: PSS-10/UCLA-3/CFPB-5 inverted at source), PH/EN composites, `band_for`, bright spot, and the **W-matrix leverage engine** (9×9 influence matrix, lowness gate score ≤ 55, 25% separation gate → pair naming, ×1.25 pressure bonus).
 - **`corpus.py`** — the similarity engine over `data/lewis_10000_scores.csv`: state-only k-NN (k=40, k_min=30), demographics/safety **raise ValueError** if they ever reach a vector, coarse-position terciles ("lower/middle/higher" words only), neutral priors while the corpus is synthetic.
 - **`pattern.py`** — Layer-4 pattern engine (LWI, texture patterns, portrait selection) — first cut.
@@ -41,7 +44,8 @@ LEWIS (The Lifed Everyday Wellbeing Intelligence System) is a full-stack, **non-
 - **`llm.py`** — Road B voicing; every failure path returns `None` so callers fall back to Road A.
 - **`validator.py`** — fail-closed regex gate every Road B output must pass before display.
 - **`safety.py`** — distress flags and gentle mode.
-- **`security.py`** — `GuardrailMiddleware`: rate limiting, body-size cap, security headers. CORS wildcard is rejected; set `FRONTEND_URL`.
+- **`security.py`** — `GuardrailMiddleware`: rate limiting (5 auth/min, 12 heavy/min), body-size cap, security headers, global `SensitiveDataFilter` log masking for passwords and database URIs. CORS whitelist configured for Cloudflare deployment (`https://lewis.cold-forest-a8ec.workers.dev`).
+- **`Procfile` & `railway.json`** — Production deployment settings for Railway hosting (`uvicorn main:app --host 0.0.0.0 --port $PORT`).
 - **`content.py`** — the SMALL-habit catalog, routed by leverage dimension key.
 - **`data/`** — the 10k synthetic seed corpus (canonical CSV).
 - **`tests/`** — pytest suite (66 tests), including a 500-row corpus regression that pins the leverage engine to the generator.

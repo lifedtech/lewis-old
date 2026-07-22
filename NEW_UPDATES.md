@@ -1,3 +1,31 @@
+# LEWIS Core Engine - Updates (Version 1.3.0 - 22 July 2026)
+
+This release lands **Supabase PostgreSQL cloud database integration**, complete **onboarding database isolation**, **de-identified dataset anonymization**, **enterprise security guardrails**, and **Cloudflare/Railway cloud deployment**.
+
+## 1. Supabase Database Isolation & Schema (`backend/db/supabase_schema.sql`)
+- Created an isolated PostgreSQL database schema using the `lewis_` table namespace: `lewis_users`, `lewis_sessions`, `lewis_user_report_vault`, and `lewis_anonymized_insight_reports`.
+- **Zero Onboarding Collision**: LEWIS user accounts and session data are strictly isolated from any Onboarding system database tables.
+
+## 2. Onboarding Analytics View (`backend/auth.py`, `backend/main.py`)
+- Created PostgreSQL View `public.lewis_onboarding_analytics_summary` and API endpoint `GET /analytics/onboarding`.
+- Allows the Onboarding system to query aggregate LEWIS activity metrics (`total_registered_lewis_users`, `total_active_subjects`, `total_assessments_completed`, `last_assessment_time`) without ever accessing user profiles or mixing user accounts.
+
+## 3. Zero-PII De-Identification & Anonymization Engine (`backend/auth.py`)
+- Built recursive PII scrubbing engine (`deidentify_data`) that strips names, emails, phone numbers, contact info, and passwords from all answers, scores, and report structures before storing them in system learning tables.
+- Generates non-reversible cryptographic subject IDs (`ANON-SUBJ-8F92A1D0`) via `HMAC-SHA256(user_id, ANON_SALT)`.
+
+## 4. Enterprise Security System & Log Masking (`backend/security.py`)
+- **Strict Auth Rate Limiter**: Throttles `/auth/login` and `/auth/register` to 5 requests/min per IP.
+- **Log Credential Redaction**: Global `SensitiveDataFilter` automatically masks passwords, tokens, API keys, and PostgreSQL connection string passwords (`postgresql://user:***REDACTED_PASSWORD***@host`) from all application logs and tracebacks.
+- **Security Response Headers**: Injects `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection`, and `Content-Security-Policy`.
+
+## 5. Cloud Deployment Configuration (Railway & Cloudflare)
+- **Frontend**: Deployed to Cloudflare Pages (`https://lewis.cold-forest-a8ec.workers.dev`).
+- **Backend**: Configured for Railway deployment via `backend/Procfile` & `backend/railway.json` (`uvicorn main:app --host 0.0.0.0 --port $PORT`).
+- **Dual-Mode Engine**: Automatically connects to Supabase Cloud when `DATABASE_URL` / `SUPABASE_URL` environment variables are present, with graceful fallback to local SQLite (`lewis_users.db`) / memory mode.
+
+---
+
 # LEWIS Core Engine - Updates (Version 1.2.0 - 14 July 2026)
 
 The 10,000-profile synthetic seed corpus (`doc/lewis_10000_scores.xlsx`, new spec set of 14 July) is now wired into the engine. Full analysis + plan: artifact "The 10,000-Profile Corpus: Analysis & Implementation Plan".

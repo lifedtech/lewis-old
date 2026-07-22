@@ -33,10 +33,11 @@ SECURITY_HEADERS = {
 
 # --- Log Masking Filter to prevent PII / Auth Token data leaks in log files ---
 class SensitiveDataFilter(logging.Filter):
-    """Redact passwords, tokens, and PII from application logs."""
+    """Redact passwords, tokens, API keys, and PII from application logs."""
     SENSITIVE_PATTERNS = [
-        (re.compile(r'("password"|"token"|"bearer"|"authorization")\s*:\s*["\'][^"\']+["\']', re.IGNORECASE), r'\1: "***REDACTED***"'),
-        (re.compile(r'Bearer\s+[A-Za-z0-9\._\-]+', re.IGNORECASE), r'Bearer ***REDACTED***')
+        (re.compile(r'("password"|"token"|"bearer"|"authorization"|"secret"|"apikey"|"service_key")\s*[:=]\s*["\'][^"\']+["\']', re.IGNORECASE), r'\1: "***REDACTED***"'),
+        (re.compile(r'Bearer\s+[A-Za-z0-9\._\-]+', re.IGNORECASE), r'Bearer ***REDACTED***'),
+        (re.compile(r'postgres(ql)?://([^:]+):([^@]+)@', re.IGNORECASE), r'postgresql://\2:***REDACTED_PASSWORD***@')
     ]
 
     def filter(self, record):

@@ -75,7 +75,7 @@ def get_supabase_headers() -> Dict[str, str]:
     }
 
 def init_db():
-    """Ensure portal and deidentified report tables exist in local SQLite if active."""
+    """Ensure isolated lewis_ tables exist in local SQLite if active."""
     if (has_pg and DATABASE_URL) or USE_SUPABASE_REST:
         return  # Managed via Supabase cloud
     try:
@@ -83,13 +83,13 @@ def init_db():
         cursor = conn.cursor()
         
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS lewis_users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 email TEXT UNIQUE NOT NULL,
                 name TEXT,
                 password_hash TEXT NOT NULL,
                 salt TEXT NOT NULL,
-                source_portal TEXT DEFAULT 'lifedhealth',
+                source_portal TEXT DEFAULT 'lewis_app',
                 role TEXT DEFAULT 'user',
                 status TEXT DEFAULT 'active',
                 last_login_at TIMESTAMP,
@@ -98,18 +98,18 @@ def init_db():
         """)
         
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS sessions (
+            CREATE TABLE IF NOT EXISTS lewis_sessions (
                 token TEXT PRIMARY KEY,
                 user_id INTEGER NOT NULL,
                 ip_address TEXT,
                 user_agent TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+                FOREIGN KEY (user_id) REFERENCES lewis_users (id) ON DELETE CASCADE
             )
         """)
         
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS user_report_vault (
+            CREATE TABLE IF NOT EXISTS lewis_user_report_vault (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
                 report_uuid TEXT UNIQUE NOT NULL,
@@ -117,12 +117,12 @@ def init_db():
                 wellbeing_band TEXT,
                 overall_score REAL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+                FOREIGN KEY (user_id) REFERENCES lewis_users (id) ON DELETE CASCADE
             )
         """)
 
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS anonymized_insight_reports (
+            CREATE TABLE IF NOT EXISTS lewis_anonymized_insight_reports (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 report_uuid TEXT UNIQUE NOT NULL,
                 anonymous_code TEXT NOT NULL,
@@ -162,7 +162,7 @@ def deidentify_data(data: Any) -> Any:
                 if k_lower == "name":
                     cleaned[k] = "[ANONYMIZED_USER]"
                 else:
-                    continue  # Strip email, phone, contact, passwords completely
+                    continue
             else:
                 cleaned[k] = deidentify_data(v)
         return cleaned
@@ -182,8 +182,8 @@ def _hash_password(password: str, salt: str) -> str:
         200000
     ).hex()
 
-def register_user(email: str, password: str, name: Optional[str] = None, source_portal: str = 'lifedhealth') -> Dict[str, Any]:
-    """Register a new user in database (PostgreSQL / Supabase Cloud or SQLite fallback)."""
+def register_user(email: str, password: str, name: Optional[str] = None, source_portal: str = 'lewis_app') -> Dict[str, Any]:
+    """Register a new user in isolated database tables (lewis_users & lewis_sessions)."""
     email_clean = email.strip().lower()
     if not email_clean or "@" not in email_clean or len(email_clean) > 254:
         raise ValueError("Invalid email address format")
@@ -200,17 +200,17 @@ def register_user(email: str, password: str, name: Optional[str] = None, source_
         try:
             conn = get_pg_conn()
             cursor = conn.cursor()
-            cursor.execute("SELECT id FROM users WHERE email = %s", (email_clean,))
+            cursor.execute("SELECT id FROM lewis_users WHERE email = %s", (email_clean,))
             if cursor.fetchone():
                 conn.close()
                 raise ValueError("An account with this email already exists")
 
             cursor.execute(
-                "INSERT INTO users (email, name, password_hash, salt, source_portal, last_login_at) VALUES (%s, %s, %s, %s, %s, NOW()) RETURNING id",
+                "INSERT INTO lewis_users (email, name, password_hash, salt, source_portal, last_login_at) VALUES (%s, %s, %s, %s, %s, NOW()) RETURNING id",
                 (email_clean, user_name, pw_hash, salt, source_portal)
             )
             user_id = cursor.fetchone()['id']
-            cursor.execute("INSERT INTO sessions (token, user_id) VALUES (%s, %s)", (token, user_id))
+            cursor.execute("INSERT INTO lewis_sessions (token, user_id) VALUES (%s, %s)", (token, user_id))
             conn.commit()
             conn.close()
             return {
@@ -226,12 +226,12 @@ def register_user(email: str, password: str, name: Optional[str] = None, source_
     # 2. Supabase REST API
     if USE_SUPABASE_REST:
         try:
-            res = requests.get(f"{SUPABASE_URL}/rest/v1/users?email=eq.{email_clean}", headers=get_supabase_headers())
+            res = requests.get(f"{SUPABASE_URL}/rest/v1/lewis_users?email=eq.{email_clean}", headers=get_supabase_headers())
             if res.status_code == 200 and len(res.json()) > 0:
                 raise ValueError("An account with this email already exists")
 
             payload = {"email": email_clean, "name": user_name, "password_hash": pw_hash, "salt": salt, "source_portal": source_portal}
-            create_res = requests.post(f"{SUPABASE_URL}/rest/v1/users", headers=get_supabase_headers(), json=payload)
+            create_res = requests.post(f"{SUPABASE_URL}/rest/v1/lewis_users", headers=get_supabase_headers(), json=payload)
             if create_res.status_code not in (200, 201):
                 raise ValueError(f"Supabase user creation error: {create_res.text}")
             
@@ -239,7 +239,7 @@ def register_user(email: str, password: str, name: Optional[str] = None, source_
             user_id = created_user["id"]
 
             session_payload = {"token": token, "user_id": user_id}
-            requests.post(f"{SUPABASE_URL}/rest/v1/sessions", headers=get_supabase_headers(), json=session_payload)
+            requests.post(f"{SUPABASE_URL}/rest/v1/lewis_sessions", headers=get_supabase_headers(), json=session_payload)
 
             return {
                 "status": "success",
@@ -255,17 +255,17 @@ def register_user(email: str, password: str, name: Optional[str] = None, source_
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM users WHERE email = ?", (email_clean,))
+        cursor.execute("SELECT id FROM lewis_users WHERE email = ?", (email_clean,))
         if cursor.fetchone():
             conn.close()
             raise ValueError("An account with this email already exists")
 
         cursor.execute(
-            "INSERT INTO users (email, name, password_hash, salt, source_portal, last_login_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
+            "INSERT INTO lewis_users (email, name, password_hash, salt, source_portal, last_login_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
             (email_clean, user_name, pw_hash, salt, source_portal)
         )
         user_id = cursor.lastrowid
-        cursor.execute("INSERT INTO sessions (token, user_id) VALUES (?, ?)", (token, user_id))
+        cursor.execute("INSERT INTO lewis_sessions (token, user_id) VALUES (?, ?)", (token, user_id))
         conn.commit()
         conn.close()
     except ValueError as ve:
@@ -284,7 +284,7 @@ def register_user(email: str, password: str, name: Optional[str] = None, source_
     }
 
 def login_user(email: str, password: str) -> Dict[str, Any]:
-    """Authenticate existing user (PostgreSQL / Supabase REST or SQLite fallback)."""
+    """Authenticate existing user against isolated lewis_users table."""
     email_clean = email.strip().lower()
 
     # 1. Native PostgreSQL
@@ -292,14 +292,14 @@ def login_user(email: str, password: str) -> Dict[str, Any]:
         try:
             conn = get_pg_conn()
             cursor = conn.cursor()
-            cursor.execute("SELECT id, name, password_hash, salt, source_portal FROM users WHERE email = %s", (email_clean,))
+            cursor.execute("SELECT id, name, password_hash, salt, source_portal FROM lewis_users WHERE email = %s", (email_clean,))
             row = cursor.fetchone()
             if row:
                 user_id = row['id']
                 name = row['name']
                 pw_hash = row['password_hash']
                 salt = row['salt']
-                source_portal = row.get('source_portal', 'lifedhealth')
+                source_portal = row.get('source_portal', 'lewis_app')
 
                 test_hash = _hash_password(password, salt)
                 if test_hash != pw_hash:
@@ -307,8 +307,8 @@ def login_user(email: str, password: str) -> Dict[str, Any]:
                     raise ValueError("Invalid email or password")
 
                 token = secrets.token_hex(32)
-                cursor.execute("UPDATE users SET last_login_at = NOW() WHERE id = %s", (user_id,))
-                cursor.execute("INSERT INTO sessions (token, user_id) VALUES (%s, %s)", (token, user_id))
+                cursor.execute("UPDATE lewis_users SET last_login_at = NOW() WHERE id = %s", (user_id,))
+                cursor.execute("INSERT INTO lewis_sessions (token, user_id) VALUES (%s, %s)", (token, user_id))
                 conn.commit()
                 conn.close()
 
@@ -326,14 +326,14 @@ def login_user(email: str, password: str) -> Dict[str, Any]:
     # 2. Supabase REST API
     if USE_SUPABASE_REST:
         try:
-            res = requests.get(f"{SUPABASE_URL}/rest/v1/users?email=eq.{email_clean}", headers=get_supabase_headers())
+            res = requests.get(f"{SUPABASE_URL}/rest/v1/lewis_users?email=eq.{email_clean}", headers=get_supabase_headers())
             if res.status_code == 200 and len(res.json()) > 0:
                 user = res.json()[0]
                 user_id = user["id"]
                 name = user.get("name")
                 pw_hash = user["password_hash"]
                 salt = user["salt"]
-                source_portal = user.get("source_portal", "lifedhealth")
+                source_portal = user.get("source_portal", "lewis_app")
 
                 test_hash = _hash_password(password, salt)
                 if test_hash != pw_hash:
@@ -341,7 +341,7 @@ def login_user(email: str, password: str) -> Dict[str, Any]:
 
                 token = secrets.token_hex(32)
                 session_payload = {"token": token, "user_id": user_id}
-                requests.post(f"{SUPABASE_URL}/rest/v1/sessions", headers=get_supabase_headers(), json=session_payload)
+                requests.post(f"{SUPABASE_URL}/rest/v1/lewis_sessions", headers=get_supabase_headers(), json=session_payload)
 
                 return {
                     "status": "success",
@@ -357,7 +357,7 @@ def login_user(email: str, password: str) -> Dict[str, Any]:
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name, password_hash, salt, source_portal FROM users WHERE email = ?", (email_clean,))
+        cursor.execute("SELECT id, name, password_hash, salt, source_portal FROM lewis_users WHERE email = ?", (email_clean,))
         row = cursor.fetchone()
         if row:
             user_id, name, pw_hash, salt, source_portal = row
@@ -366,9 +366,9 @@ def login_user(email: str, password: str) -> Dict[str, Any]:
                 conn.close()
                 raise ValueError("Invalid email or password")
                 
-            cursor.execute("UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?", (user_id,))
+            cursor.execute("UPDATE lewis_users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?", (user_id,))
             token = secrets.token_hex(32)
-            cursor.execute("INSERT INTO sessions (token, user_id) VALUES (?, ?)", (token, user_id))
+            cursor.execute("INSERT INTO lewis_sessions (token, user_id) VALUES (?, ?)", (token, user_id))
             conn.commit()
             conn.close()
             return {
@@ -398,7 +398,7 @@ def login_user(email: str, password: str) -> Dict[str, Any]:
     raise ValueError("Invalid email or password")
 
 def verify_token(token: str) -> Optional[Dict[str, Any]]:
-    """Verify session token across PostgreSQL, Supabase REST, SQLite, and memory cache."""
+    """Verify session token against isolated lewis_sessions table."""
     if not token:
         return None
 
@@ -409,8 +409,8 @@ def verify_token(token: str) -> Optional[Dict[str, Any]]:
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT u.id, u.email, u.name, u.source_portal, u.role 
-                FROM sessions s 
-                JOIN users u ON s.user_id = u.id 
+                FROM lewis_sessions s 
+                JOIN lewis_users u ON s.user_id = u.id 
                 WHERE s.token = %s
             """, (token,))
             row = cursor.fetchone()
@@ -424,18 +424,18 @@ def verify_token(token: str) -> Optional[Dict[str, Any]]:
     if USE_SUPABASE_REST:
         try:
             res = requests.get(
-                f"{SUPABASE_URL}/rest/v1/sessions?token=eq.{token}&select=user_id,users(id,email,name,source_portal,role)",
+                f"{SUPABASE_URL}/rest/v1/lewis_sessions?token=eq.{token}&select=user_id,lewis_users(id,email,name,source_portal,role)",
                 headers=get_supabase_headers()
             )
             if res.status_code == 200 and len(res.json()) > 0:
                 session_item = res.json()[0]
-                user_obj = session_item.get("users", {})
+                user_obj = session_item.get("lewis_users", {})
                 if user_obj:
                     return {
                         "id": user_obj.get("id"),
                         "email": user_obj.get("email"),
                         "name": user_obj.get("name"),
-                        "source_portal": user_obj.get("source_portal", "lifedhealth"),
+                        "source_portal": user_obj.get("source_portal", "lewis_app"),
                         "role": user_obj.get("role", "user")
                     }
         except Exception as exc:
@@ -447,8 +447,8 @@ def verify_token(token: str) -> Optional[Dict[str, Any]]:
         cursor = conn.cursor()
         cursor.execute("""
             SELECT u.id, u.email, u.name, u.source_portal, u.role 
-            FROM sessions s 
-            JOIN users u ON s.user_id = u.id 
+            FROM lewis_sessions s 
+            JOIN lewis_users u ON s.user_id = u.id 
             WHERE s.token = ?
         """, (token,))
         row = cursor.fetchone()
@@ -461,14 +461,14 @@ def verify_token(token: str) -> Optional[Dict[str, Any]]:
     # 4. Memory Check
     if token in IN_MEMORY_SESSIONS:
         u = IN_MEMORY_SESSIONS[token]
-        return {"id": u["id"], "email": u["email"], "name": u["name"], "source_portal": u.get("source_portal", "lifedhealth"), "role": "user"}
+        return {"id": u["id"], "email": u["email"], "name": u["name"], "source_portal": u.get("source_portal", "lewis_app"), "role": "user"}
 
     return None
 
 def save_assessment_submission(user_id: int, user_email: str, assessment_data: Dict[str, Any]) -> str:
     """
-    Save an anonymized insight report for system enhancement with ZERO user credentials,
-    and link its report_uuid to the user's personal vault in PostgreSQL / Supabase / SQLite.
+    Save an anonymized insight report into lewis_anonymized_insight_reports with ZERO PII,
+    and link its report_uuid to the user's personal vault in lewis_user_report_vault.
     """
     report_uuid = generate_report_uuid()
     anonymous_code = generate_anonymous_user_code(user_id)
@@ -491,7 +491,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
             conn = get_pg_conn()
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO anonymized_insight_reports 
+                INSERT INTO lewis_anonymized_insight_reports 
                 (report_uuid, anonymous_code, wellbeing_band, overall_score, deidentified_scores_json, deidentified_answers_json, deidentified_report_json)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             """, (
@@ -505,7 +505,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
             ))
 
             cursor.execute("""
-                INSERT INTO user_report_vault 
+                INSERT INTO lewis_user_report_vault 
                 (user_id, report_uuid, report_title, wellbeing_band, overall_score)
                 VALUES (%s, %s, %s, %s, %s)
             """, (
@@ -521,7 +521,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
             logger.info("PostgreSQL: De-identified report %s saved under anonymous code %s", report_uuid, anonymous_code)
             return report_uuid
         except Exception as exc:
-            logger.error("PostgreSQL assessment save error (%s). Falling back to REST/SQLite.", exc)
+            logger.error("PostgreSQL assessment save error (%s).", exc)
 
     # 2. Supabase REST API
     if USE_SUPABASE_REST:
@@ -535,7 +535,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
                 "deidentified_answers_json": clean_answers,
                 "deidentified_report_json": clean_report
             }
-            requests.post(f"{SUPABASE_URL}/rest/v1/anonymized_insight_reports", headers=get_supabase_headers(), json=anon_payload)
+            requests.post(f"{SUPABASE_URL}/rest/v1/lewis_anonymized_insight_reports", headers=get_supabase_headers(), json=anon_payload)
 
             vault_payload = {
                 "user_id": user_id,
@@ -544,7 +544,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
                 "wellbeing_band": wellbeing_band,
                 "overall_score": overall_score
             }
-            requests.post(f"{SUPABASE_URL}/rest/v1/user_report_vault", headers=get_supabase_headers(), json=vault_payload)
+            requests.post(f"{SUPABASE_URL}/rest/v1/lewis_user_report_vault", headers=get_supabase_headers(), json=vault_payload)
 
             logger.info("Supabase REST: De-identified report %s saved under anonymous code %s", report_uuid, anonymous_code)
             return report_uuid
@@ -557,7 +557,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
         cursor = conn.cursor()
 
         cursor.execute("""
-            INSERT INTO anonymized_insight_reports 
+            INSERT INTO lewis_anonymized_insight_reports 
             (report_uuid, anonymous_code, wellbeing_band, overall_score, deidentified_scores_json, deidentified_answers_json, deidentified_report_json)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
@@ -571,7 +571,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
         ))
 
         cursor.execute("""
-            INSERT INTO user_report_vault 
+            INSERT INTO lewis_user_report_vault 
             (user_id, report_uuid, report_title, wellbeing_band, overall_score)
             VALUES (?, ?, ?, ?, ?)
         """, (
@@ -591,14 +591,14 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
     return report_uuid
 
 def get_user_assessments(user_id: int) -> List[Dict[str, Any]]:
-    """Fetch user's report vault entries from PostgreSQL, Supabase Cloud REST, or SQLite."""
+    """Fetch user's report vault entries from isolated lewis_user_report_vault table."""
     if has_pg and DATABASE_URL:
         try:
             conn = get_pg_conn()
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT report_uuid, report_title, wellbeing_band, overall_score, created_at
-                FROM user_report_vault
+                FROM lewis_user_report_vault
                 WHERE user_id = %s
                 ORDER BY created_at DESC
             """, (user_id,))
@@ -611,7 +611,7 @@ def get_user_assessments(user_id: int) -> List[Dict[str, Any]]:
     if USE_SUPABASE_REST:
         try:
             res = requests.get(
-                f"{SUPABASE_URL}/rest/v1/user_report_vault?user_id=eq.{user_id}&select=report_uuid,report_title,wellbeing_band,overall_score,created_at&order=created_at.desc",
+                f"{SUPABASE_URL}/rest/v1/lewis_user_report_vault?user_id=eq.{user_id}&select=report_uuid,report_title,wellbeing_band,overall_score,created_at&order=created_at.desc",
                 headers=get_supabase_headers()
             )
             if res.status_code == 200:
@@ -624,7 +624,7 @@ def get_user_assessments(user_id: int) -> List[Dict[str, Any]]:
         cursor = conn.cursor()
         cursor.execute("""
             SELECT report_uuid, report_title, wellbeing_band, overall_score, created_at
-            FROM user_report_vault
+            FROM lewis_user_report_vault
             WHERE user_id = ?
             ORDER BY created_at DESC
         """, (user_id,))
@@ -639,3 +639,35 @@ def get_user_assessments(user_id: int) -> List[Dict[str, Any]]:
         } for r in rows]
     except Exception as exc:
         return []
+
+def get_onboarding_analytics_summary() -> Dict[str, Any]:
+    """Fetch usage analytics for the Onboarding system without exposing user details."""
+    if USE_SUPABASE_REST:
+        try:
+            res = requests.get(
+                f"{SUPABASE_URL}/rest/v1/lewis_onboarding_analytics_summary",
+                headers=get_supabase_headers()
+            )
+            if res.status_code == 200 and len(res.json()) > 0:
+                return res.json()[0]
+        except Exception as exc:
+            pass
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM lewis_onboarding_analytics_summary")
+            row = cursor.fetchone()
+            conn.close()
+            if row:
+                return dict(row)
+        except Exception as exc:
+            pass
+
+    return {
+        "total_registered_lewis_users": len(IN_MEMORY_USERS),
+        "total_active_subjects": 0,
+        "total_assessments_completed": 0,
+        "last_assessment_time": None
+    }

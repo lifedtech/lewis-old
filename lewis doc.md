@@ -47,6 +47,7 @@ LEWIS is **not** a diagnostic, screening, or risk-scoring tool, and its language
 lifed-LEWIS/
 ├── backend/
 │   ├── main.py              # FastAPI app: endpoints, Pydantic models, pipeline order
+│   ├── auth.py              # User authentication, zero-PII report de-identification, Supabase integration
 │   ├── scoring.py           # Instrument scoring, bands, bright spot, W-matrix leverage engine
 │   ├── corpus.py            # Similarity engine over the 10k seed corpus (state-only k-NN)
 │   ├── pattern.py           # Layer-4 pattern engine (LWI, texture patterns, portraits)
@@ -54,25 +55,29 @@ lifed-LEWIS/
 │   ├── llm.py               # Road B: LLM voicing via NVIDIA NIM (fail-open to Road A)
 │   ├── validator.py         # Fail-closed language validator for every Road B output
 │   ├── safety.py            # Distress flags + gentle mode
-│   ├── security.py          # GuardrailMiddleware: rate limit, body cap, security headers
+│   ├── security.py          # GuardrailMiddleware: rate limiting, body cap, security headers, log masking
 │   ├── content.py           # SMALL-habit catalog + routing
+│   ├── db/
+│   │   ├── supabase_schema.sql # Isolated PostgreSQL schema (lewis_ namespace) + Onboarding analytics view
+│   │   └── lewis_users.db   # Dedicated local SQLite fallback database
+│   ├── Procfile / railway.json # Railway deployment configuration
 │   ├── data/
 │   │   └── lewis_10000_scores.csv   # canonical 10k synthetic seed corpus
 │   ├── tests/               # pytest suite (66 tests incl. corpus regression)
-│   ├── .env                 # NVIDIA_API_KEY, FRONTEND_URL, LEWIS_* switches
+│   ├── .env                 # DATABASE_URL, SUPABASE_URL, SUPABASE_SECRET_KEY, FRONTEND_URL
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── App.jsx          # SCREENS map + SCREEN_ORDER — the only routing truth
 │   │   ├── screens/         # PreStage0Age … Stage10 → MirrorScreen (results)
 │   │   ├── lib/payload.js   # buildFullAssessmentPayload → API schema
-│   │   └── store/useLewisStore.js   # Zustand store (full reset supported)
+│   │   └── store/useLewisStore.js   # Zustand store (full reset & auth state)
 │   ├── package.json / vite.config.js / eslint.config.js
-│   └── .env                 # VITE_API_URL
+│   └── .env                 # VITE_API_URL (Cloudflare Workers / local dev)
 ├── doc/                     # Locked product specs + 10k dataset (source of truth)
-├── NEW_UPDATES.md           # Versioned changelog (currently v1.2.0)
+├── NEW_UPDATES.md           # Versioned changelog (currently v1.3.0)
 ├── learning_doc.md          # Developer onboarding guide
-└── lewis doc.md             # This file
+└── lewis doc.md             # Project documentation
 ```
 
 ---

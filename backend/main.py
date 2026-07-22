@@ -37,7 +37,7 @@ from security import GuardrailMiddleware
 from enrich import build_enriched_object
 from insight_report import build_insight_report
 from report_gate import check_report
-from auth import register_user, login_user, verify_token, save_assessment_submission, get_user_assessments
+from auth import register_user, login_user, verify_token, save_assessment_submission, get_user_assessments, get_onboarding_analytics_summary
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -220,6 +220,13 @@ def auth_user_assessments(request: Request):
         raise HTTPException(status_code=401, detail="Invalid token")
     assessments = get_user_assessments(user["id"])
     return {"status": "success", "user": user, "assessments": assessments}
+
+
+@app.get("/analytics/onboarding")
+def onboarding_analytics():
+    """Return anonymized usage metrics for the Onboarding system."""
+    summary = get_onboarding_analytics_summary()
+    return {"status": "success", "analytics": summary}
 
 
 @app.post("/pulse/calculate")
