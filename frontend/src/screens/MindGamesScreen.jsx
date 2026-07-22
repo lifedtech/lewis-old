@@ -75,42 +75,84 @@ export default function MindGamesScreen() {
           style={{
             width: '100%',
             height: '100%',
-            background: 'var(--panel-2)',
+            background: `
+              radial-gradient(circle at 0% 0%, rgba(255, 107, 107, 0.22), transparent 55%),
+              radial-gradient(circle at 100% 0%, rgba(255, 209, 102, 0.25), transparent 55%),
+              radial-gradient(circle at 0% 100%, rgba(120, 115, 245, 0.22), transparent 55%),
+              radial-gradient(circle at 100% 100%, rgba(54, 209, 220, 0.25), transparent 55%),
+              var(--panel-2)
+            `,
             border: '1px solid var(--panel-border)',
             borderRadius: '24px',
             position: 'relative',
             cursor: 'crosshair',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.06)'
           }}
         >
           {/* Axis lines */}
-          <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'var(--panel-border)' }}></div>
-          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'var(--panel-border)' }}></div>
+          <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'rgba(0,0,0,0.08)' }}></div>
+          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0,0,0,0.08)' }}></div>
           
-          {/* Subtle gradient background based on quadrants */}
+          {/* 4 Quadrants with Vibrant Color Gradients & Styled Badges */}
+          {/* Top-Left: Stressed / Tense */}
           <div style={{
             position: 'absolute', top: 0, left: 0, width: '50%', height: '50%',
-            background: 'radial-gradient(circle at top left, rgba(255, 100, 100, 0.05), transparent 70%)'
+            background: 'linear-gradient(135deg, rgba(255, 107, 107, 0.25) 0%, rgba(255, 148, 102, 0.05) 100%)',
+            borderRight: '1px dashed rgba(255, 107, 107, 0.15)',
+            borderBottom: '1px dashed rgba(255, 107, 107, 0.15)'
           }}>
-            <span style={{ position: 'absolute', top: '16px', left: '16px', fontSize: '11px', color: 'var(--text-mute)', opacity: 0.7, letterSpacing: '0.5px' }}>Stressed / Tense</span>
+            <span style={{ 
+              position: 'absolute', top: '14px', left: '14px', 
+              fontSize: '11px', fontWeight: 600, color: '#D93838', 
+              background: 'rgba(255, 255, 255, 0.75)', padding: '4px 8px', borderRadius: '8px',
+              backdropFilter: 'blur(4px)', boxShadow: '0 2px 6px rgba(217,56,56,0.1)'
+            }}>Stressed / Tense</span>
           </div>
+
+          {/* Top-Right: Excited / Alert */}
           <div style={{
             position: 'absolute', top: 0, right: 0, width: '50%', height: '50%',
-            background: 'radial-gradient(circle at top right, rgba(100, 255, 150, 0.05), transparent 70%)'
+            background: 'linear-gradient(225deg, rgba(255, 190, 60, 0.25) 0%, rgba(255, 230, 100, 0.05) 100%)',
+            borderLeft: '1px dashed rgba(255, 190, 60, 0.15)',
+            borderBottom: '1px dashed rgba(255, 190, 60, 0.15)'
           }}>
-            <span style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '11px', color: 'var(--text-mute)', opacity: 0.7, letterSpacing: '0.5px' }}>Excited / Alert</span>
+            <span style={{ 
+              position: 'absolute', top: '14px', right: '14px', 
+              fontSize: '11px', fontWeight: 600, color: '#D97706', 
+              background: 'rgba(255, 255, 255, 0.75)', padding: '4px 8px', borderRadius: '8px',
+              backdropFilter: 'blur(4px)', boxShadow: '0 2px 6px rgba(217,119,6,0.1)'
+            }}>Excited / Alert</span>
           </div>
+
+          {/* Bottom-Left: Fatigued / Sad */}
           <div style={{
             position: 'absolute', bottom: 0, left: 0, width: '50%', height: '50%',
-            background: 'radial-gradient(circle at bottom left, rgba(100, 100, 255, 0.05), transparent 70%)'
+            background: 'linear-gradient(45deg, rgba(120, 115, 245, 0.22) 0%, rgba(160, 150, 255, 0.05) 100%)',
+            borderRight: '1px dashed rgba(120, 115, 245, 0.15)',
+            borderTop: '1px dashed rgba(120, 115, 245, 0.15)'
           }}>
-            <span style={{ position: 'absolute', bottom: '16px', left: '16px', fontSize: '11px', color: 'var(--text-mute)', opacity: 0.7, letterSpacing: '0.5px' }}>Fatigued / Sad</span>
+            <span style={{ 
+              position: 'absolute', bottom: '14px', left: '14px', 
+              fontSize: '11px', fontWeight: 600, color: '#4F46E5', 
+              background: 'rgba(255, 255, 255, 0.75)', padding: '4px 8px', borderRadius: '8px',
+              backdropFilter: 'blur(4px)', boxShadow: '0 2px 6px rgba(79,70,229,0.1)'
+            }}>Fatigued / Sad</span>
           </div>
+
+          {/* Bottom-Right: Calm / Serene */}
           <div style={{
             position: 'absolute', bottom: 0, right: 0, width: '50%', height: '50%',
-            background: 'radial-gradient(circle at bottom right, rgba(200, 200, 255, 0.05), transparent 70%)'
+            background: 'linear-gradient(315deg, rgba(45, 212, 191, 0.28) 0%, rgba(54, 209, 220, 0.05) 100%)',
+            borderLeft: '1px dashed rgba(45, 212, 191, 0.15)',
+            borderTop: '1px dashed rgba(45, 212, 191, 0.15)'
           }}>
-            <span style={{ position: 'absolute', bottom: '16px', right: '16px', fontSize: '11px', color: 'var(--text-mute)', opacity: 0.7, letterSpacing: '0.5px' }}>Calm / Serene</span>
+            <span style={{ 
+              position: 'absolute', bottom: '14px', right: '14px', 
+              fontSize: '11px', fontWeight: 600, color: '#0D9488', 
+              background: 'rgba(255, 255, 255, 0.75)', padding: '4px 8px', borderRadius: '8px',
+              backdropFilter: 'blur(4px)', boxShadow: '0 2px 6px rgba(13,148,136,0.1)'
+            }}>Calm / Serene</span>
           </div>
 
           {/* The Point */}

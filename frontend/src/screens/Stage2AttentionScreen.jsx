@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
 
 export default function Stage2AttentionScreen() {
   const { setScreen, setProfileField } = useLewisStore()
@@ -51,7 +52,7 @@ export default function Stage2AttentionScreen() {
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
         <h1 className="headline">Attention Calibration</h1>
-        <p className="sub">This calibrates your cognitive presence. Tap the orb ONLY when it turns <span style={{ color: 'var(--dawn)' }}>Orange</span>.</p>
+        <p className="sub">This calibrates your cognitive presence. Tap the fluid blob ONLY when it turns <span style={{ color: 'var(--dawn)' }}>Orange</span>.</p>
         
         <div className="form-container" style={{ margin: '3rem auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           
@@ -60,16 +61,11 @@ export default function Stage2AttentionScreen() {
           </div>
 
           <div className="ring-wrap" style={{ margin: '1rem 0', cursor: 'pointer' }} onClick={handleOrbClick}>
-            <motion.div 
-              className="orb orb--lg"
-              animate={{ 
-                scale: color === 'orange' ? 1.2 : 1.0,
-                backgroundColor: color === 'orange' ? '#FF9466' : 'rgba(255, 255, 255, 0.9)',
-                boxShadow: color === 'orange' 
-                  ? '0 0 45px rgba(255,148,102,0.9)' 
-                  : '0 0 25px rgba(255,255,255,0.4)'
-              }}
-              transition={{ duration: 0.15 }}
+            <BreathingFluidBlob 
+              size={150} 
+              scaleOverride={color === 'orange' ? 1.25 : 1.0}
+              customColor={color === 'orange' ? '#FF9466' : null}
+              interactive={true}
             />
           </div>
 

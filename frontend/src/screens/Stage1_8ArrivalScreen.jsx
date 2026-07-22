@@ -22,7 +22,7 @@ export default function Stage1_8ArrivalScreen() {
         
         <div className="form-container" style={{ margin: '2rem auto' }}>
 
-          <input type="text" className="input-field" placeholder="Type here..." 
+          <textarea className="input-field" placeholder="Type here..." 
             value={arrivalState || ''} 
             onChange={(e) => setProfileField('arrivalState', e.target.value)} 
           />

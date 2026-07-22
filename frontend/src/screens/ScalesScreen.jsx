@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { motion, AnimatePresence } from 'framer-motion'
+import TopicLineIllustration from '../components/TopicLineIllustration.jsx'
 import { 
   WHO5_SCALE, PSS10_SCALE, UCLA3_SCALE, GSE_SCALE, PROMIS_SCALE, CFPB5_1_SCALE, CFPB5_2_SCALE 
 } from '../constants/scales.js'
@@ -118,20 +119,26 @@ export default function ScalesScreen() {
       exit={{ opacity: 0, x: -20 }}
       style={{ display: 'flex' }}
     >
-      <p className="eyebrow" style={{ textAlign: 'center' }}>
-        {currentScale.title} · {currentQuestionOverall} / {totalQuestions}
-      </p>
-      
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={currentItem.id}
-          initial={{opacity:0, y: 10}} 
-          animate={{opacity:1, y: 0}} 
-          exit={{opacity:0, y: -10}} 
-          transition={{ duration: 0.3 }}
-          className="q-card"
-          style={{ width: '100%', maxWidth: '600px', margin: 'auto' }}
-        >
+      <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center', width: '100%' }}>
+        <h1 className="headline">{currentScale.title}</h1>
+        <div style={{ gridArea: 'sub', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <TopicLineIllustration topic={currentScale.storeKey} title={currentScale.title} />
+        </div>
+
+        <div className="form-container" style={{ margin: 'auto' }}>
+          <p className="eyebrow" style={{ textAlign: 'left', marginBottom: '16px', margin: '0 0 16px 0' }}>
+            {currentScale.title} · {currentQuestionOverall} / {totalQuestions}
+          </p>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={currentItem.id}
+              initial={{opacity:0, y: 10}} 
+              animate={{opacity:1, y: 0}} 
+              exit={{opacity:0, y: -10}} 
+              transition={{ duration: 0.3 }}
+              className="q-card"
+              style={{ width: '100%', margin: '0' }}
+            >
           <p className="q-caption" style={{textAlign:'center', marginBottom:'12px'}}>{currentScale.prompt}</p>
           <h1 className="q-text" style={{textAlign:'center', marginBottom:'40px'}}>{currentItem.text}</h1>
           
@@ -159,6 +166,8 @@ export default function ScalesScreen() {
           </div>
         </motion.div>
       </AnimatePresence>
+        </div>
+      </div>
     </motion.section>
   )
 }

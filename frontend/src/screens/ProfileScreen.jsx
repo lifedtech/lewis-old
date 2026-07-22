@@ -3,6 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 import { motion, AnimatePresence } from 'framer-motion'
 import MultiSelectGrid from '../components/MultiSelectGrid.jsx'
 import DraggableList from '../components/DraggableList.jsx'
+import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
 
 const ROLES_OPTIONS = ['Student', 'Professional', 'Entrepreneur', 'Primary caregiver', 'Homemaker', 'Retired', 'Between jobs', 'In transition', 'Taking time out', 'Living with a health condition', 'Wearing many hats']
 const PRESSURES_OPTIONS = ['Workload', 'Financial pressure', 'Relationship strain', 'Health concerns', 'Life change or transition', 'Mental load', 'Digital overwhelm', 'Feeling lost or without direction', 'Sleep depletion', 'Nothing major right now']
@@ -43,13 +44,8 @@ export default function ProfileScreen() {
           exit={{opacity:0}} 
           className="split-layout"
         >
-          <div className="split-left">
-            <div className="orb orb--hero" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="24" fill="#6B7280" />
-                <path d="M33 24L18 32.6603L18 15.3397L33 24Z" fill="white" />
-              </svg>
-            </div>
+          <div className="split-left" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <BreathingFluidBlob size={220} duration={5} />
           </div>
           
           <div className="split-right">

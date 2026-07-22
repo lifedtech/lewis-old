@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
 
 const TOTAL = 24
 const CYCLE = 8
@@ -107,16 +108,12 @@ export default function Stage3_4BreathingScreen() {
                   style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%', transition: 'stroke-dashoffset 1s linear' }}
                 ></circle>
               </svg>
-              <motion.div
-                className="orb orb--lg"
-                animate={{ scale: phase < CYCLE / 2 ? [1, 1.25] : [1.25, 1] }}
-                transition={{ duration: CYCLE / 2, ease: "easeInOut" }}
-                // inset+margin centering needs no transform, so it can't be
-                // clobbered by transform animations; the CSS .orb "breathe"
-                // keyframes are disabled because they'd override the phase-
-                // synced framer scale (CSS animations beat inline styles).
-                style={{ position: 'absolute', inset: 0, margin: 'auto', animation: 'none' }}
-              />
+              <div style={{ position: 'absolute', inset: 0, margin: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BreathingFluidBlob 
+                  size={120} 
+                  scaleOverride={phase < CYCLE / 2 ? 1 + (phase / (CYCLE / 2)) * 0.25 : 1.25 - ((phase - CYCLE / 2) / (CYCLE / 2)) * 0.25} 
+                />
+              </div>
             </div>
             
             <div className="breathe-label" style={{ fontSize: '24px', fontWeight: 600, color: 'var(--text)', marginTop: '20px' }}>{breatheText}</div>

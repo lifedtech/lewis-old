@@ -23,11 +23,11 @@ export default function Stage7_5PlannerScreen() {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <p className="eyebrow">Action & Support</p>
         <h1 className="headline">Readiness for Action</h1>
         <p className="sub">How prepared do you feel to integrate small wellness habits or changes into your calendar starting this week?</p>
         
-        <div className="form-container" style={{ margin: '2rem auto', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="form-container" style={{ margin: '0 auto', maxWidth: '500px', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <p className="eyebrow" style={{ textAlign: 'left', marginBottom: '4px' }}>Action & Support</p>
           {options.map(opt => (
             <button
               key={opt.id}

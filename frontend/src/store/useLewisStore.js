@@ -1,10 +1,22 @@
 import { create } from 'zustand'
 
+// Load persisted auth from localStorage if available
+const savedToken = typeof window !== 'undefined' ? localStorage.getItem('lewis_auth_token') : null
+const savedUser = (typeof window !== 'undefined' && localStorage.getItem('lewis_user')) 
+  ? JSON.parse(localStorage.getItem('lewis_user')) 
+  : null
+
 // Every piece of journey state lives here, so reset() can restore all of
 // it in one call. Defaults use fresh objects/arrays per call (a shared
 // constant would leak mutations across resets).
 const initialState = () => ({
   currentScreen: 'landing',
+
+  // Auth State
+  isAuthenticated: !!savedToken,
+  authUser: savedUser,
+  authToken: savedToken || null,
+  authPendingDownload: false,
 
   // Pre-Stage & Stage 0
   isOver18: null,
@@ -97,6 +109,20 @@ export const useLewisStore = create((set) => ({
   ...initialState(),
 
   setScreen: (screenName) => set({ currentScreen: screenName }),
+
+  setAuth: (user, token) => {
+    if (token) {
+      localStorage.setItem('lewis_auth_token', token)
+      localStorage.setItem('lewis_user', JSON.stringify(user))
+    }
+    set({ isAuthenticated: true, authUser: user, authToken: token })
+  },
+
+  logout: () => {
+    localStorage.removeItem('lewis_auth_token')
+    localStorage.removeItem('lewis_user')
+    set({ isAuthenticated: false, authUser: null, authToken: null })
+  },
 
   setAffect: (x, y) => set({ affect: { x, y } }),
 

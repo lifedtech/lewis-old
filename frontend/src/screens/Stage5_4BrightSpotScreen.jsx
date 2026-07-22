@@ -21,11 +21,13 @@ export default function Stage5_4BrightSpotScreen() {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <p className="eyebrow">Qualitative Reflection</p>
+        <style>{`.main-card .content-wrapper h1.headline::before { content: none !important; }`}</style>
+        
         <h1 className="headline">Your Bright Spot</h1>
         <p className="sub">What is currently your greatest source of resilience, calm, or strength? How does it protect you during difficult weeks?</p>
         
-        <div className="form-container" style={{ margin: '2rem auto', maxWidth: '500px' }}>
+        <div className="form-container" style={{ margin: '0 auto', maxWidth: '500px', width: '100%' }}>
+          <p className="eyebrow" style={{ textAlign: 'left', marginBottom: '16px' }}>Qualitative Reflection</p>
           <textarea
             value={brightSpotCheck}
             onChange={handleChange}

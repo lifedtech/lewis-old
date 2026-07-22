@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
 import InsightReport from '../report/InsightReport.jsx'
+import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
 
 export default function MirrorScreen() {
   const setScreen = useLewisStore((s) => s.setScreen)
@@ -13,6 +14,24 @@ export default function MirrorScreen() {
   const [analysis, setAnalysis] = useState(null)
   const [error, setError] = useState(null)
   const [missing, setMissing] = useState(null)
+  const [loadingStepIdx, setLoadingStepIdx] = useState(0)
+
+  const loadingSteps = [
+    "Scoring WHO-5 Emotional Wellbeing & Resilience...",
+    "Normalizing PSS-10 Perceived Stress Load...",
+    "Evaluating Social Bonds & Financial Peace...",
+    "Running Systemic Cascade Impact Matrix...",
+    "Synthesizing Personalized Narrative & Actionable Prescription...",
+    "Preparing Your Mirror Overview..."
+  ]
+
+  useEffect(() => {
+    if (!loading) return
+    const interval = setInterval(() => {
+      setLoadingStepIdx(prev => (prev < loadingSteps.length - 1 ? prev + 1 : prev))
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [loading])
 
   useEffect(() => {
     async function fetchAnalysis() {
@@ -47,9 +66,114 @@ export default function MirrorScreen() {
 
   if (loading) {
     return (
-      <motion.section className="screen active" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <p className="q-text" style={{ textAlign: 'center' }}>LEWIS is synthesizing your results...</p>
-      </motion.section>
+      <motion.div 
+        className="screen-container"
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
+        style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '70vh', 
+          width: '100%',
+          position: 'relative' 
+        }}
+      >
+        <div style={{
+          width: '100%',
+          maxWidth: '560px',
+          padding: '44px 36px',
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(24px)',
+          borderRadius: '32px',
+          border: '1.5px solid rgba(255, 148, 102, 0.3)',
+          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.08), 0 0 45px rgba(255, 148, 102, 0.18)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          {/* Ambient Glow Aura */}
+          <div style={{
+            position: 'absolute',
+            top: '-40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '240px',
+            height: '240px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(54, 209, 220, 0.35) 0%, rgba(255, 148, 102, 0.25) 50%, transparent 80%)',
+            filter: 'blur(35px)',
+            pointerEvents: 'none'
+          }} />
+
+          {/* Dynamic Morphing Fluid Core */}
+          <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
+            <BreathingFluidBlob size={135} duration={3} />
+          </div>
+
+          {/* Engine Header Eyebrow */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', zIndex: 1 }}>
+            <motion.span 
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              style={{ 
+                width: '8px', 
+                height: '8px', 
+                borderRadius: '50%', 
+                background: 'var(--dawn)', 
+                boxShadow: '0 0 10px var(--dawn)' 
+              }} 
+            />
+            <span style={{ 
+              fontFamily: '"IBM Plex Mono", monospace', 
+              fontSize: '11px', 
+              letterSpacing: '0.14em', 
+              color: 'var(--dawn)', 
+              fontWeight: 600,
+              textTransform: 'uppercase'
+            }}>
+              LEWIS ASSESSMENT ENGINE
+            </span>
+          </div>
+
+          <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: '0 0 14px 0', zIndex: 1 }}>
+            Synthesizing Your Mirror
+          </h2>
+
+          {/* Animated Step Messages */}
+          <div style={{ height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', zIndex: 1 }}>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={loadingStepIdx}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                style={{ fontSize: '14px', color: 'var(--text-mute)', margin: 0, fontWeight: 500 }}
+              >
+                {loadingSteps[loadingStepIdx]}
+              </motion.p>
+            </AnimatePresence>
+          </div>
+
+          {/* Glowing Animated Progress Bar */}
+          <div style={{ width: '80%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', margin: '24px 0 14px', overflow: 'hidden', zIndex: 1 }}>
+            <motion.div 
+              style={{ height: '100%', background: 'linear-gradient(90deg, #36D1DC 0%, #FF9466 100%)' }}
+              animate={{ width: ['10%', '98%'] }}
+              transition={{ duration: 7, ease: "easeInOut" }}
+            />
+          </div>
+
+          <p style={{ fontSize: '12px', color: 'var(--text-faint)', fontStyle: 'italic', margin: 0, zIndex: 1 }}>
+            LEWIS compiles your psychological metrics into personalized systemic insights.
+          </p>
+        </div>
+      </motion.div>
     )
   }
 
@@ -135,12 +259,13 @@ export default function MirrorScreen() {
           flexDirection: 'column',
           padding: '24px',
           marginBottom: '32px',
-          border: '1px solid var(--lavender)',
-          background: 'linear-gradient(135deg, rgba(167,139,250,0.12) 0%, rgba(21,21,26,0.9) 100%)',
-          borderRadius: '16px'
+          border: '1.5px solid rgba(167, 139, 250, 0.4)',
+          background: 'linear-gradient(135deg, rgba(167, 139, 250, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%)',
+          borderRadius: '20px',
+          boxShadow: '0 8px 24px rgba(167, 139, 250, 0.12)'
         }}>
-          <p className="mirror-label bright" style={{ color: 'var(--lavender)', marginBottom: '12px' }}>A note of care</p>
-          <p className="mirror-text" style={{ fontSize: '15px', lineHeight: '1.7', color: '#e2e8f0', margin: 0 }}>
+          <p className="mirror-label bright" style={{ color: '#7C3AED', marginBottom: '12px', fontWeight: 700 }}>A note of care</p>
+          <p className="mirror-text" style={{ fontSize: '15px', lineHeight: '1.7', color: 'var(--text)', margin: 0 }}>
             {analysis.safety.care_note}
           </p>
         </div>
@@ -152,45 +277,46 @@ export default function MirrorScreen() {
           <div className="mirror-card resolution-card" style={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            padding: '24px', 
+            padding: '28px', 
             marginBottom: '32px',
-            border: '1px solid var(--dawn)',
-            background: 'linear-gradient(135deg, rgba(230,123,94,0.15) 0%, rgba(21,21,26,0.9) 100%)',
-            boxShadow: '0 8px 32px rgba(230,123,94,0.15)',
-            borderRadius: '16px'
+            border: '1.5px solid var(--dawn)',
+            background: 'linear-gradient(135deg, rgba(0, 174, 157, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%)',
+            boxShadow: '0 8px 24px rgba(0, 174, 157, 0.15)',
+            borderRadius: '20px'
           }}>
-            <p className="mirror-label bright" style={{ color: 'var(--dawn)', marginBottom: '12px' }}>Your Resolution</p>
-            <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '8px', fontWeight: '600' }}>{analysis?.prescription?.habit_title}</h3>
-            <p className="mirror-text" style={{ fontSize: '15px', lineHeight: '1.6', color: '#e2e8f0', margin: 0 }}>
+            <p className="mirror-label bright" style={{ color: 'var(--dawn)', marginBottom: '12px', fontWeight: 700 }}>Your Resolution</p>
+            <h3 style={{ color: 'var(--text)', fontSize: '22px', marginBottom: '8px', fontWeight: '700' }}>{analysis?.prescription?.habit_title}</h3>
+            <p className="mirror-text" style={{ fontSize: '15px', lineHeight: '1.6', color: 'var(--text-mute)', margin: 0 }}>
               {analysis?.prescription?.micro_action}
             </p>
           </div>
 
-          <div className="mirror-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '30px', position: 'relative', overflow: 'hidden', marginBottom: '24px' }}>
-            <p className="mirror-label bright">Resilience Radar</p>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at center, rgba(230,123,94,0.1), transparent 70%)', pointerEvents: 'none' }}></div>
+          <div className="mirror-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '30px', position: 'relative', overflow: 'hidden', marginBottom: '24px', borderRadius: '20px' }}>
+            <p className="mirror-label bright" style={{ color: 'var(--dawn)', fontWeight: 700 }}>Resilience Radar</p>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at center, rgba(0, 174, 157, 0.08), transparent 70%)', pointerEvents: 'none' }}></div>
             
             <div style={{ width: '100%', height: '300px', marginTop: '20px' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-                  <PolarGrid stroke="var(--panel-border)" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-mute)', fontSize: 11, letterSpacing: 0.5 }} />
+                  <PolarGrid stroke="rgba(0,0,0,0.12)" />
+                  <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                   <Radar
                     name="You"
                     dataKey="A"
                     stroke="var(--dawn)"
-                    fill="var(--dawn-glow)"
-                    fillOpacity={0.6}
+                    strokeWidth={2.5}
+                    fill="var(--dawn)"
+                    fillOpacity={0.25}
                   />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="mirror-card" style={{ display: 'flex', flexDirection: 'column', padding: '30px', marginBottom: '24px' }}>
-            <p className="mirror-label bright" style={{ alignSelf: 'flex-start' }}>The Wellbeing Landscape</p>
-            <p className="mirror-text" style={{ fontSize: '14px', marginBottom: '24px' }}>Ranked from your strongest resources to the areas asking for attention.</p>
+          <div className="mirror-card" style={{ display: 'flex', flexDirection: 'column', padding: '30px', marginBottom: '24px', borderRadius: '20px' }}>
+            <p className="mirror-label bright" style={{ color: 'var(--dawn)', fontWeight: 700, alignSelf: 'flex-start' }}>The Wellbeing Landscape</p>
+            <p className="mirror-text" style={{ fontSize: '14px', marginBottom: '24px', color: 'var(--text-mute)' }}>Ranked from your strongest resources to the areas asking for attention.</p>
             
             <div style={{ width: '100%', height: '350px' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -220,13 +346,13 @@ export default function MirrorScreen() {
                     type="category" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fill: '#e2e8f0', fontSize: 13, fontWeight: 500, letterSpacing: '0.5px' }} 
+                    tick={{ fill: 'var(--text)', fontSize: 13, fontWeight: 600, letterSpacing: '0.02em' }} 
                     width={130} 
                   />
                   <Tooltip 
-                    cursor={{fill: 'var(--panel-border)', opacity: 0.2}} 
-                    contentStyle={{ backgroundColor: 'rgba(21,21,26,0.9)', borderColor: 'var(--panel-border)', borderRadius: '12px', backdropFilter: 'blur(10px)', color: '#fff' }}
-                    itemStyle={{ color: '#fff', fontWeight: 600 }}
+                    cursor={{fill: 'rgba(0,0,0,0.04)'}} 
+                    contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', borderColor: 'var(--dawn)', borderRadius: '12px', backdropFilter: 'blur(10px)', color: 'var(--text)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+                    itemStyle={{ color: 'var(--text)', fontWeight: 700 }}
                   />
                   <Bar 
                     dataKey="A" 

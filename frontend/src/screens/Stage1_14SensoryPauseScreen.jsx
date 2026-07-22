@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
 
 export default function Stage1_14SensoryPauseScreen() {
   const { setScreen, setProfileField } = useLewisStore()
@@ -32,19 +33,12 @@ export default function Stage1_14SensoryPauseScreen() {
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
         <h1 className="headline">Sensory Pause</h1>
-        <p className="sub">Allow yourself a brief moment to reset. Just breathe in sync with the pulsing orb.</p>
+        <p className="sub">Allow yourself a brief moment to reset. Just breathe in sync with the morphing fluid.</p>
         
         <div className="form-container" style={{ margin: '3rem auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           
-          <div className="ring-wrap" style={{ margin: '2rem 0' }}>
-            <motion.div 
-              className="orb orb--lg"
-              animate={{ 
-                scale: [1, 1.3, 1],
-                boxShadow: ['0 0 20px rgba(255,148,102,0.4)', '0 0 40px rgba(255,148,102,0.8)', '0 0 20px rgba(255,148,102,0.4)']
-              }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            />
+          <div className="ring-wrap" style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <BreathingFluidBlob size={160} duration={4} />
           </div>
 
           <p className="sub" style={{ fontSize: '18px', fontWeight: 600, color: 'var(--dawn)' }}>

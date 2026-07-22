@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { motion } from 'framer-motion'
+import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
 
 const TOTAL = 24
 const CYCLE = 8
@@ -74,7 +75,9 @@ export default function BreatheScreen() {
               strokeDashoffset={offset}
             ></circle>
           </svg>
-          <div className="orb orb--lg"></div>
+          <div style={{ position: 'absolute', inset: 0, margin: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BreathingFluidBlob size={120} />
+          </div>
         </div>
         
         <div className="breathe-label">{breatheText}</div>

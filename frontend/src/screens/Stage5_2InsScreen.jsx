@@ -9,34 +9,86 @@ export default function Stage5_2InsScreen() {
     setScreen('stage5_2Swls')
   }
 
-  const renderOverlapCircles = (idx) => {
+  const LEVEL_DESCRIPTIONS = [
+    'Separate',
+    'Touching',
+    'Connected',
+    'Intertwined',
+    'Integrated',
+    'Merged',
+    'Unified'
+  ]
+
+  const renderOverlapCircles = (idx, selected) => {
     // idx: 0 to 6
-    // overlap goes from index 0 (touching) to index 6 (almost nested)
-    const distance = 26 - (idx * 4) // distance between circle centers
+    // R = 21. Max distance (Level 1) = 54. Min distance (Level 7) = 0.
+    const distance = 54 - (idx * (54 / 6))
+    const cxSelf = 60 - distance / 2
+    const cxNature = 60 + distance / 2
+
+    // Position Self text towards top and Nature text towards bottom to prevent collision at any overlap
+    const selfY = distance < 15 ? 13 : 15
+    const natureY = distance < 15 ? 65 : 63
+
     return (
-      <svg width="100" height="70" viewBox="0 0 100 70" style={{ overflow: 'visible' }}>
-        {/* Left Circle (Self) */}
+      <svg width="100%" viewBox="0 0 120 74" style={{ overflow: 'visible', maxWidth: '120px', height: 'auto' }}>
+        <defs>
+          <radialGradient id={`gradSelf-${idx}`} cx="40%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#FF7E67" stopOpacity={selected ? "0.6" : "0.35"} />
+            <stop offset="100%" stopColor="#FF4B4B" stopOpacity={selected ? "0.45" : "0.2"} />
+          </radialGradient>
+          <radialGradient id={`gradNature-${idx}`} cx="40%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#2DD4BF" stopOpacity={selected ? "0.6" : "0.35"} />
+            <stop offset="100%" stopColor="#10B981" stopOpacity={selected ? "0.45" : "0.2"} />
+          </radialGradient>
+        </defs>
+
+        {/* Self Circle */}
         <circle 
-          cx={50 - distance/2} 
-          cy="35" 
-          r="22" 
-          fill="rgba(255, 148, 102, 0.05)" 
-          stroke={ins === idx + 1 ? 'var(--dawn)' : 'rgba(255,255,255,0.2)'} 
-          strokeWidth={ins === idx + 1 ? '2' : '1.2'} 
-          style={{ transition: 'all 0.2s ease' }}
+          cx={cxSelf} 
+          cy="37" 
+          r="21" 
+          fill={`url(#gradSelf-${idx})`} 
+          stroke={selected ? '#FF4B4B' : 'rgba(255, 75, 75, 0.45)'} 
+          strokeWidth={selected ? '2' : '1.2'} 
+          style={{ transition: 'all 0.3s ease' }}
         />
-        {/* Right Circle (Nature) */}
+
+        {/* Nature Circle */}
         <circle 
-          cx={50 + distance/2} 
-          cy="35" 
-          r="22" 
-          fill="rgba(143, 191, 160, 0.05)" 
-          stroke={ins === idx + 1 ? 'var(--green)' : 'rgba(255,255,255,0.2)'} 
-          strokeWidth={ins === idx + 1 ? '2' : '1.2'} 
-          style={{ transition: 'all 0.2s ease' }}
+          cx={cxNature} 
+          cy="37" 
+          r="21" 
+          fill={`url(#gradNature-${idx})`} 
+          stroke={selected ? '#10B981' : 'rgba(16, 185, 129, 0.45)'} 
+          strokeWidth={selected ? '2' : '1.2'} 
+          style={{ transition: 'all 0.3s ease' }}
         />
-        <text x={50 - distance/2} y="38" textAnchor="middle" fontSize="9" fontWeight="bold" fill="var(--text)" style={{ pointerEvents: 'none' }}>Self</text>
-        <text x={50 + distance/2} y="38" textAnchor="middle" fontSize="9" fontWeight="bold" fill="var(--text)" style={{ pointerEvents: 'none' }}>Nature</text>
+
+        {/* Labels positioned at top and bottom to eliminate text overlap */}
+        <text 
+          x={cxSelf} 
+          y={selfY} 
+          textAnchor="middle" 
+          fontSize="10" 
+          fontWeight="700" 
+          fill={selected ? '#E11D48' : '#F43F5E'} 
+          style={{ pointerEvents: 'none', letterSpacing: '0.04em' }}
+        >
+          Self
+        </text>
+
+        <text 
+          x={cxNature} 
+          y={natureY} 
+          textAnchor="middle" 
+          fontSize="10" 
+          fontWeight="700" 
+          fill={selected ? '#047857' : '#10B981'} 
+          style={{ pointerEvents: 'none', letterSpacing: '0.04em' }}
+        >
+          Nature
+        </text>
       </svg>
     )
   }
@@ -47,48 +99,92 @@ export default function Stage5_2InsScreen() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}
     >
-      <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <p className="eyebrow">Environmental Connection</p>
-        <h1 className="headline" style={{ fontSize: '22px' }}>Inclusion of Nature in Self</h1>
-        <p className="sub" style={{ marginBottom: '2rem' }}>Select the drawing that best represents your relationship with the natural world.</p>
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
         
+        {/* Header Section */}
+        <div style={{ marginBottom: '36px', textAlign: 'left' }}>
+          <p style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', letterSpacing: '0.12em', color: 'var(--dawn)', margin: '0 0 12px 0', textTransform: 'uppercase' }}>
+            CHOOSE ONE
+          </p>
+          <h1 className="headline" style={{ fontSize: '36px', margin: 0, textAlign: 'left' }}>
+            Inclusion of Nature in Self
+          </h1>
+          <p className="sub" style={{ fontSize: '16px', margin: '8px 0 0 0', textAlign: 'left', color: 'var(--text-mute)' }}>
+            Select the diagram that best reflects how interconnected you feel with the natural world.
+          </p>
+        </div>
+        
+        {/* Horizontal Venn Diagrams Grid */}
         <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', 
-          gap: '12px', 
-          margin: '2rem auto', 
-          maxWidth: '800px',
-          width: '100%'
+          display: 'flex', 
+          flexWrap: 'nowrap',
+          justifyContent: 'space-between',
+          gap: '12px',
+          width: '100%',
+          marginBottom: '36px'
         }}>
           {Array.from({ length: 7 }).map((_, idx) => {
             const val = idx + 1
             const selected = ins === val
             return (
-              <button
+              <motion.button
                 key={idx}
+                whileHover={{ y: -4, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setProfileField('ins', val)}
-                className={`scale-opt ${selected ? 'selected' : ''}`}
                 style={{
-                  padding: '12px',
+                  flex: '1 1 0',
+                  minWidth: 0,
+                  padding: '16px 8px 14px',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  background: selected ? 'var(--dawn-glow)' : 'var(--panel-2)',
-                  borderRadius: '16px',
-                  border: `1px solid ${selected ? 'var(--dawn)' : 'var(--panel-border)'}`,
-                  cursor: 'pointer'
+                  background: selected ? 'rgba(255, 148, 102, 0.12)' : 'var(--panel-2)',
+                  borderRadius: '20px',
+                  border: `2px solid ${selected ? 'var(--dawn)' : 'var(--panel-border)'}`,
+                  boxShadow: selected 
+                    ? '0 8px 24px rgba(255, 148, 102, 0.25)' 
+                    : '0 4px 12px rgba(0,0,0,0.02)',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  outline: 'none'
                 }}
               >
-                {renderOverlapCircles(idx)}
-                <span style={{ marginTop: '8px', fontSize: '12px', fontWeight: 600, color: selected ? 'var(--dawn)' : 'var(--text-mute)' }}>Level {val}</span>
-              </button>
+                {renderOverlapCircles(idx, selected)}
+                
+                <span style={{ 
+                  marginTop: '12px', 
+                  fontSize: '13px', 
+                  fontWeight: selected ? 700 : 600, 
+                  color: selected ? 'var(--dawn)' : 'var(--text)' 
+                }}>
+                  Level {val}
+                </span>
+
+                <span style={{ 
+                  fontSize: '11px', 
+                  fontWeight: 500, 
+                  color: selected ? 'var(--dawn)' : 'var(--text-mute)', 
+                  opacity: selected ? 1 : 0.7,
+                  marginTop: '2px'
+                }}>
+                  {LEVEL_DESCRIPTIONS[idx]}
+                </span>
+              </motion.button>
             )
           })}
         </div>
         
-        <div className="button-group" style={{ marginTop: '2rem' }}>
-          <button className="btn-primary" onClick={handleNext} disabled={ins === null}>
+        {/* Continue Button */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'auto' }}>
+          <button 
+            className="btn-primary" 
+            onClick={handleNext} 
+            disabled={ins === null} 
+            style={{ maxWidth: '240px', width: '100%' }}
+          >
             Continue
           </button>
         </div>
@@ -96,3 +192,4 @@ export default function Stage5_2InsScreen() {
     </motion.div>
   )
 }
+

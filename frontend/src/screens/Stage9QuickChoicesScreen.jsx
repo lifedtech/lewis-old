@@ -71,7 +71,7 @@ export default function Stage9QuickChoicesScreen() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleChoice('immediate')}
               >
-                <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', color: 'var(--dawn)' }}>${currentImmediate}</span>
+                <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', color: 'var(--dawn)' }}>₹{(currentImmediate * 100).toLocaleString('en-IN')}</span>
                 Right Now
               </motion.button>
               
@@ -82,7 +82,7 @@ export default function Stage9QuickChoicesScreen() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleChoice('later')}
               >
-                <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', color: 'var(--dawn)' }}>$100</span>
+                <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', color: 'var(--dawn)' }}>₹10,000</span>
                 In 1 Month
               </motion.button>
             </div>

@@ -7,7 +7,8 @@ export default function Stage1_0AboutScreen() {
   const [name, setName] = useState('')
 
   const handleNext = () => {
-    if (name) setProfileField('name', name)
+    if (!name.trim()) return
+    setProfileField('name', name.trim())
     setScreen('stage1_1Identity')
   }
 
@@ -32,6 +33,12 @@ export default function Stage1_0AboutScreen() {
               type="text" 
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleNext();
+                }
+              }}
               className="input-field" 
               placeholder="Your name"
             />
@@ -72,6 +79,8 @@ export default function Stage1_0AboutScreen() {
           <button 
             className="btn-primary" 
             onClick={handleNext}
+            disabled={!name.trim()}
+            style={{ opacity: !name.trim() ? 0.5 : 1, cursor: !name.trim() ? 'not-allowed' : 'pointer' }}
           >
             Continue
           </button>

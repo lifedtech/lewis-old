@@ -12,19 +12,19 @@ export default function Stage3_5NsStateScreen() {
   const states = [
     {
       id: 'ventral',
-      title: 'Safe & Social (Ventral Vagal)',
+      title: 'Safe & Social',
       desc: 'You feel calm, connected, grounded, and open to the environment and others around you.',
       tag: 'Calm & Present'
     },
     {
       id: 'sympathetic',
-      title: 'Mobilized / Fight-or-Flight (Sympathetic)',
+      title: 'Mobilized / Fight-or-Flight',
       desc: 'You feel anxious, hyper-alert, frustrated, or physically driven. Mind is racing, body is tense.',
       tag: 'Hyperactive / Active'
     },
     {
       id: 'dorsal',
-      title: 'Shutdown / Immobilized (Dorsal Vagal)',
+      title: 'Shutdown / Immobilized',
       desc: 'You feel numb, exhausted, flat, or socially checked out. Moving feels like pulling weights.',
       tag: 'Low Energy / Numb'
     }

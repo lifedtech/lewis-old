@@ -19,7 +19,7 @@ export default function PreStage0AgeScreen() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
-      <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
+      <div className="center-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', flex: 1 }}>
         <h1 className="headline" style={{ marginBottom: '3rem' }}>Before we begin - please confirm: are you 18 or older?</h1>
         
         <div className="button-group" style={{ flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: '320px', margin: '0 auto' }}>

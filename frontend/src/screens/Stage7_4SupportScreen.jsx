@@ -26,11 +26,12 @@ export default function Stage7_4SupportScreen() {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <p className="eyebrow">Action & Support</p>
+        <style>{`.main-card .content-wrapper h1.headline::before { content: "SELECT ALL THAT APPLY" !important; }`}</style>
         <h1 className="headline">Support Preferences</h1>
         <p className="sub">What kind of support is most helpful to you when adopting new health behaviors or stress management habits?</p>
         
-        <div className="form-container" style={{ margin: '2rem auto', maxWidth: '500px' }}>
+        <div className="form-container" style={{ margin: '0 auto', maxWidth: '500px', width: '100%' }}>
+          <p className="eyebrow" style={{ textAlign: 'left', marginBottom: '16px' }}>Action & Support</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {options.map(opt => (
               <button

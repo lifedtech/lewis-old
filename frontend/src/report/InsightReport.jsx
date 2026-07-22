@@ -5,7 +5,8 @@
 // deterministic spine, gate-checked). This component only lays blocks
 // out; it never invents, reorders, or rewrites content.
 
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useLewisStore } from '../store/useLewisStore.js'
 import './report.css'
 
 const BAND_COLORS = {
@@ -165,11 +166,11 @@ function Wheel({ block }) {
           ))}
           <circle cx={cx} cy={cy} r={rMin - 3} fill="var(--ir-paper)" />
           <text x={cx} y={cy - 3} textAnchor="middle"
-            style={{ font: '700 11px Inter, system-ui, sans-serif', fill: 'var(--ir-ink)' }}>
+            style={{ font: '700 12px Nunito, system-ui, sans-serif', fill: 'var(--ir-ink)' }}>
             {block.overall}
           </text>
           <text x={cx} y={cy + 11} textAnchor="middle"
-            style={{ font: '9px Inter, system-ui, sans-serif', fill: 'var(--ir-mute)', letterSpacing: '0.1em' }}>
+            style={{ font: '9px "IBM Plex Mono", monospace', fill: 'var(--ir-mute)', letterSpacing: '0.1em' }}>
             OVERALL
           </text>
         </svg>
@@ -213,14 +214,14 @@ function DayCurve({ block }) {
         ))}
         {['High', 'Med', 'Low'].map((label, i) => (
           <text key={label} x={padX - 14} y={[28, 62, 96][i] + 3} textAnchor="end"
-            style={{ font: '9px Inter, system-ui, sans-serif', fill: 'var(--ir-mute)' }}>{label}</text>
+            style={{ font: '9px "IBM Plex Mono", monospace', fill: 'var(--ir-mute)' }}>{label}</text>
         ))}
-        <path d={path} fill="none" stroke="var(--ir-steady)" strokeWidth="2" strokeLinejoin="round" />
+        <path d={path} fill="none" stroke="var(--ir-steady)" strokeWidth="2.5" strokeLinejoin="round" />
         {coords.map((c) => (
           <g key={c.slot}>
             <circle cx={c.x} cy={c.y} r="4.5" fill="var(--ir-steady)" stroke="#fff" strokeWidth="2" />
             <text x={c.x} y={130} textAnchor="middle"
-              style={{ font: '10px Inter, system-ui, sans-serif', fill: 'var(--ir-sub)' }}>{c.slot}</text>
+              style={{ font: '10px Nunito, system-ui, sans-serif', fontWeight: 600, fill: 'var(--ir-sub)' }}>{c.slot}</text>
           </g>
         ))}
       </svg>
@@ -438,6 +439,18 @@ function ReportPage({ page, meta }) {
 /* ------------------------------------------------------------------ */
 
 export default function InsightReport({ report }) {
+  const { isAuthenticated, authPendingDownload, setScreen } = useLewisStore()
+
+  useEffect(() => {
+    if (authPendingDownload) {
+      useLewisStore.setState({ authPendingDownload: false })
+      // Slight delay to allow the full report to render before printing
+      setTimeout(() => {
+        handleDownload()
+      }, 500)
+    }
+  }, [authPendingDownload])
+
   if (!report || !report.pages) return null
 
   const handleDownload = () => {
@@ -450,19 +463,50 @@ export default function InsightReport({ report }) {
     window.print()
   }
 
+  const handleUnlockClick = () => {
+    setScreen('login')
+  }
+
+  const pagesToRender = isAuthenticated ? report.pages : report.pages.slice(0, 3)
+
   return (
     <div className="ir-root">
-      <div className="ir-toolbar">
-        <span className="ir-toolbar-note">
-          Your full insight report, ready below. Use the button to save it as a PDF.
-        </span>
-        <button className="ir-download-btn" onClick={handleDownload}>
-          Download as PDF
-        </button>
-      </div>
-      {report.pages.map((page) => (
-        <ReportPage page={page} meta={report.meta} key={page.number} />
-      ))}
+      {isAuthenticated && (
+        <div className="ir-toolbar">
+          <span className="ir-toolbar-note">
+            Your full insight report, ready below. Use the button to save it as a PDF.
+          </span>
+          <button className="ir-download-btn" onClick={handleDownload}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Download as PDF
+          </button>
+        </div>
+      )}
+      {pagesToRender.map((page, i) => {
+        const isFaded = !isAuthenticated && i === 2
+        return (
+          <div key={page.number} style={{ position: 'relative' }}>
+            <div className={isFaded ? "ir-faded-page-wrapper" : ""}>
+              <ReportPage page={page} meta={report.meta} />
+            </div>
+            {isFaded && (
+              <div className="ir-fade-overlay">
+                <button className="ir-unlock-btn" onClick={handleUnlockClick}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}>
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  Unlock Full Report
+                </button>
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }

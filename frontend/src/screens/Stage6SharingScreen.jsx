@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import TopicLineIllustration from '../components/TopicLineIllustration.jsx'
 
 export default function Stage6SharingScreen() {
   const { setScreen, setScaleAnswer, everydaySharing } = useLewisStore()
@@ -46,9 +47,13 @@ export default function Stage6SharingScreen() {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <p className="eyebrow">Everyday Sharing · {step + 1} / {questions.length}</p>
+        <h1 className="headline">Everyday Sharing</h1>
+        <div style={{ gridArea: 'sub', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <TopicLineIllustration topic="sharing" />
+        </div>
         
-        <div className="form-container" style={{ margin: '2rem auto', maxWidth: '500px' }}>
+        <div className="form-container" style={{ margin: '0 auto', width: '100%' }}>
+          <p className="eyebrow" style={{ textAlign: 'left', marginBottom: '16px', margin: '0 0 16px 0' }}>Everyday Sharing · {step + 1} / {questions.length}</p>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentItem.id}
@@ -89,11 +94,7 @@ export default function Stage6SharingScreen() {
           <button className="btn-primary" onClick={handleNext} disabled={!currentAnswer}>
             {step < questions.length - 1 ? 'Next' : 'Continue'}
           </button>
-          {step > 0 && (
-            <button className="btn-ghost" onClick={handleBack}>
-              Back
-            </button>
-          )}
+
         </div>
       </div>
     </motion.div>

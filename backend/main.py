@@ -37,6 +37,7 @@ from security import GuardrailMiddleware
 from enrich import build_enriched_object
 from insight_report import build_insight_report
 from report_gate import check_report
+from auth import register_user, login_user, verify_token, save_assessment_submission, get_user_assessments
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -45,18 +46,20 @@ logger = logging.getLogger("lewis.api")
 app = FastAPI(title="LEWIS Core Engine", version="1.1")
 
 # --- CORS: explicit origins only; a wildcard is never honored -----------------
-_raw_origins = os.getenv("FRONTEND_URL", "http://localhost:5173")
+_raw_origins = os.getenv("FRONTEND_URL", "http://localhost:5173,http://127.0.0.1:5173,https://lewis.cold-forest-a8ec.workers.dev")
 _origins = [u.strip().rstrip("/") for u in _raw_origins.split(",") if u.strip()]
+if "https://lewis.cold-forest-a8ec.workers.dev" not in _origins:
+    _origins.append("https://lewis.cold-forest-a8ec.workers.dev")
 if "*" in _origins:
-    logger.critical("Wildcard CORS origin rejected; using localhost dev origins instead. Set FRONTEND_URL explicitly.")
-    _origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    logger.critical("Wildcard CORS origin rejected; using localhost & Cloudflare dev origins instead.")
+    _origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://lewis.cold-forest-a8ec.workers.dev"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 app.add_middleware(GuardrailMiddleware)
 
@@ -80,6 +83,17 @@ Score14 = Annotated[int, Field(ge=1, le=4)]
 Score17 = Annotated[int, Field(ge=1, le=7)]
 ShortText = Annotated[str, StringConstraints(max_length=300)]
 LongText = Annotated[str, StringConstraints(max_length=2000)]
+
+
+class RegisterInput(BaseModel):
+    email: ShortText
+    password: ShortText
+    name: Optional[ShortText] = None
+
+
+class LoginInput(BaseModel):
+    email: ShortText
+    password: ShortText
 
 
 class PulseInput(BaseModel):
@@ -165,6 +179,49 @@ def read_root():
     return {"status": "success", "message": "LEWIS Core Engine is online"}
 
 
+@app.post("/auth/register")
+def auth_register(payload: RegisterInput):
+    try:
+        res = register_user(payload.email, payload.password, payload.name)
+        return res
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/auth/login")
+def auth_login(payload: LoginInput):
+    try:
+        res = login_user(payload.email, payload.password)
+        return res
+    except ValueError as exc:
+        raise HTTPException(status_code=401, detail=str(exc))
+
+
+@app.get("/auth/me")
+def auth_me(request: Request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = auth_header.split(" ")[1]
+    user = verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return {"status": "success", "user": user}
+
+
+@app.get("/auth/assessments")
+def auth_user_assessments(request: Request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = auth_header.split(" ")[1]
+    user = verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    assessments = get_user_assessments(user["id"])
+    return {"status": "success", "user": user, "assessments": assessments}
+
+
 @app.post("/pulse/calculate")
 def calculate_pulse(payload: PulseInput):
     who5_res = calculate_who5(payload.who5)
@@ -207,7 +264,7 @@ def calculate_pulse(payload: PulseInput):
 
 
 @app.post("/assessment/full")
-def calculate_full_assessment(payload: FullAssessmentInput):
+def calculate_full_assessment(payload: FullAssessmentInput, request: Request):
     if payload.is_over_18 is not True:
         raise HTTPException(
             status_code=403,
@@ -424,6 +481,27 @@ def calculate_full_assessment(payload: FullAssessmentInput):
         # that is a template defect worth loud logging, and the report of
         # record still ships (it is the only report there is).
         logger.error("Insight report gate issues: %s", "; ".join(gate_issues))
+
+    # Auto-save submission if user is logged in
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+        user = verify_token(token)
+        if user:
+            try:
+                report_uuid = save_assessment_submission(
+                    user_id=user["id"],
+                    user_email=user["email"],
+                    assessment_data={
+                        "scores": dimensions,
+                        "narrative": {"text": narrative_text, "source": source},
+                        "answers": payload.model_dump(),
+                        "insight_report": insight_report
+                    }
+                )
+                logger.info("De-identified report %s saved for system enhancement", report_uuid)
+            except Exception as e:
+                logger.error("Failed to save assessment submission to DB: %s", e)
 
     return {
         "status": "success",

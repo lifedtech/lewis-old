@@ -42,11 +42,12 @@ export default function Stage7_1ExternalScreen() {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <p className="eyebrow">Environmental Context</p>
+        <style>{`.main-card .content-wrapper h1.headline::before { content: "SELECT ALL THAT APPLY" !important; }`}</style>
         <h1 className="headline">External Conditions</h1>
         <p className="sub">Select any environmental factors in your physical surroundings that actively contribute to your stress load.</p>
         
-        <div className="form-container" style={{ margin: '2rem auto', maxWidth: '500px' }}>
+        <div className="form-container" style={{ margin: '0 auto', maxWidth: '500px', width: '100%' }}>
+          <p className="eyebrow" style={{ textAlign: 'left', marginBottom: '16px' }}>Environmental Context</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {conditions.map(c => {
               const active = isActive(c.key)

@@ -21,11 +21,12 @@ export default function Stage7_7FinancialAspScreen() {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <p className="eyebrow">Financial Wellbeing</p>
+        <style>{`.main-card .content-wrapper h1.headline::before { content: none !important; }`}</style>
         <h1 className="headline">Financial Aspirations</h1>
         <p className="sub">What is your primary financial goal or concern right now? How does this impact your day-to-day choices?</p>
         
-        <div className="form-container" style={{ margin: '2rem auto', maxWidth: '500px' }}>
+        <div className="form-container" style={{ margin: '0 auto', maxWidth: '500px', width: '100%' }}>
+          <p className="eyebrow" style={{ textAlign: 'left', marginBottom: '16px' }}>Financial Wellbeing</p>
           <textarea
             value={financialAspiration}
             onChange={handleChange}

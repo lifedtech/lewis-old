@@ -56,7 +56,7 @@ export default function Stage1_9FinancialScreen() {
               style={{ width: '100%' }}
             >
               <div className="likert-container">
-                <p className="likert-prompt">{`${step + 1}/4. ${questions[step].prompt}`}</p>
+                <p className="likert-prompt">{questions[step].prompt}</p>
                 <div className="likert-options">
                   {["Rarely", "Sometimes", "Often"].map(opt => {
                     const qId = questions[step].id
@@ -80,11 +80,7 @@ export default function Stage1_9FinancialScreen() {
           <button className="btn-primary" onClick={handleNext}>
             {step < 3 ? 'Next' : 'Continue'}
           </button>
-          {step > 0 && (
-            <button className="btn-ghost" onClick={handleBack}>
-              Back
-            </button>
-          )}
+
         </div>
       </div>
     </motion.div>

@@ -61,7 +61,7 @@ export default function Stage8_4CumulativeScreen() {
               style={{ width: '100%' }}
             >
               <div className="q-card" style={{ textAlign: 'left' }}>
-                <p className="q-text">{`${step + 1}/2. ${questions[step].prompt}`}</p>
+                <p className="q-text">{questions[step].prompt}</p>
                 <div className="scale-grid" style={{ marginTop: '20px' }}>
                   {questions[step].options.map(opt => (
                     <button 
@@ -82,11 +82,7 @@ export default function Stage8_4CumulativeScreen() {
           <button className="btn-primary" onClick={handleNext}>
             {step < 1 ? 'Next' : 'Continue'}
           </button>
-          {step > 0 && (
-            <button className="btn-ghost" onClick={handleBack}>
-              Back
-            </button>
-          )}
+
         </div>
       </div>
     </motion.div>

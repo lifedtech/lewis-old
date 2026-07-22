@@ -58,6 +58,7 @@ import Stage9SensoryScreen from './screens/Stage9SensoryScreen.jsx'
 import Stage9QuickChoicesScreen from './screens/Stage9QuickChoicesScreen.jsx'
 import Stage10GeneratingScreen from './screens/Stage10GeneratingScreen.jsx'
 import MirrorScreen from './screens/MirrorScreen.jsx'
+import LoginScreen from './screens/LoginScreen.jsx'
 
 const SCREENS = {
   landing: LandingScreen,
@@ -115,6 +116,7 @@ const SCREENS = {
   stage9QuickChoices: Stage9QuickChoicesScreen,
   stage10Generating: Stage10GeneratingScreen,
   mirror: MirrorScreen,
+  login: LoginScreen,
 }
 
 const SCREEN_ORDER = [
@@ -175,21 +177,79 @@ const SCREEN_ORDER = [
 ]
 
 export default function App() {
-  const { currentScreen, setScreen } = useLewisStore()
+  const { currentScreen, setScreen, isAuthenticated, authUser, logout } = useLewisStore()
   const ActiveScreen = SCREENS[currentScreen] || LandingScreen
 
   const currentIndex = SCREEN_ORDER.indexOf(currentScreen)
 
   return (
     <>
-      <Background3D />
+      {currentScreen === 'landing' && <Background3D />}
+      {currentScreen !== 'landing' && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+          <div style={{
+            position: 'absolute', width: '520px', height: '520px', left: '-160px', top: '-120px',
+            borderRadius: '50%', background: 'radial-gradient(circle at 40% 40%, rgba(14,147,130,.20), transparent 66%)',
+            filter: 'blur(32px)', animation: 'lewisDrift 38s ease-in-out infinite'
+          }} />
+          <div style={{
+            position: 'absolute', width: '460px', height: '460px', right: '-150px', bottom: '-140px',
+            borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(72,170,200,.16), transparent 66%)',
+            filter: 'blur(36px)', animation: 'lewisDrift2 46s ease-in-out infinite'
+          }} />
+        </div>
+      )}
 
       <div className="app-shell" style={currentScreen === 'landing' ? { padding: 0 } : {}}>
         {currentScreen !== 'landing' && (
           <header className="app-header">
-            <div className="wordmark">LEWIS<span>BY LIFED</span></div>
-            <div className="header-right">
-              <span className="proto-tag">prototype 1.1</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              {currentIndex > 0 && (
+                <button
+                  onClick={() => setScreen(SCREEN_ORDER[currentIndex - 1])}
+                  style={{
+                    background: 'none', border: 'none', padding: 0,
+                    color: 'var(--text-mute)', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                    fontFamily: "'Nunito', system-ui, sans-serif",
+                    fontSize: '14px', fontWeight: 600,
+                    transition: 'color 0.2s ease'
+                  }}
+                  title="Go back to previous question"
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-mute)'}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                </button>
+              )}
+              <div className="wordmark">LEWIS<span>BY LIFED</span></div>
+            </div>
+            <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {isAuthenticated && authUser ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0, 174, 157, 0.1)', padding: '4px 12px 4px 10px', borderRadius: '999px', border: '1px solid rgba(0, 174, 157, 0.25)' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--dawn)' }}>
+                    👤 {authUser.name || authUser.email}
+                  </span>
+                  <button 
+                    onClick={logout} 
+                    title="Log Out"
+                    style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: '11px', cursor: 'pointer', padding: 0, fontWeight: 600, marginLeft: '4px' }}
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => setScreen('login')}
+                  style={{ background: 'none', border: '1px solid var(--dawn)', color: 'var(--dawn)', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  Sign In
+                </button>
+              )}
+              <span className="proto-tag">Version 1.1.12</span>
               <div className="mini-orb" aria-hidden="true"></div>
             </div>
           </header>
@@ -246,101 +306,81 @@ export default function App() {
           const percent = ((currentIndex / (SCREEN_ORDER.length - 1)) * 100).toFixed(1)
 
           return (
-            <nav className="stage-track-v2" style={{ marginBottom: '32px', userSelect: 'none' }} aria-label="Journey progress">
+            <nav className="stage-track-v2" style={{ marginBottom: '16px', userSelect: 'none' }} aria-label="Journey progress">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', fontSize: '10px', fontFamily: "'IBM Plex Mono', monospace" }}>
-                <span style={{ color: 'var(--dawn)', fontWeight: 600, letterSpacing: '0.08em' }}>
-                  STAGE {stageInfo.num} · {stageInfo.name.toUpperCase()}
+                <span style={{
+                  color: 'var(--dawn)', fontWeight: 700, letterSpacing: '0.08em',
+                  background: 'rgba(14, 147, 130, 0.1)', padding: '6px 12px', borderRadius: '16px'
+                }}>
+                  STAGE {stageInfo.num} - {stageInfo.name.toUpperCase()}
                 </span>
-                <span style={{ color: 'var(--text-faint)' }}>
+                <span style={{ color: 'var(--text-faint)', fontWeight: 600 }}>
                   {currentIndex + 1} / {SCREEN_ORDER.length} ({Math.round(percent)}%)
                 </span>
               </div>
 
               {/* Progress Bar Container */}
-              <div style={{ 
-                height: '4px', 
-                background: 'rgba(255, 255, 255, 0.04)', 
-                border: '1px solid var(--panel-border)', 
-                borderRadius: '4px', 
+              <div style={{
+                height: '4px',
+                background: 'rgba(22, 36, 31, 0.1)',
+                borderRadius: '4px',
                 position: 'relative',
                 display: 'flex',
                 alignItems: 'center'
               }}>
-                {/* Glowing progress line */}
-                <div style={{ 
-                  width: `${percent}%`, 
-                  height: '100%', 
-                  background: 'linear-gradient(90deg, var(--lavender) 0%, var(--dawn) 100%)', 
+                {/* Solid progress line */}
+                <div style={{
+                  width: `${percent}%`,
+                  height: '100%',
+                  background: 'var(--dawn)',
                   borderRadius: '3px',
                   transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
                 }} />
 
-                {/* Floating orb indicator */}
+                {/* Solid indicator knob */}
                 <div style={{
                   position: 'absolute',
                   left: `${percent}%`,
-                  width: '10px',
-                  height: '10px',
-                  background: 'var(--dawn-soft)',
+                  width: '12px',
+                  height: '12px',
+                  background: 'var(--dawn)',
                   borderRadius: '50%',
                   transform: 'translateX(-50%)',
-                  boxShadow: '0 0 12px var(--dawn), 0 0 4px var(--dawn-soft)',
                   transition: 'left 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   pointerEvents: 'none'
                 }} />
-              </div>
-              
-              {/* Clickable Stage Landmark Dots */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', padding: '0 2px' }}>
-                {STAGE_START_SCREENS.map((screenId, idx) => {
-                  const active = idx <= stageInfo.num
-                  const current = idx === stageInfo.num
-                  // Only stages already reached are clickable — jumping
-                  // forward would skip questions and submit empty answers.
-                  const reachable = idx <= stageInfo.num
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => reachable && setScreen(screenId)}
-                      disabled={!reachable}
-                      title={reachable ? `Stage ${idx}: ${STAGE_NAMES[idx]}` : `Stage ${idx} (not yet reached)`}
-                      aria-label={reachable ? `Return to Stage ${idx}` : `Stage ${idx} not yet reached`}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: 0,
-                        margin: 0,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        cursor: reachable ? 'pointer' : 'default',
-                        outline: 'none'
-                      }}
-                    >
-                      <div 
-                        style={{ 
-                          width: current ? '8px' : '5px', 
-                          height: current ? '8px' : '5px', 
-                          borderRadius: '50%', 
-                          background: current ? 'var(--dawn)' : active ? 'var(--lavender)' : 'rgba(255, 255, 255, 0.08)',
-                          boxShadow: current ? '0 0 10px var(--dawn)' : active ? '0 0 6px var(--lavender)' : 'none',
-                          transform: current ? 'scale(1.2)' : 'scale(1)',
-                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                        }} 
-                      />
-                    </button>
-                  )
-                })}
               </div>
             </nav>
           )
         })()}
 
-        <main style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <AnimatePresence mode="wait">
-            <ActiveScreen key={currentScreen} />
-          </AnimatePresence>
-        </main>
+        {currentScreen === 'landing' ? (
+          <main style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <AnimatePresence mode="wait">
+              <ActiveScreen key={currentScreen} />
+            </AnimatePresence>
+          </main>
+        ) : (
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0' }}>
+            <div className="main-card" style={{
+              background: '#ffffff',
+              borderRadius: '32px',
+              boxShadow: '0 20px 50px rgba(16, 40, 34, 0.13)',
+              width: '100%',
+              maxWidth: '840px',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '32px 40px',
+              position: 'relative'
+            }}>
+              <main style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                <AnimatePresence mode="wait">
+                  <ActiveScreen key={currentScreen} />
+                </AnimatePresence>
+              </main>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )

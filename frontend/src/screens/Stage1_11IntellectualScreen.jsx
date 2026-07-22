@@ -22,7 +22,7 @@ export default function Stage1_11IntellectualScreen() {
         
         <div className="form-container" style={{ margin: '2rem auto' }}>
 
-          <input type="text" className="input-field" placeholder="Type here..." 
+          <textarea className="input-field" placeholder="Type here..." 
             value={intellectualPulse || ''} 
             onChange={(e) => setProfileField('intellectualPulse', e.target.value)} 
           />
