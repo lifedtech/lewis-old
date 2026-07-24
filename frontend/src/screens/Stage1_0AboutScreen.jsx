@@ -21,71 +21,213 @@ export default function Stage1_0AboutScreen() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.35, ease: 'easeInOut' }}
     >
-      <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <h1 className="headline" style={{ marginBottom: '4px' }}>About You</h1>
-        <p className="sub" style={{ marginBottom: '10px' }}>Let's set up your profile.</p>
-        
-        <div className="form-container" style={{ margin: '0.5rem auto', gap: '12px' }}>
-          <div className="form-group" style={{ textAlign: 'center' }}>
-            <label>What would you like to be called?</label>
-            <input 
-              type="text" 
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        maxWidth: '620px',
+        margin: '0 auto',
+        height: '100%',
+        padding: '0 20px',
+        boxSizing: 'border-box',
+        textAlign: 'center',
+      }}>
+        {/* Eyebrow */}
+        <p style={{
+          fontFamily: '"IBM Plex Mono", monospace',
+          fontSize: '11px',
+          fontWeight: 700,
+          letterSpacing: '0.14em',
+          color: '#00ae9d',
+          textTransform: 'uppercase',
+          margin: '0 0 10px 0',
+        }}>
+          CHOOSE ONE
+        </p>
+
+        {/* Title */}
+        <h1 style={{
+          fontFamily: "'Manrope', sans-serif",
+          fontWeight: 800,
+          fontSize: 'clamp(36px, 4.8vw, 64px)',
+          lineHeight: 1.02,
+          letterSpacing: '-0.035em',
+          margin: '0 0 8px 0',
+          color: '#16302b',
+        }}>
+          About You
+        </h1>
+
+        {/* Subtitle */}
+        <p style={{
+          margin: '0 0 32px 0',
+          fontSize: 'clamp(13px, 1.6vw, 16px)',
+          color: '#4a6b62',
+          fontFamily: "'Nunito', sans-serif",
+        }}>
+          Let's set up your profile.
+        </p>
+
+        {/* Form Container */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '26px', width: '100%', alignItems: 'center' }}>
+          
+          {/* Name Field */}
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <label style={{
+              display: 'block',
+              textAlign: 'center',
+              color: '#4a6b62',
+              fontSize: 'clamp(13px, 1.6vw, 16px)',
+              fontFamily: "'Nunito', sans-serif",
+              marginBottom: '12px',
+            }}>
+              What would you like to be called?
+            </label>
+            <input
+              type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleNext();
-                }
-              }}
-              className="input-field" 
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleNext() } }}
               placeholder="Your name"
+              style={{
+                width: '100%',
+                maxWidth: '440px',
+                textAlign: 'center',
+                padding: '10px 16px',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: '1.5px solid #c2ceca',
+                outline: 'none',
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: 'clamp(15px, 1.8vw, 18px)',
+                color: '#16302b',
+                transition: 'border-color 0.2s ease',
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#00ae9d'}
+              onBlur={(e) => e.target.style.borderColor = '#c2ceca'}
             />
           </div>
 
-          <div className="form-group" style={{ textAlign: 'center' }}>
-            <label>Which age group are you in? (Optional)</label>
-            <div className="chip-grid" style={{ gap: '8px' }}>
-              {ageGroups.map(group => (
-                <button
-                  key={group}
-                  onClick={() => setProfileField('ageCategory', group)}
-                  className={`chip ${ageCategory === group ? 'selected' : ''}`}
-                >
-                  {group}
-                </button>
-              ))}
+          {/* Age Group Field */}
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <label style={{
+              display: 'block',
+              textAlign: 'center',
+              color: '#4a6b62',
+              fontSize: 'clamp(13px, 1.6vw, 16px)',
+              fontFamily: "'Nunito', sans-serif",
+              marginBottom: '14px',
+            }}>
+              Which age group are you in? (Optional)
+            </label>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '10px',
+              justifyContent: 'center',
+              maxWidth: '520px',
+            }}>
+              {ageGroups.map(group => {
+                const active = ageCategory === group
+                return (
+                  <button
+                    key={group}
+                    onClick={() => setProfileField('ageCategory', group)}
+                    style={{
+                      padding: '8px 22px',
+                      borderRadius: '999px',
+                      border: active ? '1.5px solid #00ae9d' : '1px solid #c2ceca',
+                      background: active ? '#e4f4ee' : 'rgba(255,255,255,0.6)',
+                      color: active ? '#044e43' : '#3a3a3a',
+                      fontFamily: "'Nunito', sans-serif",
+                      fontSize: '14px',
+                      fontWeight: active ? 700 : 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: active ? '0 2px 8px rgba(0,174,157,0.15)' : 'none',
+                    }}
+                  >
+                    {group}
+                  </button>
+                )
+              })}
             </div>
           </div>
 
-          <div className="form-group" style={{ textAlign: 'center' }}>
-            <label>What is your sex? (Optional)</label>
-            <div className="chip-grid" style={{ gap: '8px' }}>
-              {sexes.map(sex => (
-                <button
-                  key={sex}
-                  onClick={() => setProfileField('gender', sex)}
-                  className={`chip ${gender === sex ? 'selected' : ''}`}
-                >
-                  {sex}
-                </button>
-              ))}
+          {/* Sex Field */}
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <label style={{
+              display: 'block',
+              textAlign: 'center',
+              color: '#4a6b62',
+              fontSize: 'clamp(13px, 1.6vw, 16px)',
+              fontFamily: "'Nunito', sans-serif",
+              marginBottom: '14px',
+            }}>
+              What is your sex? (Optional)
+            </label>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '10px',
+              justifyContent: 'center',
+              maxWidth: '560px',
+            }}>
+              {sexes.map(sex => {
+                const active = gender === sex
+                return (
+                  <button
+                    key={sex}
+                    onClick={() => setProfileField('gender', sex)}
+                    style={{
+                      padding: '8px 22px',
+                      borderRadius: '999px',
+                      border: active ? '1.5px solid #00ae9d' : '1px solid #c2ceca',
+                      background: active ? '#e4f4ee' : 'rgba(255,255,255,0.6)',
+                      color: active ? '#044e43' : '#3a3a3a',
+                      fontFamily: "'Nunito', sans-serif",
+                      fontSize: '14px',
+                      fontWeight: active ? 700 : 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: active ? '0 2px 8px rgba(0,174,157,0.15)' : 'none',
+                    }}
+                  >
+                    {sex}
+                  </button>
+                )
+              })}
             </div>
           </div>
-        </div>
-        
-        <div className="button-group" style={{ marginTop: '1rem' }}>
-          <button 
-            className="btn-primary" 
-            onClick={handleNext}
-            disabled={!name.trim()}
-            style={{ opacity: !name.trim() ? 0.5 : 1, cursor: !name.trim() ? 'not-allowed' : 'pointer' }}
-          >
-            Continue
-          </button>
+
+          {/* Submit Button */}
+          <div style={{ marginTop: '10px' }}>
+            <button
+              className="btn-primary"
+              onClick={handleNext}
+              disabled={!name.trim()}
+              style={{
+                padding: '10px 48px',
+                borderRadius: '12px',
+                opacity: !name.trim() ? 0.5 : 1,
+                cursor: !name.trim() ? 'not-allowed' : 'pointer',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                fontSize: '13.5px',
+                fontWeight: 700,
+              }}
+            >
+              Continue
+            </button>
+          </div>
+
         </div>
       </div>
     </motion.div>
   )
 }
+

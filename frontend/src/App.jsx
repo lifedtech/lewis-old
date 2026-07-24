@@ -233,22 +233,15 @@ export default function App() {
                   <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--dawn)' }}>
                     👤 {authUser.name || authUser.email}
                   </span>
-                  <button 
-                    onClick={logout} 
+                  <button
+                    onClick={logout}
                     title="Log Out"
                     style={{ background: 'none', border: 'none', color: 'var(--text-mute)', fontSize: '11px', cursor: 'pointer', padding: 0, fontWeight: 600, marginLeft: '4px' }}
                   >
                     Logout
                   </button>
                 </div>
-              ) : (
-                <button 
-                  onClick={() => setScreen('login')}
-                  style={{ background: 'none', border: '1px solid var(--dawn)', color: 'var(--dawn)', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
-                >
-                  Sign In
-                </button>
-              )}
+              ) : null}
               <span className="proto-tag">Version 1.1.12</span>
               <div className="mini-orb" aria-hidden="true"></div>
             </div>
@@ -337,18 +330,7 @@ export default function App() {
                   transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
                 }} />
 
-                {/* Solid indicator knob */}
-                <div style={{
-                  position: 'absolute',
-                  left: `${percent}%`,
-                  width: '12px',
-                  height: '12px',
-                  background: 'var(--dawn)',
-                  borderRadius: '50%',
-                  transform: 'translateX(-50%)',
-                  transition: 'left 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  pointerEvents: 'none'
-                }} />
+
               </div>
             </nav>
           )
@@ -361,19 +343,18 @@ export default function App() {
             </AnimatePresence>
           </main>
         ) : (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0' }}>
-            <div className="main-card" style={{
-              background: '#ffffff',
-              borderRadius: '32px',
-              boxShadow: '0 20px 50px rgba(16, 40, 34, 0.13)',
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 20px 32px 20px', boxSizing: 'border-box', overflow: 'hidden', minHeight: 0 }}>
+            <div className={`main-card ${(currentScreen === 'stage1_0About' || currentScreen === 'preStage0Age' || currentScreen === 'stage1_1Identity') ? 'transparent-card' : ''}`} style={{
               width: '100%',
-              maxWidth: '840px',
+              maxWidth: (currentScreen === 'preStage0Age' || currentScreen === 'ageStop') ? '480px' : '860px',
+              maxHeight: 'calc(100vh - 160px)',
               display: 'flex',
               flexDirection: 'column',
-              padding: '32px 40px',
-              position: 'relative'
+              position: 'relative',
+              boxSizing: 'border-box',
+              transition: 'max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
-              <main style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+              <main style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
                 <AnimatePresence mode="wait">
                   <ActiveScreen key={currentScreen} />
                 </AnimatePresence>

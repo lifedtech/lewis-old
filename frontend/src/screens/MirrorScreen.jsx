@@ -5,7 +5,55 @@ import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
 import InsightReport from '../report/InsightReport.jsx'
-import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
+/* ── Backend Connection Error Vector Line Art ── */
+const BackendConnectionErrorIllustration = () => (
+  <motion.svg
+    viewBox="0 0 240 190"
+    fill="none"
+    style={{ width: '100%', maxWidth: '200px', display: 'block', margin: '0 auto' }}
+    initial={{ opacity: 0, scale: 0.92 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.6, ease: 'easeOut' }}
+  >
+    <defs>
+      <radialGradient id="errAura" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#EF4444" stopOpacity="0.18" />
+        <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
+      </radialGradient>
+    </defs>
+
+    {/* Background Soft Glow */}
+    <circle cx="120" cy="90" r="75" fill="url(#errAura)" />
+
+    {/* Disconnected Server Plug Line Art */}
+    <rect x="75" y="60" width="90" height="55" rx="14" stroke="#00AE9D" strokeWidth="2.5" fill="rgba(0,174,157,0.06)" />
+    <circle cx="100" cy="87.5" r="7" fill="#EF4444" stroke="#FFF" strokeWidth="1.5" />
+    <circle cx="120" cy="87.5" r="7" fill="#F59E0B" stroke="#FFF" strokeWidth="1.5" />
+    <circle cx="140" cy="87.5" r="7" fill="#10B981" stroke="#FFF" strokeWidth="1.5" />
+
+    {/* Pulsing Disconnection Warning Signal */}
+    <motion.path
+      d="M 120,40 L 120,50"
+      stroke="#EF4444" strokeWidth="3" strokeLinecap="round"
+      animate={{ opacity: [0.3, 1, 0.3] }}
+      transition={{ duration: 1.5, repeat: Infinity }}
+    />
+
+    {/* Wavy Horizon Lines */}
+    <motion.path
+      d="M 28,154 Q 85,145 135,158 T 222,150"
+      stroke="#00AE9D" strokeWidth="3.2" strokeLinecap="round" fill="none"
+      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+      transition={{ duration: 1.2 }}
+    />
+    <motion.path
+      d="M 38,170 Q 95,161 145,174 T 212,166"
+      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+      transition={{ duration: 1.2, delay: 0.2 }}
+    />
+  </motion.svg>
+)
 
 export default function MirrorScreen() {
   const setScreen = useLewisStore((s) => s.setScreen)
@@ -199,10 +247,122 @@ export default function MirrorScreen() {
 
   if (error) {
     return (
-      <motion.section className="screen active" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-        <p className="q-text" style={{ textAlign: 'center', color: 'var(--dawn)' }}>{error}</p>
-        <button className="btn-primary" onClick={() => window.location.reload()} style={{marginTop: '24px'}}>Try Again</button>
-      </motion.section>
+      <motion.div
+        className="screen-container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+      >
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1.65fr',
+          gap: 'clamp(24px, 4vw, 52px)',
+          alignItems: 'stretch',
+          width: '100%',
+          height: '100%',
+          maxHeight: '100%',
+          padding: '0 clamp(16px, 3vw, 40px)',
+          boxSizing: 'border-box',
+        }}>
+
+          {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'center' }}>
+            <div>
+              <p style={{
+                fontFamily: '"IBM Plex Mono", monospace',
+                fontSize: '11px',
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+                color: '#ef4444',
+                textTransform: 'uppercase',
+                margin: '0 0 6px 0',
+              }}>
+                CONNECTION STATUS
+              </p>
+              <h1 style={{
+                fontFamily: "'Manrope', sans-serif",
+                fontWeight: 800,
+                fontSize: 'clamp(34px, 4.4vw, 56px)',
+                lineHeight: 1.05,
+                letterSpacing: '-0.035em',
+                margin: 0,
+                color: '#16302b',
+                textWrap: 'balance',
+              }}>
+                Unable to<br />Synthesize
+              </h1>
+              <p style={{
+                margin: '12px 0 0 2px',
+                fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+                color: '#4a6b62',
+                fontFamily: "'Nunito', sans-serif",
+                lineHeight: 1.5,
+                maxWidth: '350px',
+              }}>
+                {error}
+              </p>
+            </div>
+            <BackendConnectionErrorIllustration />
+          </div>
+
+          {/* RIGHT — DIAGNOSTICS & RETRY + Warning Card + Pinned Retry Button */}
+          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+
+            <p style={{
+              fontFamily: '"IBM Plex Mono", monospace',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: '#94a3b8',
+              textTransform: 'uppercase',
+              textAlign: 'right',
+              margin: '0 0 12px 0',
+            }}>
+              DIAGNOSTICS & RETRY
+            </p>
+
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px',
+              padding: '24px',
+              borderRadius: '20px',
+              border: '1.5px solid #fee2e2',
+              background: '#fef2f2',
+              boxSizing: 'border-box',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '22px' }}>⚠️</span>
+                <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: '18px', color: '#991b1b' }}>
+                  Backend Service Offline
+                </span>
+              </div>
+              <p style={{
+                margin: 0,
+                fontSize: '13.5px',
+                color: '#7f1d1d',
+                fontFamily: "'Nunito', sans-serif",
+                lineHeight: 1.5,
+              }}>
+                The LEWIS backend analysis server is unreachable. Please verify that the API server is running on <code style={{ background: '#fca5a5', padding: '2px 6px', borderRadius: '4px', color: '#7f1d1d' }}>http://127.0.0.1:8000</code> and click Try Again.
+              </p>
+            </div>
+
+            {/* Action button pinned at bottom right */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '16px', flexShrink: 0 }}>
+              <button
+                className="btn-primary"
+                onClick={() => window.location.reload()}
+                style={{ padding: '12px 38px' }}
+              >
+                Try Again
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </motion.div>
     )
   }
 

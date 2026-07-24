@@ -38,6 +38,8 @@ export default function Stage3_1AffectScreen() {
     }
   }
 
+  const hasSelected = affect?.x !== null && affect?.x !== undefined
+
   return (
     <motion.div
       className="screen-container"
@@ -45,146 +47,171 @@ export default function Stage3_1AffectScreen() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
-      <div className="content-wrapper" style={{ justifyContent: 'flex-start', paddingTop: '2rem', textAlign: 'center' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1.65fr',
+        gap: 'clamp(24px, 4vw, 52px)',
+        alignItems: 'stretch',
+        width: '100%',
+        height: '100%',
+        maxHeight: '100%',
+        padding: 0,
+        boxSizing: 'border-box',
+      }}>
 
-        <h1 className="headline">Where is your mind sitting right now?</h1>
-        <p className="sub" style={{ marginBottom: '16px' }}>Tap anywhere on the grid.</p>
-
-        <div
-          className="affect-canvas-wrapper"
-          style={{
-            gridArea: 'form',
-            width: '100%',
-            maxWidth: '300px',
-            aspectRatio: '1/1',
-            margin: '0 auto 16px',
-            position: 'relative'
-          }}
-        >
-          <p className="eyebrow" style={{ position: 'absolute', top: '-50px', left: '50%', transform: 'translateX(-50%)', margin: 0, whiteSpace: 'nowrap' }}>The Affect Canvas</p>
-          {/* Labels */}
-          <span style={{ position: 'absolute', top: '-25px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: 'var(--text-mute)', fontWeight: 500, letterSpacing: '1px', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Activated / High Energy</span>
-          <span style={{ position: 'absolute', bottom: '-25px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: 'var(--text-mute)', fontWeight: 500, letterSpacing: '1px', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Calm / Low Energy</span>
-          <span style={{ position: 'absolute', top: '50%', left: '-24px', transform: 'translate(-50%, -50%) rotate(-90deg)', fontSize: '11px', color: 'var(--text-mute)', fontWeight: 500, letterSpacing: '1px', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Unpleasant</span>
-          <span style={{ position: 'absolute', top: '50%', right: '-24px', transform: 'translate(50%, -50%) rotate(90deg)', fontSize: '11px', color: 'var(--text-mute)', fontWeight: 500, letterSpacing: '1px', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Pleasant</span>
-
-          {/* The Grid Canvas */}
-          <div
-            ref={canvasRef}
-            className="affect-grid"
-            onClick={handleCanvasClick}
-            style={{
-              width: '100%',
-              height: '100%',
-              background: `
-                radial-gradient(circle at 0% 0%, rgba(255, 107, 107, 0.22), transparent 55%),
-                radial-gradient(circle at 100% 0%, rgba(255, 209, 102, 0.25), transparent 55%),
-                radial-gradient(circle at 0% 100%, rgba(120, 115, 245, 0.22), transparent 55%),
-                radial-gradient(circle at 100% 100%, rgba(54, 209, 220, 0.25), transparent 55%),
-                var(--panel-2)
-              `,
-              border: '1px solid var(--panel-border)',
-              borderRadius: '24px',
-              position: 'relative',
-              cursor: 'crosshair',
-              overflow: 'hidden',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.06)'
-            }}
-          >
-            {/* Axis lines */}
-            <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'rgba(0,0,0,0.08)' }}></div>
-            <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0,0,0,0.08)' }}></div>
-
-            {/* 4 Quadrants with Vibrant Color Gradients & Styled Badges */}
-            {/* Top-Left: Stressed / Tense */}
-            <div style={{
-              position: 'absolute', top: 0, left: 0, width: '50%', height: '50%',
-              background: 'linear-gradient(135deg, rgba(255, 107, 107, 0.25) 0%, rgba(255, 148, 102, 0.05) 100%)',
-              borderRight: '1px dashed rgba(255, 107, 107, 0.15)',
-              borderBottom: '1px dashed rgba(255, 107, 107, 0.15)'
+        {/* LEFT — Eyebrow + Title + Subtitle */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+          <div>
+            <p style={{
+              fontFamily: '"IBM Plex Mono", monospace',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: '#00ae9d',
+              textTransform: 'uppercase',
+              margin: '0 0 14px 0',
             }}>
-              <span style={{ 
-                position: 'absolute', top: '14px', left: '14px', 
-                fontSize: '11px', fontWeight: 600, color: '#D93838', 
-                background: 'rgba(255, 255, 255, 0.75)', padding: '4px 8px', borderRadius: '8px',
-                backdropFilter: 'blur(4px)', boxShadow: '0 2px 6px rgba(217,56,56,0.1)'
-              }}>Stressed / Tense</span>
-            </div>
-
-            {/* Top-Right: Excited / Alert */}
-            <div style={{
-              position: 'absolute', top: 0, right: 0, width: '50%', height: '50%',
-              background: 'linear-gradient(225deg, rgba(255, 190, 60, 0.25) 0%, rgba(255, 230, 100, 0.05) 100%)',
-              borderLeft: '1px dashed rgba(255, 190, 60, 0.15)',
-              borderBottom: '1px dashed rgba(255, 190, 60, 0.15)'
+              EMOTIONAL STATE
+            </p>
+            <h1 style={{
+              fontFamily: "'Manrope', sans-serif",
+              fontWeight: 700,
+              fontSize: 'clamp(26px, 3.2vw, 40px)',
+              lineHeight: 1.05,
+              letterSpacing: '-0.01em',
+              margin: 0,
+              color: '#16302b',
+              textWrap: 'balance',
             }}>
-              <span style={{ 
-                position: 'absolute', top: '14px', right: '14px', 
-                fontSize: '11px', fontWeight: 600, color: '#D97706', 
-                background: 'rgba(255, 255, 255, 0.75)', padding: '4px 8px', borderRadius: '8px',
-                backdropFilter: 'blur(4px)', boxShadow: '0 2px 6px rgba(217,119,6,0.1)'
-              }}>Excited / Alert</span>
-            </div>
-
-            {/* Bottom-Left: Fatigued / Sad */}
-            <div style={{
-              position: 'absolute', bottom: 0, left: 0, width: '50%', height: '50%',
-              background: 'linear-gradient(45deg, rgba(120, 115, 245, 0.22) 0%, rgba(160, 150, 255, 0.05) 100%)',
-              borderRight: '1px dashed rgba(120, 115, 245, 0.15)',
-              borderTop: '1px dashed rgba(120, 115, 245, 0.15)'
+              Where is your mind sitting right now?
+            </h1>
+            <p style={{
+              margin: '12px 0 0 2px',
+              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+              color: '#4a6b62',
+              fontFamily: "'Nunito', sans-serif",
+              lineHeight: 1.5,
+              maxWidth: '350px',
             }}>
-              <span style={{ 
-                position: 'absolute', bottom: '14px', left: '14px', 
-                fontSize: '11px', fontWeight: 600, color: '#4F46E5', 
-                background: 'rgba(255, 255, 255, 0.75)', padding: '4px 8px', borderRadius: '8px',
-                backdropFilter: 'blur(4px)', boxShadow: '0 2px 6px rgba(79,70,229,0.1)'
-              }}>Fatigued / Sad</span>
-            </div>
-
-            {/* Bottom-Right: Calm / Serene */}
-            <div style={{
-              position: 'absolute', bottom: 0, right: 0, width: '50%', height: '50%',
-              background: 'linear-gradient(315deg, rgba(45, 212, 191, 0.28) 0%, rgba(54, 209, 220, 0.05) 100%)',
-              borderLeft: '1px dashed rgba(45, 212, 191, 0.15)',
-              borderTop: '1px dashed rgba(45, 212, 191, 0.15)'
-            }}>
-              <span style={{ 
-                position: 'absolute', bottom: '14px', right: '14px', 
-                fontSize: '11px', fontWeight: 600, color: '#0D9488', 
-                background: 'rgba(255, 255, 255, 0.75)', padding: '4px 8px', borderRadius: '8px',
-                backdropFilter: 'blur(4px)', boxShadow: '0 2px 6px rgba(13,148,136,0.1)'
-              }}>Calm / Serene</span>
-            </div>
-
-            {/* The Point */}
-            <motion.div
-              className="affect-dot"
-              layout
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              style={{
-                position: 'absolute',
-                width: '24px',
-                height: '24px',
-                background: 'var(--dawn-glow)',
-                border: '2px solid var(--dawn)',
-                borderRadius: '50%',
-                transform: 'translate(-50%, -50%)',
-                boxShadow: '0 0 15px var(--dawn-glow)',
-                ...getDotStyle()
-              }}
-            />
+              Tap anywhere on the grid to reflect your current energy and mood.
+            </p>
           </div>
         </div>
 
-        <div className="button-group" style={{ marginTop: '1rem' }}>
-          <button
-            className="btn-primary"
-            onClick={handleNext}
-            disabled={affect?.x === null || affect?.x === undefined}
-          >
-            Continue
-          </button>
+        {/* RIGHT — Affect Grid Canvas + Pinned Button */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
+
+          <p style={{
+            fontFamily: '"IBM Plex Mono", monospace',
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '0.14em',
+            color: '#94a3b8',
+            textTransform: 'uppercase',
+            textAlign: 'right',
+            margin: '0 0 14px 0',
+            width: '100%',
+          }}>
+            AFFECT GRID
+          </p>
+
+          <div style={{
+            flex: 1,
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px 0',
+          }}>
+            <div
+              className="affect-canvas-wrapper"
+              style={{
+                width: '100%',
+                maxWidth: '300px',
+                aspectRatio: '1/1',
+                position: 'relative'
+              }}
+            >
+              {/* Axis Labels */}
+              <span style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Activated / High Energy</span>
+              <span style={{ position: 'absolute', bottom: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Calm / Low Energy</span>
+              <span style={{ position: 'absolute', top: '50%', left: '-26px', transform: 'translate(-50%, -50%) rotate(-90deg)', fontSize: '11px', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Unpleasant</span>
+              <span style={{ position: 'absolute', top: '50%', right: '-26px', transform: 'translate(50%, -50%) rotate(90deg)', fontSize: '11px', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Pleasant</span>
+
+              {/* The Grid Canvas */}
+              <div
+                ref={canvasRef}
+                className="affect-grid"
+                onClick={handleCanvasClick}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: `
+                    radial-gradient(circle at 15% 15%, rgba(250, 220, 215, 0.65) 0%, rgba(248, 230, 225, 0.3) 50%, transparent 80%),
+                    radial-gradient(circle at 85% 15%, rgba(225, 242, 210, 0.65) 0%, rgba(240, 250, 225, 0.3) 50%, transparent 80%),
+                    radial-gradient(circle at 15% 85%, rgba(235, 230, 252, 0.65) 0%, rgba(242, 238, 255, 0.3) 50%, transparent 80%),
+                    radial-gradient(circle at 85% 85%, rgba(215, 245, 235, 0.65) 0%, rgba(230, 250, 242, 0.3) 50%, transparent 80%),
+                    #f2f9f6
+                  `,
+                  border: '1.5px solid #d2e7e0',
+                  borderRadius: '24px',
+                  position: 'relative',
+                  cursor: 'crosshair',
+                  overflow: 'hidden',
+                  boxShadow: '0 8px 28px rgba(0,174,157,0.08)'
+                }}
+              >
+                {/* Center Crosshair Lines */}
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'rgba(0, 0, 0, 0.08)' }}></div>
+                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0, 0, 0, 0.08)' }}></div>
+
+                {/* Corner Quadrant Labels */}
+                <span style={{ position: 'absolute', top: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: '#64748b', fontFamily: "'Nunito', sans-serif" }}>Tense</span>
+                <span style={{ position: 'absolute', top: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: '#64748b', fontFamily: "'Nunito', sans-serif" }}>Alert</span>
+                <span style={{ position: 'absolute', bottom: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: '#64748b', fontFamily: "'Nunito', sans-serif" }}>Heavy</span>
+                <span style={{ position: 'absolute', bottom: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: '#64748b', fontFamily: "'Nunito', sans-serif" }}>Serene</span>
+
+                {/* Selector Dot */}
+                {hasSelected && (
+                  <motion.div
+                    className="affect-dot"
+                    layout
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    style={{
+                      position: 'absolute',
+                      width: '28px',
+                      height: '28px',
+                      background: '#ffffff',
+                      border: '3px solid #00ae9d',
+                      borderRadius: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      boxShadow: '0 4px 14px rgba(0, 174, 157, 0.35)',
+                      ...getDotStyle()
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Action button pinned at bottom right */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
+            <button
+              className="btn-primary"
+              onClick={handleNext}
+              disabled={!hasSelected}
+              style={{
+                padding: '10px 36px',
+                opacity: hasSelected ? 1 : 0.5,
+                cursor: hasSelected ? 'pointer' : 'not-allowed',
+              }}
+            >
+              Continue
+            </button>
+          </div>
+
         </div>
+
       </div>
     </motion.div>
   )

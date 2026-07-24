@@ -43,7 +43,7 @@ export default function Stage5_2Ucla3Screen() {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <h1 className="headline">Relationships & Social</h1>
+        <h1 className="headline">Relationships &amp; Social</h1>
         <div style={{ gridArea: 'sub', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
           <TopicLineIllustration topic="ucla3" />
         </div>
@@ -107,7 +107,6 @@ export default function Stage5_2Ucla3Screen() {
           <button className="btn-primary" onClick={handleNext} disabled={!ucla3?.[questions[step].id]}>
             {step < 2 ? 'Next' : 'Continue'}
           </button>
-
         </div>
       </div>
     </motion.div>

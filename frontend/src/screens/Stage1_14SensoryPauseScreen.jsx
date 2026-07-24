@@ -1,7 +1,80 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
-import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
+
+/* ── Sensory Pause Clock Face Illustration with Dynamic Timer ── */
+const ClockFaceIllustration = ({ timeLeft, done }) => {
+  const radius = 65
+  const circumference = 2 * Math.PI * radius
+  const progress = (10 - timeLeft) / 10
+  const strokeOffset = circumference * (1 - progress)
+  const clockAngle = (10 - timeLeft) * 36
+
+  return (
+    <svg
+      viewBox="0 0 200 200"
+      fill="none"
+      style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '0 auto' }}
+    >
+      <defs>
+        <radialGradient id="clockGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#EBFBFA" stopOpacity="1" />
+          <stop offset="70%" stopColor="#E0F7F3" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* Background Soft Circle Glow */}
+      <circle cx="100" cy="100" r="85" fill="url(#clockGlow)" />
+
+      {/* Clock Face Base Ring */}
+      <circle cx="100" cy="100" r={radius} stroke="#D1EAE4" strokeWidth="5" fill="none" />
+
+      {/* Dynamic Teal Progress Ring */}
+      <motion.circle
+        cx="100" cy="100" r={radius}
+        stroke="#00AE9D" strokeWidth="5.5" fill="none"
+        strokeDasharray={circumference}
+        animate={{ strokeDashoffset: strokeOffset }}
+        transition={{ duration: 0.8, ease: 'easeInOut' }}
+        transform="rotate(-90 100 100)"
+        strokeLinecap="round"
+      />
+
+      {/* 4 Clock Tick Marks */}
+      <line x1="100" y1="28" x2="100" y2="38" stroke="#80C7B9" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="100" y1="162" x2="100" y2="172" stroke="#80C7B9" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="28" y1="100" x2="38" y2="100" stroke="#80C7B9" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="162" y1="100" x2="172" y2="100" stroke="#80C7B9" strokeWidth="2.2" strokeLinecap="round" />
+
+      {/* Ticking Clock Hand */}
+      {!done && (
+        <line
+          x1="100" y1="100" x2="100" y2="48"
+          stroke="#00AE9D" strokeWidth="2.5" strokeLinecap="round" opacity="0.65"
+          transform={`rotate(${clockAngle} 100 100)`}
+          style={{ transition: 'transform 1s linear' }}
+        />
+      )}
+
+      {/* Serene Happy Face Features */}
+      <path d="M 74,95 Q 83,82 92,95" stroke="#00856A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+      <path d="M 108,95 Q 117,82 126,95" stroke="#00856A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+      <path d="M 81,114 Q 100,132 119,114" stroke="#00856A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+
+      {/* Live Seconds Countdown inside Clock */}
+      {!done && (
+        <text
+          x="100" y="148"
+          textAnchor="middle" fill="#00856A"
+          fontSize="12" fontWeight="800" fontFamily="IBM Plex Mono, monospace"
+        >
+          {timeLeft}s
+        </text>
+      )}
+    </svg>
+  )
+}
 
 export default function Stage1_14SensoryPauseScreen() {
   const { setScreen, setProfileField } = useLewisStore()
@@ -31,27 +104,115 @@ export default function Stage1_14SensoryPauseScreen() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
-      <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <h1 className="headline">Sensory Pause</h1>
-        <p className="sub">Allow yourself a brief moment to reset. Just breathe in sync with the morphing fluid.</p>
-        
-        <div className="form-container" style={{ margin: '3rem auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          
-          <div className="ring-wrap" style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <BreathingFluidBlob size={160} duration={4} />
-          </div>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1.65fr',
+        gap: 'clamp(24px, 4vw, 52px)',
+        alignItems: 'stretch',
+        width: '100%',
+        height: '100%',
+        maxHeight: '100%',
+        padding: 0,
+        boxSizing: 'border-box',
+      }}>
 
-          <p className="sub" style={{ fontSize: '18px', fontWeight: 600, color: 'var(--dawn)' }}>
-            {timeLeft > 0 ? `Settle in... ${timeLeft}s` : 'Pause complete'}
+        {/* LEFT — Eyebrow + Title + Subtitle */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+          <div>
+            <p style={{
+              fontFamily: '"IBM Plex Mono", monospace',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: '#00ae9d',
+              textTransform: 'uppercase',
+              margin: '0 0 14px 0',
+            }}>
+              MINDFUL PAUSE
+            </p>
+            <h1 style={{
+              fontFamily: "'Manrope', sans-serif",
+              fontWeight: 700,
+              fontSize: 'clamp(26px, 3.2vw, 40px)',
+              lineHeight: 1.05,
+              letterSpacing: '-0.01em',
+              margin: 0,
+              color: '#16302b',
+              whiteSpace: 'nowrap',
+            }}>
+              Sensory Pause
+            </h1>
+            <p style={{
+              margin: '12px 0 0 2px',
+              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+              color: '#4a6b62',
+              fontFamily: "'Nunito', sans-serif",
+              lineHeight: 1.5,
+              maxWidth: '350px',
+            }}>
+              Allow yourself a brief moment to reset. Just breathe slowly as the timer winds down.
+            </p>
+          </div>
+        </div>
+
+        {/* RIGHT — Clock Illustration + Timer + Pinned Action Button */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
+
+          <p style={{
+            fontFamily: '"IBM Plex Mono", monospace',
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '0.14em',
+            color: '#94a3b8',
+            textTransform: 'uppercase',
+            textAlign: 'right',
+            margin: '0 0 14px 0',
+            width: '100%',
+          }}>
+            MINDFULNESS TIMER
           </p>
 
+          <div style={{
+            flex: 1,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '16px',
+            boxSizing: 'border-box',
+          }}>
+            <ClockFaceIllustration timeLeft={timeLeft} done={done} />
+
+            <p style={{
+              margin: 0,
+              fontSize: '13.5px',
+              fontWeight: 700,
+              color: done ? '#044e43' : '#4a6b62',
+              fontFamily: "'Nunito', sans-serif",
+              textAlign: 'center',
+            }}>
+              {done ? ' Reset Complete. Ready to proceed.' : `Calibrating your focus... ${timeLeft}s`}
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '12px', flexShrink: 0 }}>
+            <button
+              className="btn-primary"
+              onClick={handleNext}
+              disabled={!done}
+              style={{
+                padding: '10px 36px',
+                opacity: done ? 1 : 0.5,
+                cursor: done ? 'pointer' : 'not-allowed',
+              }}
+            >
+              {done ? 'Continue' : 'Calibrating...'}
+            </button>
+          </div>
+
         </div>
-        
-        <div className="button-group" style={{ marginTop: '2rem' }}>
-          <button className="btn-primary" onClick={handleNext} disabled={!done}>
-            {done ? 'Continue Journey' : 'Calibrating...'}
-          </button>
-        </div>
+
       </div>
     </motion.div>
   )

@@ -10,6 +10,65 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
   const t = (topic || '').toLowerCase()
 
   const getIllustrationContent = () => {
+    if (t.includes('about') || t.includes('identity') || t.includes('profile')) {
+      // About You / Identity: Abstract personal silhouette with an ambient aura
+      return (
+        <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
+          <defs>
+            <linearGradient id="aboutGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FF9466" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#36D1DC" stopOpacity="0.5" />
+            </linearGradient>
+          </defs>
+
+          {/* Ambient Aura */}
+          <motion.circle
+            cx="160" cy="140" r="70"
+            fill="url(#aboutGrad)"
+            opacity="0.15"
+            animate={{ scale: [1, 1.15, 1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            style={{ transformOrigin: '160px 140px' }}
+          />
+
+          {/* Head */}
+          <motion.circle
+            cx="160" cy="95" r="30"
+            stroke="var(--dawn)"
+            strokeWidth="2.2"
+            fill="rgba(255, 148, 102, 0.08)"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+          />
+
+          {/* Shoulders / Silhouette Arc */}
+          <motion.path
+            d="M 90,215 C 90,155 130,130 160,130 C 190,130 230,155 230,215"
+            stroke="var(--dawn)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            fill="none"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 1.6, ease: "easeInOut", delay: 0.2 }}
+          />
+
+          {/* Identity Spark */}
+          <motion.circle
+            cx="216" cy="150" r="6"
+            fill="#36D1DC"
+            animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
+            ABOUT YOU
+          </text>
+        </svg>
+      )
+    }
+
     if (t.includes('gse') || t.includes('agency') || t.includes('accomplishment')) {
       // Accomplishment & Agency: Mountain peak, climbing trajectory, summit star
       return (
@@ -94,9 +153,9 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           </defs>
 
           {/* Sun Aura */}
-          <motion.circle 
-            cx="160" cy="90" r="45" 
-            fill="url(#wellGrad)" 
+          <motion.circle
+            cx="160" cy="90" r="45"
+            fill="url(#wellGrad)"
             opacity="0.2"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -113,18 +172,16 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             stroke="#10B981"
             strokeWidth="2.2"
             strokeLinecap="round"
-            animate={{ d: [
-              "M 30,190 Q 90,160 160,190 T 290,190",
-              "M 30,185 Q 90,200 160,185 T 290,185",
-              "M 30,190 Q 90,160 160,190 T 290,190"
-            ]}}
+            animate={{
+              d: [
+                "M 30,190 Q 90,160 160,190 T 290,190",
+                "M 30,185 Q 90,200 160,185 T 290,185",
+                "M 30,190 Q 90,160 160,190 T 290,190"
+              ]
+            }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           />
           <path d="M 50,210 Q 110,190 180,210 T 270,210" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1.5" />
-
-          <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-            OVERALL WELLBEING
-          </text>
         </svg>
       )
     }
@@ -139,10 +196,10 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <motion.ellipse cx="160" cy="140" rx="32" ry="11" fill="rgba(236, 72, 153, 0.25)" stroke="#EC4899" strokeWidth="2" />
 
           {/* Centering Ripple Rings */}
-          <motion.circle 
-            cx="160" cy="90" r="30" 
-            stroke="var(--dawn)" 
-            strokeWidth="1.5" 
+          <motion.circle
+            cx="160" cy="90" r="30"
+            stroke="var(--dawn)"
+            strokeWidth="1.5"
             strokeDasharray="4 4"
             animate={{ scale: [1, 1.4, 1], opacity: [0.8, 0.2, 0.8] }}
             transition={{ duration: 3, repeat: Infinity }}
@@ -163,11 +220,11 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <circle cx="120" cy="130" r="45" stroke="#36D1DC" strokeWidth="2.2" fill="rgba(54, 209, 220, 0.1)" />
           <circle cx="200" cy="130" r="45" stroke="#FF9466" strokeWidth="2.2" fill="rgba(255, 148, 102, 0.1)" />
-          
-          <motion.line 
-            x1="120" y1="130" x2="200" y2="130" 
-            stroke="var(--dawn)" 
-            strokeWidth="2.5" 
+
+          <motion.line
+            x1="120" y1="130" x2="200" y2="130"
+            stroke="var(--dawn)"
+            strokeWidth="2.5"
             strokeDasharray="6 4"
             animate={{ strokeDashoffset: [-20, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -189,9 +246,9 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <circle cx="160" cy="130" r="65" stroke="rgba(22, 36, 31, 0.2)" strokeWidth="1.5" strokeDasharray="6 6" />
           <circle cx="160" cy="130" r="45" stroke="var(--dawn)" strokeWidth="1.8" fill="rgba(255, 148, 102, 0.08)" />
 
-          <motion.path 
-            d="M 160,70 L 170,120 L 220,130 L 170,140 L 160,190 L 150,140 L 100,130 L 150,120 Z" 
-            fill="var(--dawn)" 
+          <motion.path
+            d="M 160,70 L 170,120 L 220,130 L 170,140 L 160,190 L 150,140 L 100,130 L 150,120 Z"
+            fill="var(--dawn)"
             opacity="0.9"
             animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -217,9 +274,9 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           </defs>
 
           {/* Central Sharing Energy Core */}
-          <motion.circle 
-            cx="160" cy="120" r="35" 
-            fill="url(#shareGrad)" 
+          <motion.circle
+            cx="160" cy="120" r="35"
+            fill="url(#shareGrad)"
             opacity="0.2"
             animate={{ scale: [1, 1.3, 1] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -261,9 +318,9 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
               <stop offset="100%" stopColor="#36D1DC" stopOpacity="0.6" />
             </linearGradient>
           </defs>
-          <motion.circle 
-            cx="160" cy="120" r="50" 
-            fill="url(#satGrad)" 
+          <motion.circle
+            cx="160" cy="120" r="50"
+            fill="url(#satGrad)"
             opacity="0.18"
             animate={{ scale: [1, 1.25, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -273,10 +330,10 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <circle cx="160" cy="120" r="10" fill="var(--dawn)" />
 
           {/* Balanced Horizon Arc */}
-          <motion.path 
-            d="M 50,170 Q 160,110 270,170" 
-            stroke="#10B981" 
-            strokeWidth="2.5" 
+          <motion.path
+            d="M 50,170 Q 160,110 270,170"
+            stroke="#10B981"
+            strokeWidth="2.5"
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
@@ -305,9 +362,9 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
               <stop offset="100%" stopColor="#6366F1" stopOpacity="0.5" />
             </linearGradient>
           </defs>
-          <motion.circle 
-            cx="160" cy="125" r="45" 
-            fill="url(#growthGrad)" 
+          <motion.circle
+            cx="160" cy="125" r="45"
+            fill="url(#growthGrad)"
             opacity="0.15"
             animate={{ scale: [1, 1.3, 1] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -332,10 +389,10 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
       return (
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <path d="M 50,210 L 270,210" stroke="rgba(22, 36, 31, 0.2)" strokeWidth="1.5" />
-          <motion.path 
-            d="M 60,190 L 120,150 L 170,170 L 250,90" 
-            stroke="#10B981" 
-            strokeWidth="2.8" 
+          <motion.path
+            d="M 60,190 L 120,150 L 170,170 L 250,90"
+            stroke="#10B981"
+            strokeWidth="2.8"
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
@@ -347,6 +404,122 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
             FINANCIAL WELLNESS
           </text>
+        </svg>
+      )
+    }
+
+    if (t.includes('circadian') || t.includes('bodyrhythm') || t.includes('rhythm') || t.includes('dayrhythm')) {
+      // Body & Circadian Rhythms: Sun moving over circadian arc with green waves & floating particles
+      return (
+        <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
+          <defs>
+            <radialGradient id="circadianGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+              <stop offset="60%" stopColor="#00AE9D" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* Background Soft Dome Glow */}
+          <circle cx="160" cy="140" r="85" fill="url(#circadianGlow)" />
+
+          {/* Dotted Parabolic Circadian Trajectory Arc */}
+          <motion.path
+            d="M 95,175 C 115,100 205,100 225,175"
+            stroke="#10B981"
+            strokeWidth="2.2"
+            strokeDasharray="3 4"
+            strokeLinecap="round"
+            animate={{ strokeDashoffset: [-28, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          />
+
+          {/* Floating Green Particles along the Arc */}
+          <motion.circle
+            cx="160" cy="108" r="4.5"
+            fill="#10B981"
+            animate={{ y: [-3, 3, -3], scale: [0.9, 1.25, 0.9] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.circle
+            cx="185" cy="116" r="3.5"
+            fill="#34D399"
+            animate={{ y: [2, -4, 2], scale: [1.1, 0.8, 1.1] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+          />
+          <motion.circle
+            cx="204" cy="134" r="2.8"
+            fill="#10B981"
+            animate={{ y: [-2, 3, -2], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+          />
+          <motion.circle
+            cx="138" cy="120" r="3"
+            fill="#059669"
+            animate={{ y: [3, -3, 3], scale: [0.8, 1.15, 0.8] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+          />
+
+          {/* Animated Traveling Sun along the Arc */}
+          <motion.g
+            animate={{
+              x: [0, 45, 90, 45, 0],
+              y: [0, -40, -28, -40, 0]
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            style={{ transformOrigin: '110px 168px' }}
+          >
+            {/* Glowing Sun Core */}
+            <circle cx="110" cy="168" r="14" fill="#FBBF24" stroke="#F59E0B" strokeWidth="1.5" />
+
+            {/* Rotating Sun Rays */}
+            <motion.g
+              animate={{ rotate: 360 }}
+              transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+              style={{ transformOrigin: '110px 168px' }}
+            >
+              <line x1="110" y1="146" x2="110" y2="151" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <line x1="110" y1="185" x2="110" y2="190" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <line x1="88" y1="168" x2="93" y2="168" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <line x1="127" y1="168" x2="132" y2="168" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <line x1="95" y1="153" x2="99" y2="157" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <line x1="121" y1="179" x2="125" y2="183" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <line x1="95" y1="183" x2="99" y2="179" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <line x1="121" y1="157" x2="125" y2="153" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+            </motion.g>
+          </motion.g>
+
+          {/* Bottom Wavy Landscape / Waves */}
+          <motion.path
+            d="M 85,215 Q 160,198 235,215"
+            stroke="#00AE9D"
+            strokeWidth="3"
+            strokeLinecap="round"
+            fill="none"
+            animate={{
+              d: [
+                "M 85,215 Q 160,198 235,215",
+                "M 85,212 Q 160,203 235,212",
+                "M 85,215 Q 160,198 235,215"
+              ]
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.path
+            d="M 95,227 Q 160,217 225,227"
+            stroke="rgba(0, 174, 157, 0.45)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            fill="none"
+            animate={{
+              d: [
+                "M 95,227 Q 160,217 225,227",
+                "M 95,229 Q 160,214 225,229",
+                "M 95,227 Q 160,217 225,227"
+              ]
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          />
         </svg>
       )
     }
@@ -364,7 +537,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="topic-illustration-container"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}

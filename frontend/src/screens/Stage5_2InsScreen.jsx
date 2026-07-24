@@ -104,10 +104,24 @@ export default function Stage5_2InsScreen() {
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
         
         {/* Header Section */}
-        <div style={{ marginBottom: '36px', textAlign: 'left' }}>
-          <p style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', letterSpacing: '0.12em', color: 'var(--dawn)', margin: '0 0 12px 0', textTransform: 'uppercase' }}>
-            CHOOSE ONE
-          </p>
+        <div style={{ marginBottom: '24px', textAlign: 'left' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', color: 'var(--dawn)', textTransform: 'uppercase' }}>
+                INCLUSION OF NATURE · 1 OF 1
+              </span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-mute)' }}>
+                {ins !== null ? '100%' : '0%'}
+              </span>
+            </div>
+            <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+              <motion.div 
+                style={{ height: '100%', background: 'linear-gradient(90deg, var(--dawn), #10b981)' }}
+                animate={{ width: ins !== null ? '100%' : '0%' }}
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+              />
+            </div>
+          </div>
           <h1 className="headline" style={{ fontSize: '36px', margin: 0, textAlign: 'left' }}>
             Inclusion of Nature in Self
           </h1>
