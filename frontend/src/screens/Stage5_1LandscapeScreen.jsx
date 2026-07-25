@@ -84,13 +84,15 @@ export default function Stage5_1LandscapeScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(24px, 3vw, 36px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(20px, 2.4vw, 30px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#16302b',
             }}>
-              Where you're resourced, and where depleted.
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Where you're</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>resourced, and</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>where depleted.</span>
             </h1>
             <p style={{
               margin: '8px 0 0 2px',

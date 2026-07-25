@@ -7,7 +7,7 @@ const QuickChoicesIllustration = () => (
   <motion.svg
     viewBox="0 0 240 190"
     fill="none"
-    style={{ width: '100%', maxWidth: '200px', display: 'block', margin: '0 auto' }}
+    style={{ width: '100%', maxWidth: '160px', display: 'block', margin: '0 auto' }}
     initial={{ opacity: 0, scale: 0.92 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -129,8 +129,8 @@ export default function Stage9QuickChoicesScreen() {
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Vector Line Art */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
             <p style={{
               fontFamily: '"IBM Plex Mono", monospace',
@@ -139,7 +139,7 @@ export default function Stage9QuickChoicesScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 14px 0',
+              margin: '0 0 12px 0',
             }}>
               QUICK CHOICES (DELAY DISCOUNTING)
             </p>
@@ -151,9 +151,10 @@ export default function Stage9QuickChoicesScreen() {
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#16302b',
-              textWrap: 'balance',
+              textAlign: 'left',
             }}>
-              Which would<br />you prefer?
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Which would</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>you prefer?</span>
             </h1>
             <p style={{
               margin: '12px 0 0 2px',
@@ -162,201 +163,222 @@ export default function Stage9QuickChoicesScreen() {
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
+              textAlign: 'left',
             }}>
               Round {round} of {maxRounds}
             </p>
           </div>
-          <QuickChoicesIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+            <QuickChoicesIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — DECISION CALIBRATION + 2 Option Cards + Calibration Bar */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* RIGHT — Questionnaire Card Container */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
 
-          <p style={{
-            fontFamily: '"IBM Plex Mono", monospace',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#94a3b8',
-            textTransform: 'uppercase',
-            textAlign: 'right',
-            margin: '0 0 12px 0',
-          }}>
-            DECISION CALIBRATION
-          </p>
+          <div
+            style={{
+              width: '100%',
+              background: '#ffffff',
+              border: '1.5px solid #e2e8e5',
+              borderRadius: '20px',
+              padding: '18px 22px',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+            }}
+          >
+            {/* Header Row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+                DECISION CALIBRATION
+              </span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+                ROUND {round} / {maxRounds}
+              </span>
+            </div>
 
-          {!gameOver ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: 1, justifyContent: 'center' }}>
-              {/* Option 1: Instant Reward */}
-              <motion.button
-                onClick={() => handleChoice('immediate')}
-                whileHover={{ scale: 1.015 }}
-                whileTap={{ scale: 0.985 }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                  padding: '20px 24px',
-                  borderRadius: '20px',
-                  border: '1.5px solid #00ae9d',
-                  background: '#f7faf8',
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  boxShadow: '0 4px 14px rgba(0,174,157,0.08)',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontWeight: 800,
-                  fontSize: '26px',
-                  color: '#16302b',
-                }}>
-                  ₹{(currentImmediate * 100).toLocaleString('en-IN')}
-                </span>
-                <span style={{
-                  fontFamily: '"IBM Plex Mono", monospace',
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  letterSpacing: '0.08em',
-                  color: '#044e43',
-                  background: '#e4f4ee',
-                  padding: '8px 16px',
-                  borderRadius: '30px',
-                  border: '1px solid #00ae9d',
-                }}>
-                  RIGHT NOW
-                </span>
-              </motion.button>
+            {!gameOver ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+                {/* Option 1: Instant Reward */}
+                <motion.button
+                  onClick={() => handleChoice('immediate')}
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    padding: '12px 18px',
+                    borderRadius: '14px',
+                    border: '1.5px solid #00ae9d',
+                    background: '#f2f9f6',
+                    cursor: 'pointer',
+                    transition: 'all 0.18s ease',
+                    boxShadow: '0 2px 8px rgba(0,174,157,0.1)',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <span style={{
+                    fontFamily: "'Manrope', sans-serif",
+                    fontWeight: 800,
+                    fontSize: '22px',
+                    color: '#16302b',
+                  }}>
+                    ₹{(currentImmediate * 100).toLocaleString('en-IN')}
+                  </span>
+                  <span style={{
+                    fontFamily: '"IBM Plex Mono", monospace',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    letterSpacing: '0.08em',
+                    color: '#044e43',
+                    background: '#e4f4ee',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    border: '1px solid #00ae9d',
+                  }}>
+                    RIGHT NOW
+                  </span>
+                </motion.button>
 
-              {/* Option 2: Delayed Reward */}
-              <motion.button
-                onClick={() => handleChoice('later')}
-                whileHover={{ scale: 1.015 }}
-                whileTap={{ scale: 0.985 }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                  padding: '20px 24px',
-                  borderRadius: '20px',
-                  border: '1.5px solid #00ae9d',
-                  background: '#f7faf8',
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  boxShadow: '0 4px 14px rgba(0,174,157,0.08)',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontWeight: 800,
-                  fontSize: '26px',
-                  color: '#16302b',
-                }}>
-                  ₹10,000
-                </span>
-                <span style={{
-                  fontFamily: '"IBM Plex Mono", monospace',
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  letterSpacing: '0.08em',
-                  color: '#044e43',
-                  background: '#e4f4ee',
-                  padding: '8px 16px',
-                  borderRadius: '30px',
-                  border: '1px solid #00ae9d',
-                }}>
-                  IN 1 MONTH
-                </span>
-              </motion.button>
+                {/* Option 2: Delayed Reward */}
+                <motion.button
+                  onClick={() => handleChoice('later')}
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    padding: '12px 18px',
+                    borderRadius: '14px',
+                    border: '1.5px solid #00ae9d',
+                    background: '#f2f9f6',
+                    cursor: 'pointer',
+                    transition: 'all 0.18s ease',
+                    boxShadow: '0 2px 8px rgba(0,174,157,0.1)',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <span style={{
+                    fontFamily: "'Manrope', sans-serif",
+                    fontWeight: 800,
+                    fontSize: '22px',
+                    color: '#16302b',
+                  }}>
+                    ₹10,000
+                  </span>
+                  <span style={{
+                    fontFamily: '"IBM Plex Mono", monospace',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    letterSpacing: '0.08em',
+                    color: '#044e43',
+                    background: '#e4f4ee',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    border: '1px solid #00ae9d',
+                  }}>
+                    IN 1 MONTH
+                  </span>
+                </motion.button>
 
-              {/* Indifference Calibration Progress Bar */}
-              <div style={{ marginTop: '24px', width: '100%' }}>
-                <p style={{
-                  fontFamily: "'Nunito', sans-serif",
-                  fontSize: '12px',
-                  color: '#4a6b62',
-                  textAlign: 'center',
-                  margin: '0 0 8px 0',
-                  fontWeight: 600,
-                }}>
-                  Indifference Calibration
-                </p>
-                <div style={{ height: '6px', background: '#e2e8e5', borderRadius: '3px', position: 'relative', overflow: 'hidden' }}>
-                  <motion.div
-                    style={{
-                      height: '100%',
-                      background: 'linear-gradient(90deg, #36D1DC 0%, #10B981 100%)',
-                      borderRadius: '3px',
-                    }}
-                    animate={{ width: `${(round / maxRounds) * 100}%` }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                  />
+                {/* Indifference Calibration Progress Bar */}
+                <div style={{ marginTop: '10px', width: '100%' }}>
+                  <p style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '11.5px',
+                    color: '#4a6b62',
+                    textAlign: 'center',
+                    margin: '0 0 6px 0',
+                    fontWeight: 600,
+                  }}>
+                    Indifference Calibration
+                  </p>
+                  <div style={{ height: '6px', background: '#e2e8e5', borderRadius: '3px', position: 'relative', overflow: 'hidden' }}>
+                    <motion.div
+                      style={{
+                        height: '100%',
+                        background: 'linear-gradient(90deg, #36D1DC 0%, #10B981 100%)',
+                        borderRadius: '3px',
+                      }}
+                      animate={{ width: `${(round / maxRounds) * 100}%` }}
+                      transition={{ duration: 0.4, ease: 'easeOut' }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flex: 1,
-                gap: '16px',
-                textAlign: 'center',
-              }}
-            >
-              <h2 style={{
-                fontFamily: "'Manrope', sans-serif",
-                fontWeight: 800,
-                fontSize: '28px',
-                color: '#16302b',
-                margin: 0,
-              }}>
-                Calibration Complete
-              </h2>
-
-              <div style={{
-                background: '#f7faf8',
-                border: '1.5px solid #00ae9d',
-                padding: '24px 32px',
-                borderRadius: '20px',
-                width: '100%',
-                boxSizing: 'border-box',
-              }}>
-                <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: '#4a6b62', fontFamily: "'Nunito', sans-serif" }}>
-                  Computed Indifference Score:
-                </p>
-                <p style={{
-                  fontSize: '44px',
-                  fontWeight: 800,
-                  color: '#00ae9d',
-                  margin: '0 0 8px 0',
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  gap: '10px',
+                  textAlign: 'center',
+                  padding: '8px 0',
+                }}
+              >
+                <h2 style={{
                   fontFamily: "'Manrope', sans-serif",
+                  fontWeight: 800,
+                  fontSize: '22px',
+                  color: '#16302b',
+                  margin: 0,
                 }}>
-                  {discountingTendency}
-                </p>
-                <p style={{ fontSize: '13px', color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.45, margin: 0 }}>
-                  {parseFloat(discountingTendency) > 0.5
-                    ? "Your choices indicate a stronger preference for immediate gratification."
-                    : "Your choices indicate a willingness to delay gratification for a larger reward."}
-                </p>
-              </div>
+                  Calibration Complete
+                </h2>
 
+                <div style={{
+                  background: '#f2f9f6',
+                  border: '1.5px solid #00ae9d',
+                  padding: '16px 20px',
+                  borderRadius: '14px',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                }}>
+                  <p style={{ margin: '0 0 2px 0', fontSize: '12px', color: '#4a6b62', fontFamily: "'Nunito', sans-serif" }}>
+                    Computed Indifference Score:
+                  </p>
+                  <p style={{
+                    fontSize: '36px',
+                    fontWeight: 800,
+                    color: '#00ae9d',
+                    margin: '0 0 4px 0',
+                    fontFamily: "'Manrope', sans-serif",
+                  }}>
+                    {discountingTendency}
+                  </p>
+                  <p style={{ fontSize: '12px', color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, margin: 0 }}>
+                    {parseFloat(discountingTendency) > 0.5
+                      ? "Your choices indicate a stronger preference for immediate gratification."
+                      : "Your choices indicate a willingness to delay gratification for a larger reward."}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Action button directly below card when Game Over */}
+          {gameOver && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '14px', flexShrink: 0 }}>
               <button
                 className="btn-primary"
                 onClick={handleNext}
-                style={{ padding: '12px 38px', marginTop: '12px' }}
+                style={{ padding: '9px 36px' }}
               >
                 Continue Journey
               </button>
-            </motion.div>
+            </div>
           )}
 
         </div>
@@ -365,3 +387,4 @@ export default function Stage9QuickChoicesScreen() {
     </motion.div>
   )
 }
+

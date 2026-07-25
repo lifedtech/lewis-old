@@ -524,6 +524,78 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
       )
     }
 
+    if (t.includes('ins') || t.includes('nature') || t.includes('inclusion')) {
+      // Inclusion of Nature in Self: Self & Nature circles overlapping, leaf & shared core
+      return (
+        <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
+          <defs>
+            <radialGradient id="insSelfGrad" cx="40%" cy="40%" r="65%">
+              <stop offset="0%" stopColor="#FF9466" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#FF7E67" stopOpacity="0.12" />
+            </radialGradient>
+            <radialGradient id="insNatureGrad" cx="60%" cy="40%" r="65%">
+              <stop offset="0%" stopColor="#10B981" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#059669" stopOpacity="0.12" />
+            </radialGradient>
+          </defs>
+
+          {/* Ambient Aura */}
+          <motion.circle
+            cx="160" cy="130" r="92"
+            fill="url(#insNatureGrad)"
+            opacity="0.12"
+            animate={{ scale: [1, 1.12, 1] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '160px 130px' }}
+          />
+
+          {/* Self Circle — breathes toward Nature */}
+          <motion.circle
+            cx="128" cy="130" r="62"
+            fill="url(#insSelfGrad)"
+            stroke="#FF7E67"
+            strokeWidth="2"
+            animate={{ x: [0, 6, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          {/* Nature Circle — breathes toward Self */}
+          <motion.circle
+            cx="192" cy="130" r="62"
+            fill="url(#insNatureGrad)"
+            stroke="#10B981"
+            strokeWidth="2"
+            animate={{ x: [0, -6, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          {/* Leaf motif inside Nature */}
+          <path d="M 206,108 C 228,108 238,130 221,152 C 199,152 194,128 206,108 Z" fill="rgba(16, 185, 129, 0.35)" stroke="#10B981" strokeWidth="1.6" strokeLinejoin="round" />
+          <path d="M 210,148 L 219,118" stroke="#10B981" strokeWidth="1.4" strokeLinecap="round" />
+
+          {/* Self spark */}
+          <circle cx="112" cy="130" r="6" fill="#FF7E67" />
+
+          {/* Shared Overlap Core */}
+          <motion.circle
+            cx="160" cy="130" r="9"
+            fill="var(--dawn)"
+            animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '160px 130px' }}
+          />
+
+          {/* Anchor Labels */}
+          <text x="110" y="214" textAnchor="middle" fill="#F43F5E" fontSize="11" fontWeight="700" letterSpacing="0.04em">SELF</text>
+          <text x="210" y="214" textAnchor="middle" fill="#059669" fontSize="11" fontWeight="700" letterSpacing="0.04em">NATURE</text>
+
+          <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
+            CONNECTION TO NATURE
+          </text>
+        </svg>
+      )
+    }
+
     // Default Abstract Trajectory
     return (
       <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>

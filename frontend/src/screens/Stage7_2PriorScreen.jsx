@@ -7,7 +7,7 @@ const PriorAttemptsIllustration = () => (
   <motion.svg
     viewBox="0 0 240 190"
     fill="none"
-    style={{ width: '100%', maxWidth: '200px', display: 'block', margin: '0 auto' }}
+    style={{ width: '100%', maxWidth: '170px', display: 'block', margin: '0 auto' }}
     initial={{ opacity: 0, scale: 0.92 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -84,24 +84,36 @@ export default function Stage7_2PriorScreen() {
         width: '100%',
         height: '100%',
         maxHeight: '100%',
-        padding: '0 clamp(16px, 3vw, 40px)',
+        padding: 0,
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Eyebrow + Title + Subtitle + Vector Illustration */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'center' }}>
+        {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Vector Illustration */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
+            <p style={{
+              fontFamily: '"IBM Plex Mono", monospace',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: '#00ae9d',
+              textTransform: 'uppercase',
+              margin: '0 0 12px 0',
+            }}>
+              PERSONAL JOURNEY
+            </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(34px, 4.4vw, 56px)',
+              fontWeight: 700,
+              fontSize: 'clamp(26px, 3.2vw, 40px)',
               lineHeight: 1.05,
-              letterSpacing: '-0.035em',
+              letterSpacing: '-0.01em',
               margin: 0,
               color: '#16302b',
-              textWrap: 'balance',
+              textAlign: 'left',
             }}>
-              Prior<br />Attempts
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Prior</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Attempts</span>
             </h1>
             <p style={{
               margin: '12px 0 0 2px',
@@ -110,91 +122,126 @@ export default function Stage7_2PriorScreen() {
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
+              textAlign: 'left',
             }}>
               Have you tried to improve your wellbeing recently?
             </p>
           </div>
-          <PriorAttemptsIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+            <PriorAttemptsIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — Standardized 4 Full-Width Option Cards + Pinned Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* RIGHT — Questionnaire Card Container */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {options.map(opt => {
-              const selected = priorAttempts === opt.title
-              return (
-                <button
-                  key={opt.title}
-                  onClick={() => setProfileField('priorAttempts', opt.title)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '16px',
-                    width: '100%',
-                    padding: '14px 20px',
-                    borderRadius: '16px',
-                    border: selected ? '1.5px solid #00ae9d' : '1.5px solid #e2e8e5',
-                    background: selected ? '#e4f4ee' : '#f7faf8',
-                    color: selected ? '#044e43' : '#3a3a3a',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    boxShadow: selected ? '0 4px 14px rgba(0,174,157,0.12)' : 'none',
-                    boxSizing: 'border-box',
-                    textAlign: 'left',
-                  }}
-                >
-                  {/* Selection Circle Radio Indicator */}
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    border: selected ? '2px solid #00ae9d' : '2px solid #c2ceca',
-                    background: selected ? '#00ae9d' : 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    marginTop: '2px',
-                    transition: 'all 0.2s ease',
-                  }}>
-                    {selected && <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#fff' }} />}
-                  </div>
+          <div
+            style={{
+              width: '100%',
+              background: '#ffffff',
+              border: '1.5px solid #e2e8e5',
+              borderRadius: '20px',
+              padding: '18px 22px',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+            }}
+          >
+            {/* Header Row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+                HISTORICAL ATTEMPTS
+              </span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+                {priorAttempts ? 'SELECTED' : 'CHOOSE ONE'}
+              </span>
+            </div>
 
-                  {/* Content Container */}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1 }}>
-                    <span style={{
-                      fontFamily: "'Nunito', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '15.5px',
-                      color: selected ? '#044e43' : '#16302b',
-                      marginBottom: '3px',
+            {/* 4 Stacked Option Cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+              {options.map(opt => {
+                const selected = priorAttempts === opt.title
+                return (
+                  <button
+                    key={opt.title}
+                    onClick={() => setProfileField('priorAttempts', opt.title)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '14px',
+                      width: '100%',
+                      padding: '11px 16px',
+                      borderRadius: '14px',
+                      border: selected ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                      background: selected ? '#e4f4ee' : '#f2f9f6',
+                      color: selected ? '#044e43' : '#3a3a3a',
+                      cursor: 'pointer',
+                      transition: 'all 0.18s ease',
+                      boxShadow: selected ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
+                      boxSizing: 'border-box',
+                      textAlign: 'left',
+                    }}
+                  >
+                    {/* Selection Circle Radio Indicator */}
+                    <div style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      border: selected ? '2px solid #00ae9d' : '2px solid #c2ceca',
+                      background: selected ? '#00ae9d' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px',
+                      transition: 'all 0.18s ease',
                     }}>
-                      {opt.title}
-                    </span>
-                    <p style={{
-                      margin: 0,
-                      fontSize: '13px',
-                      color: selected ? '#1b4d43' : '#4a6b62',
-                      fontFamily: "'Nunito', sans-serif",
-                      lineHeight: 1.45,
-                    }}>
-                      {opt.desc}
-                    </p>
-                  </div>
-                </button>
-              )
-            })}
+                      {selected && <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#fff' }} />}
+                    </div>
+
+                    {/* Content Container */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1 }}>
+                      <span style={{
+                        fontFamily: "'Nunito', sans-serif",
+                        fontWeight: selected ? 700 : 600,
+                        fontSize: '14.5px',
+                        color: selected ? '#044e43' : '#16302b',
+                        marginBottom: '2px',
+                        textAlign: 'left',
+                      }}>
+                        {opt.title}
+                      </span>
+                      <p style={{
+                        margin: 0,
+                        fontSize: '12.5px',
+                        color: selected ? '#1b4d43' : '#4a6b62',
+                        fontFamily: "'Nunito', sans-serif",
+                        lineHeight: 1.4,
+                        textAlign: 'left',
+                      }}>
+                        {opt.desc}
+                      </p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+              Select the option that best describes your recent experience.
+            </p>
           </div>
 
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '16px', flexShrink: 0 }}>
+          {/* Action Button directly below card */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '14px', flexShrink: 0 }}>
             <button
               className="btn-primary"
               onClick={handleNext}
               disabled={!priorAttempts}
               style={{
-                padding: '12px 38px',
+                padding: '9px 36px',
                 opacity: priorAttempts ? 1 : 0.5,
                 cursor: priorAttempts ? 'pointer' : 'not-allowed',
               }}
@@ -209,3 +256,4 @@ export default function Stage7_2PriorScreen() {
     </motion.div>
   )
 }
+

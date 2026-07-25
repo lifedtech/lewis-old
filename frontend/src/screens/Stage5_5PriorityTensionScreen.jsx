@@ -7,7 +7,7 @@ const SeesawTensionIllustration = () => (
   <motion.svg
     viewBox="0 0 200 180"
     fill="none"
-    style={{ width: '100%', maxWidth: '200px', display: 'block', margin: '0 auto' }}
+    style={{ width: '100%', maxWidth: '160px', display: 'block', margin: '0' }}
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.6 }}
@@ -76,103 +76,128 @@ export default function Stage5_5PriorityTensionScreen() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 56px)',
+        gap: 'clamp(24px, 4vw, 52px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
         maxHeight: '100%',
-        padding: '0 clamp(16px, 3vw, 40px)',
+        padding: 0,
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Title + Subtitle + Animated Seesaw Tension Illustration */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'center' }}>
+        {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Vector Graphic */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
+            <p style={{
+              fontFamily: '"IBM Plex Mono", monospace',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: '#00ae9d',
+              textTransform: 'uppercase',
+              margin: '0 0 12px 0',
+            }}>
+              QUALITATIVE REFLECTION
+            </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(34px, 4.4vw, 58px)',
+              fontWeight: 700,
+              fontSize: 'clamp(26px, 3.2vw, 40px)',
               lineHeight: 1.05,
-              letterSpacing: '-0.035em',
+              letterSpacing: '-0.01em',
               margin: 0,
               color: '#16302b',
-              textWrap: 'balance',
+              textAlign: 'left',
             }}>
-              Priority<br />Tension
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Priority</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Tension</span>
             </h1>
             <p style={{
               margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.6vw, 16px)',
+              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
               color: '#4a6b62',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
-              maxWidth: '360px',
+              maxWidth: '350px',
+              textAlign: 'left',
             }}>
               Where do you experience the biggest friction or "gap" between your listed priorities and where your daily energy actually goes?
             </p>
           </div>
-          <SeesawTensionIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+            <SeesawTensionIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — Full-Height Textarea + Pinned Action Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '12px' }}>
+        {/* RIGHT — Textarea Card Container + Action Button */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
 
-          <p style={{
-            fontFamily: '"IBM Plex Mono", monospace',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.12em',
-            color: '#00ae9d',
-            textTransform: 'uppercase',
-            margin: 0,
-          }}>
-            Qualitative Reflection
-          </p>
-
-          <textarea
-            value={priorityTensionCheck || ''}
-            onChange={handleChange}
-            placeholder="Describe the tension or imbalance you feel..."
+          <div
             style={{
               width: '100%',
-              flex: 1,
-              minHeight: '200px',
-              padding: '18px',
+              background: '#ffffff',
+              border: '1.5px solid #e2e8e5',
               borderRadius: '20px',
-              border: '1.5px solid rgba(0, 174, 157, 0.2)',
-              background: '#f7faf8',
-              color: '#16302b',
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: '15px',
-              lineHeight: '1.6',
-              resize: 'none',
-              outline: 'none',
+              padding: '18px 22px',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
               boxSizing: 'border-box',
-              transition: 'all 0.2s ease',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
             }}
-            onFocus={(e) => {
-              e.target.style.borderColor = '#00ae9d'
-              e.target.style.background = '#ffffff'
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(0, 174, 157, 0.2)'
-              e.target.style.background = '#f7faf8'
-            }}
-          />
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+                SHARE YOUR REFLECTION
+              </span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+                OPTIONAL
+              </span>
+            </div>
 
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', paddingTop: '8px', flexShrink: 0 }}>
+            <textarea
+              value={priorityTensionCheck || ''}
+              onChange={handleChange}
+              placeholder="Describe the tension or imbalance you feel..."
+              style={{
+                width: '100%',
+                height: '180px',
+                padding: '14px 16px',
+                borderRadius: '14px',
+                border: '1.5px solid #d2e7e0',
+                background: '#f2f9f6',
+                color: '#16302b',
+                fontFamily: "'Nunito', sans-serif",
+                fontSize: '14.5px',
+                lineHeight: '1.6',
+                resize: 'none',
+                outline: 'none',
+                boxSizing: 'border-box',
+                transition: 'all 0.2s ease',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#00ae9d'
+                e.target.style.background = '#ffffff'
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#d2e7e0'
+                e.target.style.background = '#f2f9f6'
+              }}
+            />
+
+            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+              Your reflection is saved to guide your personalized insights.
+            </p>
+          </div>
+
+          {/* Action button directly below card */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '14px', flexShrink: 0 }}>
             <button
               className="btn-primary"
               onClick={handleNext}
-              disabled={!priorityTensionCheck || !priorityTensionCheck.trim()}
-              style={{
-                padding: '12px 38px',
-                opacity: priorityTensionCheck && priorityTensionCheck.trim() ? 1 : 0.5,
-                cursor: priorityTensionCheck && priorityTensionCheck.trim() ? 'pointer' : 'not-allowed',
-              }}
+              style={{ padding: '10px 40px' }}
             >
-              Continue
+              {priorityTensionCheck && priorityTensionCheck.trim() ? 'Continue' : 'Skip'}
             </button>
           </div>
 
@@ -182,3 +207,4 @@ export default function Stage5_5PriorityTensionScreen() {
     </motion.div>
   )
 }
+

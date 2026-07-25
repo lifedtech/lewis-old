@@ -7,7 +7,7 @@ const SupportPreferencesIllustration = () => (
   <motion.svg
     viewBox="0 0 240 190"
     fill="none"
-    style={{ width: '100%', maxWidth: '200px', display: 'block', margin: '0 auto' }}
+    style={{ width: '100%', maxWidth: '170px', display: 'block', margin: '0 auto' }}
     initial={{ opacity: 0, scale: 0.92 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -93,12 +93,12 @@ export default function Stage7_4SupportScreen() {
         width: '100%',
         height: '100%',
         maxHeight: '100%',
-        padding: '0 clamp(16px, 3vw, 40px)',
+        padding: 0,
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'center' }}>
+        {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Vector Line Art */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
             <p style={{
               fontFamily: '"IBM Plex Mono", monospace',
@@ -107,21 +107,22 @@ export default function Stage7_4SupportScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 6px 0',
+              margin: '0 0 12px 0',
             }}>
               SELECT ALL THAT APPLY
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(34px, 4.4vw, 56px)',
+              fontWeight: 700,
+              fontSize: 'clamp(26px, 3.2vw, 40px)',
               lineHeight: 1.05,
-              letterSpacing: '-0.035em',
+              letterSpacing: '-0.01em',
               margin: 0,
               color: '#16302b',
-              textWrap: 'balance',
+              textAlign: 'left',
             }}>
-              Support<br />Preferences
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Support</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Preferences</span>
             </h1>
             <p style={{
               margin: '12px 0 0 2px',
@@ -130,91 +131,112 @@ export default function Stage7_4SupportScreen() {
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
+              textAlign: 'left',
             }}>
               What kind of support is most helpful to you when adopting new health behaviors or stress management habits?
             </p>
           </div>
-          <SupportPreferencesIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+            <SupportPreferencesIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — ACTION & SUPPORT Eyebrow + 4 Multi-select Checkbox Cards + Pinned Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* RIGHT — Questionnaire Card Container */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
 
-          <p style={{
-            fontFamily: '"IBM Plex Mono", monospace',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#94a3b8',
-            textTransform: 'uppercase',
-            textAlign: 'right',
-            margin: '0 0 12px 0',
-          }}>
-            ACTION & SUPPORT
-          </p>
+          <div
+            style={{
+              width: '100%',
+              background: '#ffffff',
+              border: '1.5px solid #e2e8e5',
+              borderRadius: '20px',
+              padding: '18px 22px',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+            }}
+          >
+            {/* Header Row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+                ACTION &amp; SUPPORT
+              </span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+                {selectedCount} SELECTED
+              </span>
+            </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {options.map(opt => {
-              const active = isSelected(opt.id)
-              return (
-                <button
-                  key={opt.id}
-                  onClick={() => toggleArrayItem('supportPreferences', opt.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '16px',
-                    width: '100%',
-                    padding: '16px 20px',
-                    borderRadius: '16px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #e2e8e5',
-                    background: active ? '#e4f4ee' : '#f7faf8',
-                    color: active ? '#044e43' : '#3a3a3a',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    boxShadow: active ? '0 4px 14px rgba(0,174,157,0.12)' : 'none',
-                    boxSizing: 'border-box',
-                    textAlign: 'left',
-                  }}
-                >
-                  {/* Selection Circle Indicator with Checkmark */}
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
-                    background: active ? '#00ae9d' : 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    transition: 'all 0.2s ease',
-                  }}>
-                    {active && <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
-                  </div>
+            {/* 4 Stacked Checkbox Options */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+              {options.map(opt => {
+                const active = isSelected(opt.id)
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => toggleArrayItem('supportPreferences', opt.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      width: '100%',
+                      padding: '10px 16px',
+                      borderRadius: '14px',
+                      border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                      background: active ? '#e4f4ee' : '#f2f9f6',
+                      color: active ? '#044e43' : '#3a3a3a',
+                      cursor: 'pointer',
+                      transition: 'all 0.18s ease',
+                      boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
+                      boxSizing: 'border-box',
+                      textAlign: 'left',
+                    }}
+                  >
+                    {/* Selection Indicator Circle with Checkmark */}
+                    <div style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
+                      background: active ? '#00ae9d' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      transition: 'all 0.18s ease',
+                    }}>
+                      {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                    </div>
 
-                  <span style={{
-                    fontFamily: "'Nunito', sans-serif",
-                    fontWeight: active ? 700 : 500,
-                    fontSize: '14.5px',
-                    color: active ? '#044e43' : '#16302b',
-                    lineHeight: 1.4,
-                  }}>
-                    {opt.label}
-                  </span>
-                </button>
-              )
-            })}
+                    <span style={{
+                      fontFamily: "'Nunito', sans-serif",
+                      fontWeight: active ? 700 : 500,
+                      fontSize: '14px',
+                      color: active ? '#044e43' : '#16302b',
+                      lineHeight: 1.4,
+                      textAlign: 'left',
+                    }}>
+                      {opt.label}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+
+            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+              Select all types of support you would find helpful.
+            </p>
           </div>
 
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '16px', flexShrink: 0 }}>
+          {/* Action Button directly below card */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '14px', flexShrink: 0 }}>
             <button
               className="btn-primary"
               onClick={handleNext}
               disabled={selectedCount === 0}
               style={{
-                padding: '12px 38px',
+                padding: '9px 36px',
                 opacity: selectedCount > 0 ? 1 : 0.5,
                 cursor: selectedCount > 0 ? 'pointer' : 'not-allowed',
               }}
@@ -229,3 +251,4 @@ export default function Stage7_4SupportScreen() {
     </motion.div>
   )
 }
+

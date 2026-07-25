@@ -58,7 +58,11 @@ export default function LandscapeScreen() {
       style={{ display: 'flex' }}
     >
       <p className="eyebrow" style={{ textAlign: 'center' }}>The landscape</p>
-      <h1 className="headline" style={{ fontSize: '22px' }}>Where you're resourced, and where depleted.</h1>
+      <h1 className="headline" style={{ fontSize: '22px', lineHeight: 1.15 }}>
+        <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Where you're</span>
+        <span style={{ display: 'block', whiteSpace: 'nowrap' }}>resourced, and</span>
+        <span style={{ display: 'block', whiteSpace: 'nowrap' }}>where depleted.</span>
+      </h1>
       <p className="sub" style={{ marginBottom: '6px' }}>Tap a point to read more.</p>
 
       <div className="legend">
