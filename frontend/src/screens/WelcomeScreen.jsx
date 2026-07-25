@@ -1,4 +1,3 @@
-import React from 'react'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { motion } from 'framer-motion'
 import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'

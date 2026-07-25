@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import {  useState  } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import TopicLineIllustration from '../components/TopicLineIllustration.jsx'

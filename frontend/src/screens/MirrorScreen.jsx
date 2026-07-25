@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
 import InsightReport from '../report/InsightReport.jsx'
+import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
 /* ── Backend Connection Error Vector Line Art ── */
 const BackendConnectionErrorIllustration = () => (
   <motion.svg
@@ -79,7 +80,7 @@ export default function MirrorScreen() {
       setLoadingStepIdx(prev => (prev < loadingSteps.length - 1 ? prev + 1 : prev))
     }, 1200)
     return () => clearInterval(interval)
-  }, [loading])
+  }, [loading, loadingSteps.length])
 
   useEffect(() => {
     async function fetchAnalysis() {
@@ -393,13 +394,6 @@ export default function MirrorScreen() {
     sortedData = [...chartData].sort((a, b) => b.A - a.A)
   }
 
-  const getBarColor = (score) => {
-    if (score >= 70) return '#6b8e23' // Thriving - Greenish
-    if (score >= 55) return '#e6c229' // Steady - Yellowish
-    if (score >= 40) return '#e67b5e' // Stretched - Dawn (Orange)
-    return '#c85250' // Depleted - Reddish
-  }
-
   return (
     <motion.section 
       className="screen active"
@@ -546,13 +540,13 @@ export default function MirrorScreen() {
         <div className="mirror-card ai-report-content" style={{ marginBottom: '40px' }}>
           <ReactMarkdown
             components={{
-              h1: ({node, ...props}) => <h2 className="mirror-label notice" style={{ marginTop: '32px', marginBottom: '16px', fontSize: '16px' }} {...props} />,
-              h2: ({node, ...props}) => <h3 className="mirror-title" style={{ marginTop: '24px', marginBottom: '12px', fontSize: '18px' }} {...props} />,
-              p: ({node, ...props}) => <p className="mirror-text" style={{ marginBottom: '16px', lineHeight: '1.6' }} {...props} />,
-              ul: ({node, ...props}) => <ul style={{ listStyleType: 'disc', paddingLeft: '20px', marginBottom: '16px', color: 'var(--text-sub)' }} {...props} />,
-              li: ({node, ...props}) => <li style={{ marginBottom: '8px' }} {...props} />,
-              blockquote: ({node, ...props}) => <blockquote style={{ borderLeft: '4px solid var(--dawn)', paddingLeft: '16px', fontStyle: 'italic', color: 'var(--text-main)', background: 'var(--panel-border)', padding: '12px 16px', borderRadius: '4px', marginBottom: '16px' }} {...props} />,
-              strong: ({node, ...props}) => <strong style={{ color: 'var(--text-main)', fontWeight: 600 }} {...props} />
+              h1: ({ ...props }) => <h2 className="mirror-label notice" style={{ marginTop: '32px', marginBottom: '16px', fontSize: '16px' }} {...props} />,
+              h2: ({ ...props }) => <h3 className="mirror-title" style={{ marginTop: '24px', marginBottom: '12px', fontSize: '18px' }} {...props} />,
+              p: ({ ...props }) => <p className="mirror-text" style={{ marginBottom: '16px', lineHeight: '1.6' }} {...props} />,
+              ul: ({ ...props }) => <ul style={{ listStyleType: 'disc', paddingLeft: '20px', marginBottom: '16px', color: 'var(--text-sub)' }} {...props} />,
+              li: ({ ...props }) => <li style={{ marginBottom: '8px' }} {...props} />,
+              blockquote: ({ ...props }) => <blockquote style={{ borderLeft: '4px solid var(--dawn)', paddingLeft: '16px', fontStyle: 'italic', color: 'var(--text-main)', background: 'var(--panel-border)', padding: '12px 16px', borderRadius: '4px', marginBottom: '16px' }} {...props} />,
+              strong: ({ ...props }) => <strong style={{ color: 'var(--text-main)', fontWeight: 600 }} {...props} />
             }}
           >
             {analysis?.narrative}

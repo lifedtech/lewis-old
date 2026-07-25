@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import {  useState, useEffect, useCallback  } from 'react';
 import { useLewisStore } from '../store/useLewisStore.js'
 import { motion } from 'framer-motion'
 import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
@@ -18,10 +18,7 @@ export default function BreatheScreen() {
   }, [])
 
   useEffect(() => {
-    if (remaining <= 0) {
-      finishBreathing()
-      return
-    }
+    if (isFinished) return
 
     const timer = setInterval(() => {
       setRemaining(prev => {
@@ -35,7 +32,7 @@ export default function BreatheScreen() {
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [remaining, finishBreathing])
+  }, [finishBreathing, isFinished])
 
   const elapsed = TOTAL - remaining
   const phase = elapsed % CYCLE

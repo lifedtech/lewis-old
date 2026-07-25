@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import {  useState, useEffect, useCallback, useRef  } from 'react';
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
@@ -31,15 +31,12 @@ const HEIGHT = 15
 export default function Stage4MazeScreen() {
   const { setScreen, setProfileField } = useLewisStore()
 
-  const [maze, setMaze] = useState([])
+  const [maze] = useState(() => generateMaze(WIDTH, HEIGHT))
   const [pos, setPos] = useState({ r: 1, c: 1 })
   const [won, setWon] = useState(false)
   const startTimeRef = useRef(null)
 
   useEffect(() => {
-    setMaze(generateMaze(WIDTH, HEIGHT))
-    setPos({ r: 1, c: 1 })
-    setWon(false)
     startTimeRef.current = Date.now()
   }, [])
 

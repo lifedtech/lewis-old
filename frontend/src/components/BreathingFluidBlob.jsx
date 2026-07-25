@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 
 /**
@@ -17,10 +16,6 @@ export default function BreathingFluidBlob({
   const path1 = "M 0,-70 C 45,-75 75,-40 70,10 C 65,55 35,75 -15,70 C -60,65 -75,30 -70,-20 C -65,-60 -40,-65 0,-70 Z"
   const path2 = "M 10,-75 C 65,-60 70,-15 75,25 C 80,65 15,80 -30,70 C -75,60 -80,0 -60,-40 C -45,-75 -30,-85 10,-75 Z"
   const path3 = "M -10,-65 C 35,-85 80,-30 60,20 C 45,70 -20,80 -65,55 C -85,35 -60,-15 -50,-55 C -40,-80 -45,-45 -10,-65 Z"
-
-  const defaultGlow = customColor 
-    ? `0 0 50px ${customColor}` 
-    : '0 0 50px rgba(54, 209, 220, 0.6)'
 
   return (
     <motion.div 

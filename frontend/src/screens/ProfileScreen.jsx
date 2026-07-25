@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import {  useState  } from 'react';
 import { useLewisStore } from '../store/useLewisStore.js'
 import { motion, AnimatePresence } from 'framer-motion'
 import MultiSelectGrid from '../components/MultiSelectGrid.jsx'
@@ -10,7 +10,7 @@ const PRESSURES_OPTIONS = ['Workload', 'Financial pressure', 'Relationship strai
 
 export default function ProfileScreen() {
   const { 
-    name, ageCategory, gender, profession, setProfileField, 
+    name, setProfileField, 
     roles, lifePressures, toggleArrayItem,
     priorities,
     setScreen 

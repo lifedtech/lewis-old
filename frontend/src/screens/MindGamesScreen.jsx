@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useRef } from 'react';
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
@@ -93,23 +93,6 @@ export default function MindGamesScreen() {
           {/* Axis lines */}
           <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'rgba(0,0,0,0.08)' }}></div>
           <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0,0,0,0.08)' }}></div>
-          
-          {/* 4 Quadrants with Vibrant Color Gradients & Styled Badges */}
-          background: `
-            radial-gradient(circle at 15% 15%, rgba(250, 220, 215, 0.65) 0%, rgba(248, 230, 225, 0.3) 50%, transparent 80%),
-            radial-gradient(circle at 85% 15%, rgba(225, 242, 210, 0.65) 0%, rgba(240, 250, 225, 0.3) 50%, transparent 80%),
-            radial-gradient(circle at 15% 85%, rgba(235, 230, 252, 0.65) 0%, rgba(242, 238, 255, 0.3) 50%, transparent 80%),
-            radial-gradient(circle at 85% 85%, rgba(215, 245, 235, 0.65) 0%, rgba(230, 250, 242, 0.3) 50%, transparent 80%),
-            #fafcfb
-          `,
-          border: '1.5px solid rgba(16, 185, 129, 0.18)',
-          borderRadius: '28px',
-          position: 'relative',
-          cursor: 'crosshair',
-          overflow: 'hidden',
-          boxShadow: '0 12px 36px rgba(0,0,0,0.04)'
-        }}
-      >
         {/* Subtle Center Crosshair Lines */}
         <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'rgba(0, 0, 0, 0.06)' }}></div>
         <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0, 0, 0, 0.06)' }}></div>

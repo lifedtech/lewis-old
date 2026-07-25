@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useRef } from 'react';
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 

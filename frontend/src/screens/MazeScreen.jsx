@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import {  useState, useEffect, useCallback  } from 'react';
 import { useLewisStore } from '../store/useLewisStore.js'
 import { motion } from 'framer-motion'
 
@@ -31,15 +31,9 @@ const HEIGHT = 15
 export default function MazeScreen() {
   const { setScreen } = useLewisStore()
   
-  const [maze, setMaze] = useState([])
+  const [maze] = useState(() => generateMaze(WIDTH, HEIGHT))
   const [pos, setPos] = useState({ r: 1, c: 1 })
   const [won, setWon] = useState(false)
-
-  useEffect(() => {
-    setMaze(generateMaze(WIDTH, HEIGHT))
-    setPos({ r: 1, c: 1 })
-    setWon(false)
-  }, [])
 
   const move = useCallback((dr, dc) => {
     if (won) return

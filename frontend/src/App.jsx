@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useLewisStore } from './store/useLewisStore.js'
 
@@ -250,20 +249,6 @@ export default function App() {
 
         {/* Premium Stage Progress Indicator (hidden on terminal screens) */}
         {currentScreen !== 'landing' && currentIndex !== -1 && (() => {
-          const STAGE_START_SCREENS = [
-            'landing',           // Stage 0
-            'stage1_1Identity',   // Stage 1
-            'stage2Attention',   // Stage 2
-            'stage3_1Affect',    // Stage 3
-            'stage4Maze',        // Stage 4
-            'stage5_1Landscape', // Stage 5
-            'stage6Sharing',     // Stage 6
-            'stage7_1External',  // Stage 7
-            'stage8_1EnergyArc', // Stage 8
-            'stage9Sensory',     // Stage 9
-            'stage10Generating'  // Stage 10
-          ]
-
           const STAGE_NAMES = [
             'Setup',
             'Life Context',

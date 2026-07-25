@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import {  useState, useEffect, useCallback  } from 'react';
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
@@ -114,10 +114,6 @@ export default function Stage3_4BreathingScreen() {
 
   useEffect(() => {
     if (isFinished) return
-    if (remaining <= 0) {
-      finishBreathing()
-      return
-    }
 
     const timer = setInterval(() => {
       setRemaining(prev => {
@@ -131,13 +127,13 @@ export default function Stage3_4BreathingScreen() {
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [remaining, finishBreathing, isFinished])
+  }, [finishBreathing, isFinished])
 
   const elapsed = TOTAL_TIME - remaining
   const cycleNum = Math.min(3, Math.floor(elapsed / CYCLE_TIME) + 1)
   const cycleSec = elapsed % CYCLE_TIME
 
-  let breatheState = 'Breathe in'
+  let breatheState
 
   if (cycleSec < 4) {
     breatheState = 'Breathe in'

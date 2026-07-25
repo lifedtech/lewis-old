@@ -9,7 +9,7 @@
 
 import {
   WHO5_SCALE, PSS10_SCALE, UCLA3_SCALE, GSE_SCALE, PROMIS_SCALE,
-  CFPB5_1_SCALE, CFPB5_2_SCALE, AGREEMENT_5,
+  CFPB5_1_SCALE, CFPB5_2_SCALE,
 } from '../constants/scales.js'
 
 // Diener/SWLS are administered on a 5-point agreement scale but published

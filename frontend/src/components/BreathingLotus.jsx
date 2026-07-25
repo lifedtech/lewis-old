@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 
 /**
@@ -15,11 +14,6 @@ export default function BreathingLotus({
 }) {
   const innerPetalCount = 6
   const outerPetalCount = 12
-
-  // Color options
-  const defaultGradientStart = customColor || '#36D1DC'
-  const defaultGradientEnd = customColor || '#5B86E5'
-  const defaultGlow = customColor ? `0 0 40px ${customColor}` : '0 0 50px rgba(54, 209, 220, 0.5)'
 
   return (
     <motion.div 

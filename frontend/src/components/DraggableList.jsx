@@ -1,4 +1,3 @@
-import React from 'react'
 import { Reorder } from 'framer-motion'
 
 export default function DraggableList({ items, setItems }) {

@@ -1,4 +1,3 @@
-import React from 'react'
 
 export default function MultiSelectGrid({ options, selected, onChange }) {
   return (

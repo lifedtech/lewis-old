@@ -5,7 +5,7 @@
 // deterministic spine, gate-checked). This component only lays blocks
 // out; it never invents, reorders, or rewrites content.
 
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 import { useLewisStore } from '../store/useLewisStore.js'
 import './report.css'
 
@@ -208,7 +208,7 @@ function DayCurve({ block }) {
     <div className="ir-daycurve">
       <p className="ir-table-title">YOUR DAY, AS YOU DESCRIBED IT</p>
       <svg viewBox="0 0 560 150" role="img" aria-label="Energy level across the day">
-        {[28, 62, 96].map((y, i) => (
+        {[28, 62, 96].map((y) => (
           <line key={y} x1={padX - 8} y1={y} x2={w - padX + 8} y2={y}
             stroke="var(--ir-hairline)" strokeWidth="1" />
         ))}
@@ -384,7 +384,7 @@ const BLOCKS = {
 /* Pages                                                               */
 /* ------------------------------------------------------------------ */
 
-function CoverPage({ page, meta }) {
+function CoverPage({ page }) {
   const prepared = page.blocks.find((b) => b.type === 'paragraph' && b.lead)
   const privateLine = page.blocks.find((b) => b.type === 'paragraph' && !b.lead)
   const cards = page.blocks.find((b) => b.type === 'cards')
@@ -441,6 +441,16 @@ function ReportPage({ page, meta }) {
 export default function InsightReport({ report }) {
   const { isAuthenticated, authPendingDownload, setScreen } = useLewisStore()
 
+  const handleDownload = () => {
+    document.body.classList.add('ir-printing')
+    const cleanup = () => {
+      document.body.classList.remove('ir-printing')
+      window.removeEventListener('afterprint', cleanup)
+    }
+    window.addEventListener('afterprint', cleanup)
+    window.print()
+  }
+
   useEffect(() => {
     if (authPendingDownload) {
       useLewisStore.setState({ authPendingDownload: false })
@@ -452,16 +462,6 @@ export default function InsightReport({ report }) {
   }, [authPendingDownload])
 
   if (!report || !report.pages) return null
-
-  const handleDownload = () => {
-    document.body.classList.add('ir-printing')
-    const cleanup = () => {
-      document.body.classList.remove('ir-printing')
-      window.removeEventListener('afterprint', cleanup)
-    }
-    window.addEventListener('afterprint', cleanup)
-    window.print()
-  }
 
   const handleUnlockClick = () => {
     setScreen('login')

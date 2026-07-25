@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import {  useState  } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { AGREEMENT_5 } from '../constants/scales.js'

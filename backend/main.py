@@ -271,7 +271,7 @@ def calculate_pulse(payload: PulseInput):
 
 
 @app.post("/assessment/full")
-def calculate_full_assessment(payload: FullAssessmentInput, request: Request):
+def calculate_full_assessment(payload: FullAssessmentInput, request: Request = None):
     if payload.is_over_18 is not True:
         raise HTTPException(
             status_code=403,
@@ -490,7 +490,7 @@ def calculate_full_assessment(payload: FullAssessmentInput, request: Request):
         logger.error("Insight report gate issues: %s", "; ".join(gate_issues))
 
     # Auto-save submission if user is logged in
-    auth_header = request.headers.get("Authorization")
+    auth_header = request.headers.get("Authorization") if request else None
     if auth_header and auth_header.startswith("Bearer "):
         token = auth_header.split(" ")[1]
         user = verify_token(token)

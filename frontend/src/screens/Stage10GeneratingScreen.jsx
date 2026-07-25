@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import {  useState, useEffect  } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
@@ -99,7 +99,7 @@ export default function Stage10GeneratingScreen() {
       }, 800)
       return () => clearTimeout(timer)
     }
-  }, [stepIdx])
+  }, [stepIdx, setScreen, steps.length])
 
   const progressPercent = Math.round(((stepIdx + 1) / steps.length) * 100)
 

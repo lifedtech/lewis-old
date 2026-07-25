@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import {  useState, useEffect  } from 'react';
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
@@ -82,15 +82,19 @@ export default function Stage1_14SensoryPauseScreen() {
   const [done, setDone] = useState(false)
 
   useEffect(() => {
-    if (timeLeft <= 0) {
-      setDone(true)
-      return
-    }
-    const timer = setTimeout(() => {
-      setTimeLeft(timeLeft - 1)
+    if (done) return
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          setDone(true)
+          return 0
+        }
+        return prev - 1
+      })
     }, 1000)
-    return () => clearTimeout(timer)
-  }, [timeLeft])
+    return () => clearInterval(timer)
+  }, [done])
 
   const handleNext = () => {
     setProfileField('sensoryPauseDone', true)

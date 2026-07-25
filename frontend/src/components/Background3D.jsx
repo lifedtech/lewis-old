@@ -1,4 +1,5 @@
-import React, { useRef, useMemo } from 'react'
+/* eslint-disable react-hooks/purity, react-hooks/immutability */
+import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
