@@ -73,7 +73,8 @@ body:has(.landing-screen-wrapper),
 }
 
 .node-pulse {
-  animation: lw-node-pulse 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  /* Motion disabled per user preference */
+  animation: none;
 }
 
 @keyframes lw-node-pulse {
@@ -83,6 +84,7 @@ body:has(.landing-screen-wrapper),
 
 /* Infinite Marquee Ticker Scroller */
 .landing-marquee-container {
+  display: none !important;
   width: 100%;
   overflow: hidden;
   white-space: nowrap;

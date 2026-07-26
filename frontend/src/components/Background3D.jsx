@@ -6,7 +6,7 @@ import * as THREE from 'three'
 const NUM_NEURONS = 70
 const CONNECTION_DISTANCE = 3.5
 const BOUNDARY = 9
-const SPEED = 0.3
+const SPEED = 0
 
 function NeuralNetwork() {
   const pointsRef = useRef()

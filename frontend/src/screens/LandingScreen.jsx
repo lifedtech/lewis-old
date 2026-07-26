@@ -233,28 +233,6 @@ export default function LandingScreen() {
             >
               Let's begin <span style={{ fontSize: '18px' }}>→</span>
             </button>
-
-            <button
-              onClick={(e) => scrollTo(e, 'how')}
-              className="landing-secondary-btn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: '#ffffff',
-                color: '#16302b',
-                border: '1.5px solid #e2e8e5',
-                borderRadius: '999px',
-                padding: '16px 30px',
-                fontSize: '15.5px',
-                fontFamily: "'Nunito', sans-serif",
-                fontWeight: 600,
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.04)',
-                cursor: 'pointer',
-              }}
-            >
-              See how it works <span style={{ fontSize: '14px', color: '#16302b' }}>⌄</span>
-            </button>
           </div>
         </div>
 
