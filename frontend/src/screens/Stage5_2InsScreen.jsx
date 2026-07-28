@@ -31,7 +31,7 @@ const renderOverlapCircles = (idx, selected) => {
         </radialGradient>
         <radialGradient id={`gradNature-${idx}`} cx="40%" cy="40%" r="60%">
           <stop offset="0%" stopColor="#2DD4BF" stopOpacity={selected ? '0.6' : '0.35'} />
-          <stop offset="100%" stopColor="#10B981" stopOpacity={selected ? '0.45' : '0.2'} />
+          <stop offset="100%" stopColor="#00ae9d" stopOpacity={selected ? '0.45' : '0.2'} />
         </radialGradient>
       </defs>
 
@@ -52,7 +52,7 @@ const renderOverlapCircles = (idx, selected) => {
         cy="37"
         r="21"
         fill={`url(#gradNature-${idx})`}
-        stroke={selected ? '#10B981' : 'rgba(16, 185, 129, 0.45)'}
+        stroke={selected ? '#00ae9d' : 'rgba(16, 185, 129, 0.45)'}
         strokeWidth={selected ? '2' : '1.2'}
         style={{ transition: 'all 0.3s ease' }}
       />
@@ -75,7 +75,7 @@ const renderOverlapCircles = (idx, selected) => {
         textAnchor="middle"
         fontSize="10"
         fontWeight="700"
-        fill={selected ? '#047857' : '#10B981'}
+        fill={selected ? '#047857' : '#00ae9d'}
         style={{ pointerEvents: 'none', letterSpacing: '0.04em' }}
       >
         Nature
@@ -133,7 +133,7 @@ export default function Stage5_2InsScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Connection to</span>
@@ -142,7 +142,7 @@ export default function Stage5_2InsScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -163,7 +163,7 @@ export default function Stage5_2InsScreen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '16px 20px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -179,7 +179,7 @@ export default function Stage5_2InsScreen() {
                 <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                   SELECT YOUR LEVEL · 1 OF 1
                 </span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                   {answered ? '100%' : '0%'}
                 </span>
               </div>
@@ -193,7 +193,7 @@ export default function Stage5_2InsScreen() {
             </div>
 
             {/* Question Statement */}
-            <p style={{ margin: '2px 0 0 0', fontSize: '14.5px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
+            <p style={{ margin: '2px 0 0 0', fontSize: '14.5px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
               "How connected do you feel with the natural world?"
             </p>
 
@@ -231,7 +231,7 @@ export default function Stage5_2InsScreen() {
                     <span style={{
                       fontSize: '12px',
                       fontWeight: selected ? 700 : 600,
-                      color: selected ? '#044e43' : '#16302b',
+                      color: selected ? '#414242' : '#414242',
                       fontFamily: "'Nunito', sans-serif",
                       lineHeight: 1,
                     }}>
@@ -241,7 +241,7 @@ export default function Stage5_2InsScreen() {
                     <span style={{
                       fontSize: '10px',
                       fontWeight: 500,
-                      color: selected ? '#00ae9d' : '#8fa099',
+                      color: selected ? '#00ae9d' : '#414242',
                       fontFamily: "'Nunito', sans-serif",
                       lineHeight: 1.1,
                       textAlign: 'center',
@@ -253,7 +253,7 @@ export default function Stage5_2InsScreen() {
               })}
             </div>
 
-            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
               Pick the pair of circles that matches how intertwined you feel with nature.
             </p>
           </div>

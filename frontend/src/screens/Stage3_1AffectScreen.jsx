@@ -80,7 +80,7 @@ export default function Stage3_1AffectScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textWrap: 'balance',
             }}>
               Where is your mind sitting right now?
@@ -88,7 +88,7 @@ export default function Stage3_1AffectScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -106,7 +106,7 @@ export default function Stage3_1AffectScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -133,10 +133,10 @@ export default function Stage3_1AffectScreen() {
               }}
             >
               {/* Axis Labels */}
-              <span style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Activated / High Energy</span>
-              <span style={{ position: 'absolute', bottom: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Calm / Low Energy</span>
-              <span style={{ position: 'absolute', top: '50%', left: '-26px', transform: 'translate(-50%, -50%) rotate(-90deg)', fontSize: '11px', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Unpleasant</span>
-              <span style={{ position: 'absolute', top: '50%', right: '-26px', transform: 'translate(50%, -50%) rotate(90deg)', fontSize: '11px', color: '#94a3b8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Pleasant</span>
+              <span style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Activated / High Energy</span>
+              <span style={{ position: 'absolute', bottom: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Calm / Low Energy</span>
+              <span style={{ position: 'absolute', top: '50%', left: '-26px', transform: 'translate(-50%, -50%) rotate(-90deg)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Unpleasant</span>
+              <span style={{ position: 'absolute', top: '50%', right: '-26px', transform: 'translate(50%, -50%) rotate(90deg)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Pleasant</span>
 
               {/* The Grid Canvas */}
               <div
@@ -147,10 +147,10 @@ export default function Stage3_1AffectScreen() {
                   width: '100%',
                   height: '100%',
                   background: `
-                    radial-gradient(circle at 15% 15%, rgba(250, 220, 215, 0.65) 0%, rgba(248, 230, 225, 0.3) 50%, transparent 80%),
-                    radial-gradient(circle at 85% 15%, rgba(225, 242, 210, 0.65) 0%, rgba(240, 250, 225, 0.3) 50%, transparent 80%),
-                    radial-gradient(circle at 15% 85%, rgba(235, 230, 252, 0.65) 0%, rgba(242, 238, 255, 0.3) 50%, transparent 80%),
-                    radial-gradient(circle at 85% 85%, rgba(215, 245, 235, 0.65) 0%, rgba(230, 250, 242, 0.3) 50%, transparent 80%),
+                    radial-gradient(circle at 15% 15%, rgba(214, 237, 234, 0.65) 0%, rgba(248, 230, 225, 0.3) 50%, transparent 80%),
+                    radial-gradient(circle at 85% 15%, rgba(230, 244, 208, 0.65) 0%, rgba(240, 250, 225, 0.3) 50%, transparent 80%),
+                    radial-gradient(circle at 15% 85%, rgba(214, 237, 234, 0.65) 0%, rgba(242, 238, 255, 0.3) 50%, transparent 80%),
+                    radial-gradient(circle at 85% 85%, rgba(214, 237, 234, 0.65) 0%, rgba(230, 250, 242, 0.3) 50%, transparent 80%),
                     #f2f9f6
                   `,
                   border: '1.5px solid #d2e7e0',
@@ -166,10 +166,10 @@ export default function Stage3_1AffectScreen() {
                 <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0, 0, 0, 0.08)' }}></div>
 
                 {/* Corner Quadrant Labels */}
-                <span style={{ position: 'absolute', top: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: '#64748b', fontFamily: "'Nunito', sans-serif" }}>Tense</span>
-                <span style={{ position: 'absolute', top: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: '#64748b', fontFamily: "'Nunito', sans-serif" }}>Alert</span>
-                <span style={{ position: 'absolute', bottom: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: '#64748b', fontFamily: "'Nunito', sans-serif" }}>Heavy</span>
-                <span style={{ position: 'absolute', bottom: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: '#64748b', fontFamily: "'Nunito', sans-serif" }}>Serene</span>
+                <span style={{ position: 'absolute', top: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>Tense</span>
+                <span style={{ position: 'absolute', top: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>Alert</span>
+                <span style={{ position: 'absolute', bottom: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>Heavy</span>
+                <span style={{ position: 'absolute', bottom: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>Serene</span>
 
                 {/* Selector Dot */}
                 {hasSelected && (

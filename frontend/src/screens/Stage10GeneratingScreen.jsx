@@ -18,8 +18,8 @@ const MirrorSynthesisIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="synthGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -36,7 +36,7 @@ const MirrorSynthesisIllustration = () => (
     />
     <motion.circle
       cx="120" cy="95" r="32"
-      stroke="#10B981" strokeWidth="1.8" strokeDasharray="4 4" fill="none"
+      stroke="#00ae9d" strokeWidth="1.8" strokeDasharray="4 4" fill="none"
       animate={{ rotate: -360 }}
       transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
       style={{ transformOrigin: '120px 95px' }}
@@ -50,12 +50,12 @@ const MirrorSynthesisIllustration = () => (
       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       style={{ transformOrigin: '120px 95px' }}
     />
-    <circle cx="120" cy="95" r="6" fill="#10B981" stroke="#FFF" strokeWidth="1.5" />
+    <circle cx="120" cy="95" r="6" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
 
     {/* Orbit Sparkle Nodes */}
     <motion.circle cx="120" cy="45" r="4" fill="#00AE9D" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
-    <motion.circle cx="170" cy="95" r="4" fill="#10B981" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} />
-    <motion.circle cx="120" cy="145" r="4" fill="#36D1DC" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} />
+    <motion.circle cx="170" cy="95" r="4" fill="#00ae9d" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} />
+    <motion.circle cx="120" cy="145" r="4" fill="#00ae9d" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} />
     <motion.circle cx="70" cy="95" r="4" fill="#00AE9D" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 1.5 }} />
 
     {/* Wavy Horizon Lines */}
@@ -67,7 +67,7 @@ const MirrorSynthesisIllustration = () => (
     />
     <motion.path
       d="M 38,181 Q 95,172 145,185 T 212,177"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -148,7 +148,7 @@ export default function Stage10GeneratingScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.12em',
-            color: '#044e43',
+            color: '#414242',
             textTransform: 'uppercase',
           }}>
             LEWIS AI ENGINE SYNTHESIS
@@ -166,7 +166,7 @@ export default function Stage10GeneratingScreen() {
           lineHeight: 1.1,
           letterSpacing: '-0.03em',
           margin: '16px 0 8px 0',
-          color: '#16302b',
+          color: '#414242',
         }}>
           Synthesizing Your Mirror
         </h1>
@@ -206,7 +206,7 @@ export default function Stage10GeneratingScreen() {
             justifyContent: 'space-between',
             fontSize: '11.5px',
             fontWeight: 700,
-            color: '#4a6b62',
+            color: '#414242',
             marginBottom: '8px',
             fontFamily: "'IBM Plex Mono', monospace",
           }}>
@@ -217,13 +217,13 @@ export default function Stage10GeneratingScreen() {
             width: '100%',
             height: '6px',
             borderRadius: '6px',
-            background: '#e2e8e5',
+            background: '#f4f4f4',
             overflow: 'hidden',
           }}>
             <motion.div
               style={{
                 height: '100%',
-                background: 'linear-gradient(90deg, #36D1DC 0%, #10B981 100%)',
+                background: 'linear-gradient(90deg, #00ae9d 0%, #00ae9d 100%)',
                 borderRadius: '6px',
               }}
               animate={{ width: `${progressPercent}%` }}
@@ -235,7 +235,7 @@ export default function Stage10GeneratingScreen() {
         {/* Subtitle Footer */}
         <p style={{
           fontSize: '13px',
-          color: '#4a6b62',
+          color: '#414242',
           margin: 0,
           maxWidth: '440px',
           fontFamily: "'Nunito', sans-serif",

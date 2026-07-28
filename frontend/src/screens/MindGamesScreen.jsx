@@ -76,10 +76,10 @@ export default function MindGamesScreen() {
             width: '100%',
             height: '100%',
             background: `
-              radial-gradient(circle at 0% 0%, rgba(255, 107, 107, 0.22), transparent 55%),
-              radial-gradient(circle at 100% 0%, rgba(255, 209, 102, 0.25), transparent 55%),
-              radial-gradient(circle at 0% 100%, rgba(120, 115, 245, 0.22), transparent 55%),
-              radial-gradient(circle at 100% 100%, rgba(54, 209, 220, 0.25), transparent 55%),
+              radial-gradient(circle at 0% 0%, rgba(0, 174, 157, 0.22), transparent 55%),
+              radial-gradient(circle at 100% 0%, rgba(91, 187, 70, 0.25), transparent 55%),
+              radial-gradient(circle at 0% 100%, rgba(0, 174, 157, 0.22), transparent 55%),
+              radial-gradient(circle at 100% 100%, rgba(0, 174, 157, 0.25), transparent 55%),
               var(--panel-2)
             `,
             border: '1px solid var(--panel-border)',
@@ -98,10 +98,10 @@ export default function MindGamesScreen() {
         <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0, 0, 0, 0.06)' }}></div>
 
         {/* Muted Minimal Corner Labels */}
-        <span style={{ position: 'absolute', top: '16px', left: '18px', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Tense</span>
-        <span style={{ position: 'absolute', top: '16px', right: '18px', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Alert</span>
-        <span style={{ position: 'absolute', bottom: '16px', left: '18px', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Heavy</span>
-        <span style={{ position: 'absolute', bottom: '16px', right: '18px', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Serene</span>
+        <span style={{ position: 'absolute', top: '16px', left: '18px', fontSize: '13px', fontWeight: 600, color: '#414242' }}>Tense</span>
+        <span style={{ position: 'absolute', top: '16px', right: '18px', fontSize: '13px', fontWeight: 600, color: '#414242' }}>Alert</span>
+        <span style={{ position: 'absolute', bottom: '16px', left: '18px', fontSize: '13px', fontWeight: 600, color: '#414242' }}>Heavy</span>
+        <span style={{ position: 'absolute', bottom: '16px', right: '18px', fontSize: '13px', fontWeight: 600, color: '#414242' }}>Serene</span>
 
         {/* Selector Dot with White Outer Ring & Teal Core */}
         {affect?.x !== null && affect?.x !== undefined && (

@@ -27,7 +27,7 @@ const EnergyArcIllustration = () => (
     />
 
     {/* Horizontal Baseline */}
-    <line x1="35" y1="145" x2="165" y2="145" stroke="#E2E8E5" strokeWidth="2.5" strokeLinecap="round" />
+    <line x1="35" y1="145" x2="165" y2="145" stroke="#f4f4f4" strokeWidth="2.5" strokeLinecap="round" />
 
     {/* Arc Parabola Curve Line */}
     <motion.path
@@ -53,7 +53,7 @@ const EnergyArcIllustration = () => (
     {/* Node 2 (Apex Peak Green Dot - Vibrant Pulsing Glow) */}
     <motion.circle
       cx="90" cy="72" r="9"
-      fill="#10B981" stroke="#FFF" strokeWidth="1.8"
+      fill="#00ae9d" stroke="#FFF" strokeWidth="1.8"
       animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
       transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: 0.7 }}
       style={{ transformOrigin: '90px 72px' }}
@@ -135,7 +135,7 @@ export default function Stage8_1EnergyArcScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Energy Arc</span>
@@ -144,7 +144,7 @@ export default function Stage8_1EnergyArcScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -165,7 +165,7 @@ export default function Stage8_1EnergyArcScreen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '18px 22px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -180,7 +180,7 @@ export default function Stage8_1EnergyArcScreen() {
               <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                 CIRCADIAN ENERGY
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 DAILY MAPPING
               </span>
             </div>
@@ -205,7 +205,7 @@ export default function Stage8_1EnergyArcScreen() {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span style={{ fontSize: '17px' }}>{tod.icon}</span>
-                      <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '14.5px', color: '#16302b' }}>
+                      <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '14.5px', color: '#414242' }}>
                         {tod.label}
                       </span>
                     </div>
@@ -222,7 +222,7 @@ export default function Stage8_1EnergyArcScreen() {
                               borderRadius: '10px',
                               border: selected ? '1.5px solid #00ae9d' : '1.5px solid #c2ceca',
                               background: selected ? '#00ae9d' : '#ffffff',
-                              color: selected ? '#ffffff' : '#4a6b62',
+                              color: selected ? '#ffffff' : '#414242',
                               fontFamily: "'Nunito', sans-serif",
                               fontWeight: selected ? 700 : 600,
                               fontSize: '12.5px',
@@ -241,7 +241,7 @@ export default function Stage8_1EnergyArcScreen() {
               })}
             </div>
 
-            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
               Select your typical energy level for each phase of the day.
             </p>
           </div>

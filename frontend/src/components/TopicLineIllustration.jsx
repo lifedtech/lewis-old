@@ -16,7 +16,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <defs>
             <linearGradient id="aboutGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#FF9466" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#36D1DC" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#00ae9d" stopOpacity="0.5" />
             </linearGradient>
           </defs>
 
@@ -56,7 +56,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           {/* Identity Spark */}
           <motion.circle
             cx="216" cy="150" r="6"
-            fill="#36D1DC"
+            fill="#00ae9d"
             animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -75,11 +75,11 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <defs>
             <linearGradient id="illGradDawn" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#FF9466" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#E67B5E" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#5bbb46" stopOpacity="0.6" />
             </linearGradient>
             <linearGradient id="illGradTeal" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#36D1DC" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#5B86E5" stopOpacity="0.4" />
+              <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#00ae9d" stopOpacity="0.4" />
             </linearGradient>
           </defs>
 
@@ -146,8 +146,8 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <defs>
             <linearGradient id="wellGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#10B981" stopOpacity="0.5" />
+              <stop offset="0%" stopColor="#5bbb46" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#00ae9d" stopOpacity="0.5" />
             </linearGradient>
           </defs>
 
@@ -168,7 +168,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           {/* Horizon Fluid Waves */}
           <motion.path
             d="M 30,190 Q 90,160 160,190 T 290,190"
-            stroke="#10B981"
+            stroke="#00ae9d"
             strokeWidth="2.2"
             strokeLinecap="round"
             animate={{
@@ -217,7 +217,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
       // Relationships & Social: Overlapping human profiles / Connection bridge
       return (
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
-          <circle cx="120" cy="130" r="45" stroke="#36D1DC" strokeWidth="2.2" fill="rgba(54, 209, 220, 0.1)" />
+          <circle cx="120" cy="130" r="45" stroke="#00ae9d" strokeWidth="2.2" fill="rgba(0, 174, 157, 0.1)" />
           <circle cx="200" cy="130" r="45" stroke="#FF9466" strokeWidth="2.2" fill="rgba(255, 148, 102, 0.1)" />
 
           <motion.line
@@ -267,7 +267,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <defs>
             <linearGradient id="shareGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#36D1DC" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#FF9466" stopOpacity="0.8" />
             </linearGradient>
           </defs>
@@ -290,15 +290,15 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
             style={{ transformOrigin: '160px 120px' }}
           >
-            <circle cx="160" cy="65" r="7" fill="#36D1DC" />
+            <circle cx="160" cy="65" r="7" fill="#00ae9d" />
             <circle cx="215" cy="120" r="7" fill="#FF9466" />
-            <circle cx="160" cy="175" r="7" fill="#10B981" />
-            <circle cx="105" cy="120" r="7" fill="#F59E0B" />
+            <circle cx="160" cy="175" r="7" fill="#00ae9d" />
+            <circle cx="105" cy="120" r="7" fill="#5bbb46" />
           </motion.g>
 
           {/* Radiating Sharing Rings */}
           <circle cx="160" cy="120" r="55" stroke="var(--dawn)" strokeWidth="1.5" strokeDasharray="5 5" opacity="0.6" />
-          <circle cx="160" cy="120" r="75" stroke="rgba(54, 209, 220, 0.4)" strokeWidth="1.2" strokeDasharray="3 3" />
+          <circle cx="160" cy="120" r="75" stroke="rgba(0, 174, 157, 0.4)" strokeWidth="1.2" strokeDasharray="3 3" />
 
           <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
             EVERYDAY SHARING
@@ -313,8 +313,8 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <defs>
             <linearGradient id="satGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#36D1DC" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="#5bbb46" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#00ae9d" stopOpacity="0.6" />
             </linearGradient>
           </defs>
           <motion.circle
@@ -331,7 +331,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           {/* Balanced Horizon Arc */}
           <motion.path
             d="M 50,170 Q 160,110 270,170"
-            stroke="#10B981"
+            stroke="#00ae9d"
             strokeWidth="2.5"
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
@@ -341,8 +341,8 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <path d="M 70,190 Q 160,140 250,190" stroke="rgba(0, 174, 157, 0.35)" strokeWidth="1.5" strokeDasharray="5 5" />
 
           {/* Star Node */}
-          <circle cx="160" cy="65" r="5" fill="#F59E0B" />
-          <line x1="160" y1="75" x2="160" y2="92" stroke="#F59E0B" strokeWidth="1.5" strokeDasharray="3 3" />
+          <circle cx="160" cy="65" r="5" fill="#5bbb46" />
+          <line x1="160" y1="75" x2="160" y2="92" stroke="#5bbb46" strokeWidth="1.5" strokeDasharray="3 3" />
 
           <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
             GLOBAL LIFE SATISFACTION
@@ -357,7 +357,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <defs>
             <linearGradient id="growthGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#10B981" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#6366F1" stopOpacity="0.5" />
             </linearGradient>
           </defs>
@@ -370,7 +370,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             style={{ transformOrigin: '160px 125px' }}
           />
           {/* Outer Petals */}
-          <path d="M 160,65 C 190,95 210,125 160,185 C 110,125 130,95 160,65 Z" fill="rgba(16, 185, 129, 0.15)" stroke="#10B981" strokeWidth="1.8" />
+          <path d="M 160,65 C 190,95 210,125 160,185 C 110,125 130,95 160,65 Z" fill="rgba(16, 185, 129, 0.15)" stroke="#00ae9d" strokeWidth="1.8" />
           <path d="M 100,125 C 130,95 160,115 220,125 C 160,135 130,155 100,125 Z" fill="rgba(0, 174, 157, 0.15)" stroke="var(--dawn)" strokeWidth="1.8" />
 
           {/* Central Bloom Core */}
@@ -390,15 +390,15 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <path d="M 50,210 L 270,210" stroke="rgba(22, 36, 31, 0.2)" strokeWidth="1.5" />
           <motion.path
             d="M 60,190 L 120,150 L 170,170 L 250,90"
-            stroke="#10B981"
+            stroke="#00ae9d"
             strokeWidth="2.8"
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
             transition={{ duration: 1.5 }}
           />
-          <circle cx="250" cy="90" r="8" fill="#10B981" />
-          <path d="M 170,170 C 170,140 190,130 200,130 C 210,130 210,150 170,170 Z" fill="rgba(16, 185, 129, 0.3)" stroke="#10B981" strokeWidth="1.5" />
+          <circle cx="250" cy="90" r="8" fill="#00ae9d" />
+          <path d="M 170,170 C 170,140 190,130 200,130 C 210,130 210,150 170,170 Z" fill="rgba(16, 185, 129, 0.3)" stroke="#00ae9d" strokeWidth="1.5" />
 
           <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
             FINANCIAL WELLNESS
@@ -413,9 +413,9 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <defs>
             <radialGradient id="circadianGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+              <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.25" />
               <stop offset="60%" stopColor="#00AE9D" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+              <stop offset="100%" stopColor="#00ae9d" stopOpacity="0" />
             </radialGradient>
           </defs>
 
@@ -425,7 +425,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           {/* Dotted Parabolic Circadian Trajectory Arc */}
           <motion.path
             d="M 95,175 C 115,100 205,100 225,175"
-            stroke="#10B981"
+            stroke="#00ae9d"
             strokeWidth="2.2"
             strokeDasharray="3 4"
             strokeLinecap="round"
@@ -436,7 +436,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           {/* Floating Green Particles along the Arc */}
           <motion.circle
             cx="160" cy="108" r="4.5"
-            fill="#10B981"
+            fill="#00ae9d"
             animate={{ y: [-3, 3, -3], scale: [0.9, 1.25, 0.9] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -448,13 +448,13 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           />
           <motion.circle
             cx="204" cy="134" r="2.8"
-            fill="#10B981"
+            fill="#00ae9d"
             animate={{ y: [-2, 3, -2], opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
           />
           <motion.circle
             cx="138" cy="120" r="3"
-            fill="#059669"
+            fill="#00ae9d"
             animate={{ y: [3, -3, 3], scale: [0.8, 1.15, 0.8] }}
             transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
           />
@@ -469,7 +469,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             style={{ transformOrigin: '110px 168px' }}
           >
             {/* Glowing Sun Core */}
-            <circle cx="110" cy="168" r="14" fill="#FBBF24" stroke="#F59E0B" strokeWidth="1.5" />
+            <circle cx="110" cy="168" r="14" fill="#FBBF24" stroke="#5bbb46" strokeWidth="1.5" />
 
             {/* Rotating Sun Rays */}
             <motion.g
@@ -477,14 +477,14 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
               transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
               style={{ transformOrigin: '110px 168px' }}
             >
-              <line x1="110" y1="146" x2="110" y2="151" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
-              <line x1="110" y1="185" x2="110" y2="190" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
-              <line x1="88" y1="168" x2="93" y2="168" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
-              <line x1="127" y1="168" x2="132" y2="168" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
-              <line x1="95" y1="153" x2="99" y2="157" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
-              <line x1="121" y1="179" x2="125" y2="183" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
-              <line x1="95" y1="183" x2="99" y2="179" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
-              <line x1="121" y1="157" x2="125" y2="153" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <line x1="110" y1="146" x2="110" y2="151" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="110" y1="185" x2="110" y2="190" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="88" y1="168" x2="93" y2="168" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="127" y1="168" x2="132" y2="168" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="95" y1="153" x2="99" y2="157" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="121" y1="179" x2="125" y2="183" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="95" y1="183" x2="99" y2="179" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="121" y1="157" x2="125" y2="153" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
             </motion.g>
           </motion.g>
 
@@ -533,8 +533,8 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
               <stop offset="100%" stopColor="#FF7E67" stopOpacity="0.12" />
             </radialGradient>
             <radialGradient id="insNatureGrad" cx="60%" cy="40%" r="65%">
-              <stop offset="0%" stopColor="#10B981" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#059669" stopOpacity="0.12" />
+              <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#00ae9d" stopOpacity="0.12" />
             </radialGradient>
           </defs>
 
@@ -562,15 +562,15 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <motion.circle
             cx="192" cy="130" r="62"
             fill="url(#insNatureGrad)"
-            stroke="#10B981"
+            stroke="#00ae9d"
             strokeWidth="2"
             animate={{ x: [0, -6, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
 
           {/* Leaf motif inside Nature */}
-          <path d="M 206,108 C 228,108 238,130 221,152 C 199,152 194,128 206,108 Z" fill="rgba(16, 185, 129, 0.35)" stroke="#10B981" strokeWidth="1.6" strokeLinejoin="round" />
-          <path d="M 210,148 L 219,118" stroke="#10B981" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M 206,108 C 228,108 238,130 221,152 C 199,152 194,128 206,108 Z" fill="rgba(16, 185, 129, 0.35)" stroke="#00ae9d" strokeWidth="1.6" strokeLinejoin="round" />
+          <path d="M 210,148 L 219,118" stroke="#00ae9d" strokeWidth="1.4" strokeLinecap="round" />
 
           {/* Self spark */}
           <circle cx="112" cy="130" r="6" fill="#FF7E67" />
@@ -586,7 +586,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
 
           {/* Anchor Labels */}
           <text x="110" y="214" textAnchor="middle" fill="#F43F5E" fontSize="11" fontWeight="700" letterSpacing="0.04em">SELF</text>
-          <text x="210" y="214" textAnchor="middle" fill="#059669" fontSize="11" fontWeight="700" letterSpacing="0.04em">NATURE</text>
+          <text x="210" y="214" textAnchor="middle" fill="#00ae9d" fontSize="11" fontWeight="700" letterSpacing="0.04em">NATURE</text>
 
           <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
             CONNECTION TO NATURE

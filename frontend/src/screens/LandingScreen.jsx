@@ -74,7 +74,7 @@ export default function LandingScreen() {
       {/* Constellation Vector Mesh Overlay matching screenshot */}
       <svg className="constellation-svg" viewBox="0 0 1440 900" preserveAspectRatio="none">
         {/* Left Constellation Mesh */}
-        <g stroke="#99e2d8" strokeWidth="1.2" opacity="0.6" fill="none">
+        <g stroke="#d6edea" strokeWidth="1.2" opacity="0.6" fill="none">
           <line x1="150" y1="180" x2="310" y2="120" />
           <line x1="310" y1="120" x2="265" y2="300" />
           <line x1="150" y1="180" x2="265" y2="300" />
@@ -90,7 +90,7 @@ export default function LandingScreen() {
         </g>
 
         {/* Right Constellation Mesh */}
-        <g stroke="#99e2d8" strokeWidth="1.2" opacity="0.6" fill="none">
+        <g stroke="#d6edea" strokeWidth="1.2" opacity="0.6" fill="none">
           <line x1="1130" y1="150" x2="1215" y2="265" />
           <line x1="1215" y1="265" x2="1265" y2="565" />
           <line x1="1215" y1="265" x2="1340" y2="120" />
@@ -121,19 +121,19 @@ export default function LandingScreen() {
             width: '34px',
             height: '34px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle at 35% 35%, #36D1DC 0%, #00AE9D 65%, #044E43 100%)',
+            background: 'radial-gradient(circle at 35% 35%, #00ae9d 0%, #00AE9D 65%, #414242 100%)',
             boxShadow: '0 4px 14px rgba(0, 174, 157, 0.35)',
             flexShrink: 0,
           }} />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '20px', color: '#16302b', letterSpacing: '-0.02em' }}>Lewis</span>
-            <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '9px', fontWeight: 700, letterSpacing: '0.14em', color: '#7a968e', marginTop: '2px' }}>BY LIFED</span>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '20px', color: '#414242', letterSpacing: '-0.02em' }}>Lewis</span>
+            <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '9px', fontWeight: 700, letterSpacing: '0.14em', color: '#414242', marginTop: '2px' }}>BY LIFED</span>
           </div>
         </div>
 
         {/* Header Right Nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-          <a href="#how" onClick={(e) => scrollTo(e, 'how')} className="hide-on-mobile" style={{ fontSize: '14.5px', fontWeight: 600, color: '#4a6b62', transition: 'color 0.2s' }}>
+          <a href="#how" onClick={(e) => scrollTo(e, 'how')} className="hide-on-mobile" style={{ fontSize: '14.5px', fontWeight: 600, color: '#414242', transition: 'color 0.2s' }}>
             How it works
           </a>
           <a href="#begin" onClick={handleNext} className="landing-header-btn" style={{
@@ -147,10 +147,10 @@ export default function LandingScreen() {
             padding: '9px 22px',
             fontSize: '13.5px',
             fontWeight: 600,
-            color: '#16302b',
+            color: '#414242',
             cursor: 'pointer',
           }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#5fbb46', display: 'inline-block' }} />
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#5bbb46', display: 'inline-block' }} />
             Get your report
           </a>
         </div>
@@ -193,15 +193,15 @@ export default function LandingScreen() {
             lineHeight: 1.05,
             margin: '0 0 28px 0',
           }}>
-            <span style={{ fontWeight: 400, color: '#8fa099' }}>wellbeing </span>
-            <span style={{ fontWeight: 800, color: '#16302b' }}>made intelligent</span>
+            <span style={{ fontWeight: 400, color: '#414242' }}>wellbeing </span>
+            <span style={{ fontWeight: 800, color: '#414242' }}>made intelligent</span>
           </h2>
 
           {/* Description matching screenshot */}
           <p style={{
             fontFamily: "'Nunito', sans-serif",
             fontSize: 'clamp(16px, 1.8vw, 19px)',
-            color: '#4a6b62',
+            color: '#414242',
             lineHeight: 1.6,
             maxWidth: '680px',
             margin: '0 auto 36px auto',
@@ -262,19 +262,19 @@ export default function LandingScreen() {
             <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '4px', fontFamily: '"IBM Plex Mono", monospace' }}>
               WELLBEING INTELLIGENCE
             </div>
-            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.5, color: '#4a6b62' }}>
+            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.5, color: '#414242' }}>
               Nine scientific domains, one living picture of you.
             </p>
           </div>
 
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <a href="#domains" onClick={(e) => scrollTo(e, 'domains')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#16302b', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+            <a href="#domains" onClick={(e) => scrollTo(e, 'domains')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
               9 Domains
             </a>
-            <a href="#how" onClick={(e) => scrollTo(e, 'how')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#16302b', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+            <a href="#how" onClick={(e) => scrollTo(e, 'how')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
               Science-backed
             </a>
-            <a href="#report" onClick={(e) => scrollTo(e, 'report')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#16302b', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+            <a href="#report" onClick={(e) => scrollTo(e, 'report')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
               Adaptive
             </a>
           </div>
@@ -285,7 +285,7 @@ export default function LandingScreen() {
       <div className="landing-marquee-container">
         <div className="landing-marquee-track">
           {[...DOMAINS, ...DOMAINS, ...DOMAINS].map((d, i) => (
-            <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif" }}>
+            <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>
               <span style={{ fontSize: '16px' }}>{d.icon}</span>
               <span>{d.name}</span>
               <span style={{ color: '#00ae9d', fontSize: '11px', margin: '0 8px' }}>✦</span>
@@ -301,11 +301,11 @@ export default function LandingScreen() {
             <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '10px', fontFamily: '"IBM Plex Mono", monospace' }}>
               [ 01 ] THE NINE DOMAINS
             </div>
-            <h2 style={{ margin: 0, fontSize: 'clamp(32px, 4vw, 50px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#16302b', lineHeight: 1.08, maxWidth: '640px' }}>
+            <h2 style={{ margin: 0, fontSize: 'clamp(32px, 4vw, 50px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#414242', lineHeight: 1.08, maxWidth: '640px' }}>
               One score is a lie.<br />Nine tell the truth.
             </h2>
           </div>
-          <p style={{ margin: 0, maxWidth: '360px', fontSize: '14.5px', lineHeight: 1.6, color: '#4a6b62' }}>
+          <p style={{ margin: 0, maxWidth: '360px', fontSize: '14.5px', lineHeight: 1.6, color: '#414242' }}>
             Every domain is grounded in peer-reviewed science. Together they map the full terrain of how you're really doing. Select any card to explore.
           </p>
         </div>
@@ -325,7 +325,7 @@ export default function LandingScreen() {
                   background: isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.75)', 
                   backdropFilter: 'blur(16px)', 
                   WebkitBackdropFilter: 'blur(16px)', 
-                  border: isSelected ? '2px solid #00ae9d' : '1.5px solid #e2e8e5', 
+                  border: isSelected ? '2px solid #00ae9d' : '1.5px solid #f4f4f4', 
                   borderRadius: '20px', 
                   padding: '24px 22px', 
                   cursor: 'pointer',
@@ -334,14 +334,14 @@ export default function LandingScreen() {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                   <span style={{ fontSize: '20px' }}>{d.icon}</span>
-                  <span style={{ fontSize: '10.5px', fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? '#00ae9d' : '#8fa099' }}>
+                  <span style={{ fontSize: '10.5px', fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? '#00ae9d' : '#414242' }}>
                     {d.field}
                   </span>
                 </div>
-                <div style={{ fontSize: '18px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b', marginBottom: '6px' }}>
+                <div style={{ fontSize: '18px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '6px' }}>
                   {d.name}
                 </div>
-                <div style={{ fontSize: '13px', lineHeight: 1.5, color: '#4a6b62' }}>
+                <div style={{ fontSize: '13px', lineHeight: 1.5, color: '#414242' }}>
                   {d.tag}
                 </div>
               </div>
@@ -358,7 +358,7 @@ export default function LandingScreen() {
             transition={{ duration: 0.35, ease: 'easeOut' }}
             style={{ 
               marginTop: '28px', 
-              background: '#16302b', 
+              background: '#414242', 
               color: '#ffffff', 
               borderRadius: '24px', 
               padding: '30px 34px', 
@@ -367,12 +367,12 @@ export default function LandingScreen() {
               alignItems: 'center', 
               justifyContent: 'space-between',
               gap: '28px', 
-              boxShadow: '0 20px 50px rgba(22, 48, 43, 0.25)',
+              boxShadow: '0 20px 50px rgba(65, 66, 66, 0.25)',
               border: '1.5px solid rgba(0, 174, 157, 0.4)',
             }}
           >
             <div style={{ flex: 1, minWidth: '280px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#5fbb46', marginBottom: '8px', fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700 }}>
+              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#5bbb46', marginBottom: '8px', fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700 }}>
                 DOMAIN 0{active + 1} / 09 · {activeDomain.field}
               </div>
               <div style={{ fontSize: '24px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -386,10 +386,10 @@ export default function LandingScreen() {
             <div style={{ minWidth: '240px', flex: '0 0 auto', background: 'rgba(255,255,255,0.06)', borderRadius: '18px', padding: '20px 22px', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '10px' }}>
                 <span>Benchmark Score</span>
-                <span style={{ color: '#5fbb46', fontWeight: 800 }}>{activeDomain.score} / 100</span>
+                <span style={{ color: '#5bbb46', fontWeight: 800 }}>{activeDomain.score} / 100</span>
               </div>
               <div style={{ height: '8px', borderRadius: '999px', background: 'rgba(255,255,255,0.15)', overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5fbb46)', width: `${activeDomain.score}%`, transition: 'width 0.6s ease' }} />
+                <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5bbb46)', width: `${activeDomain.score}%`, transition: 'width 0.6s ease' }} />
               </div>
               <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'rgba(255, 255, 255, 0.5)', fontStyle: 'italic' }}>
                 Analyzed via Lewis Adaptive Engine
@@ -404,10 +404,10 @@ export default function LandingScreen() {
         <div ref={addToRefs} className="landing-reveal-element" style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
           [ 02 ] HOW LEWIS WORKS
         </div>
-        <h2 ref={addToRefs} className="landing-reveal-element" style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#16302b', letterSpacing: '-0.03em' }}>
+        <h2 ref={addToRefs} className="landing-reveal-element" style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em' }}>
           Intelligence, not averages.
         </h2>
-        <p ref={addToRefs} className="landing-reveal-element" style={{ margin: '0 0 32px 0', maxWidth: '640px', fontSize: '15.5px', lineHeight: 1.6, color: '#4a6b62' }}>
+        <p ref={addToRefs} className="landing-reveal-element" style={{ margin: '0 0 32px 0', maxWidth: '640px', fontSize: '15.5px', lineHeight: 1.6, color: '#414242' }}>
           Answer a few gentle questions. Lewis translates your life signals into one clear, actionable picture of your wellbeing.
         </p>
 
@@ -437,33 +437,33 @@ export default function LandingScreen() {
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>
               LEWIS SYSTEM OVERVIEW BRIEF
             </div>
-            <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.65, color: '#16302b' }}>
+            <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.65, color: '#414242' }}>
               LEWIS (The Lifed Everyday Wellbeing Intelligence System) evaluates your responses across 9 validated scientific life dimensions using standardized scales like WHO-5 and PSS-10. Instead of giving generic advice, Lewis uses a deterministic cross-domain influence matrix to calculate where a single micro-habit creates the largest positive ripple effect across your health, mood, and resilience.
             </p>
           </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #e2e8e5', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', marginBottom: '16px', fontFamily: '"IBM Plex Mono", monospace' }}>01 — LISTEN</div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b', marginBottom: '10px' }}>An assessment that fits your day</div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#4a6b62' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>An assessment that fits your day</div>
+            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#414242' }}>
               Validated questions across all nine domains — choose a 3–5 minute Pulse or the full deep dive. No wearables required.
             </p>
           </div>
 
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #e2e8e5', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', marginBottom: '16px', fontFamily: '"IBM Plex Mono", monospace' }}>02 — ANALYZE</div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b', marginBottom: '10px' }}>Cross-domain intelligence</div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#4a6b62' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>Cross-domain intelligence</div>
+            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#414242' }}>
               Lewis weighs how your domains interact — because sleep debt shows up in mood, and stress impacts every single domain.
             </p>
           </div>
 
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #e2e8e5', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', marginBottom: '16px', fontFamily: '"IBM Plex Mono", monospace' }}>03 — GUIDE</div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b', marginBottom: '10px' }}>A report that acts</div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#4a6b62' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>A report that acts</div>
+            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#414242' }}>
               Your report ranks what to change first, and adapts continuously every time you check back in.
             </p>
           </div>
@@ -476,10 +476,10 @@ export default function LandingScreen() {
           <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
             [ 03 ] THE SCIENCE &amp; ARCHITECTURE
           </div>
-          <h2 style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#16302b', letterSpacing: '-0.03em', maxWidth: '780px', lineHeight: 1.1 }}>
+          <h2 style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em', maxWidth: '780px', lineHeight: 1.1 }}>
             Deterministic intelligence, zero-PII privacy, &amp; 10,000-profile benchmarking.
           </h2>
-          <p style={{ margin: 0, maxWidth: '640px', fontSize: '15.5px', lineHeight: 1.65, color: '#4a6b62' }}>
+          <p style={{ margin: 0, maxWidth: '640px', fontSize: '15.5px', lineHeight: 1.65, color: '#414242' }}>
             LEWIS (The Lifed Everyday Wellbeing Intelligence System) is built on validated psychological scales and a deterministic leverage engine — turning your signals into actionable clarity.
           </p>
         </div>
@@ -487,50 +487,50 @@ export default function LandingScreen() {
         {/* 4 Core Pillars Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
           
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #e2e8e5', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, color: '#00ae9d', marginBottom: '14px', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.1em' }}>
               ⚡ 9×9 INFLUENCE MATRIX
             </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b', marginBottom: '10px' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>
               W-Matrix Leverage Engine
             </div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#4a6b62' }}>
+            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#414242' }}>
               Maps how your 9 domains interact. Instead of treating symptoms, Lewis calculates where a small micro-habit change creates the biggest positive ripple effect across your entire life.
             </p>
           </div>
 
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #e2e8e5', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, color: '#00ae9d', marginBottom: '14px', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.1em' }}>
               📊 10K SEED CORPUS (k-NN)
             </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b', marginBottom: '10px' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>
               10,000-Profile Benchmark
             </div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#4a6b62' }}>
+            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#414242' }}>
               Maps your profile against a 10k synthetic dataset using state-only k-NN matching. You receive coarse-position context (<strong style={{ color: '#00ae9d' }}>Thriving, Steady, Strained, Depleted</strong>) without punitive scores.
             </p>
           </div>
 
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #e2e8e5', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, color: '#00ae9d', marginBottom: '14px', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.1em' }}>
               🔬 CLINICAL INSTRUMENTS
             </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b', marginBottom: '10px' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>
               Validated Scientific Scales
             </div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#4a6b62' }}>
+            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#414242' }}>
               Integrates WHO-5 (Wellbeing), PSS-10 (Calm), UCLA-3 (Relationships), GSE (Agency), CFPB-5 (Financial Peace), and PROMIS (Purpose). All distress scales are inverted at source into positive wellbeing polarity.
             </p>
           </div>
 
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #e2e8e5', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, color: '#00ae9d', marginBottom: '14px', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.1em' }}>
               🛡️ FAIL-SAFE PRIVACY
             </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b', marginBottom: '10px' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>
               Zero-PII &amp; Safety Lattice
             </div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#4a6b62' }}>
+            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#414242' }}>
               Private by design. Answers live only for the request duration. If severe depletion is detected, Gentle Mode automatically engages to deliver grounding micro-habits and care signposts.
             </p>
           </div>
@@ -546,10 +546,10 @@ export default function LandingScreen() {
             <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
               [ 04 ] YOUR WELLBEING REPORT
             </div>
-            <h2 style={{ margin: '0 0 18px', fontSize: 'clamp(32px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#16302b', lineHeight: 1.08 }}>
+            <h2 style={{ margin: '0 0 18px', fontSize: 'clamp(32px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#414242', lineHeight: 1.08 }}>
               Nine signals.<br />One honest number.
             </h2>
-            <p style={{ margin: '0 0 32px', fontSize: '15px', lineHeight: 1.65, color: '#4a6b62' }}>
+            <p style={{ margin: '0 0 32px', fontSize: '15px', lineHeight: 1.65, color: '#414242' }}>
               Your Lewis Score distills all nine domains into a single trajectory you can actually move — showing you exactly which habit unlocks the biggest impact.
             </p>
             <a href="#begin" onClick={handleNext} className="landing-primary-btn" style={{
@@ -574,13 +574,13 @@ export default function LandingScreen() {
             flex: '0 1 480px',
             minWidth: '320px',
             background: '#ffffff',
-            border: '1.5px solid #e2e8e5',
+            border: '1.5px solid #f4f4f4',
             borderRadius: '26px',
             padding: '32px 30px',
             boxShadow: '0 20px 50px rgba(0, 80, 70, 0.08)',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <div style={{ fontSize: '15px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#16302b' }}>Wellbeing Report</div>
+              <div style={{ fontSize: '15px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242' }}>Wellbeing Report</div>
               <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', fontFamily: '"IBM Plex Mono", monospace' }}>LIVE PREVIEW</div>
             </div>
 
@@ -591,22 +591,22 @@ export default function LandingScreen() {
                 height: '120px',
                 flex: 'none',
                 borderRadius: '50%',
-                background: `conic-gradient(#00ae9d ${scoreDeg}, #e2e8e5 0)`,
+                background: `conic-gradient(#00ae9d ${scoreDeg}, #f4f4f4 0)`,
                 display: 'grid',
                 placeItems: 'center',
                 boxShadow: '0 4px 16px rgba(0,174,157,0.15)',
               }}>
                 <div style={{ width: '92px', height: '92px', borderRadius: '50%', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                  <div style={{ fontSize: '30px', fontWeight: 800, letterSpacing: '-0.02em', color: '#16302b', lineHeight: 1, fontFamily: "'Manrope', sans-serif" }}>
+                  <div style={{ fontSize: '30px', fontWeight: 800, letterSpacing: '-0.02em', color: '#414242', lineHeight: 1, fontFamily: "'Manrope', sans-serif" }}>
                     {score}
                   </div>
-                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8fa099', marginTop: '4px', fontFamily: '"IBM Plex Mono", monospace' }}>
+                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#414242', marginTop: '4px', fontFamily: '"IBM Plex Mono", monospace' }}>
                     Lewis score
                   </div>
                 </div>
               </div>
 
-              <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.55, color: '#4a6b62' }}>
+              <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.55, color: '#414242' }}>
                 Solid foundation. Your primary opportunity right now is <strong style={{ color: '#00ae9d', fontWeight: 700 }}>Sleep &amp; Recovery</strong> — small improvements there directly elevate three other domains.
               </p>
             </div>
@@ -614,13 +614,13 @@ export default function LandingScreen() {
             <div style={{ display: 'grid', gap: '10px' }}>
               {DOMAINS.map((d, i) => (
                 <div key={i} style={{ display: 'grid', gridTemplateColumns: '130px 1fr 34px', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#16302b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#414242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {d.icon} {d.name}
                   </div>
                   <div style={{ height: '6px', borderRadius: '999px', background: '#f0f4f2', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5fbb46)', width: `${d.score}%` }} />
+                    <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5bbb46)', width: `${d.score}%` }} />
                   </div>
-                  <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#044e43', textAlign: 'right', fontFamily: '"IBM Plex Mono", monospace' }}>
+                  <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#414242', textAlign: 'right', fontFamily: '"IBM Plex Mono", monospace' }}>
                     {d.score}
                   </div>
                 </div>
@@ -641,7 +641,7 @@ export default function LandingScreen() {
         alignItems: 'center',
         gap: '16px',
         padding: '28px 32px',
-        background: '#16302b',
+        background: '#414242',
         color: '#ffffff',
         borderTop: '1px solid rgba(255,255,255,0.1)',
       }}>

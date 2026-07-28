@@ -12,7 +12,7 @@ body:has(.landing-screen-wrapper),
 }
 
 .landing-screen-wrapper {
-  color: #16302b;
+  color: #414242;
   font-family: 'Nunito', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   position: fixed;
@@ -23,7 +23,7 @@ body:has(.landing-screen-wrapper),
   overflow-y: auto !important;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  background: linear-gradient(135deg, #eef9f6 0%, #f5fcfa 50%, #d8f5ec 100%);
+  background: linear-gradient(135deg, #f4f4f4 0%, #ffffff 50%, #d6edea 100%);
   scroll-behavior: smooth !important;
 }
 
@@ -37,14 +37,14 @@ body:has(.landing-screen-wrapper),
   width: 10px;
 }
 .landing-screen-wrapper::-webkit-scrollbar-track {
-  background: #eef9f6;
+  background: #f4f4f4;
 }
 .landing-screen-wrapper::-webkit-scrollbar-thumb {
   background: #00ae9d;
   border-radius: 5px;
 }
 .landing-screen-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #00856a;
+  background: #00ae9d;
 }
 
 
@@ -54,12 +54,12 @@ body:has(.landing-screen-wrapper),
 }
 
 .landing-screen-wrapper a:hover {
-  color: #00856a;
+  color: #00ae9d;
 }
 
 .landing-screen-wrapper ::selection {
-  background: #c2f0e6;
-  color: #044e43;
+  background: #d6edea;
+  color: #414242;
 }
 
 /* Constellation Ambient Glow & Floating Lines */
@@ -129,8 +129,8 @@ body:has(.landing-screen-wrapper),
   font-size: clamp(120px, 18vw, 210px);
   line-height: 0.86;
   letter-spacing: -0.045em;
-  color: #16302b;
-  background: linear-gradient(135deg, #102622 0%, #00ae9d 60%, #36d1dc 100%);
+  color: #414242;
+  background: linear-gradient(135deg, #102622 0%, #00ae9d 60%, #00ae9d 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 14px 30px rgba(0, 174, 157, 0.25));
@@ -160,7 +160,7 @@ body:has(.landing-screen-wrapper),
   overflow: hidden;
 }
 .landing-primary-btn:hover {
-  background: #00856a !important;
+  background: #00ae9d !important;
   color: #ffffff !important;
   transform: translateY(-3px) scale(1.02);
   box-shadow: 0 16px 36px rgba(0, 174, 157, 0.35) !important;
@@ -191,7 +191,7 @@ body:has(.landing-screen-wrapper),
   transition: all 0.25s ease;
 }
 .landing-footer-link:hover {
-  color: #5fbb46 !important;
+  color: #5bbb46 !important;
 }
 
 /* Smooth Intersection Observer Reveal Utility */

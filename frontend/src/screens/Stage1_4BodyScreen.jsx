@@ -17,8 +17,8 @@ const BodyIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -31,7 +31,7 @@ const BodyIllustration = () => (
 
     {/* Energy Pulse Ring */}
     <motion.circle
-      cx="120" cy="90" r="32" stroke="#10B981" strokeWidth="1.8" strokeDasharray="4 4" fill="none"
+      cx="120" cy="90" r="32" stroke="#00ae9d" strokeWidth="1.8" strokeDasharray="4 4" fill="none"
       animate={{ rotate: 360 }}
       transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
     />
@@ -45,7 +45,7 @@ const BodyIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -107,7 +107,7 @@ export default function Stage1_4BodyScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textWrap: 'balance',
             }}>
               Body &amp; Movement<br />Context
@@ -115,7 +115,7 @@ export default function Stage1_4BodyScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -134,7 +134,7 @@ export default function Stage1_4BodyScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 8px 0',
@@ -147,7 +147,7 @@ export default function Stage1_4BodyScreen() {
 
             {/* Activity Level */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
-              <p style={{ margin: '0 0 8px', fontSize: '13.5px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif", textAlign: 'left' }}>
+              <p style={{ margin: '0 0 8px', fontSize: '13.5px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", textAlign: 'left' }}>
                 How active has your body been lately?
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-start', width: '100%' }}>
@@ -166,7 +166,7 @@ export default function Stage1_4BodyScreen() {
                         borderRadius: '14px',
                         border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                         background: active ? '#e4f4ee' : '#f2f9f6',
-                        color: active ? '#044e43' : '#3a3a3a',
+                        color: active ? '#414242' : '#3a3a3a',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
                         boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -188,7 +188,7 @@ export default function Stage1_4BodyScreen() {
                       }}>
                         {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
                       </div>
-                      <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: active ? 700 : 500, fontSize: '13.5px', color: active ? '#044e43' : '#16302b' }}>
+                      <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: active ? 700 : 500, fontSize: '13.5px', color: active ? '#414242' : '#414242' }}>
                         {label}
                       </span>
                     </button>
@@ -199,7 +199,7 @@ export default function Stage1_4BodyScreen() {
 
             {/* Sleep Quality */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
-              <p style={{ margin: '0 0 8px', fontSize: '13.5px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif", textAlign: 'left' }}>
+              <p style={{ margin: '0 0 8px', fontSize: '13.5px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", textAlign: 'left' }}>
                 How has your sleep been?
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-start', width: '100%' }}>
@@ -218,7 +218,7 @@ export default function Stage1_4BodyScreen() {
                         borderRadius: '14px',
                         border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                         background: active ? '#e4f4ee' : '#f2f9f6',
-                        color: active ? '#044e43' : '#3a3a3a',
+                        color: active ? '#414242' : '#3a3a3a',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
                         boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -240,7 +240,7 @@ export default function Stage1_4BodyScreen() {
                       }}>
                         {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
                       </div>
-                      <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: active ? 700 : 500, fontSize: '13.5px', color: active ? '#044e43' : '#16302b' }}>
+                      <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: active ? 700 : 500, fontSize: '13.5px', color: active ? '#414242' : '#414242' }}>
                         {label}
                       </span>
                     </button>

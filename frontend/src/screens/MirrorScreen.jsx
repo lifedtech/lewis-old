@@ -18,8 +18,8 @@ const BackendConnectionErrorIllustration = () => (
   >
     <defs>
       <radialGradient id="errAura" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#EF4444" stopOpacity="0.18" />
-        <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
+        <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.18" />
+        <stop offset="100%" stopColor="#00ae9d" stopOpacity="0" />
       </radialGradient>
     </defs>
 
@@ -28,14 +28,14 @@ const BackendConnectionErrorIllustration = () => (
 
     {/* Disconnected Server Plug Line Art */}
     <rect x="75" y="60" width="90" height="55" rx="14" stroke="#00AE9D" strokeWidth="2.5" fill="rgba(0,174,157,0.06)" />
-    <circle cx="100" cy="87.5" r="7" fill="#EF4444" stroke="#FFF" strokeWidth="1.5" />
-    <circle cx="120" cy="87.5" r="7" fill="#F59E0B" stroke="#FFF" strokeWidth="1.5" />
-    <circle cx="140" cy="87.5" r="7" fill="#10B981" stroke="#FFF" strokeWidth="1.5" />
+    <circle cx="100" cy="87.5" r="7" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
+    <circle cx="120" cy="87.5" r="7" fill="#5bbb46" stroke="#FFF" strokeWidth="1.5" />
+    <circle cx="140" cy="87.5" r="7" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
 
     {/* Pulsing Disconnection Warning Signal */}
     <motion.path
       d="M 120,40 L 120,50"
-      stroke="#EF4444" strokeWidth="3" strokeLinecap="round"
+      stroke="#00ae9d" strokeWidth="3" strokeLinecap="round"
       animate={{ opacity: [0.3, 1, 0.3] }}
       transition={{ duration: 1.5, repeat: Infinity }}
     />
@@ -49,7 +49,7 @@ const BackendConnectionErrorIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -154,7 +154,7 @@ export default function MirrorScreen() {
             width: '240px',
             height: '240px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(54, 209, 220, 0.35) 0%, rgba(255, 148, 102, 0.25) 50%, transparent 80%)',
+            background: 'radial-gradient(circle, rgba(0, 174, 157, 0.35) 0%, rgba(255, 148, 102, 0.25) 50%, transparent 80%)',
             filter: 'blur(35px)',
             pointerEvents: 'none'
           }} />
@@ -212,7 +212,7 @@ export default function MirrorScreen() {
           {/* Glowing Animated Progress Bar */}
           <div style={{ width: '80%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', margin: '24px 0 14px', overflow: 'hidden', zIndex: 1 }}>
             <motion.div 
-              style={{ height: '100%', background: 'linear-gradient(90deg, #36D1DC 0%, #FF9466 100%)' }}
+              style={{ height: '100%', background: 'linear-gradient(90deg, #00ae9d 0%, #FF9466 100%)' }}
               animate={{ width: ['10%', '98%'] }}
               transition={{ duration: 7, ease: "easeInOut" }}
             />
@@ -274,7 +274,7 @@ export default function MirrorScreen() {
                 fontSize: '11px',
                 fontWeight: 700,
                 letterSpacing: '0.14em',
-                color: '#ef4444',
+                color: '#00ae9d',
                 textTransform: 'uppercase',
                 margin: '0 0 6px 0',
               }}>
@@ -287,7 +287,7 @@ export default function MirrorScreen() {
                 lineHeight: 1.05,
                 letterSpacing: '-0.035em',
                 margin: 0,
-                color: '#16302b',
+                color: '#414242',
                 textWrap: 'balance',
               }}>
                 Unable to<br />Synthesize
@@ -295,7 +295,7 @@ export default function MirrorScreen() {
               <p style={{
                 margin: '12px 0 0 2px',
                 fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-                color: '#4a6b62',
+                color: '#414242',
                 fontFamily: "'Nunito', sans-serif",
                 lineHeight: 1.5,
                 maxWidth: '350px',
@@ -314,7 +314,7 @@ export default function MirrorScreen() {
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#94a3b8',
+              color: '#414242',
               textTransform: 'uppercase',
               textAlign: 'right',
               margin: '0 0 12px 0',
@@ -418,7 +418,7 @@ export default function MirrorScreen() {
           borderRadius: '20px',
           boxShadow: '0 8px 24px rgba(167, 139, 250, 0.12)'
         }}>
-          <p className="mirror-label bright" style={{ color: '#7C3AED', marginBottom: '12px', fontWeight: 700 }}>A note of care</p>
+          <p className="mirror-label bright" style={{ color: '#00ae9d', marginBottom: '12px', fontWeight: 700 }}>A note of care</p>
           <p className="mirror-text" style={{ fontSize: '15px', lineHeight: '1.7', color: 'var(--text)', margin: 0 }}>
             {analysis.safety.care_note}
           </p>
@@ -478,7 +478,7 @@ export default function MirrorScreen() {
                   <defs>
                     <linearGradient id="gradThriving" x1="0" y1="0" x2="1" y2="0">
                       <stop offset="0%" stopColor="#34d399" stopOpacity={0.8} />
-                      <stop offset="100%" stopColor="#059669" stopOpacity={1} />
+                      <stop offset="100%" stopColor="#00ae9d" stopOpacity={1} />
                     </linearGradient>
                     <linearGradient id="gradSteady" x1="0" y1="0" x2="1" y2="0">
                       <stop offset="0%" stopColor="#fde047" stopOpacity={0.8} />

@@ -17,8 +17,8 @@ const SomaticConnectionIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="somaticGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -44,12 +44,12 @@ const SomaticConnectionIllustration = () => (
     {/* Heartbeat / Pulse Wave Line */}
     <path
       d="M 65,90 L 95,90 L 105,70 L 115,110 L 125,75 L 135,98 L 145,90 L 175,90"
-      stroke="#10B981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"
+      stroke="#00ae9d" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"
     />
 
     {/* Central Core Pulse Dot */}
     <motion.circle
-      cx="120" cy="90" r="6.5" fill="#10B981" stroke="#FFF" strokeWidth="2"
+      cx="120" cy="90" r="6.5" fill="#00ae9d" stroke="#FFF" strokeWidth="2"
       animate={{ scale: [1, 1.3, 1] }}
       transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
     />
@@ -63,7 +63,7 @@ const SomaticConnectionIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -123,7 +123,7 @@ export default function Stage3_6BodyAwarenessScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Somatic Connection
@@ -131,7 +131,7 @@ export default function Stage3_6BodyAwarenessScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -150,7 +150,7 @@ export default function Stage3_6BodyAwarenessScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -175,7 +175,7 @@ export default function Stage3_6BodyAwarenessScreen() {
                     borderRadius: '16px',
                     border: selected ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                     background: selected ? '#e4f4ee' : '#f2f9f6',
-                    color: selected ? '#044e43' : '#3a3a3a',
+                    color: selected ? '#414242' : '#3a3a3a',
                     cursor: 'pointer',
                     transition: 'all 0.25s ease',
                     boxShadow: selected ? '0 4px 14px rgba(0,174,157,0.14)' : 'none',
@@ -204,7 +204,7 @@ export default function Stage3_6BodyAwarenessScreen() {
                       fontFamily: "'Nunito', sans-serif",
                       fontWeight: 700,
                       fontSize: '14.5px',
-                      color: selected ? '#044e43' : '#16302b',
+                      color: selected ? '#414242' : '#414242',
                     }}>
                       {opt.label}
                     </span>
@@ -212,7 +212,7 @@ export default function Stage3_6BodyAwarenessScreen() {
                       fontFamily: "'Nunito', sans-serif",
                       fontWeight: 400,
                       fontSize: '12.5px',
-                      color: selected ? '#0a5d50' : '#4a6b62',
+                      color: selected ? '#0a5d50' : '#414242',
                       lineHeight: 1.4,
                     }}>
                       {opt.desc}

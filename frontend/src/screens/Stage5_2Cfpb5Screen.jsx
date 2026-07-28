@@ -76,7 +76,7 @@ export default function Stage5_2Cfpb5Screen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               Financial<br />Peace
@@ -84,7 +84,7 @@ export default function Stage5_2Cfpb5Screen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -103,7 +103,7 @@ export default function Stage5_2Cfpb5Screen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '18px 22px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -119,7 +119,7 @@ export default function Stage5_2Cfpb5Screen() {
                 <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                   FINANCIAL PEACE · {qIdx + 1} OF {CFPB_ITEMS.length}
                 </span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                   {Math.round(((qIdx + 1) / CFPB_ITEMS.length) * 100)}%
                 </span>
               </div>
@@ -143,7 +143,7 @@ export default function Stage5_2Cfpb5Screen() {
                 style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}
               >
                 {/* Question Statement */}
-                <p style={{ margin: '4px 0 4px 0', fontSize: '15px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
+                <p style={{ margin: '4px 0 4px 0', fontSize: '15px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
                   "{currentItem.text}"
                 </p>
 
@@ -164,7 +164,7 @@ export default function Stage5_2Cfpb5Screen() {
                           borderRadius: '12px',
                           border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                           background: active ? '#e4f4ee' : '#f2f9f6',
-                          color: active ? '#044e43' : '#3a3a3a',
+                          color: active ? '#414242' : '#3a3a3a',
                           cursor: 'pointer',
                           transition: 'all 0.18s ease',
                           boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -191,7 +191,7 @@ export default function Stage5_2Cfpb5Screen() {
                           fontFamily: "'Nunito', sans-serif",
                           fontWeight: active ? 700 : 500,
                           fontSize: '13.5px',
-                          color: active ? '#044e43' : '#16302b',
+                          color: active ? '#414242' : '#414242',
                         }}>
                           {opt}
                         </span>
@@ -202,7 +202,7 @@ export default function Stage5_2Cfpb5Screen() {
               </motion.div>
             </AnimatePresence>
 
-            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
               {currentItem.prompt}
             </p>
           </div>

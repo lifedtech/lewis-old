@@ -17,8 +17,8 @@ const CoreValuesIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="valuesGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -27,7 +27,7 @@ const CoreValuesIllustration = () => (
 
     {/* Compass Diamond Star Core Values Line Art */}
     <polygon points="120,40 135,80 175,95 135,110 120,150 105,110 65,95 105,80" fill="rgba(0,174,157,0.06)" stroke="url(#valuesGrad)" strokeWidth="2.2" strokeLinejoin="round" />
-    <circle cx="120" cy="95" r="7" fill="#10B981" stroke="#FFF" strokeWidth="1.8" />
+    <circle cx="120" cy="95" r="7" fill="#00ae9d" stroke="#FFF" strokeWidth="1.8" />
 
     {/* Wavy Horizon Lines */}
     <motion.path
@@ -38,7 +38,7 @@ const CoreValuesIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -106,7 +106,7 @@ export default function Stage7_6ValuesScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textWrap: 'balance',
             }}>
               Core<br />Values
@@ -114,7 +114,7 @@ export default function Stage7_6ValuesScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -133,7 +133,7 @@ export default function Stage7_6ValuesScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 10px 0',
@@ -155,9 +155,9 @@ export default function Stage7_6ValuesScreen() {
                     width: '100%',
                     padding: '10px 16px',
                     borderRadius: '14px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #e2e8e5',
+                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #f4f4f4',
                     background: active ? '#e4f4ee' : '#f7faf8',
-                    color: active ? '#044e43' : '#3a3a3a',
+                    color: active ? '#414242' : '#3a3a3a',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -185,7 +185,7 @@ export default function Stage7_6ValuesScreen() {
                     fontFamily: "'Nunito', sans-serif",
                     fontWeight: active ? 700 : 500,
                     fontSize: '14px',
-                    color: active ? '#044e43' : '#16302b',
+                    color: active ? '#414242' : '#414242',
                     lineHeight: 1.4,
                   }}>
                     {val}

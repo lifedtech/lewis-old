@@ -32,13 +32,13 @@ export default function BreathingLotus({
       animate={scaleOverride === null ? {
         scale: [1, 1.22, 1],
         filter: [
-          'drop-shadow(0px 0px 20px rgba(54, 209, 220, 0.4))',
+          'drop-shadow(0px 0px 20px rgba(0, 174, 157, 0.4))',
           'drop-shadow(0px 0px 45px rgba(91, 134, 229, 0.8))',
-          'drop-shadow(0px 0px 20px rgba(54, 209, 220, 0.4))'
+          'drop-shadow(0px 0px 20px rgba(0, 174, 157, 0.4))'
         ]
       } : {
         scale: scaleOverride,
-        filter: 'drop-shadow(0px 0px 30px rgba(54, 209, 220, 0.6))'
+        filter: 'drop-shadow(0px 0px 30px rgba(0, 174, 157, 0.6))'
       }}
       transition={{
         duration: scaleOverride === null ? duration : 0.4,
@@ -53,7 +53,7 @@ export default function BreathingLotus({
           width: '80%',
           height: '80%',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(54, 209, 220, 0.25) 0%, rgba(255, 148, 102, 0.15) 60%, transparent 80%)',
+          background: 'radial-gradient(circle, rgba(0, 174, 157, 0.25) 0%, rgba(255, 148, 102, 0.15) 60%, transparent 80%)',
           filter: 'blur(15px)',
           zIndex: 0
         }}
@@ -92,7 +92,7 @@ export default function BreathingLotus({
           {/* Center Glow Gradient */}
           <radialGradient id="lotusCoreGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#FFF9E6" stopOpacity="1" />
-            <stop offset="45%" stopColor="#FFD166" stopOpacity="0.9" />
+            <stop offset="45%" stopColor="#e6f4d0" stopOpacity="0.9" />
             <stop offset="100%" stopColor="#FF9466" stopOpacity="0.8" />
           </radialGradient>
 

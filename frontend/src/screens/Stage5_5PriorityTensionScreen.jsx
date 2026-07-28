@@ -31,7 +31,7 @@ const SeesawTensionIllustration = () => (
     <path
       d="M 86,145 L 114,145 L 100,105 Z"
       fill="#E6F7F5"
-      stroke="#00856A"
+      stroke="#00ae9d"
       strokeWidth="3.2"
       strokeLinejoin="round"
     />
@@ -43,13 +43,13 @@ const SeesawTensionIllustration = () => (
       style={{ transformOrigin: '100px 105px' }}
     >
       {/* Seesaw Lever Beam */}
-      <line x1="38" y1="105" x2="162" y2="105" stroke="#00856A" strokeWidth="4.5" strokeLinecap="round" />
+      <line x1="38" y1="105" x2="162" y2="105" stroke="#00ae9d" strokeWidth="4.5" strokeLinecap="round" />
 
       {/* Left Heavy Teal Sphere (Priority) */}
       <circle cx="36" cy="105" r="18" fill="#00AE9D" stroke="#FFF" strokeWidth="1.8" />
 
       {/* Right Smaller Gold Sphere (Energy) */}
-      <circle cx="164" cy="105" r="12" fill="#F59E0B" stroke="#FFF" strokeWidth="1.8" />
+      <circle cx="164" cy="105" r="12" fill="#5bbb46" stroke="#FFF" strokeWidth="1.8" />
     </motion.g>
   </motion.svg>
 )
@@ -105,7 +105,7 @@ export default function Stage5_5PriorityTensionScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Priority</span>
@@ -114,7 +114,7 @@ export default function Stage5_5PriorityTensionScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -135,7 +135,7 @@ export default function Stage5_5PriorityTensionScreen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '18px 22px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -149,7 +149,7 @@ export default function Stage5_5PriorityTensionScreen() {
               <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                 SHARE YOUR REFLECTION
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 OPTIONAL
               </span>
             </div>
@@ -165,7 +165,7 @@ export default function Stage5_5PriorityTensionScreen() {
                 borderRadius: '14px',
                 border: '1.5px solid #d2e7e0',
                 background: '#f2f9f6',
-                color: '#16302b',
+                color: '#414242',
                 fontFamily: "'Nunito', sans-serif",
                 fontSize: '14.5px',
                 lineHeight: '1.6',
@@ -184,7 +184,7 @@ export default function Stage5_5PriorityTensionScreen() {
               }}
             />
 
-            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
               Your reflection is saved to guide your personalized insights.
             </p>
           </div>

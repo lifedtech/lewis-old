@@ -18,8 +18,8 @@ const QuickChoicesIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="choiceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -36,18 +36,18 @@ const QuickChoicesIllustration = () => (
       transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       style={{ transformOrigin: '120px 65px' }}
     >
-      <line x1="60" y1="65" x2="180" y2="65" stroke="#00856A" strokeWidth="3" strokeLinecap="round" />
+      <line x1="60" y1="65" x2="180" y2="65" stroke="#00ae9d" strokeWidth="3" strokeLinecap="round" />
 
       {/* Left Pan (Instant Choice) */}
       <line x1="60" y1="65" x2="60" y2="95" stroke="#00AE9D" strokeWidth="1.5" />
-      <path d="M 42,95 C 42,108 78,108 78,95 Z" fill="#E4F4EE" stroke="#00856A" strokeWidth="2" />
-      <circle cx="60" cy="88" r="8" fill="#10B981" stroke="#FFF" strokeWidth="1.5" />
+      <path d="M 42,95 C 42,108 78,108 78,95 Z" fill="#E4F4EE" stroke="#00ae9d" strokeWidth="2" />
+      <circle cx="60" cy="88" r="8" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
 
       {/* Right Pan (Delayed Choice - Double Stack) */}
       <line x1="180" y1="65" x2="180" y2="95" stroke="#00AE9D" strokeWidth="1.5" />
-      <path d="M 162,95 C 162,108 198,108 198,95 Z" fill="#E4F4EE" stroke="#00856A" strokeWidth="2" />
+      <path d="M 162,95 C 162,108 198,108 198,95 Z" fill="#E4F4EE" stroke="#00ae9d" strokeWidth="2" />
       <circle cx="180" cy="86" r="8" fill="url(#choiceGrad)" stroke="#FFF" strokeWidth="1.5" />
-      <circle cx="180" cy="76" r="8" fill="#36D1DC" stroke="#FFF" strokeWidth="1.5" />
+      <circle cx="180" cy="76" r="8" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
     </motion.g>
 
     {/* Wavy Horizon Lines */}
@@ -59,7 +59,7 @@ const QuickChoicesIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -150,7 +150,7 @@ export default function Stage9QuickChoicesScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Which would</span>
@@ -159,7 +159,7 @@ export default function Stage9QuickChoicesScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -180,7 +180,7 @@ export default function Stage9QuickChoicesScreen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '18px 22px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -195,7 +195,7 @@ export default function Stage9QuickChoicesScreen() {
               <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                 DECISION CALIBRATION
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 ROUND {round} / {maxRounds}
               </span>
             </div>
@@ -226,7 +226,7 @@ export default function Stage9QuickChoicesScreen() {
                     fontFamily: "'Manrope', sans-serif",
                     fontWeight: 800,
                     fontSize: '22px',
-                    color: '#16302b',
+                    color: '#414242',
                   }}>
                     ₹{(currentImmediate * 100).toLocaleString('en-IN')}
                   </span>
@@ -235,7 +235,7 @@ export default function Stage9QuickChoicesScreen() {
                     fontWeight: 700,
                     fontSize: '11px',
                     letterSpacing: '0.08em',
-                    color: '#044e43',
+                    color: '#414242',
                     background: '#e4f4ee',
                     padding: '6px 14px',
                     borderRadius: '20px',
@@ -269,7 +269,7 @@ export default function Stage9QuickChoicesScreen() {
                     fontFamily: "'Manrope', sans-serif",
                     fontWeight: 800,
                     fontSize: '22px',
-                    color: '#16302b',
+                    color: '#414242',
                   }}>
                     ₹10,000
                   </span>
@@ -278,7 +278,7 @@ export default function Stage9QuickChoicesScreen() {
                     fontWeight: 700,
                     fontSize: '11px',
                     letterSpacing: '0.08em',
-                    color: '#044e43',
+                    color: '#414242',
                     background: '#e4f4ee',
                     padding: '6px 14px',
                     borderRadius: '20px',
@@ -293,18 +293,18 @@ export default function Stage9QuickChoicesScreen() {
                   <p style={{
                     fontFamily: "'Nunito', sans-serif",
                     fontSize: '11.5px',
-                    color: '#4a6b62',
+                    color: '#414242',
                     textAlign: 'center',
                     margin: '0 0 6px 0',
                     fontWeight: 600,
                   }}>
                     Indifference Calibration
                   </p>
-                  <div style={{ height: '6px', background: '#e2e8e5', borderRadius: '3px', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ height: '6px', background: '#f4f4f4', borderRadius: '3px', position: 'relative', overflow: 'hidden' }}>
                     <motion.div
                       style={{
                         height: '100%',
-                        background: 'linear-gradient(90deg, #36D1DC 0%, #10B981 100%)',
+                        background: 'linear-gradient(90deg, #00ae9d 0%, #00ae9d 100%)',
                         borderRadius: '3px',
                       }}
                       animate={{ width: `${(round / maxRounds) * 100}%` }}
@@ -332,7 +332,7 @@ export default function Stage9QuickChoicesScreen() {
                   fontFamily: "'Manrope', sans-serif",
                   fontWeight: 800,
                   fontSize: '22px',
-                  color: '#16302b',
+                  color: '#414242',
                   margin: 0,
                 }}>
                   Calibration Complete
@@ -346,7 +346,7 @@ export default function Stage9QuickChoicesScreen() {
                   width: '100%',
                   boxSizing: 'border-box',
                 }}>
-                  <p style={{ margin: '0 0 2px 0', fontSize: '12px', color: '#4a6b62', fontFamily: "'Nunito', sans-serif" }}>
+                  <p style={{ margin: '0 0 2px 0', fontSize: '12px', color: '#414242', fontFamily: "'Nunito', sans-serif" }}>
                     Computed Indifference Score:
                   </p>
                   <p style={{
@@ -358,7 +358,7 @@ export default function Stage9QuickChoicesScreen() {
                   }}>
                     {discountingTendency}
                   </p>
-                  <p style={{ fontSize: '12px', color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, margin: 0 }}>
+                  <p style={{ fontSize: '12px', color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, margin: 0 }}>
                     {parseFloat(discountingTendency) > 0.5
                       ? "Your choices indicate a stronger preference for immediate gratification."
                       : "Your choices indicate a willingness to delay gratification for a larger reward."}

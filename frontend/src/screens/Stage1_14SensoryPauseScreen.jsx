@@ -58,15 +58,15 @@ const ClockFaceIllustration = ({ timeLeft, done }) => {
       )}
 
       {/* Serene Happy Face Features */}
-      <path d="M 74,95 Q 83,82 92,95" stroke="#00856A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M 108,95 Q 117,82 126,95" stroke="#00856A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      <path d="M 81,114 Q 100,132 119,114" stroke="#00856A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+      <path d="M 74,95 Q 83,82 92,95" stroke="#00ae9d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+      <path d="M 108,95 Q 117,82 126,95" stroke="#00ae9d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+      <path d="M 81,114 Q 100,132 119,114" stroke="#00ae9d" strokeWidth="3.5" strokeLinecap="round" fill="none" />
 
       {/* Live Seconds Countdown inside Clock */}
       {!done && (
         <text
           x="100" y="148"
-          textAnchor="middle" fill="#00856A"
+          textAnchor="middle" fill="#00ae9d"
           fontSize="12" fontWeight="800" fontFamily="IBM Plex Mono, monospace"
         >
           {timeLeft}s
@@ -141,7 +141,7 @@ export default function Stage1_14SensoryPauseScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Sensory Pause
@@ -149,7 +149,7 @@ export default function Stage1_14SensoryPauseScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -167,7 +167,7 @@ export default function Stage1_14SensoryPauseScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -192,7 +192,7 @@ export default function Stage1_14SensoryPauseScreen() {
               margin: 0,
               fontSize: '13.5px',
               fontWeight: 700,
-              color: done ? '#044e43' : '#4a6b62',
+              color: done ? '#414242' : '#414242',
               fontFamily: "'Nunito', sans-serif",
               textAlign: 'center',
             }}>

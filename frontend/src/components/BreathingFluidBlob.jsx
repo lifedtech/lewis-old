@@ -35,15 +35,15 @@ export default function BreathingFluidBlob({
         scale: [1, 1.25, 1],
         rotate: [0, 90, 180, 270, 360],
         filter: [
-          'drop-shadow(0px 0px 25px rgba(54, 209, 220, 0.5))',
+          'drop-shadow(0px 0px 25px rgba(0, 174, 157, 0.5))',
           'drop-shadow(0px 0px 50px rgba(255, 148, 102, 0.75))',
-          'drop-shadow(0px 0px 25px rgba(54, 209, 220, 0.5))'
+          'drop-shadow(0px 0px 25px rgba(0, 174, 157, 0.5))'
         ]
       } : {
         scale: scaleOverride,
         filter: customColor 
           ? `drop-shadow(0px 0px 45px ${customColor})` 
-          : 'drop-shadow(0px 0px 30px rgba(54, 209, 220, 0.7))'
+          : 'drop-shadow(0px 0px 30px rgba(0, 174, 157, 0.7))'
       }}
       transition={{
         scale: { duration: scaleOverride === null ? duration : 0.25, repeat: scaleOverride === null ? Infinity : 0, ease: "easeInOut" },
@@ -60,7 +60,7 @@ export default function BreathingFluidBlob({
           borderRadius: '45% 55% 60% 40% / 50% 45% 55% 50%',
           background: customColor
             ? `radial-gradient(circle, ${customColor} 0%, transparent 75%)`
-            : 'radial-gradient(circle at 30% 30%, rgba(54, 209, 220, 0.4), rgba(255, 148, 102, 0.3) 60%, transparent 85%)',
+            : 'radial-gradient(circle at 30% 30%, rgba(0, 174, 157, 0.4), rgba(255, 148, 102, 0.3) 60%, transparent 85%)',
           filter: 'blur(20px)',
           zIndex: 0
         }}
@@ -88,8 +88,8 @@ export default function BreathingFluidBlob({
         <defs>
           {/* Main Aurora Liquid Gradient */}
           <linearGradient id="blobAuroraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#36D1DC" stopOpacity="0.95" />
-            <stop offset="45%" stopColor="#5B86E5" stopOpacity="0.9" />
+            <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.95" />
+            <stop offset="45%" stopColor="#00ae9d" stopOpacity="0.9" />
             <stop offset="100%" stopColor="#FF9466" stopOpacity="0.95" />
           </linearGradient>
 
@@ -97,7 +97,7 @@ export default function BreathingFluidBlob({
           <radialGradient id="blobCoreHighlight" cx="35%" cy="30%" r="65%">
             <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.8" />
             <stop offset="40%" stopColor="#E0FFFF" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#36D1DC" stopOpacity="0" />
+            <stop offset="100%" stopColor="#00ae9d" stopOpacity="0" />
           </radialGradient>
 
           {/* Custom Dynamic Gradient */}

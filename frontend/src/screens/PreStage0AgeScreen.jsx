@@ -53,7 +53,7 @@ export default function PreStage0AgeScreen() {
           lineHeight: 1.02,
           letterSpacing: '-0.035em',
           margin: '0 0 8px 0',
-          color: '#16302b',
+          color: '#414242',
         }}>
           Before We Begin
         </h1>
@@ -62,7 +62,7 @@ export default function PreStage0AgeScreen() {
         <p style={{
           margin: '0 0 32px 0',
           fontSize: 'clamp(13px, 1.6vw, 16px)',
-          color: '#4a6b62',
+          color: '#414242',
           fontFamily: "'Nunito', sans-serif",
         }}>
           Please confirm your age eligibility to continue.
@@ -75,7 +75,7 @@ export default function PreStage0AgeScreen() {
             <label style={{
               display: 'block',
               textAlign: 'center',
-              color: '#4a6b62',
+              color: '#414242',
               fontSize: 'clamp(14px, 1.7vw, 17px)',
               fontFamily: "'Nunito', sans-serif",
               marginBottom: '20px',
@@ -118,7 +118,7 @@ export default function PreStage0AgeScreen() {
                   borderRadius: '999px',
                   border: '1.5px solid #c2ceca',
                   background: 'rgba(255, 255, 255, 0.6)',
-                  color: '#4a6b62',
+                  color: '#414242',
                   fontFamily: "'Nunito', sans-serif",
                   fontSize: '15px',
                   fontWeight: 600,
@@ -127,11 +127,11 @@ export default function PreStage0AgeScreen() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = '#00ae9d'
-                  e.currentTarget.style.color = '#044e43'
+                  e.currentTarget.style.color = '#414242'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = '#c2ceca'
-                  e.currentTarget.style.color = '#4a6b62'
+                  e.currentTarget.style.color = '#414242'
                 }}
               >
                 No, I am under 18

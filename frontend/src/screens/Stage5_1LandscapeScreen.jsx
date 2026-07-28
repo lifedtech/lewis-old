@@ -88,7 +88,7 @@ export default function Stage5_1LandscapeScreen() {
               lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Where you're</span>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>resourced, and</span>
@@ -97,7 +97,7 @@ export default function Stage5_1LandscapeScreen() {
             <p style={{
               margin: '8px 0 0 2px',
               fontSize: 'clamp(12.5px, 1.4vw, 14.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.4,
               maxWidth: '350px',
@@ -107,13 +107,13 @@ export default function Stage5_1LandscapeScreen() {
           </div>
 
           {/* Color Legend */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12.5px', color: '#4a6b62', fontFamily: "'Nunito', sans-serif" }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12.5px', color: '#414242', fontFamily: "'Nunito', sans-serif" }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#c85250', display: 'inline-block' }}></span>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#00ae9d', display: 'inline-block' }}></span>
               <span>Quietly depleted</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#e6c229', display: 'inline-block' }}></span>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#5bbb46', display: 'inline-block' }}></span>
               <span>Finding its footing</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -134,18 +134,18 @@ export default function Stage5_1LandscapeScreen() {
             boxSizing: 'border-box',
           }}>
             {!selectedNode ? (
-              <p style={{ margin: 0, color: '#94a3b8', fontStyle: 'italic', fontSize: '13px', textAlign: 'left', fontFamily: "'Nunito', sans-serif" }}>
+              <p style={{ margin: 0, color: '#414242', fontStyle: 'italic', fontSize: '13px', textAlign: 'left', fontFamily: "'Nunito', sans-serif" }}>
                 Tap a point on the radar to read more.
               </p>
             ) : (
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ textAlign: 'left' }}>
-                <p style={{ color: getBand(selectedNode.score).cls === 'dep' ? '#c85250' : getBand(selectedNode.score).cls === 'mid' ? '#e6c229' : '#00ae9d', margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"IBM Plex Mono", monospace' }}>
+                <p style={{ color: getBand(selectedNode.score).cls === 'dep' ? '#00ae9d' : getBand(selectedNode.score).cls === 'mid' ? '#5bbb46' : '#00ae9d', margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"IBM Plex Mono", monospace' }}>
                   {selectedBand.label}{selectedTag}
                 </p>
-                <p style={{ color: '#16302b', fontWeight: 700, margin: '0 0 4px 0', fontSize: '15px', fontFamily: "'Manrope', sans-serif" }}>
+                <p style={{ color: '#414242', fontWeight: 700, margin: '0 0 4px 0', fontSize: '15px', fontFamily: "'Manrope', sans-serif" }}>
                   {selectedNode.name}
                 </p>
-                <p style={{ color: '#4a6b62', margin: 0, fontSize: '12.5px', lineHeight: 1.4, fontFamily: "'Nunito', sans-serif" }}>
+                <p style={{ color: '#414242', margin: 0, fontSize: '12.5px', lineHeight: 1.4, fontFamily: "'Nunito', sans-serif" }}>
                   {selectedNode.insight}
                 </p>
               </motion.div>
@@ -161,7 +161,7 @@ export default function Stage5_1LandscapeScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -185,7 +185,7 @@ export default function Stage5_1LandscapeScreen() {
                     key={`spoke-${d.code}`}
                     x1={cx} y1={cy}
                     x2={d._x} y2={d._y}
-                    stroke="rgba(22, 48, 43, 0.12)"
+                    stroke="rgba(65, 66, 66, 0.12)"
                     strokeWidth="1.5"
                   />
                 ))}
@@ -201,12 +201,12 @@ export default function Stage5_1LandscapeScreen() {
                 )}
 
                 <circle cx={cx} cy={cy} r="26" fill="#f2f9f6" stroke="#d2e7e0" strokeWidth="1.5" />
-                <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#16302b" fontSize="11" fontWeight="800" fontFamily='"IBM Plex Mono", monospace'>YOU</text>
+                <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#414242" fontSize="11" fontWeight="800" fontFamily='"IBM Plex Mono", monospace'>YOU</text>
 
                 {nodes.map(d => {
                   const r = 14 + (d.score / 100) * 12
                   const band = getBand(d.score)
-                  const colorMap = { dep: '#c85250', mid: '#e6c229', res: '#00ae9d' }
+                  const colorMap = { dep: '#00ae9d', mid: '#5bbb46', res: '#00ae9d' }
                   return (
                     <g
                       key={`node-${d.code}`}
@@ -214,9 +214,9 @@ export default function Stage5_1LandscapeScreen() {
                       style={{ cursor: 'pointer', outline: 'none' }}
                     >
                       {d.code === ROOT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#00ae9d" strokeWidth="1.5" strokeDasharray="3,3" />}
-                      {d.code === BRIGHT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3,3" />}
+                      {d.code === BRIGHT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#00ae9d" strokeWidth="1.5" strokeDasharray="3,3" />}
                       <circle cx={d._x} cy={d._y} r={r} fill={colorMap[band.cls]} style={{ transition: 'all 0.3s ease', transform: selectedCode === d.code ? 'scale(1.15)' : 'scale(1)', transformOrigin: `${d._x}px ${d._y}px` }} />
-                      <text x={d._x} y={d._y + r + 16} textAnchor="middle" fill="#4a6b62" fontSize="10" fontWeight="700" fontFamily='"IBM Plex Mono", monospace'>{d.code}</text>
+                      <text x={d._x} y={d._y + r + 16} textAnchor="middle" fill="#414242" fontSize="10" fontWeight="700" fontFamily='"IBM Plex Mono", monospace'>{d.code}</text>
                     </g>
                   )
                 })}

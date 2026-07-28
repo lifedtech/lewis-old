@@ -60,7 +60,7 @@ export default function Stage1_1IdentityScreen() {
           lineHeight: 1.02,
           letterSpacing: '-0.035em',
           margin: '0 0 8px 0',
-          color: '#16302b',
+          color: '#414242',
         }}>
           Identity &amp; Life Roles
         </h1>
@@ -69,7 +69,7 @@ export default function Stage1_1IdentityScreen() {
         <p style={{
           margin: '0 0 32px 0',
           fontSize: 'clamp(13px, 1.6vw, 16px)',
-          color: '#4a6b62',
+          color: '#414242',
           fontFamily: "'Nunito', sans-serif",
         }}>
           Which of these describes you right now? Select all that apply.
@@ -98,7 +98,7 @@ export default function Stage1_1IdentityScreen() {
                   borderRadius: '999px',
                   border: active ? '1.5px solid #00ae9d' : '1px solid #c2ceca',
                   background: active ? '#e4f4ee' : 'rgba(255,255,255,0.6)',
-                  color: active ? '#044e43' : '#3a3a3a',
+                  color: active ? '#414242' : '#3a3a3a',
                   fontFamily: "'Nunito', sans-serif",
                   fontSize: '14px',
                   fontWeight: active ? 700 : 500,

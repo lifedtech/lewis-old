@@ -31,13 +31,13 @@ const AspirationPlantIllustration = () => (
       style={{ transformOrigin: '100px 150px' }}
     >
       {/* Vertical Green Plant Stem */}
-      <line x1="100" y1="150" x2="100" y2="60" stroke="#5FBB46" strokeWidth="3.8" strokeLinecap="round" />
+      <line x1="100" y1="150" x2="100" y2="60" stroke="#5bbb46" strokeWidth="3.8" strokeLinecap="round" />
 
       {/* Left Mint Leaf */}
       <path
         d="M 100,110 C 70,95 65,120 90,132 C 98,135 100,122 100,110 Z"
         fill="#DDF3D5"
-        stroke="#5FBB46"
+        stroke="#5bbb46"
         strokeWidth="2.5"
         strokeLinejoin="round"
       />
@@ -46,7 +46,7 @@ const AspirationPlantIllustration = () => (
       <path
         d="M 100,90 C 130,75 135,100 110,112 C 102,115 100,102 100,90 Z"
         fill="#DDF3D5"
-        stroke="#5FBB46"
+        stroke="#5bbb46"
         strokeWidth="2.5"
         strokeLinejoin="round"
       />
@@ -56,7 +56,7 @@ const AspirationPlantIllustration = () => (
     <motion.path
       d="M 100,20 Q 100,42 122,42 Q 100,42 100,64 Q 100,42 78,42 Q 100,42 100,20 Z"
       fill="#00AE9D"
-      stroke="#00856A"
+      stroke="#00ae9d"
       strokeWidth="1.5"
       animate={{ scale: [0.92, 1.12, 0.92], rotate: [0, 90, 180, 270, 360] }}
       transition={{
@@ -119,7 +119,7 @@ export default function Stage7_3AspirationScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Wellbeing</span>
@@ -128,7 +128,7 @@ export default function Stage7_3AspirationScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -149,7 +149,7 @@ export default function Stage7_3AspirationScreen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '18px 22px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -163,7 +163,7 @@ export default function Stage7_3AspirationScreen() {
               <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                 SHARE YOUR REFLECTION
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 OPTIONAL
               </span>
             </div>
@@ -179,7 +179,7 @@ export default function Stage7_3AspirationScreen() {
                 borderRadius: '14px',
                 border: '1.5px solid #d2e7e0',
                 background: '#f2f9f6',
-                color: '#16302b',
+                color: '#414242',
                 fontFamily: "'Nunito', sans-serif",
                 fontSize: '14.5px',
                 lineHeight: '1.6',
@@ -198,7 +198,7 @@ export default function Stage7_3AspirationScreen() {
               }}
             />
 
-            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
               Your reflection is saved to guide your personalized insights.
             </p>
           </div>

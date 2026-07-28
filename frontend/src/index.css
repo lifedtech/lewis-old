@@ -2,21 +2,33 @@
 
 /* ---------- Tokens ---------- */
 :root {
+  /* ---------- Strict LEWIS Color Palette ---------- */
+  --lifed-teal: #00ae9d;
+  --green-of-life: #5bbb46;
+  --pure-white: #ffffff;
+  --grey-of-light: #f4f4f4;
+  --grey-of-dark: #414242;
+  --healing-aqua-teal: #d6edea;
+  --healing-aqua-green: #e6f4d0;
+
+  /* ---------- System Mapped Tokens ---------- */
   --void: #ffffff;
   --void-2: #f4f4f4;
-  --panel: rgba(255, 255, 255, 0.75);
-  --panel-2: rgba(244, 244, 244, 0.55);
-  --panel-border: rgba(0, 0, 0, 0.08);
+  --panel: rgba(255, 255, 255, 0.95);
+  --panel-2: rgba(244, 244, 244, 0.85);
+  --panel-border: rgba(65, 66, 66, 0.12);
   --dawn: #00ae9d;
   --dawn-soft: #d6edea;
-  --dawn-glow: rgba(0, 174, 157, 0.28);
-  --sage: #5fbb46;
+  --dawn-glow: rgba(0, 174, 157, 0.25);
+  --sage: #5bbb46;
   --sage-soft: #e6f4d0;
   --lavender: #00ae9d;
   --lavender-soft: #d6edea;
   --text: #414242;
-  --text-mute: rgba(65, 66, 66, 0.7);
-  --text-faint: rgba(65, 66, 66, 0.45);
+  --text-main: #414242;
+  --text-sub: rgba(65, 66, 66, 0.75);
+  --text-mute: rgba(65, 66, 66, 0.6);
+  --text-faint: rgba(65, 66, 66, 0.4);
   --r-lg: 28px;
   --r-md: 18px;
   --r-sm: 12px;
@@ -51,7 +63,7 @@ body,
 }
 
 body {
-  background: radial-gradient(120% 92% at 50% -8%, #f5f9f7, #e6efeb);
+  background: radial-gradient(120% 92% at 50% -8%, #f4f4f4, #d6edea);
   color: var(--text);
   font-family: 'Nunito', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -916,13 +928,13 @@ h1.headline em {
 .scale-opt:hover {
   border-color: #00ae9d !important;
   background: #ffffff !important;
-  color: #0f172a !important;
+  color: #414242 !important;
 }
 
 .scale-opt.selected {
   background: #e6f7f2 !important;
   border-color: #00ae9d !important;
-  color: #044e43 !important;
+  color: #414242 !important;
   font-weight: 700 !important;
   box-shadow: 0 6px 20px rgba(0, 174, 157, 0.15) !important;
 }
@@ -1070,7 +1082,7 @@ p.eyebrow {
 .scale-opt.selected {
   background: #e4f4ee !important;
   border-color: #00ae9d !important;
-  color: #044e43 !important;
+  color: #414242 !important;
   font-weight: 700 !important;
   box-shadow: 0 4px 16px rgba(0, 174, 157, 0.15) !important;
 }
@@ -1079,7 +1091,7 @@ p.eyebrow {
 
 .btn-primary,
 .btn-next {
-  background: linear-gradient(135deg, #00ae9d 0%, #10b981 100%) !important;
+  background: linear-gradient(135deg, #00ae9d 0%, #00ae9d 100%) !important;
   color: #ffffff !important;
   font-family: 'Nunito', system-ui, sans-serif !important;
   font-weight: 800 !important;
@@ -1231,13 +1243,13 @@ p.eyebrow {
 .chip:hover {
   border-color: #00ae9d;
   background: #e8f7f4;
-  color: #16302b;
+  color: #414242;
 }
 
 .chip.selected {
   background: #e4f4ee;
   border-color: #00ae9d;
-  color: #044e43;
+  color: #414242;
   font-weight: 700;
   box-shadow: 0 2px 10px rgba(0, 174, 157, 0.15);
 }
@@ -1743,13 +1755,13 @@ select.input-field {
 .chip:hover {
   border-color: #00ae9d;
   background: #e8f7f4;
-  color: #16302b;
+  color: #414242;
 }
 
 .chip.selected {
   background: #e4f4ee;
   border-color: #00ae9d;
-  color: #044e43;
+  color: #414242;
   font-weight: 700;
   box-shadow: 0 2px 10px rgba(0, 174, 157, 0.15);
 }
@@ -1806,11 +1818,11 @@ select.input-field {
   font-size: 13.5px !important;
   font-family: 'Nunito', sans-serif !important;
   font-weight: 700 !important;
-  color: #16302b !important;
+  color: #414242 !important;
 }
 
 .draggable-handle {
-  color: #94a3b8 !important;
+  color: #414242 !important;
   font-size: 16px !important;
   flex-shrink: 0 !important;
 }

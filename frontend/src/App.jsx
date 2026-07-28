@@ -188,12 +188,12 @@ export default function App() {
         <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', width: '520px', height: '520px', left: '-160px', top: '-120px',
-            borderRadius: '50%', background: 'radial-gradient(circle at 40% 40%, rgba(14,147,130,.20), transparent 66%)',
+            borderRadius: '50%', background: 'radial-gradient(circle at 40% 40%, rgba(0, 174, 157,.20), transparent 66%)',
             filter: 'blur(32px)', animation: 'lewisDrift 38s ease-in-out infinite'
           }} />
           <div style={{
             position: 'absolute', width: '460px', height: '460px', right: '-150px', bottom: '-140px',
-            borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(72,170,200,.16), transparent 66%)',
+            borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(0, 174, 157,.16), transparent 66%)',
             filter: 'blur(36px)', animation: 'lewisDrift2 46s ease-in-out infinite'
           }} />
         </div>
@@ -288,7 +288,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', fontSize: '10px', fontFamily: "'IBM Plex Mono', monospace" }}>
                 <span style={{
                   color: 'var(--dawn)', fontWeight: 700, letterSpacing: '0.08em',
-                  background: 'rgba(14, 147, 130, 0.1)', padding: '6px 12px', borderRadius: '16px'
+                  background: 'rgba(0, 174, 157, 0.1)', padding: '6px 12px', borderRadius: '16px'
                 }}>
                   STAGE {stageInfo.num} - {stageInfo.name.toUpperCase()}
                 </span>

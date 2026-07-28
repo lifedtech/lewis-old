@@ -17,9 +17,9 @@ const MindfulBreathingOrb = ({ isFinished }) => {
         <defs>
           <radialGradient id="orbGradient" cx="38%" cy="35%" r="65%">
             <stop offset="0%" stopColor="#A8F3E9" />
-            <stop offset="45%" stopColor="#36D1DC" />
+            <stop offset="45%" stopColor="#00ae9d" />
             <stop offset="85%" stopColor="#00AE9D" />
-            <stop offset="100%" stopColor="#00856A" />
+            <stop offset="100%" stopColor="#00ae9d" />
           </radialGradient>
           <radialGradient id="orbOuterGlow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#00AE9D" stopOpacity="0.4" />
@@ -51,7 +51,7 @@ const MindfulBreathingOrb = ({ isFinished }) => {
         {/* Middle Wave 2 — Smooth solid ripple ring */}
         <motion.circle
           cx="160" cy="160" r="96"
-          stroke="#10B981" strokeWidth="1.8" fill="rgba(0, 174, 157, 0.05)"
+          stroke="#00ae9d" strokeWidth="1.8" fill="rgba(0, 174, 157, 0.05)"
           animate={isFinished ? { scale: 1, opacity: 0.4 } : {
             scale: [0.86, 1.28, 1.28, 0.86],
             opacity: [0.25, 0.7, 0.7, 0.25]
@@ -190,7 +190,7 @@ export default function Stage3_4BreathingScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Mindful Breathing
@@ -198,7 +198,7 @@ export default function Stage3_4BreathingScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -216,7 +216,7 @@ export default function Stage3_4BreathingScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -248,7 +248,7 @@ export default function Stage3_4BreathingScreen() {
                   fontSize: '22px',
                   fontWeight: 700,
                   fontStyle: 'italic',
-                  color: '#16302b',
+                  color: '#414242',
                   fontFamily: "'Nunito', sans-serif",
                 }}
               >
@@ -258,7 +258,7 @@ export default function Stage3_4BreathingScreen() {
                 margin: '6px 0 0 0',
                 fontSize: '12px',
                 fontWeight: 700,
-                color: '#7a9e97',
+                color: '#414242',
                 fontFamily: '"IBM Plex Mono", monospace',
                 letterSpacing: '0.08em',
               }}>

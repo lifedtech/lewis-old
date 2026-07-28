@@ -161,7 +161,7 @@ export default function Stage1_8ArrivalScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Arrival State
@@ -169,7 +169,7 @@ export default function Stage1_8ArrivalScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '360px',
@@ -188,7 +188,7 @@ export default function Stage1_8ArrivalScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: 0,
@@ -208,7 +208,7 @@ export default function Stage1_8ArrivalScreen() {
               borderRadius: '16px',
               border: '1.5px solid #d2e7e0',
               background: '#f2f9f6',
-              color: '#16302b',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               fontSize: '15px',
               lineHeight: 1.6,

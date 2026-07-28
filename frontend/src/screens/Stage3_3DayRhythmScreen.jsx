@@ -15,7 +15,7 @@ const DiurnalCycleIllustration = () => (
     <defs>
       <radialGradient id="diurnalAura" cx="50%" cy="50%" r="50%">
         <stop offset="0%" stopColor="#00AE9D" stopOpacity="0.2" />
-        <stop offset="70%" stopColor="#10B981" stopOpacity="0.08" />
+        <stop offset="70%" stopColor="#00ae9d" stopOpacity="0.08" />
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
     </defs>
@@ -39,7 +39,7 @@ const DiurnalCycleIllustration = () => (
       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       style={{ transformOrigin: '120px 40px' }}
     >
-      <circle cx="120" cy="40" r="13" fill="#FBBF24" stroke="#F59E0B" strokeWidth="2" />
+      <circle cx="120" cy="40" r="13" fill="#FBBF24" stroke="#5bbb46" strokeWidth="2" />
       <motion.g
         animate={{ rotate: 360 }}
         transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
@@ -49,7 +49,7 @@ const DiurnalCycleIllustration = () => (
           <line
             key={deg}
             x1="120" y1="23" x2="120" y2="19"
-            stroke="#F59E0B" strokeWidth="1.8" strokeLinecap="round"
+            stroke="#5bbb46" strokeWidth="1.8" strokeLinecap="round"
             transform={`rotate(${deg} 120 40)`}
           />
         ))}
@@ -73,19 +73,19 @@ const DiurnalCycleIllustration = () => (
     {/* Sunrise / Dawn Star on Morning Rise */}
     <motion.circle
       cx="40" cy="135" r="5"
-      fill="#F97316"
+      fill="#5bbb46"
       animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
       transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
     />
 
     {/* Floating Energy Particles along the Cycle Arc */}
     <motion.circle
-      cx="80" cy="78" r="3.5" fill="#10B981"
+      cx="80" cy="78" r="3.5" fill="#00ae9d"
       animate={{ y: [-3, 3, -3], scale: [0.9, 1.25, 0.9] }}
       transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.circle
-      cx="160" cy="78" r="3.5" fill="#36D1DC"
+      cx="160" cy="78" r="3.5" fill="#00ae9d"
       animate={{ y: [3, -3, 3], scale: [1.2, 0.8, 1.2] }}
       transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
     />
@@ -103,7 +103,7 @@ const DiurnalCycleIllustration = () => (
     />
     <motion.path
       d="M 38,164 Q 95,155 145,168 T 212,160"
-      stroke="#99E2D8"
+      stroke="#d6edea"
       strokeWidth="2.2"
       strokeLinecap="round"
       fill="none"
@@ -173,7 +173,7 @@ export default function Stage3_3DayRhythmScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Diurnal Energy Cycle
@@ -181,7 +181,7 @@ export default function Stage3_3DayRhythmScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -200,7 +200,7 @@ export default function Stage3_3DayRhythmScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -225,7 +225,7 @@ export default function Stage3_3DayRhythmScreen() {
                     borderRadius: '14px',
                     border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                     background: active ? '#e4f4ee' : '#f2f9f6',
-                    color: active ? '#044e43' : '#3a3a3a',
+                    color: active ? '#414242' : '#3a3a3a',
                     fontFamily: "'Nunito', sans-serif",
                     fontSize: '13.5px',
                     fontWeight: active ? 700 : 500,

@@ -44,14 +44,14 @@ export default function Stage3_2BodyMapScreen() {
             lineHeight: 1.05,
             letterSpacing: '-0.035em',
             margin: 0,
-            color: '#16302b',
+            color: '#414242',
           }}>
             Body Tension Map
           </h1>
           <p style={{
             margin: '6px 0 0 2px',
             fontSize: 'clamp(13px, 1.5vw, 15px)',
-            color: '#4a6b62',
+            color: '#414242',
             fontFamily: "'Nunito', sans-serif",
           }}>
             Where in your body do you feel physical tension or holding right now?
@@ -71,7 +71,7 @@ export default function Stage3_2BodyMapScreen() {
           <div style={{
             height: '100%',
             maxHeight: '300px',
-            background: '#fafcfb',
+            background: '#ffffff',
             borderRadius: '24px',
             border: '1.5px solid rgba(0,174,157,0.18)',
             padding: '16px',
@@ -84,7 +84,7 @@ export default function Stage3_2BodyMapScreen() {
               <defs>
                 <linearGradient id="bodyDefault" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#f3f6f5" />
-                  <stop offset="100%" stopColor="#e2e8e5" />
+                  <stop offset="100%" stopColor="#f4f4f4" />
                 </linearGradient>
                 <linearGradient id="bodySelected" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#e4f4ee" />
@@ -196,9 +196,9 @@ export default function Stage3_2BodyMapScreen() {
                     width: '100%',
                     padding: '10px 20px',
                     borderRadius: '16px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #e2e8e5',
+                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #f4f4f4',
                     background: active ? '#e4f4ee' : '#f7faf8',
-                    color: active ? '#044e43' : '#3a3a3a',
+                    color: active ? '#414242' : '#3a3a3a',
                     fontFamily: "'Nunito', sans-serif",
                     fontSize: '14px',
                     fontWeight: active ? 700 : 600,

@@ -17,8 +17,8 @@ const CumulativeLoadIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="cumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -30,8 +30,8 @@ const CumulativeLoadIllustration = () => (
       d="M 80,45 L 160,45 L 120,90 L 160,135 L 80,135 L 120,90 Z"
       stroke="#00AE9D" strokeWidth="2.5" strokeLinejoin="round" fill="rgba(0,174,157,0.06)"
     />
-    <line x1="75" y1="45" x2="165" y2="45" stroke="#00856A" strokeWidth="3" strokeLinecap="round" />
-    <line x1="75" y1="135" x2="165" y2="135" stroke="#00856A" strokeWidth="3" strokeLinecap="round" />
+    <line x1="75" y1="45" x2="165" y2="45" stroke="#00ae9d" strokeWidth="3" strokeLinecap="round" />
+    <line x1="75" y1="135" x2="165" y2="135" stroke="#00ae9d" strokeWidth="3" strokeLinecap="round" />
 
     {/* Falling Time Sand Grains Animation */}
     <motion.line
@@ -50,7 +50,7 @@ const CumulativeLoadIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -102,7 +102,7 @@ export default function Stage8_4CumulativeScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.035em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textWrap: 'balance',
             }}>
               Cumulative<br />Allostatic Load
@@ -110,7 +110,7 @@ export default function Stage8_4CumulativeScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -129,7 +129,7 @@ export default function Stage8_4CumulativeScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 12px 0',
@@ -151,9 +151,9 @@ export default function Stage8_4CumulativeScreen() {
                     width: '100%',
                     padding: '14px 20px',
                     borderRadius: '16px',
-                    border: selected ? '1.5px solid #00ae9d' : '1.5px solid #e2e8e5',
+                    border: selected ? '1.5px solid #00ae9d' : '1.5px solid #f4f4f4',
                     background: selected ? '#e4f4ee' : '#f7faf8',
-                    color: selected ? '#044e43' : '#3a3a3a',
+                    color: selected ? '#414242' : '#3a3a3a',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     boxShadow: selected ? '0 4px 14px rgba(0,174,157,0.12)' : 'none',
@@ -184,7 +184,7 @@ export default function Stage8_4CumulativeScreen() {
                       fontFamily: "'Nunito', sans-serif",
                       fontWeight: 700,
                       fontSize: '15.5px',
-                      color: selected ? '#044e43' : '#16302b',
+                      color: selected ? '#414242' : '#414242',
                       marginBottom: '3px',
                     }}>
                       {opt.title}
@@ -192,7 +192,7 @@ export default function Stage8_4CumulativeScreen() {
                     <p style={{
                       margin: 0,
                       fontSize: '13px',
-                      color: selected ? '#1b4d43' : '#4a6b62',
+                      color: selected ? '#1b4d43' : '#414242',
                       fontFamily: "'Nunito', sans-serif",
                       lineHeight: 1.45,
                     }}>

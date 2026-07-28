@@ -17,8 +17,8 @@ const PriorAttemptsIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="priorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -35,8 +35,8 @@ const PriorAttemptsIllustration = () => (
 
     {/* Step Nodes */}
     <circle cx="50" cy="130" r="6" fill="#00AE9D" stroke="#FFF" strokeWidth="1.8" />
-    <circle cx="120" cy="80" r="6" fill="#36D1DC" stroke="#FFF" strokeWidth="1.8" />
-    <circle cx="190" cy="50" r="7.5" fill="#10B981" stroke="#FFF" strokeWidth="2" />
+    <circle cx="120" cy="80" r="6" fill="#00ae9d" stroke="#FFF" strokeWidth="1.8" />
+    <circle cx="190" cy="50" r="7.5" fill="#00ae9d" stroke="#FFF" strokeWidth="2" />
 
     {/* Wavy Horizon Lines */}
     <motion.path
@@ -47,7 +47,7 @@ const PriorAttemptsIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -108,7 +108,7 @@ export default function Stage7_2PriorScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Prior</span>
@@ -117,7 +117,7 @@ export default function Stage7_2PriorScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -138,7 +138,7 @@ export default function Stage7_2PriorScreen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '18px 22px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -153,7 +153,7 @@ export default function Stage7_2PriorScreen() {
               <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                 HISTORICAL ATTEMPTS
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 {priorAttempts ? 'SELECTED' : 'CHOOSE ONE'}
               </span>
             </div>
@@ -175,7 +175,7 @@ export default function Stage7_2PriorScreen() {
                       borderRadius: '14px',
                       border: selected ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                       background: selected ? '#e4f4ee' : '#f2f9f6',
-                      color: selected ? '#044e43' : '#3a3a3a',
+                      color: selected ? '#414242' : '#3a3a3a',
                       cursor: 'pointer',
                       transition: 'all 0.18s ease',
                       boxShadow: selected ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -206,7 +206,7 @@ export default function Stage7_2PriorScreen() {
                         fontFamily: "'Nunito', sans-serif",
                         fontWeight: selected ? 700 : 600,
                         fontSize: '14.5px',
-                        color: selected ? '#044e43' : '#16302b',
+                        color: selected ? '#414242' : '#414242',
                         marginBottom: '2px',
                         textAlign: 'left',
                       }}>
@@ -215,7 +215,7 @@ export default function Stage7_2PriorScreen() {
                       <p style={{
                         margin: 0,
                         fontSize: '12.5px',
-                        color: selected ? '#1b4d43' : '#4a6b62',
+                        color: selected ? '#1b4d43' : '#414242',
                         fontFamily: "'Nunito', sans-serif",
                         lineHeight: 1.4,
                         textAlign: 'left',
@@ -228,7 +228,7 @@ export default function Stage7_2PriorScreen() {
               })}
             </div>
 
-            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
               Select the option that best describes your recent experience.
             </p>
           </div>

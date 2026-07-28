@@ -14,9 +14,9 @@ const BrightSpotIllustration = () => (
     <defs>
       <radialGradient id="brightOrbGrad" cx="35%" cy="35%" r="65%">
         <stop offset="0%" stopColor="#80E8DD" />
-        <stop offset="45%" stopColor="#36D1DC" />
+        <stop offset="45%" stopColor="#00ae9d" />
         <stop offset="85%" stopColor="#00AE9D" />
-        <stop offset="100%" stopColor="#00856A" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </radialGradient>
       <radialGradient id="brightGlow" cx="50%" cy="50%" r="50%">
         <stop offset="0%" stopColor="#00AE9D" stopOpacity="0.32" />
@@ -112,7 +112,7 @@ export default function Stage5_4BrightSpotScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Your Bright</span>
@@ -121,7 +121,7 @@ export default function Stage5_4BrightSpotScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -142,7 +142,7 @@ export default function Stage5_4BrightSpotScreen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '18px 22px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -156,7 +156,7 @@ export default function Stage5_4BrightSpotScreen() {
               <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                 SHARE YOUR REFLECTION
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 OPTIONAL
               </span>
             </div>
@@ -172,7 +172,7 @@ export default function Stage5_4BrightSpotScreen() {
                 borderRadius: '14px',
                 border: '1.5px solid #d2e7e0',
                 background: '#f2f9f6',
-                color: '#16302b',
+                color: '#414242',
                 fontFamily: "'Nunito', sans-serif",
                 fontSize: '14.5px',
                 lineHeight: '1.6',
@@ -191,7 +191,7 @@ export default function Stage5_4BrightSpotScreen() {
               }}
             />
 
-            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
               Your reflection is saved to guide your personalized insights.
             </p>
           </div>

@@ -17,8 +17,8 @@ const ExternalConditionsIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="envGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -30,7 +30,7 @@ const ExternalConditionsIllustration = () => (
       d="M 120,40 L 65,85 L 75,85 L 75,135 L 165,135 L 165,85 L 175,85 Z"
       stroke="#00AE9D" strokeWidth="2.2" strokeLinejoin="round" fill="rgba(0,174,157,0.05)"
     />
-    <rect x="105" y="100" width="30" height="35" rx="4" stroke="#10B981" strokeWidth="1.8" fill="none" />
+    <rect x="105" y="100" width="30" height="35" rx="4" stroke="#00ae9d" strokeWidth="1.8" fill="none" />
 
     {/* Wind / Noise Stream Waves */}
     <motion.path
@@ -41,7 +41,7 @@ const ExternalConditionsIllustration = () => (
     />
     <motion.path
       d="M 50,115 Q 85,125 120,110 T 190,120"
-      stroke="#36D1DC" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.6"
+      stroke="#00ae9d" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.6"
       animate={{ x: [5, -5, 5] }}
       transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
     />
@@ -55,7 +55,7 @@ const ExternalConditionsIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -131,7 +131,7 @@ export default function Stage7_1ExternalScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textAlign: 'left',
             }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>External</span>
@@ -140,7 +140,7 @@ export default function Stage7_1ExternalScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -161,7 +161,7 @@ export default function Stage7_1ExternalScreen() {
             style={{
               width: '100%',
               background: '#ffffff',
-              border: '1.5px solid #e2e8e5',
+              border: '1.5px solid #f4f4f4',
               borderRadius: '20px',
               padding: '18px 22px',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -176,7 +176,7 @@ export default function Stage7_1ExternalScreen() {
               <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                 ENVIRONMENTAL CONTEXT
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 {selectedCount} SELECTED
               </span>
             </div>
@@ -198,7 +198,7 @@ export default function Stage7_1ExternalScreen() {
                       borderRadius: '12px',
                       border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                       background: active ? '#e4f4ee' : '#f2f9f6',
-                      color: active ? '#044e43' : '#3a3a3a',
+                      color: active ? '#414242' : '#3a3a3a',
                       cursor: 'pointer',
                       transition: 'all 0.18s ease',
                       boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -225,7 +225,7 @@ export default function Stage7_1ExternalScreen() {
                       fontFamily: "'Nunito', sans-serif",
                       fontWeight: active ? 700 : 500,
                       fontSize: '13px',
-                      color: active ? '#044e43' : '#16302b',
+                      color: active ? '#414242' : '#414242',
                       lineHeight: 1.35,
                       textAlign: 'left',
                     }}>
@@ -236,7 +236,7 @@ export default function Stage7_1ExternalScreen() {
               })}
             </div>
 
-            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
               Select all that apply to your current living or work environment.
             </p>
           </div>

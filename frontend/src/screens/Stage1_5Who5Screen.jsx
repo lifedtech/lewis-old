@@ -69,7 +69,7 @@ export default function Stage1_5Who5Screen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Overall Wellbeing
@@ -91,7 +91,7 @@ export default function Stage1_5Who5Screen() {
               style={{
                 width: '100%',
                 background: '#ffffff',
-                border: '1.5px solid #e2e8e5',
+                border: '1.5px solid #f4f4f4',
                 borderRadius: '20px',
                 padding: '16px 20px',
                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
@@ -107,7 +107,7 @@ export default function Stage1_5Who5Screen() {
                   <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                     LAST 2 WEEKS · {step + 1} OF 5
                   </span>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                     {Math.round(((step + 1) / 5) * 100)}%
                   </span>
                 </div>
@@ -121,7 +121,7 @@ export default function Stage1_5Who5Screen() {
               </div>
 
               {/* Question Statement */}
-              <p style={{ margin: '2px 0 2px 0', fontSize: '14.5px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4 }}>
+              <p style={{ margin: '2px 0 2px 0', fontSize: '14.5px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4 }}>
                 {questions[step]}
               </p>
 
@@ -142,7 +142,7 @@ export default function Stage1_5Who5Screen() {
                         borderRadius: '12px',
                         border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                         background: active ? '#e4f4ee' : '#f2f9f6',
-                        color: active ? '#044e43' : '#3a3a3a',
+                        color: active ? '#414242' : '#3a3a3a',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
                         boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -169,7 +169,7 @@ export default function Stage1_5Who5Screen() {
                         fontFamily: "'Nunito', sans-serif",
                         fontWeight: active ? 700 : 500,
                         fontSize: '13px',
-                        color: active ? '#044e43' : '#16302b',
+                        color: active ? '#414242' : '#414242',
                       }}>
                         {opt}
                       </span>
@@ -179,7 +179,7 @@ export default function Stage1_5Who5Screen() {
               </div>
 
               {/* Footer Instruction Note */}
-              <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#8fa099', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
+              <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
                 Select how often you felt this way over the last two weeks.
               </p>
             </motion.div>

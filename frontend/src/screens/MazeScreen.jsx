@@ -106,7 +106,7 @@ export default function MazeScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Navigate your thoughts
@@ -114,7 +114,7 @@ export default function MazeScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -132,7 +132,7 @@ export default function MazeScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -158,7 +158,7 @@ export default function MazeScreen() {
                 display: 'grid', 
                 gridTemplateColumns: `repeat(${WIDTH}, 1fr)`,
                 gap: '2px',
-                background: '#16302b',
+                background: '#414242',
                 padding: '10px',
                 borderRadius: '18px',
                 border: '1.5px solid #d2e7e0',
@@ -175,7 +175,7 @@ export default function MazeScreen() {
                       key={`${r}-${c}`} 
                       style={{
                         width: '16px', height: '16px',
-                        backgroundColor: isPlayer ? '#FF9466' : isTarget ? '#10B981' : cell === 1 ? 'rgba(255,255,255,0.12)' : 'transparent',
+                        backgroundColor: isPlayer ? '#FF9466' : isTarget ? '#00ae9d' : cell === 1 ? 'rgba(255,255,255,0.12)' : 'transparent',
                         borderRadius: isPlayer || isTarget ? '50%' : '3px',
                         boxShadow: isPlayer ? '0 0 12px rgba(255,148,102,0.9)' : isTarget ? '0 0 12px rgba(16,185,129,0.9)' : 'none',
                         transition: 'all 0.15s ease',

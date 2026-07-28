@@ -35,7 +35,7 @@ const IntellectualIllustration = () => (
     {/* Sparking Idea Filament */}
     <motion.path
       d="M 110 85 Q 120 70 130 85"
-      stroke="#10B981" strokeWidth="2.2" strokeLinecap="round" fill="none"
+      stroke="#00ae9d" strokeWidth="2.2" strokeLinecap="round" fill="none"
       animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}
       style={{ transformOrigin: '120px 80px' }}
     />
@@ -44,7 +44,7 @@ const IntellectualIllustration = () => (
     {[{ x1: 120, y1: 34, x2: 120, y2: 42 }, { x1: 72, y1: 58, x2: 78, y2: 64 }, { x1: 168, y1: 58, x2: 162, y2: 64 }].map((r, i) => (
       <motion.line
         key={i} x1={r.x1} y1={r.y1} x2={r.x2} y2={r.y2}
-        stroke="#10B981" strokeWidth="2" strokeLinecap="round"
+        stroke="#00ae9d" strokeWidth="2" strokeLinecap="round"
         animate={{ opacity: [0.3, 1, 0.3] }}
         transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
       />
@@ -102,7 +102,7 @@ export default function Stage1_11IntellectualScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Intellectual Pulse
@@ -110,7 +110,7 @@ export default function Stage1_11IntellectualScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '360px',
@@ -129,7 +129,7 @@ export default function Stage1_11IntellectualScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: 0,
@@ -149,7 +149,7 @@ export default function Stage1_11IntellectualScreen() {
               borderRadius: '16px',
               border: '1.5px solid #d2e7e0',
               background: '#f2f9f6',
-              color: '#16302b',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               fontSize: '15px',
               lineHeight: 1.6,

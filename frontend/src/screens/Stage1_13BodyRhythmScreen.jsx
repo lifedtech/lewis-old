@@ -14,9 +14,9 @@ const CircadianIllustration = () => (
   >
     <defs>
       <radialGradient id="circadianGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#10B981" stopOpacity="0.22" />
+        <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.22" />
         <stop offset="60%" stopColor="#00AE9D" stopOpacity="0.08" />
-        <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+        <stop offset="100%" stopColor="#00ae9d" stopOpacity="0" />
       </radialGradient>
     </defs>
 
@@ -26,7 +26,7 @@ const CircadianIllustration = () => (
     {/* Dotted Parabolic Circadian Trajectory Arc */}
     <motion.path
       d="M 40,135 Q 120,40 200,135"
-      stroke="#10B981"
+      stroke="#00ae9d"
       strokeWidth="2.2"
       strokeDasharray="4 4"
       strokeLinecap="round"
@@ -35,7 +35,7 @@ const CircadianIllustration = () => (
 
     {/* Floating Green Particles along the Arc */}
     <motion.circle
-      cx="120" cy="70" r="3.5" fill="#10B981"
+      cx="120" cy="70" r="3.5" fill="#00ae9d"
       animate={{ y: [-3, 3, -3], scale: [0.9, 1.25, 0.9] }}
       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
     />
@@ -55,7 +55,7 @@ const CircadianIllustration = () => (
       transition={{ duration: 3.5, repeat: Infinity, repeatDelay: 3.5, ease: 'easeInOut' }}
       style={{ transformOrigin: '40px 135px' }}
     >
-      <circle cx="40" cy="135" r="14" fill="#FBBF24" stroke="#F59E0B" strokeWidth="2" />
+      <circle cx="40" cy="135" r="14" fill="#FBBF24" stroke="#5bbb46" strokeWidth="2" />
       <motion.g
         animate={{ rotate: 360 }}
         transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
@@ -65,7 +65,7 @@ const CircadianIllustration = () => (
           <line
             key={deg}
             x1="40" y1="117" x2="40" y2="112"
-            stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"
+            stroke="#5bbb46" strokeWidth="2" strokeLinecap="round"
             transform={`rotate(${deg} 40 135)`}
           />
         ))}
@@ -105,7 +105,7 @@ const CircadianIllustration = () => (
     />
     <motion.path
       d="M 38,168 Q 95,159 145,172 T 212,164"
-      stroke="#99E2D8"
+      stroke="#d6edea"
       strokeWidth="2.5"
       strokeLinecap="round"
       fill="none"
@@ -191,7 +191,7 @@ export default function Stage1_13BodyRhythmScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textWrap: 'balance',
             }}>
               Body &amp;<br />Circadian Rhythms
@@ -199,7 +199,7 @@ export default function Stage1_13BodyRhythmScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -216,16 +216,16 @@ export default function Stage1_13BodyRhythmScreen() {
           {/* Progress Header */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px', width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#94a3b8', textTransform: 'uppercase' }}>
+              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#414242', textTransform: 'uppercase' }}>
                 CIRCADIAN RHYTHMS · {step + 1} OF {questions.length}
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#4a6b62' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 {Math.round(((step + 1) / questions.length) * 100)}%
               </span>
             </div>
             <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
               <motion.div
-                style={{ height: '100%', background: 'linear-gradient(90deg, #00ae9d, #10b981)' }}
+                style={{ height: '100%', background: 'linear-gradient(90deg, #00ae9d, #00ae9d)' }}
                 animate={{ width: `${((step + 1) / questions.length) * 100}%` }}
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
               />
@@ -242,7 +242,7 @@ export default function Stage1_13BodyRhythmScreen() {
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-start', width: '100%' }}
             >
-              <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
+              <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
                 {currentQ.prompt}
               </p>
 
@@ -262,7 +262,7 @@ export default function Stage1_13BodyRhythmScreen() {
                         borderRadius: '14px',
                         border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                         background: active ? '#e4f4ee' : '#f2f9f6',
-                        color: active ? '#044e43' : '#3a3a3a',
+                        color: active ? '#414242' : '#3a3a3a',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
                         boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -289,7 +289,7 @@ export default function Stage1_13BodyRhythmScreen() {
                         fontFamily: "'Nunito', sans-serif",
                         fontWeight: active ? 700 : 500,
                         fontSize: '14px',
-                        color: active ? '#044e43' : '#16302b',
+                        color: active ? '#414242' : '#414242',
                       }}>
                         {opt}
                       </span>

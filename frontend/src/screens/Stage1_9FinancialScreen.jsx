@@ -18,8 +18,8 @@ const FinancialIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="finGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -28,7 +28,7 @@ const FinancialIllustration = () => (
 
     {/* Financial Growth Pulse Chart */}
     <path d="M 60,125 L 95,100 L 130,115 L 180,65" stroke="url(#finGrad)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    <motion.circle cx="180" cy="65" r="6" fill="#10B981" stroke="#FFF" strokeWidth="1.8" animate={{ scale: [1, 1.25, 1] }} transition={{ duration: 2, repeat: Infinity }} />
+    <motion.circle cx="180" cy="65" r="6" fill="#00ae9d" stroke="#FFF" strokeWidth="1.8" animate={{ scale: [1, 1.25, 1] }} transition={{ duration: 2, repeat: Infinity }} />
 
     {/* Coin Stack Line Art */}
     <ellipse cx="75" cy="135" rx="14" ry="4" stroke="#00AE9D" strokeWidth="1.8" fill="rgba(0,174,157,0.1)" />
@@ -44,7 +44,7 @@ const FinancialIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -117,7 +117,7 @@ export default function Stage1_9FinancialScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               textWrap: 'balance',
             }}>
               Financial<br />Wellness Pulse
@@ -125,7 +125,7 @@ export default function Stage1_9FinancialScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -142,16 +142,16 @@ export default function Stage1_9FinancialScreen() {
           {/* Progress Header */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px', width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#94a3b8', textTransform: 'uppercase' }}>
+              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#414242', textTransform: 'uppercase' }}>
                 FINANCIAL PULSE · {step + 1} OF {questions.length}
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#4a6b62' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
                 {Math.round(((step + 1) / questions.length) * 100)}%
               </span>
             </div>
             <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
               <motion.div
-                style={{ height: '100%', background: 'linear-gradient(90deg, #00ae9d, #10b981)' }}
+                style={{ height: '100%', background: 'linear-gradient(90deg, #00ae9d, #00ae9d)' }}
                 animate={{ width: `${((step + 1) / questions.length) * 100}%` }}
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
               />
@@ -168,7 +168,7 @@ export default function Stage1_9FinancialScreen() {
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-start', width: '100%' }}
             >
-              <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
+              <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
                 {currentQ.prompt}
               </p>
 
@@ -188,7 +188,7 @@ export default function Stage1_9FinancialScreen() {
                         borderRadius: '14px',
                         border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                         background: active ? '#e4f4ee' : '#f2f9f6',
-                        color: active ? '#044e43' : '#3a3a3a',
+                        color: active ? '#414242' : '#3a3a3a',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
                         boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -215,7 +215,7 @@ export default function Stage1_9FinancialScreen() {
                         fontFamily: "'Nunito', sans-serif",
                         fontWeight: active ? 700 : 500,
                         fontSize: '14px',
-                        color: active ? '#044e43' : '#16302b',
+                        color: active ? '#414242' : '#414242',
                       }}>
                         {opt}
                       </span>

@@ -54,7 +54,7 @@ const ButterflyIllustration = ({ isOrange = false, onClick }) => (
         <path
           d="M 120,100 C 80,115 50,145 75,165 C 95,180 115,145 120,110 Z"
           fill={isOrange ? 'rgba(255, 148, 102, 0.25)' : 'rgba(16, 185, 129, 0.12)'}
-          stroke={isOrange ? '#FF7A45' : '#10B981'}
+          stroke={isOrange ? '#FF7A45' : '#00ae9d'}
           strokeWidth="2.2"
           strokeLinejoin="round"
           style={{ transition: 'all 0.3s ease' }}
@@ -73,7 +73,7 @@ const ButterflyIllustration = ({ isOrange = false, onClick }) => (
         <path
           d="M 120,100 C 160,115 190,145 165,165 C 145,180 125,145 120,110 Z"
           fill={isOrange ? 'rgba(255, 148, 102, 0.25)' : 'rgba(16, 185, 129, 0.12)'}
-          stroke={isOrange ? '#FF7A45' : '#10B981'}
+          stroke={isOrange ? '#FF7A45' : '#00ae9d'}
           strokeWidth="2.2"
           strokeLinejoin="round"
           style={{ transition: 'all 0.3s ease' }}
@@ -82,19 +82,19 @@ const ButterflyIllustration = ({ isOrange = false, onClick }) => (
         {/* Wing Vein Line Art Details */}
         <path d="M 120,93 Q 80,70 55,80" stroke={isOrange ? '#FF9466' : '#00AE9D'} strokeWidth="1.5" opacity="0.6" fill="none" />
         <path d="M 120,93 Q 160,70 185,80" stroke={isOrange ? '#FF9466' : '#00AE9D'} strokeWidth="1.5" opacity="0.6" fill="none" />
-        <path d="M 120,103 Q 90,135 75,150" stroke={isOrange ? '#FF7A45' : '#10B981'} strokeWidth="1.2" opacity="0.5" fill="none" />
-        <path d="M 120,103 Q 150,135 165,150" stroke={isOrange ? '#FF7A45' : '#10B981'} strokeWidth="1.2" opacity="0.5" fill="none" />
+        <path d="M 120,103 Q 90,135 75,150" stroke={isOrange ? '#FF7A45' : '#00ae9d'} strokeWidth="1.2" opacity="0.5" fill="none" />
+        <path d="M 120,103 Q 150,135 165,150" stroke={isOrange ? '#FF7A45' : '#00ae9d'} strokeWidth="1.2" opacity="0.5" fill="none" />
       </motion.g>
 
       {/* Butterfly Body Line */}
-      <line x1="120" y1="70" x2="120" y2="130" stroke={isOrange ? '#E65100' : '#16302B'} strokeWidth="3.5" strokeLinecap="round" />
-      <circle cx="120" cy="67" r="4.5" fill={isOrange ? '#E65100' : '#16302B'} />
+      <line x1="120" y1="70" x2="120" y2="130" stroke={isOrange ? '#E65100' : '#414242'} strokeWidth="3.5" strokeLinecap="round" />
+      <circle cx="120" cy="67" r="4.5" fill={isOrange ? '#E65100' : '#414242'} />
 
       {/* Antennae */}
-      <path d="M 120,65 Q 112,50 102,45" stroke={isOrange ? '#E65100' : '#16302B'} strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <path d="M 120,65 Q 128,50 138,45" stroke={isOrange ? '#E65100' : '#16302B'} strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <circle cx="102" cy="45" r="2" fill={isOrange ? '#E65100' : '#16302B'} />
-      <circle cx="138" cy="45" r="2" fill={isOrange ? '#E65100' : '#16302B'} />
+      <path d="M 120,65 Q 112,50 102,45" stroke={isOrange ? '#E65100' : '#414242'} strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <path d="M 120,65 Q 128,50 138,45" stroke={isOrange ? '#E65100' : '#414242'} strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <circle cx="102" cy="45" r="2" fill={isOrange ? '#E65100' : '#414242'} />
+      <circle cx="138" cy="45" r="2" fill={isOrange ? '#E65100' : '#414242'} />
 
       {/* Floating Sparkle Nodes */}
       {[{ cx: 50, cy: 50 }, { cx: 190, cy: 50 }, { cx: 70, cy: 170 }, { cx: 170, cy: 170 }].map((sp, i) => (
@@ -187,7 +187,7 @@ export default function Stage2AttentionScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Cognitive Focus
@@ -195,7 +195,7 @@ export default function Stage2AttentionScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -213,7 +213,7 @@ export default function Stage2AttentionScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -241,7 +241,7 @@ export default function Stage2AttentionScreen() {
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: '12px',
               fontWeight: 700,
-              color: '#16302b',
+              color: '#414242',
               background: '#ffffff',
               border: '1.5px solid #d2e7e0',
               borderRadius: '20px',
@@ -259,7 +259,7 @@ export default function Stage2AttentionScreen() {
               margin: 0,
               fontSize: '14.5px',
               fontWeight: 700,
-              color: color === 'orange' ? '#FF9466' : done ? '#00ae9d' : '#4a6b62',
+              color: color === 'orange' ? '#FF9466' : done ? '#00ae9d' : '#414242',
               fontFamily: "'Nunito', sans-serif",
               textAlign: 'center',
               minHeight: '24px',

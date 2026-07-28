@@ -17,7 +17,7 @@ const NervousSystemIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="neuralSpine" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
         <stop offset="50%" stopColor="#FF9466" />
         <stop offset="100%" stopColor="#6366F1" />
       </linearGradient>
@@ -31,8 +31,8 @@ const NervousSystemIllustration = () => (
 
     {/* 3 Autonomic State Nodes */}
     <g>
-      <path d="M 120,48 Q 80,38 58,54 M 120,48 Q 160,38 182,54" stroke="#10B981" strokeWidth="2" strokeLinecap="round" fill="none" />
-      <circle cx="120" cy="48" r="6.5" fill="#10B981" stroke="#FFF" strokeWidth="2" />
+      <path d="M 120,48 Q 80,38 58,54 M 120,48 Q 160,38 182,54" stroke="#00ae9d" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <circle cx="120" cy="48" r="6.5" fill="#00ae9d" stroke="#FFF" strokeWidth="2" />
     </g>
     <g>
       <path d="M 120,90 Q 75,78 48,94 M 120,90 Q 165,78 192,94" stroke="#FF9466" strokeWidth="2" strokeLinecap="round" fill="none" />
@@ -52,7 +52,7 @@ const NervousSystemIllustration = () => (
     />
     <motion.path
       d="M 34,172 Q 95,162 145,176 T 216,168"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -131,7 +131,7 @@ export default function Stage3_5NsStateScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Nervous System State
@@ -139,7 +139,7 @@ export default function Stage3_5NsStateScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -158,7 +158,7 @@ export default function Stage3_5NsStateScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -183,7 +183,7 @@ export default function Stage3_5NsStateScreen() {
                     borderRadius: '16px',
                     border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                     background: active ? '#e4f4ee' : '#f2f9f6',
-                    color: active ? '#044e43' : '#3a3a3a',
+                    color: active ? '#414242' : '#3a3a3a',
                     cursor: 'pointer',
                     transition: 'all 0.25s ease',
                     boxShadow: active ? '0 4px 14px rgba(0,174,157,0.14)' : 'none',
@@ -213,7 +213,7 @@ export default function Stage3_5NsStateScreen() {
                         fontFamily: "'Nunito', sans-serif",
                         fontWeight: 700,
                         fontSize: '14.5px',
-                        color: active ? '#044e43' : '#16302b',
+                        color: active ? '#414242' : '#414242',
                       }}>
                         {s.title}
                       </span>
@@ -222,7 +222,7 @@ export default function Stage3_5NsStateScreen() {
                       fontFamily: "'Nunito', sans-serif",
                       fontWeight: 400,
                       fontSize: '12.5px',
-                      color: active ? '#0a5d50' : '#4a6b62',
+                      color: active ? '#0a5d50' : '#414242',
                       lineHeight: 1.4,
                     }}>
                       {s.desc}

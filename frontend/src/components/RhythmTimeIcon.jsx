@@ -100,9 +100,9 @@ export default function RhythmTimeIcon({ periodId, isActive = false, size = 38 }
             boxShadow: isActive ? '0 0 14px rgba(249, 115, 22, 0.4)' : 'none'
           }}
         >
-          <svg width={iconScale} height={iconScale} viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="4" fill="#f97316" />
-            <circle cx="12" cy="12" r="8" stroke="#f97316" strokeWidth="1.5" opacity="0.6" />
+          <svg width={iconScale} height={iconScale} viewBox="0 0 24 24" fill="none" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="4" fill="#5bbb46" />
+            <circle cx="12" cy="12" r="8" stroke="#5bbb46" strokeWidth="1.5" opacity="0.6" />
             <path d="M12 1v2M12 21v2M1 12h2M21 12h2" />
           </svg>
         </motion.div>
@@ -150,8 +150,8 @@ export default function RhythmTimeIcon({ periodId, isActive = false, size = 38 }
             boxShadow: isActive ? '0 0 14px rgba(124, 58, 237, 0.4)' : 'none'
           }}
         >
-          <svg width={iconScale} height={iconScale} viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#7c3aed" />
+          <svg width={iconScale} height={iconScale} viewBox="0 0 24 24" fill="none" stroke="#00ae9d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#00ae9d" />
           </svg>
         </motion.div>
       )
@@ -174,7 +174,7 @@ export default function RhythmTimeIcon({ periodId, isActive = false, size = 38 }
             boxShadow: isActive ? '0 0 14px rgba(30, 41, 59, 0.4)' : 'none'
           }}
         >
-          <svg width={iconScale} height={iconScale} viewBox="0 0 24 24" fill="#1e293b" stroke="#1e293b" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+          <svg width={iconScale} height={iconScale} viewBox="0 0 24 24" fill="#414242" stroke="#414242" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
           </svg>
         </motion.div>

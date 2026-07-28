@@ -6,9 +6,9 @@
 .ir-root {
   /* LIFED Light Theme Tokens */
   --ir-paper: rgba(255, 255, 255, 0.92);      /* Clean soft white paper surface */
-  --ir-ink: #333435;                          /* LIFED charcoal text */
-  --ir-sub: rgba(51, 52, 53, 0.75);           /* Muted body text */
-  --ir-mute: rgba(51, 52, 53, 0.48);          /* Faint label text */
+  --ir-ink: #414242;                          /* LIFED charcoal text */
+  --ir-sub: rgba(65, 66, 66, 0.75);           /* Muted body text */
+  --ir-mute: rgba(65, 66, 66, 0.48);          /* Faint label text */
   --ir-hairline: rgba(0, 0, 0, 0.07);         /* Soft hairline border */
   --ir-tint: rgba(244, 248, 246, 0.85);       /* Subtle panel tint */
   --ir-tint-deep: rgba(230, 238, 234, 0.7);   /* Soft sage surface tint */
@@ -17,13 +17,13 @@
   
   --ir-accent: #00ae9d;                       /* LIFED Dawn Teal */
   --ir-accent-glow: rgba(0, 174, 157, 0.15);
-  --ir-lavender: #7C3AED;                     /* Purple accent */
+  --ir-lavender: #00ae9d;                     /* Purple accent */
 
   /* Band Palette (Light Theme) */
-  --ir-empty: #e65250;                        /* Running on empty - Soft Coral Red */
-  --ir-pressure: #e69c3a;                     /* Under pressure - Soft Amber */
+  --ir-empty: #00ae9d;                        /* Running on empty - Soft Coral Red */
+  --ir-pressure: #5bbb46;                     /* Under pressure - Soft Amber */
   --ir-steady: #00ae9d;                       /* Steady - LIFED Teal */
-  --ir-strong: #5fbb46;                       /* Strong - LIFED Sage Green */
+  --ir-strong: #5bbb46;                       /* Strong - LIFED Sage Green */
 
   --ir-serif: 'Nunito', system-ui, -apple-system, sans-serif;
   --ir-sans: 'Nunito', system-ui, -apple-system, sans-serif;
@@ -40,20 +40,20 @@
 @media print {
   .ir-root {
     --ir-paper: #ffffff;
-    --ir-ink: #23262a;
+    --ir-ink: #414242;
     --ir-sub: #55595e;
     --ir-mute: #8a8f94;
-    --ir-hairline: #e4e1da;
-    --ir-tint: #f5f8f6;
-    --ir-tint-deep: #eaf0ec;
+    --ir-hairline: #f4f4f4;
+    --ir-tint: #f4f4f4;
+    --ir-tint-deep: #d6edea;
     --ir-card-bg: #ffffff;
-    --ir-card-border: #e2e8f0;
-    --ir-accent: #00897b;
-    --ir-lavender: #6D28D9;
-    --ir-empty: #c84947;
-    --ir-pressure: #c88832;
-    --ir-steady: #00897b;
-    --ir-strong: #4f9f38;
+    --ir-card-border: #f4f4f4;
+    --ir-accent: #00ae9d;
+    --ir-lavender: #00ae9d;
+    --ir-empty: #00ae9d;
+    --ir-pressure: #5bbb46;
+    --ir-steady: #00ae9d;
+    --ir-strong: #5bbb46;
   }
 }
 
@@ -90,7 +90,7 @@
   padding: 12px 24px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, #00ae9d 0%, #00897b 100%);
+  background: linear-gradient(135deg, #00ae9d 0%, #00ae9d 100%);
   color: #fff;
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(0, 174, 157, 0.3);
@@ -133,7 +133,7 @@
   padding: 18px 42px;
   border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.5);
-  background: linear-gradient(135deg, #00ae9d 0%, #10b981 100%);
+  background: linear-gradient(135deg, #00ae9d 0%, #00ae9d 100%);
   color: #ffffff;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   cursor: pointer;
@@ -146,7 +146,7 @@
 }
 .ir-unlock-btn:hover {
   transform: translateY(-3px) scale(1.03);
-  background: linear-gradient(135deg, #009688 0%, #059669 100%);
+  background: linear-gradient(135deg, #009688 0%, #00ae9d 100%);
   box-shadow: 0 16px 44px rgba(16, 185, 129, 0.55), 0 6px 20px rgba(0, 174, 157, 0.4);
   border-color: #ffffff;
 }

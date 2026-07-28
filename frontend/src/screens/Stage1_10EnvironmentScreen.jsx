@@ -13,19 +13,19 @@ const EnvironmentIllustration = () => (
   >
     <defs>
       <radialGradient id="envAura" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#10B981" stopOpacity="0.18" />
-        <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+        <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.18" />
+        <stop offset="100%" stopColor="#00ae9d" stopOpacity="0" />
       </radialGradient>
     </defs>
 
     {/* Soft Aura */}
     <circle cx="120" cy="100" r="80" fill="url(#envAura)" />
-    <circle cx="120" cy="100" r="72" stroke="#10B981" strokeWidth="1.2" strokeDasharray="5 5" opacity="0.25" />
+    <circle cx="120" cy="100" r="72" stroke="#00ae9d" strokeWidth="1.2" strokeDasharray="5 5" opacity="0.25" />
 
     {/* Gentle Hills / Landscape Waves */}
     <motion.path
       d="M 30,140 Q 80,105 130,135 T 210,125"
-      stroke="#10B981"
+      stroke="#00ae9d"
       strokeWidth="2.2"
       strokeLinecap="round"
       fill="none"
@@ -46,7 +46,7 @@ const EnvironmentIllustration = () => (
     <motion.path
       d="M 120,135 C 120,95 155,85 155,85 C 155,85 145,120 120,135 Z"
       fill="rgba(16, 185, 129, 0.2)"
-      stroke="#10B981"
+      stroke="#00ae9d"
       strokeWidth="2"
       strokeLinejoin="round"
       initial={{ scale: 0, originX: '120px', originY: '135px' }}
@@ -67,13 +67,13 @@ const EnvironmentIllustration = () => (
     {/* Sun Ray Dot */}
     <motion.circle
       cx="165" cy="65" r="7"
-      fill="#F59E0B" opacity="0.8"
+      fill="#5bbb46" opacity="0.8"
       animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.9, 0.6] }}
       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
     />
 
     {/* Ground baseline */}
-    <line x1="30" y1="155" x2="210" y2="155" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" opacity="0.3" />
+    <line x1="30" y1="155" x2="210" y2="155" stroke="#00ae9d" strokeWidth="1.5" strokeLinecap="round" opacity="0.3" />
   </motion.svg>
 )
 
@@ -126,7 +126,7 @@ export default function Stage1_10EnvironmentScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Environmental Pulse
@@ -134,7 +134,7 @@ export default function Stage1_10EnvironmentScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -153,7 +153,7 @@ export default function Stage1_10EnvironmentScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 14px 0',
@@ -163,7 +163,7 @@ export default function Stage1_10EnvironmentScreen() {
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-start', width: '100%' }}>
-            <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#16302b', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
+            <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
               Do you have regular access to nature or green spaces?
             </p>
 
@@ -183,7 +183,7 @@ export default function Stage1_10EnvironmentScreen() {
                       borderRadius: '14px',
                       border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
                       background: active ? '#e4f4ee' : '#f2f9f6',
-                      color: active ? '#044e43' : '#3a3a3a',
+                      color: active ? '#414242' : '#3a3a3a',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -210,7 +210,7 @@ export default function Stage1_10EnvironmentScreen() {
                       fontFamily: "'Nunito', sans-serif",
                       fontWeight: active ? 700 : 500,
                       fontSize: '14px',
-                      color: active ? '#044e43' : '#16302b',
+                      color: active ? '#414242' : '#414242',
                     }}>
                       {opt}
                     </span>

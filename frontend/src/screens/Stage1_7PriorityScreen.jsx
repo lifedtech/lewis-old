@@ -17,8 +17,8 @@ const PriorityIllustration = () => (
         <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
       </radialGradient>
       <linearGradient id="prioGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#36D1DC" />
-        <stop offset="100%" stopColor="#10B981" />
+        <stop offset="0%" stopColor="#00ae9d" />
+        <stop offset="100%" stopColor="#00ae9d" />
       </linearGradient>
     </defs>
 
@@ -28,7 +28,7 @@ const PriorityIllustration = () => (
     {/* Stacked Ordered Cards Line Art */}
     <rect x="70" y="55" width="100" height="22" rx="6" stroke="#00AE9D" strokeWidth="2" fill="rgba(0,174,157,0.12)" />
     <rect x="75" y="85" width="90" height="22" rx="6" stroke="url(#prioGrad)" strokeWidth="2" fill="rgba(0,174,157,0.06)" />
-    <rect x="80" y="115" width="80" height="22" rx="6" stroke="#10B981" strokeWidth="2" fill="rgba(16,185,129,0.04)" />
+    <rect x="80" y="115" width="80" height="22" rx="6" stroke="#00ae9d" strokeWidth="2" fill="rgba(16,185,129,0.04)" />
 
     {/* Up/Down Reorder Indicator */}
     <motion.path
@@ -47,7 +47,7 @@ const PriorityIllustration = () => (
     />
     <motion.path
       d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#99E2D8" strokeWidth="2.5" strokeLinecap="round" fill="none"
+      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
       initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
@@ -103,7 +103,7 @@ export default function Stage1_7PriorityScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
               whiteSpace: 'nowrap',
             }}>
               Priority Ranking
@@ -111,7 +111,7 @@ export default function Stage1_7PriorityScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -130,7 +130,7 @@ export default function Stage1_7PriorityScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#94a3b8',
+            color: '#414242',
             textTransform: 'uppercase',
             textAlign: 'right',
             margin: '0 0 8px 0',

@@ -8,7 +8,7 @@ const LABELS = [
   { max: 55,  text: 'In between',       emoji: '🌤️',  color: '#8fad52' },
   { max: 70,  text: 'Mostly stable',    emoji: '☀️',  color: '#3aad8e' },
   { max: 85,  text: 'Quite steady',     emoji: '🌿',  color: '#1a9e7a' },
-  { max: 101, text: 'Very steady',      emoji: '⚓',  color: '#00856a' },
+  { max: 101, text: 'Very steady',      emoji: '⚓',  color: '#00ae9d' },
 ]
 
 function getLabel(v) {
@@ -58,14 +58,14 @@ export default function Stage1_2StabilityScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#16302b',
+              color: '#414242',
             }}>
               Life Stability Spectrum
             </h1>
             <p style={{
               margin: '10px 0 0 0',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#4a6b62',
+              color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '520px',
@@ -131,7 +131,7 @@ export default function Stage1_2StabilityScreen() {
                 height: '8px',
               }}
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '11px', fontWeight: 700, color: '#94a3b8', fontFamily: '"IBM Plex Mono", monospace' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '11px', fontWeight: 700, color: '#414242', fontFamily: '"IBM Plex Mono", monospace' }}>
               <span>TURBULENT</span>
               <span>STEADY</span>
             </div>
