@@ -10,7 +10,6 @@ import Stage1_1IdentityScreen from './screens/Stage1_1IdentityScreen.jsx'
 import Stage1_2StabilityScreen from './screens/Stage1_2StabilityScreen.jsx'
 import Stage1_3PressuresScreen from './screens/Stage1_3PressuresScreen.jsx'
 import Stage1_4BodyScreen from './screens/Stage1_4BodyScreen.jsx'
-import Stage1_5Who5Screen from './screens/Stage1_5Who5Screen.jsx'
 import Stage1_6RelationalScreen from './screens/Stage1_6RelationalScreen.jsx'
 import Stage1_7PriorityScreen from './screens/Stage1_7PriorityScreen.jsx'
 import Stage1_8ArrivalScreen from './screens/Stage1_8ArrivalScreen.jsx'
@@ -29,14 +28,9 @@ import Stage3_5NsStateScreen from './screens/Stage3_5NsStateScreen.jsx'
 import Stage3_6BodyAwarenessScreen from './screens/Stage3_6BodyAwarenessScreen.jsx'
 import Stage4MazeScreen from './screens/Stage4MazeScreen.jsx'
 import Stage5_1LandscapeScreen from './screens/Stage5_1LandscapeScreen.jsx'
-import Stage5_2Pss10Screen from './screens/Stage5_2Pss10Screen.jsx'
-import Stage5_2Ucla3Screen from './screens/Stage5_2Ucla3Screen.jsx'
-import Stage5_2GseScreen from './screens/Stage5_2GseScreen.jsx'
-import Stage5_2PromisScreen from './screens/Stage5_2PromisScreen.jsx'
-import Stage5_2Cfpb5Screen from './screens/Stage5_2Cfpb5Screen.jsx'
-import Stage5_2DienerScreen from './screens/Stage5_2DienerScreen.jsx'
+import InstrumentScreen from './screens/InstrumentScreen.jsx'
+import { INSTRUMENTS } from './constants/instruments.js'
 import Stage5_2InsScreen from './screens/Stage5_2InsScreen.jsx'
-import Stage5_2SwlsScreen from './screens/Stage5_2SwlsScreen.jsx'
 import Stage5_3DeepDivesScreen from './screens/Stage5_3DeepDivesScreen.jsx'
 import Stage5_4BrightSpotScreen from './screens/Stage5_4BrightSpotScreen.jsx'
 import Stage5_5PriorityTensionScreen from './screens/Stage5_5PriorityTensionScreen.jsx'
@@ -59,6 +53,16 @@ import Stage10GeneratingScreen from './screens/Stage10GeneratingScreen.jsx'
 import MirrorScreen from './screens/MirrorScreen.jsx'
 import LoginScreen from './screens/LoginScreen.jsx'
 
+// Bound once at module load so the screen map holds stable component
+// identities — an inline arrow would remount the screen on every render.
+const INSTRUMENT_SCREENS = Object.fromEntries(
+  Object.keys(INSTRUMENTS).map((id) => {
+    const Screen = () => <InstrumentScreen id={id} />
+    Screen.displayName = id
+    return [id, Screen]
+  }),
+)
+
 const SCREENS = {
   landing: LandingScreen,
   preStage0Age: PreStage0AgeScreen,
@@ -68,7 +72,6 @@ const SCREENS = {
   stage1_2Stability: Stage1_2StabilityScreen,
   stage1_3Pressures: Stage1_3PressuresScreen,
   stage1_4Body: Stage1_4BodyScreen,
-  stage1_5Who5: Stage1_5Who5Screen,
   stage1_6Relational: Stage1_6RelationalScreen,
   stage1_7Priority: Stage1_7PriorityScreen,
   stage1_8Arrival: Stage1_8ArrivalScreen,
@@ -87,14 +90,8 @@ const SCREENS = {
   stage3_6BodyAwareness: Stage3_6BodyAwarenessScreen,
   stage4Maze: Stage4MazeScreen,
   stage5_1Landscape: Stage5_1LandscapeScreen,
-  stage5_2Pss10: Stage5_2Pss10Screen,
-  stage5_2Ucla3: Stage5_2Ucla3Screen,
-  stage5_2Gse: Stage5_2GseScreen,
-  stage5_2Promis: Stage5_2PromisScreen,
-  stage5_2Cfpb5: Stage5_2Cfpb5Screen,
-  stage5_2Diener: Stage5_2DienerScreen,
+  ...INSTRUMENT_SCREENS, // the 8 stepped questionnaires (who5 + stage5_2*)
   stage5_2Ins: Stage5_2InsScreen,
-  stage5_2Swls: Stage5_2SwlsScreen,
   stage5_3DeepDives: Stage5_3DeepDivesScreen,
   stage5_4BrightSpot: Stage5_4BrightSpotScreen,
   stage5_5PriorityTension: Stage5_5PriorityTensionScreen,

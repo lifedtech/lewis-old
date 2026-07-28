@@ -6,7 +6,7 @@ import html
 import threading
 import logging
 from collections import deque
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse

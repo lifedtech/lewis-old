@@ -4,7 +4,6 @@ import hashlib
 import hmac
 import secrets
 import os
-import sys
 import re
 import json
 import uuid
@@ -379,7 +378,7 @@ def login_user(email: str, password: str) -> Dict[str, Any]:
         conn.close()
     except ValueError as ve:
         raise ve
-    except Exception as exc:
+    except Exception:
         pass
 
     # 4. Memory Fallback
@@ -417,7 +416,7 @@ def verify_token(token: str) -> Optional[Dict[str, Any]]:
             conn.close()
             if row:
                 return {"id": row['id'], "email": row['email'], "name": row['name'], "source_portal": row['source_portal'], "role": row['role']}
-        except Exception as exc:
+        except Exception:
             pass
 
     # 2. Supabase REST API
@@ -438,7 +437,7 @@ def verify_token(token: str) -> Optional[Dict[str, Any]]:
                         "source_portal": user_obj.get("source_portal", "lewis_app"),
                         "role": user_obj.get("role", "user")
                     }
-        except Exception as exc:
+        except Exception:
             pass
 
     # 3. SQLite Check
@@ -455,7 +454,7 @@ def verify_token(token: str) -> Optional[Dict[str, Any]]:
         conn.close()
         if row:
             return {"id": row[0], "email": row[1], "name": row[2], "source_portal": row[3], "role": row[4]}
-    except Exception as exc:
+    except Exception:
         pass
 
     # 4. Memory Check
@@ -474,7 +473,6 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
     anonymous_code = generate_anonymous_user_code(user_id)
 
     scores = assessment_data.get("scores", {})
-    narrative = assessment_data.get("narrative", {})
     answers = assessment_data.get("answers", {})
     report_obj = assessment_data.get("insight_report", {})
     
@@ -605,7 +603,7 @@ def get_user_assessments(user_id: int) -> List[Dict[str, Any]]:
             rows = cursor.fetchall()
             conn.close()
             return rows
-        except Exception as exc:
+        except Exception:
             pass
 
     if USE_SUPABASE_REST:
@@ -616,7 +614,7 @@ def get_user_assessments(user_id: int) -> List[Dict[str, Any]]:
             )
             if res.status_code == 200:
                 return res.json()
-        except Exception as exc:
+        except Exception:
             pass
 
     try:
@@ -637,7 +635,7 @@ def get_user_assessments(user_id: int) -> List[Dict[str, Any]]:
             "overall_score": r[3],
             "created_at": r[4]
         } for r in rows]
-    except Exception as exc:
+    except Exception:
         return []
 
 def get_onboarding_analytics_summary() -> Dict[str, Any]:
@@ -650,7 +648,7 @@ def get_onboarding_analytics_summary() -> Dict[str, Any]:
             )
             if res.status_code == 200 and len(res.json()) > 0:
                 return res.json()[0]
-        except Exception as exc:
+        except Exception:
             pass
 
     if has_pg and DATABASE_URL:
@@ -662,7 +660,7 @@ def get_onboarding_analytics_summary() -> Dict[str, Any]:
             conn.close()
             if row:
                 return dict(row)
-        except Exception as exc:
+        except Exception:
             pass
 
     return {
