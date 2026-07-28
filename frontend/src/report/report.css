@@ -21,9 +21,9 @@
 
   /* Band Palette (Light Theme) */
   --ir-empty: #00ae9d;                        /* Running on empty - Soft Coral Red */
-  --ir-pressure: #5bbb46;                     /* Under pressure - Soft Amber */
+  --ir-pressure: #5fbb46;                     /* Under pressure - Soft Amber */
   --ir-steady: #00ae9d;                       /* Steady - LIFED Teal */
-  --ir-strong: #5bbb46;                       /* Strong - LIFED Sage Green */
+  --ir-strong: #5fbb46;                       /* Strong - LIFED Sage Green */
 
   --ir-serif: 'Nunito', system-ui, -apple-system, sans-serif;
   --ir-sans: 'Nunito', system-ui, -apple-system, sans-serif;
@@ -51,9 +51,9 @@
     --ir-accent: #00ae9d;
     --ir-lavender: #00ae9d;
     --ir-empty: #00ae9d;
-    --ir-pressure: #5bbb46;
+    --ir-pressure: #5fbb46;
     --ir-steady: #00ae9d;
-    --ir-strong: #5bbb46;
+    --ir-strong: #5fbb46;
   }
 }
 

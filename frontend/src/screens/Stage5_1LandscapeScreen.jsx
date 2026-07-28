@@ -113,7 +113,7 @@ export default function Stage5_1LandscapeScreen() {
               <span>Quietly depleted</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#5bbb46', display: 'inline-block' }}></span>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#5fbb46', display: 'inline-block' }}></span>
               <span>Finding its footing</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -139,7 +139,7 @@ export default function Stage5_1LandscapeScreen() {
               </p>
             ) : (
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ textAlign: 'left' }}>
-                <p style={{ color: getBand(selectedNode.score).cls === 'dep' ? '#00ae9d' : getBand(selectedNode.score).cls === 'mid' ? '#5bbb46' : '#00ae9d', margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"IBM Plex Mono", monospace' }}>
+                <p style={{ color: getBand(selectedNode.score).cls === 'dep' ? '#00ae9d' : getBand(selectedNode.score).cls === 'mid' ? '#5fbb46' : '#00ae9d', margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"IBM Plex Mono", monospace' }}>
                   {selectedBand.label}{selectedTag}
                 </p>
                 <p style={{ color: '#414242', fontWeight: 700, margin: '0 0 4px 0', fontSize: '15px', fontFamily: "'Manrope', sans-serif" }}>
@@ -206,7 +206,7 @@ export default function Stage5_1LandscapeScreen() {
                 {nodes.map(d => {
                   const r = 14 + (d.score / 100) * 12
                   const band = getBand(d.score)
-                  const colorMap = { dep: '#00ae9d', mid: '#5bbb46', res: '#00ae9d' }
+                  const colorMap = { dep: '#00ae9d', mid: '#5fbb46', res: '#00ae9d' }
                   return (
                     <g
                       key={`node-${d.code}`}

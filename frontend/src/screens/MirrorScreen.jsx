@@ -29,7 +29,7 @@ const BackendConnectionErrorIllustration = () => (
     {/* Disconnected Server Plug Line Art */}
     <rect x="75" y="60" width="90" height="55" rx="14" stroke="#00AE9D" strokeWidth="2.5" fill="rgba(0,174,157,0.06)" />
     <circle cx="100" cy="87.5" r="7" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
-    <circle cx="120" cy="87.5" r="7" fill="#5bbb46" stroke="#FFF" strokeWidth="1.5" />
+    <circle cx="120" cy="87.5" r="7" fill="#5fbb46" stroke="#FFF" strokeWidth="1.5" />
     <circle cx="140" cy="87.5" r="7" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
 
     {/* Pulsing Disconnection Warning Signal */}

@@ -55,7 +55,7 @@ const CircadianIllustration = () => (
       transition={{ duration: 3.5, repeat: Infinity, repeatDelay: 3.5, ease: 'easeInOut' }}
       style={{ transformOrigin: '40px 135px' }}
     >
-      <circle cx="40" cy="135" r="14" fill="#FBBF24" stroke="#5bbb46" strokeWidth="2" />
+      <circle cx="40" cy="135" r="14" fill="#FBBF24" stroke="#5fbb46" strokeWidth="2" />
       <motion.g
         animate={{ rotate: 360 }}
         transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
@@ -65,7 +65,7 @@ const CircadianIllustration = () => (
           <line
             key={deg}
             x1="40" y1="117" x2="40" y2="112"
-            stroke="#5bbb46" strokeWidth="2" strokeLinecap="round"
+            stroke="#5fbb46" strokeWidth="2" strokeLinecap="round"
             transform={`rotate(${deg} 40 135)`}
           />
         ))}

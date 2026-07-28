@@ -100,9 +100,9 @@ export default function RhythmTimeIcon({ periodId, isActive = false, size = 38 }
             boxShadow: isActive ? '0 0 14px rgba(249, 115, 22, 0.4)' : 'none'
           }}
         >
-          <svg width={iconScale} height={iconScale} viewBox="0 0 24 24" fill="none" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="4" fill="#5bbb46" />
-            <circle cx="12" cy="12" r="8" stroke="#5bbb46" strokeWidth="1.5" opacity="0.6" />
+          <svg width={iconScale} height={iconScale} viewBox="0 0 24 24" fill="none" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="4" fill="#5fbb46" />
+            <circle cx="12" cy="12" r="8" stroke="#5fbb46" strokeWidth="1.5" opacity="0.6" />
             <path d="M12 1v2M12 21v2M1 12h2M21 12h2" />
           </svg>
         </motion.div>

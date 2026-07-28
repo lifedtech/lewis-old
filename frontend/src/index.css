@@ -4,7 +4,7 @@
 :root {
   /* ---------- Strict LEWIS Color Palette ---------- */
   --lifed-teal: #00ae9d;
-  --green-of-life: #5bbb46;
+  --green-of-life: #5fbb46;
   --pure-white: #ffffff;
   --grey-of-light: #f4f4f4;
   --grey-of-dark: #414242;
@@ -20,7 +20,7 @@
   --dawn: #00ae9d;
   --dawn-soft: #d6edea;
   --dawn-glow: rgba(0, 174, 157, 0.25);
-  --sage: #5bbb46;
+  --sage: #5fbb46;
   --sage-soft: #e6f4d0;
   --lavender: #00ae9d;
   --lavender-soft: #d6edea;

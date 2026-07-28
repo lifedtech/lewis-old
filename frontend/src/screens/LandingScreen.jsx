@@ -150,7 +150,7 @@ export default function LandingScreen() {
             color: '#414242',
             cursor: 'pointer',
           }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#5bbb46', display: 'inline-block' }} />
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#5fbb46', display: 'inline-block' }} />
             Get your report
           </a>
         </div>
@@ -372,7 +372,7 @@ export default function LandingScreen() {
             }}
           >
             <div style={{ flex: 1, minWidth: '280px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#5bbb46', marginBottom: '8px', fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700 }}>
+              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#5fbb46', marginBottom: '8px', fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700 }}>
                 DOMAIN 0{active + 1} / 09 · {activeDomain.field}
               </div>
               <div style={{ fontSize: '24px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -386,10 +386,10 @@ export default function LandingScreen() {
             <div style={{ minWidth: '240px', flex: '0 0 auto', background: 'rgba(255,255,255,0.06)', borderRadius: '18px', padding: '20px 22px', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '10px' }}>
                 <span>Benchmark Score</span>
-                <span style={{ color: '#5bbb46', fontWeight: 800 }}>{activeDomain.score} / 100</span>
+                <span style={{ color: '#5fbb46', fontWeight: 800 }}>{activeDomain.score} / 100</span>
               </div>
               <div style={{ height: '8px', borderRadius: '999px', background: 'rgba(255,255,255,0.15)', overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5bbb46)', width: `${activeDomain.score}%`, transition: 'width 0.6s ease' }} />
+                <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5fbb46)', width: `${activeDomain.score}%`, transition: 'width 0.6s ease' }} />
               </div>
               <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'rgba(255, 255, 255, 0.5)', fontStyle: 'italic' }}>
                 Analyzed via Lewis Adaptive Engine
@@ -618,7 +618,7 @@ export default function LandingScreen() {
                     {d.icon} {d.name}
                   </div>
                   <div style={{ height: '6px', borderRadius: '999px', background: '#f0f4f2', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5bbb46)', width: `${d.score}%` }} />
+                    <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5fbb46)', width: `${d.score}%` }} />
                   </div>
                   <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#414242', textAlign: 'right', fontFamily: '"IBM Plex Mono", monospace' }}>
                     {d.score}

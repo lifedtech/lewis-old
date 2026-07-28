@@ -31,13 +31,13 @@ const AspirationPlantIllustration = () => (
       style={{ transformOrigin: '100px 150px' }}
     >
       {/* Vertical Green Plant Stem */}
-      <line x1="100" y1="150" x2="100" y2="60" stroke="#5bbb46" strokeWidth="3.8" strokeLinecap="round" />
+      <line x1="100" y1="150" x2="100" y2="60" stroke="#5fbb46" strokeWidth="3.8" strokeLinecap="round" />
 
       {/* Left Mint Leaf */}
       <path
         d="M 100,110 C 70,95 65,120 90,132 C 98,135 100,122 100,110 Z"
         fill="#DDF3D5"
-        stroke="#5bbb46"
+        stroke="#5fbb46"
         strokeWidth="2.5"
         strokeLinejoin="round"
       />
@@ -46,7 +46,7 @@ const AspirationPlantIllustration = () => (
       <path
         d="M 100,90 C 130,75 135,100 110,112 C 102,115 100,102 100,90 Z"
         fill="#DDF3D5"
-        stroke="#5bbb46"
+        stroke="#5fbb46"
         strokeWidth="2.5"
         strokeLinejoin="round"
       />

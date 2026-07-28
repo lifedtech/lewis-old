@@ -116,7 +116,7 @@ function NeuralNetwork() {
   // Material for the Neurons (Somas)
   const nodeMaterial = useMemo(() => new THREE.ShaderMaterial({
     uniforms: {
-      color: { value: new THREE.Color('#5bbb46') }, // Lewis Green
+      color: { value: new THREE.Color('#5fbb46') }, // Lewis Green
       time: { value: 0 }
     },
     vertexShader: `

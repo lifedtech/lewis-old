@@ -67,7 +67,7 @@ const EnvironmentIllustration = () => (
     {/* Sun Ray Dot */}
     <motion.circle
       cx="165" cy="65" r="7"
-      fill="#5bbb46" opacity="0.8"
+      fill="#5fbb46" opacity="0.8"
       animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.9, 0.6] }}
       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
     />

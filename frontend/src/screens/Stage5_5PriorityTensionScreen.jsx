@@ -49,7 +49,7 @@ const SeesawTensionIllustration = () => (
       <circle cx="36" cy="105" r="18" fill="#00AE9D" stroke="#FFF" strokeWidth="1.8" />
 
       {/* Right Smaller Gold Sphere (Energy) */}
-      <circle cx="164" cy="105" r="12" fill="#5bbb46" stroke="#FFF" strokeWidth="1.8" />
+      <circle cx="164" cy="105" r="12" fill="#5fbb46" stroke="#FFF" strokeWidth="1.8" />
     </motion.g>
   </motion.svg>
 )

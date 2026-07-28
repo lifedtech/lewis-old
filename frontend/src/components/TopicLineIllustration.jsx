@@ -75,7 +75,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <defs>
             <linearGradient id="illGradDawn" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#FF9466" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#5bbb46" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#5fbb46" stopOpacity="0.6" />
             </linearGradient>
             <linearGradient id="illGradTeal" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.8" />
@@ -146,7 +146,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <defs>
             <linearGradient id="wellGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#5bbb46" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#5fbb46" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#00ae9d" stopOpacity="0.5" />
             </linearGradient>
           </defs>
@@ -293,7 +293,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             <circle cx="160" cy="65" r="7" fill="#00ae9d" />
             <circle cx="215" cy="120" r="7" fill="#FF9466" />
             <circle cx="160" cy="175" r="7" fill="#00ae9d" />
-            <circle cx="105" cy="120" r="7" fill="#5bbb46" />
+            <circle cx="105" cy="120" r="7" fill="#5fbb46" />
           </motion.g>
 
           {/* Radiating Sharing Rings */}
@@ -313,7 +313,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <defs>
             <linearGradient id="satGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#5bbb46" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#5fbb46" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#00ae9d" stopOpacity="0.6" />
             </linearGradient>
           </defs>
@@ -341,8 +341,8 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <path d="M 70,190 Q 160,140 250,190" stroke="rgba(0, 174, 157, 0.35)" strokeWidth="1.5" strokeDasharray="5 5" />
 
           {/* Star Node */}
-          <circle cx="160" cy="65" r="5" fill="#5bbb46" />
-          <line x1="160" y1="75" x2="160" y2="92" stroke="#5bbb46" strokeWidth="1.5" strokeDasharray="3 3" />
+          <circle cx="160" cy="65" r="5" fill="#5fbb46" />
+          <line x1="160" y1="75" x2="160" y2="92" stroke="#5fbb46" strokeWidth="1.5" strokeDasharray="3 3" />
 
           <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
             GLOBAL LIFE SATISFACTION
@@ -469,7 +469,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             style={{ transformOrigin: '110px 168px' }}
           >
             {/* Glowing Sun Core */}
-            <circle cx="110" cy="168" r="14" fill="#FBBF24" stroke="#5bbb46" strokeWidth="1.5" />
+            <circle cx="110" cy="168" r="14" fill="#FBBF24" stroke="#5fbb46" strokeWidth="1.5" />
 
             {/* Rotating Sun Rays */}
             <motion.g
@@ -477,14 +477,14 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
               transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
               style={{ transformOrigin: '110px 168px' }}
             >
-              <line x1="110" y1="146" x2="110" y2="151" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
-              <line x1="110" y1="185" x2="110" y2="190" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
-              <line x1="88" y1="168" x2="93" y2="168" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
-              <line x1="127" y1="168" x2="132" y2="168" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
-              <line x1="95" y1="153" x2="99" y2="157" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
-              <line x1="121" y1="179" x2="125" y2="183" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
-              <line x1="95" y1="183" x2="99" y2="179" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
-              <line x1="121" y1="157" x2="125" y2="153" stroke="#5bbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="110" y1="146" x2="110" y2="151" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="110" y1="185" x2="110" y2="190" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="88" y1="168" x2="93" y2="168" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="127" y1="168" x2="132" y2="168" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="95" y1="153" x2="99" y2="157" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="121" y1="179" x2="125" y2="183" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="95" y1="183" x2="99" y2="179" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" />
+              <line x1="121" y1="157" x2="125" y2="153" stroke="#5fbb46" strokeWidth="2" strokeLinecap="round" />
             </motion.g>
           </motion.g>
 

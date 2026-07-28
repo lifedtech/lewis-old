@@ -39,7 +39,7 @@ const DiurnalCycleIllustration = () => (
       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       style={{ transformOrigin: '120px 40px' }}
     >
-      <circle cx="120" cy="40" r="13" fill="#FBBF24" stroke="#5bbb46" strokeWidth="2" />
+      <circle cx="120" cy="40" r="13" fill="#FBBF24" stroke="#5fbb46" strokeWidth="2" />
       <motion.g
         animate={{ rotate: 360 }}
         transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
@@ -49,7 +49,7 @@ const DiurnalCycleIllustration = () => (
           <line
             key={deg}
             x1="120" y1="23" x2="120" y2="19"
-            stroke="#5bbb46" strokeWidth="1.8" strokeLinecap="round"
+            stroke="#5fbb46" strokeWidth="1.8" strokeLinecap="round"
             transform={`rotate(${deg} 120 40)`}
           />
         ))}
@@ -73,7 +73,7 @@ const DiurnalCycleIllustration = () => (
     {/* Sunrise / Dawn Star on Morning Rise */}
     <motion.circle
       cx="40" cy="135" r="5"
-      fill="#5bbb46"
+      fill="#5fbb46"
       animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
       transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
     />

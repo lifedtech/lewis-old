@@ -191,7 +191,7 @@ body:has(.landing-screen-wrapper),
   transition: all 0.25s ease;
 }
 .landing-footer-link:hover {
-  color: #5bbb46 !important;
+  color: #5fbb46 !important;
 }
 
 /* Smooth Intersection Observer Reveal Utility */
