@@ -54,10 +54,12 @@ body,
 #root {
   margin: 0;
   padding: 0;
-  height: 100vh !important;
-  max-height: 100vh !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
   overflow: hidden !important;
-  touch-action: none;
+  touch-action: manipulation;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
@@ -65,14 +67,15 @@ body,
 body {
   background: radial-gradient(120% 92% at 50% -8%, #f4f4f4, #d6edea);
   color: var(--text);
-  font-family: 'Nunito', system-ui, sans-serif;
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ---------- Laptop & Compact Desktop Viewport Optimization ---------- */
 @media (min-width: 900px) and (max-height: 850px) {
   .main-card {
-    max-height: calc(100vh - 160px) !important;
+    max-height: calc(100dvh - 120px) !important;
     padding: clamp(12px, 1.8vh, 22px) clamp(18px, 2.5vw, 34px) !important;
     border-radius: 24px !important;
   }
@@ -1456,4 +1459,171 @@ select.input-field {
   border-color: var(--dawn);
   transform: scale(0.92);
   box-shadow: 0 0 14px var(--dawn-glow);
+}
+
+/* ================================================================== */
+/* DEVICE-SPECIFIC SYSTEM & RESPONSIVE OPTIMIZATIONS                  */
+/* Targets: iPhone, Google Pixel, Samsung Galaxy, iPad, Tablets       */
+/* ================================================================== */
+
+/* ---------- 1. Ultra-Compact Mobile (Samsung S20/S22 360px, iPhone SE 375px, Fold 344px) ---------- */
+@media screen and (max-width: 380px) {
+  .app-shell {
+    padding: 8px 10px 10px !important;
+  }
+
+  .app-header {
+    margin-bottom: 6px !important;
+  }
+
+  .wordmark {
+    font-size: 17px !important;
+  }
+
+  .stage-track {
+    margin-bottom: 10px !important;
+    gap: 3px !important;
+  }
+
+  .main-card {
+    padding: 14px 14px !important;
+    border-radius: 18px !important;
+    max-height: calc(100dvh - 80px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .main-card h1,
+  .main-card h2,
+  .main-card .headline,
+  .main-card h1.headline {
+    font-size: 20px !important;
+    line-height: 1.15 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .main-card p.sub,
+  p.sub {
+    font-size: 12.5px !important;
+    line-height: 1.35 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .likert-btn,
+  .scale-opt {
+    padding: 7px 10px !important;
+    font-size: 12.5px !important;
+    border-radius: 10px !important;
+  }
+
+  .choice-card {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+  }
+
+  .btn-primary,
+  .btn-next {
+    height: 38px !important;
+    padding: 0 20px !important;
+    font-size: 11.5px !important;
+    min-width: 100px !important;
+  }
+
+  .chip {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+
+  .draggable-item {
+    padding: 7px 10px !important;
+    font-size: 12.5px !important;
+  }
+}
+
+/* ---------- 2. Standard Mobile Phones (iPhone 13/14/15/16, Google Pixel 6/7/8/9, Galaxy S23/S24 381px - 480px) ---------- */
+@media screen and (min-width: 381px) and (max-width: 480px) {
+  .app-shell {
+    padding: 12px 14px 14px !important;
+  }
+
+  .app-header {
+    margin-bottom: 10px !important;
+  }
+
+  .main-card {
+    padding: 20px 18px !important;
+    border-radius: 22px !important;
+    max-height: calc(100dvh - 90px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .main-card h1,
+  .main-card h2,
+  .main-card .headline,
+  .main-card h1.headline {
+    font-size: 23px !important;
+    line-height: 1.18 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .main-card p.sub,
+  p.sub {
+    font-size: 13.5px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 14px !important;
+  }
+
+  .likert-btn,
+  .scale-opt {
+    padding: 9px 14px !important;
+    font-size: 13.5px !important;
+    border-radius: 12px !important;
+  }
+
+  .btn-primary,
+  .btn-next {
+    height: 42px !important;
+    padding: 0 24px !important;
+    font-size: 12.5px !important;
+    min-width: 120px !important;
+  }
+}
+
+/* ---------- 3. Tablet Devices (iPad Mini 744px, iPad Air 820px, iPad Pro 834px/1024px, Galaxy Tab) ---------- */
+@media screen and (min-width: 481px) and (max-width: 1024px) {
+  .app-shell {
+    padding: 20px 32px !important;
+  }
+
+  .main-card {
+    max-width: 780px !important;
+    padding: 32px 40px !important;
+    border-radius: 28px !important;
+    max-height: calc(100dvh - 100px) !important;
+  }
+
+  .main-card h1,
+  .main-card h2,
+  .main-card .headline,
+  .main-card h1.headline {
+    font-size: clamp(30px, 4vw, 40px) !important;
+  }
+
+  .likert-container {
+    gap: 10px !important;
+  }
+
+  .likert-btn,
+  .scale-opt {
+    padding: 12px 20px !important;
+    font-size: 15px !important;
+  }
+
+  .btn-primary,
+  .btn-next {
+    height: 46px !important;
+    padding: 0 32px !important;
+    font-size: 13.5px !important;
+  }
 }
