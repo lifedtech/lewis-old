@@ -190,9 +190,9 @@ export default function Stage4MazeScreen() {
                       key={`${r}-${c}`}
                       style={{
                         position: 'relative',
-                        backgroundColor: isPlayer ? '#00ae9d' : isTarget ? '#00ae9d' : cell === 1 ? '#c2e5dc' : 'transparent',
+                        backgroundColor: isPlayer ? '#00ae9d' : isTarget ? '#5fbb46' : cell === 1 ? '#c2e5dc' : 'transparent',
                         borderRadius: isPlayer || isTarget ? '50%' : '3px',
-                        boxShadow: isPlayer ? '0 0 10px rgba(0,174,157,0.6)' : isTarget ? '0 0 10px rgba(16,185,129,0.6)' : 'none',
+                        boxShadow: isPlayer ? '0 0 10px rgba(0,174,157,0.6)' : isTarget ? '0 0 10px rgba(95,187,70,0.6)' : 'none',
                         transition: 'background-color 0.2s ease, transform 0.15s ease',
                         transform: isPlayer ? 'scale(1.2)' : isTarget ? 'scale(1.1)' : 'scale(1)',
                         zIndex: isPlayer || isTarget ? 10 : 1
@@ -209,7 +209,7 @@ export default function Stage4MazeScreen() {
                               width: '100%',
                               height: '100%',
                               borderRadius: '50%',
-                              border: '2px solid #00ae9d',
+                              border: '2px solid #5fbb46',
                             }}
                           />
                         </div>

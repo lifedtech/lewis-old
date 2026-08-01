@@ -1,23 +1,26 @@
-# insight_report.py — the deterministic 16-page LEWIS Insight Report.
+# insight_report.py — the deterministic 25-page LEWIS Insight Report.
 #
-# Implements Part B of the Insight Report Generation Rulebook v3.0.
-# Input: the enriched object (enrich.build_enriched_object). Output: a
-# structured JSON document of 16 pages of typed blocks that the frontend
-# renders in the approved report style and prints to PDF.
+# Implements Part B and Part C of the Insight Report Generation Rulebook
+# v4.0. Input: the enriched object (enrich.build_enriched_object).
+# Output: a structured JSON document of 25 pages of typed blocks, grouped
+# into six parts behind a cover and a contents page, that the frontend
+# renders in the approved redesign and prints to PDF.
 #
 # Contract highlights enforced here by construction:
 #   - Four band words only; no numeric score, percentile or internal label
 #     ever reaches a page (rulebook §6, §8.4).
 #   - No em-dashes or en-dashes anywhere in the document (§8.2).
 #   - Strengths are named before stretched areas when the shape is uneven.
-#   - Connections describe company, never cause (§9 p5).
-#   - The free anchor precedes any paid suggestion; commerce is gated (§13).
-#   - Research appears only on page 16, bound to §18.
+#   - Connections describe company, never cause (§9 p9, p10).
+#   - The free anchor (pages 17 and 18) precedes the programs page (21),
+#     which then leads confidently toward the best-fit programs unless
+#     commerce is capped or safety has fired (§13).
+#   - Research appears only on pages 24 and 25, bound to §18.
 #   - Safety tiers make the report gentler and shorter, never more
 #     analytical (§16).
 #
 # The report_gate module re-checks all of this mechanically before the
-# API returns the document (§17: the self-check gate).
+# API returns the document (§17 self-check gate, §24 design gate).
 
 from enrich import AREA_CODE_TO_NAME, BAND_STEP
 
@@ -29,13 +32,56 @@ NON_CLINICAL_LINE = (
 )
 
 BAND_GLOSS = {
-    "Running on empty": "This area needs the gentlest care right now.",
-    "Under pressure": "Stretched, and asking for attention.",
-    "Steady": "Holding reliably, without strain.",
-    "Strong": "A real strength, and a place to stand.",
+    "Running on empty": "This area needs the gentlest care right now. Reserve is thin, and effort here costs more than it should.",
+    "Under pressure": "Stretched, and asking for attention. Still functioning, but with less give than it used to have.",
+    "Steady": "Holding reliably, without strain. Not remarkable, and not asking anything of you this month.",
+    "Strong": "A real strength, and a place to stand. Something to spend deliberately, not simply admire.",
 }
 
+BAND_ORDER = ("Running on empty", "Under pressure", "Steady", "Strong")
+
 LOW_BANDS = ("Under pressure", "Running on empty")
+
+# Spec-code order, as the areas are defined in enrich.AREA_DEFS.
+AREA_ORDER = ("MD", "RS", "EC", "IG", "AC", "FW", "EM", "PH", "EN")
+
+# One line icon per area (Part C §22). The frontend maps these keys onto
+# the single thin line icon family; it never substitutes an illustration.
+AREA_ICONS = {
+    "MD": "compass", "RS": "users", "EC": "home", "IG": "sparkles",
+    "AC": "target", "FW": "wallet", "EM": "waves", "PH": "heart", "EN": "zap",
+}
+
+# The short form of each area name, used in page titles inside part four.
+AREA_SHORT = {
+    "MD": "meaning", "RS": "relationships", "EC": "surroundings",
+    "IG": "growth", "AC": "agency", "FW": "money", "EM": "calm",
+    "PH": "body", "EN": "energy",
+}
+
+# The six parts (§7). Front matter (pages 1 and 2) sits outside them.
+PART_ONE = "Part one · Orientation"
+PART_TWO = "Part two · Your picture"
+PART_THREE = "Part three · How it connects"
+PART_FOUR = "Part four · A closer look"
+PART_FIVE = "Part five · Your plan"
+PART_SIX = "Part six · After this"
+
+PART_ICONS = {
+    PART_ONE: "sparkles", PART_TWO: "grid", PART_THREE: "refresh",
+    PART_FOUR: "eye", PART_FIVE: "target", PART_SIX: "calendar",
+}
+
+# The crux of the reader's pattern, said once, as the page 6 pull-quote.
+# One line per handoff lead, so two readers with different patterns never
+# receive the same sentence (§19.5).
+PULL_QUOTES = {
+    "down-regulation": "Your working day does not end. It quietens, and then follows you into the evening.",
+    "gentle activation": "Energy is not missing from your days. It arrives at the hours you have already spent.",
+    "simplification": "Your mind is not disorganised. It is holding too many open loops to put any of them down.",
+    "gentleness": "This is not a season that needs pushing. It is a season that needs carrying, a little.",
+    "steadiness": "Nothing here is broken. The work in front of you is protecting what already holds.",
+}
 
 STANCE = {
     "clear_low": "Spoken plainly, because your answers were consistent",
@@ -345,6 +391,14 @@ ANCHORS = {
         ],
         "why_this": ("WHY AN ENDING, RATHER THAN A BEDTIME ROUTINE",
                      "You might reasonably expect a plan about recovery to focus on sleep. Yours does not, and the reason is specific to your pattern. The difficulty is not the late hour itself. It is that your working day never formally ends, so the whole evening carries it. Give the day a real ending and the evening changes shape on its own. Start at bedtime and you are trying to close a day that has already been carried for hours."),
+        "movements": [
+            ("The laptop closes", "Your cue object catches your eye"),
+            ("Both feet supported", "Sitting or standing, either is fine"),
+            ("Two comfortable breaths", "Then carry on with your evening"),
+        ],
+        "movements_title": "Ten seconds, in three movements",
+        "good_week": "Three honest evenings, not seven forced ones. The pattern is what you are building, and a pattern survives gaps.",
+        "too_much": "Adding a second practice before day four, or turning the pause into a longer routine because it felt good once.",
         "practice_keys": ["cue_anchored", "breathing", "boundaries"],
     },
     "one_small_start": {
@@ -369,6 +423,14 @@ ANCHORS = {
         ],
         "why_this": ("WHY A MORNING START, RATHER THAN A BIGGER PLAN",
                      "You might expect a season of low energy to call for an energy plan: exercise, routines, targets. Yours starts smaller, and deliberately. When reserves are thin, every added demand competes with recovery. One tiny completed loop each day rebuilds traction without spending reserve you do not have. The bigger plan becomes available precisely because you did not start with it."),
+        "movements": [
+            ("The first drink is in your hand", "The cue already happens every morning"),
+            ("Name one small thing", "Fully yours, finished before noon"),
+            ("Say it once", "Out loud or silently, then get on with the day"),
+        ],
+        "movements_title": "Ten seconds, in three movements",
+        "good_week": "Four named mornings, not seven completed lists. What you are rebuilding is the experience of choosing something and having it happen.",
+        "too_much": "Naming three things instead of one, or quietly turning the small thing into the hardest thing on your list.",
         "practice_keys": ["cue_anchored", "progress_noticing", "small_valued_activity"],
     },
     "single_list_moment": {
@@ -393,6 +455,14 @@ ANCHORS = {
         ],
         "why_this": ("WHY A LIST, RATHER THAN A RELAXATION PRACTICE",
                      "A scattered, foggy season seems to call for calm, and calm helps. But a mind juggling open loops cannot relax on command, because the juggling is doing a job: making sure nothing is dropped. Give the loops a page to live on and the mind can stand down honestly. The relaxation arrives as a consequence rather than a demand."),
+        "movements": [
+            ("The day is about to close", "The pad is already where you stop"),
+            ("Write tomorrow's open loops", "Three lines is plenty"),
+            ("Leave it where tomorrow finds it", "Then close the notebook"),
+        ],
+        "movements_title": "Two minutes, in three movements",
+        "good_week": "Four evenings with the loops on paper rather than in your head. An incomplete list still does the whole job.",
+        "too_much": "Turning the list into a planning system, or ranking and re-ranking it until it becomes the evening's work.",
         "practice_keys": ["cue_anchored", "task_writing", "boundaries"],
     },
     "grounding_breath": {
@@ -417,6 +487,14 @@ ANCHORS = {
         ],
         "why_this": ("WHY THIS IS THE WHOLE PLAN",
                      "In a season that is asking a lot of you, a plan should give rather than take. Anything larger than this would quietly become one more demand on reserves that deserve protecting. One small returning each day is a complete practice, and if a day comes when you want more, more will be there. Nothing needs to happen first."),
+        "movements": [
+            ("You find a moment", "Any moment. The hour does not matter"),
+            ("Feet or back supported", "Let something else hold you for a second"),
+            ("Three slow breaths", "Then the practice is finished"),
+        ],
+        "movements_title": "Under a minute, in three movements",
+        "good_week": "Any week in which you returned to yourself once or twice. There is no target here, and nothing to catch up on.",
+        "too_much": "Adding anything at all to this. In this season the practice is complete exactly as it stands.",
         "practice_keys": ["breathing", "self_kindness"],
     },
 }
@@ -559,58 +637,116 @@ def _adjustment_cards(enriched):
 
 
 # ---------------------------------------------------------------------------
-# Programs (page 13), with commerce gating (§13.3).
+# Programs (page 21), with commerce gating (§13.3).
+#
+# Each program carries a cover photograph from the imagery library (§23),
+# a concrete description, fit reasoning drawn from this reader's findings,
+# and the tangible takeaway plus the group-level research advantage behind
+# it. Operator-fillable details render as dashed placeholder chips.
 # ---------------------------------------------------------------------------
+
+PROGRAM_CHIPS = ["[ host name ]", "[ venue ]", "[ dates ]", "[ places ]", "[ all-in price ]"]
 
 PROGRAMS = {
     "evening_winddown": {
-        "tag": "BEST FIT FOR YOU",
         "title": "Evening wind down practice series",
-        "what": "Four small group, in person sessions of forty five minutes each, in the early evening. Gentle settling, body release, and a repeatable closing ritual that you keep afterwards. No performance tracking of any kind.",
-        "why": "It works on exactly the boundary this report identifies as your starting point, and it teaches the transition rather than asking you to already be calm. The sessions are short, and the early evening timing means you practise the skill at the hour you actually need it.",
-        "check": "Ask whether the sessions build on each other, and whether you keep the practice afterwards. A series that leaves you with a portable habit is worth more than four pleasant evenings.",
+        "image": "program-rejuvenation",
+        "what": "Four small group, in person sessions of forty five minutes each, in the early evening. Gentle settling, body release, and a repeatable closing ritual you keep for good. No performance tracking of any kind.",
+        "why": "It works on exactly the boundary this report identifies as your starting point, and it teaches the transition rather than asking you to already be calm. The sessions are short, so they respect your time, and the early evening timing means you practise the skill at the very hour you need it.",
+        "walkaway": "A closing ritual you own, that keeps working long after the four sessions end. In a controlled trial, a structured recovery course improved people's recovery, their reported sleep and their sense of wellbeing.",
         "research_key": "recovery_course",
     },
     "restorative_day": {
-        "tag": "WORTH CONSIDERING LATER",
         "title": "Restorative movement and deep rest day",
+        "image": "program-onsen",
         "what": "A half day experience with unhurried mobility, guided rest, and quiet breaks. No intensive physical demand, and no overnight commitment.",
-        "why": "It is gentle rather than challenging, which matters while stopping is not yet fully restorative for you. It gives your body a longer experience of genuine rest without asking you to perform. Consider it after your first seven days, once you have some sense of whether recovery is starting to arrive.",
-        "check": "Ask what the pacing looks like and what can be skipped. A day that packs its timetable will leave you more activated than when you arrived, which would be the opposite of the point.",
+        "why": "It is gentle rather than challenging, which is exactly right while stopping is not yet fully restorative for you. It gives your body a longer experience of genuine rest without asking you to perform. Pair it with the series, or take it as your reset.",
+        "walkaway": "A full day where rest is the whole point, of the kind that in trials with adults running low increased energy and reduced fatigue.",
         "research_key": "gentle_movement",
     },
     "gentle_movement": {
-        "tag": "BEST FIT FOR YOU",
         "title": "Gentle movement series for low energy seasons",
+        "image": "program-panchakarma",
         "what": "Short, low intensity group sessions of unhurried, breath led movement, designed for people whose energy is currently thin. No fitness goals, no measurements, no intensity progression.",
-        "why": "Demanding exercise asks your body for reserves it does not currently have. Low intensity movement is the version research supports for a season like yours: it adds energy rather than spending it, and the group setting supplies gentle accountability without pressure.",
-        "check": "Ask whether sessions can be scaled down on a tired day, and whether resting during a session is explicitly welcome. The answer tells you whether the design matches its description.",
+        "why": "Demanding exercise asks your body for reserves it does not currently have. Low intensity movement is the version built for a season like yours: it adds energy rather than spending it, and the group supplies gentle accountability without pressure.",
+        "walkaway": "A way of moving that gives energy back rather than spending it. In a randomised trial with adults running low, low intensity activity increased energy and reduced fatigue, outperforming more demanding exercise.",
         "research_key": "low_intensity_movement",
     },
     "connection_circle": {
-        "tag": "BEST FIT FOR YOU",
         "title": "Small guided connection circle",
+        "image": "program-scalp-massage",
         "what": "A small, facilitated group that meets a few times to practise unhurried conversation. No sharing requirements, no performance, and a facilitator whose job is to keep it safe and light.",
         "why": "Your reflection points to connection as the place where a little structure would help most. A small guided format lowers the cost of reaching out by making the first move for you: the time is set, the people arrive, and the conversation is held.",
-        "check": "Ask how large the group is and what happens if you prefer to mostly listen at first. A good host will treat listening as full participation.",
+        "walkaway": "A handful of people who already know where you are starting from. Supportive presence alongside others has long been found to lighten the felt weight of a demanding season.",
         "research_key": "small_group",
     },
     "nature_mornings": {
-        "tag": "A GOOD FIT",
         "title": "Nature immersion morning walks",
+        "image": "hero-breath",
         "what": "Guided, unhurried group walks in green surroundings, early in the day. More noticing than exercising, with no pace requirements.",
-        "why": "Time in green surroundings is one of the most reliably supportive habits in wellbeing research, and a scheduled group walk protects the time in a way good intentions rarely do.",
-        "check": "Ask about the pace and whether the walk includes quiet time. A walk that is really a workout serves a different purpose than this one.",
+        "why": "Green surroundings are among the most reliably supportive settings there are, and a scheduled group walk protects the time in a way good intentions rarely do. It suits a pattern that responds to place rather than to effort.",
+        "walkaway": "A standing morning that belongs to you. Spending around two hours a week in nature is associated with good self reported health and wellbeing.",
         "research_key": "nature_contact",
     },
 }
 
+# The case for guided support (§13.2). Each advantage is backed by a
+# group-level finding, expressed in plain language with no citation and no
+# promise to this reader. The three shown are chosen from this reader's
+# own pattern, so the box differs between reports (§19.5).
+PROGRAM_ADVANTAGES = {
+    "facilitation": ("Skilled facilitation",
+                     "In a controlled trial, people who took a structured recovery course reported better recovery, improved sleep and a stronger sense of wellbeing.",
+                     "users"),
+    "protected_time": ("A protected room and a set time",
+                       "Gentle, breath led movement is linked across review after review to lower perceived stress.",
+                       "clock"),
+    "company": ("People beside you",
+                "Showing up alongside others has long been found to lighten the felt weight of a demanding season.",
+                "heart"),
+    "movement": ("Movement sized for a low season",
+                 "In a randomised trial with adults running low on energy, low intensity activity increased energy and reduced fatigue.",
+                 "zap"),
+    "setting": ("A setting that does some of the work",
+                "Spending around two hours a week in green surroundings is associated with good self reported health and wellbeing.",
+                "home"),
+}
+
+
+def _advantage_keys(enriched):
+    """Three advantages for the page 21 case, chosen from this reader's
+    pattern rather than from a fixed list."""
+    lead = enriched["handoff"]["lead_with"]
+    focus = enriched["handoff"]["primary_focus"]
+    keys = []
+    if lead == "down-regulation" or focus in ("PH", "EM"):
+        keys.append("facilitation")
+    if lead == "gentle activation" or focus == "EN":
+        keys.append("movement")
+    if enriched["areas"]["EC"]["band"] in ("Steady", "Strong") or focus == "EC":
+        keys.append("setting")
+    keys.append("protected_time")
+    if enriched["areas"]["RS"]["band"] in ("Steady", "Strong") or focus == "RS" \
+            or enriched["context"].get("support_preference") == "structured":
+        keys.append("company")
+    keys.append("facilitation")
+    ordered, seen = [], set()
+    for key in keys:
+        if key not in seen:
+            seen.add(key)
+            ordered.append(key)
+    return ordered[:3]
+
 
 def _pick_programs(enriched):
+    """The best fit, a complementary second, and one off-pattern option
+    that may be named in a single positive line (§13.2). A second program
+    is a companion recommendation, never a deferral."""
     lead = enriched["handoff"]["lead_with"]
     focus = enriched["handoff"]["primary_focus"]
     recovery = (enriched["patterns"]["recovery_load"] or {}).get("label", "")
     ctx_recovery = enriched["context"].get("recovery")
+    thin_recovery = recovery == "Carrying a lot" or ctx_recovery in ("still_tired", "anxious_at_rest")
 
     if lead == "down-regulation" or focus in ("PH", "EM"):
         primary = "evening_winddown"
@@ -621,14 +757,19 @@ def _pick_programs(enriched):
     else:
         primary = "nature_mornings"
 
-    secondary = None
-    if recovery == "Carrying a lot" or ctx_recovery in ("still_tired", "anxious_at_rest"):
-        secondary = "restorative_day" if primary != "restorative_day" else None
-    if secondary is None and primary != "nature_mornings":
-        secondary = None  # a second program must earn its place; none forced
+    if thin_recovery:
+        order = ["restorative_day", "gentle_movement", "nature_mornings", "connection_circle"]
+    elif focus == "EN" or enriched["areas"]["EN"]["band"] in LOW_BANDS:
+        order = ["gentle_movement", "restorative_day", "nature_mornings", "connection_circle"]
+    elif enriched["areas"]["RS"]["band"] in LOW_BANDS:
+        order = ["connection_circle", "nature_mornings", "restorative_day", "gentle_movement"]
+    else:
+        order = ["nature_mornings", "restorative_day", "connection_circle", "gentle_movement"]
+    secondary = next((p for p in order if p != primary), None)
 
-    saved = "nature_mornings" if primary != "nature_mornings" and lead == "down-regulation" else None
-    return primary, secondary, saved
+    mention = next((p for p in ("nature_mornings", "connection_circle", "gentle_movement")
+                    if p not in (primary, secondary)), None)
+    return primary, secondary, mention
 
 
 # ---------------------------------------------------------------------------
@@ -683,13 +824,15 @@ PROGRAM_RESEARCH = {
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _page(number, eyebrow, title, subtitle, blocks):
+def _page(number, part, eyebrow, title, deck, blocks, next_line=None):
     return {
         "number": number,
+        "part": part,
         "eyebrow": eyebrow,
         "title": title,
-        "subtitle": subtitle,
+        "deck": deck,
         "blocks": [b for b in blocks if b],
+        "next": next_line,
     }
 
 
@@ -697,13 +840,43 @@ def _para(text, lead=None):
     return {"type": "paragraph", "text": text, "lead": lead}
 
 
-def _callout(label, body, variant="info", title=None):
-    return {"type": "callout", "label": label, "title": title, "body": body, "variant": variant}
+def _callout(label, body, variant="info", title=None, icon=None):
+    return {"type": "callout", "label": label, "title": title, "body": body,
+            "variant": variant, "icon": icon}
 
 
-def _cards(items, columns=2):
-    return {"type": "cards", "columns": columns,
-            "items": [{"label": l, "title": t, "body": b} for (l, t, b) in items]}
+def _cards(items, columns=2, tone=None):
+    """Each item is (label, title, body) with optional icon and tone as a
+    fourth and fifth element."""
+    built = []
+    for item in items:
+        label, title, body = item[0], item[1], item[2]
+        built.append({
+            "label": label, "title": title, "body": body,
+            "icon": item[3] if len(item) > 3 else None,
+            "tone": item[4] if len(item) > 4 else tone,
+        })
+    return {"type": "cards", "columns": columns, "items": built}
+
+
+def _numbered_cards(items, columns=4):
+    """The four movements of the report (page 3): a numbered badge, an
+    icon, a title and a line of body."""
+    return {"type": "cards", "columns": columns, "numbered": True, "items": [
+        {"n": str(i + 1), "label": None, "title": t, "body": b, "icon": ic,
+         "tone": tone}
+        for i, (t, b, ic, tone) in enumerate(items)
+    ]}
+
+
+def _list(label, items, icon="check"):
+    return {"type": "list", "label": label,
+            "items": [{"text": t, "icon": icon} for t in items]}
+
+
+def _row(blocks):
+    """Two blocks side by side, in the proportions the page asks for."""
+    return {"type": "row", "blocks": [b for b in blocks if b]}
 
 
 def _sorted_areas(enriched, strengths_first=True):
@@ -711,146 +884,66 @@ def _sorted_areas(enriched, strengths_first=True):
     return sorted(areas, key=lambda a: a["score"], reverse=strengths_first)
 
 
+def _area(enriched, code):
+    """The nine report areas only. Scoring carries dimensions the report
+    does not describe, so any code is looked up rather than indexed."""
+    return enriched["areas"].get(code) if code else None
+
+
 def _area_name(enriched, code):
-    return enriched["areas"][code]["name"] if code and code in enriched["areas"] else None
+    area = _area(enriched, code)
+    return area["name"] if area else None
 
 
-# ---------------------------------------------------------------------------
-# Pages 1 to 6: the reading
-# ---------------------------------------------------------------------------
-
-def _p1_cover(enriched):
-    meta = enriched["meta"]
-    prepared = " / ".join(x for x in [
-        f"Prepared for {meta['name']}" if meta["name"] else "Prepared for you",
-        meta["date"], meta["location"],
-    ] if x)
-    return _page(1, "LIFED · LEWIS · FULL REFLECTION", "Your LEWIS Insight Report",
-                 "A whole-person reading of what is holding you, what is stretched, how the pieces move together, and where a small change may travel furthest.", [
-        _para(prepared, lead="YOUR COMPLETE WELLBEING REFLECTION"),
-        _para("A private reflection, prepared from your full journey."),
-        _cards([
-            ("WHAT THIS REPORT IS", None,
-             "A reflection of how your wellbeing is arranged right now, across nine areas of life, written to be read slowly and returned to."),
-            ("HOW IT WAS BUILT", None,
-             "Your answers were read using established wellbeing measures used in published research. The studies behind each area are listed in the appendix."),
-        ], columns=2),
-        _callout(None, NON_CLINICAL_LINE, variant="footer"),
-    ])
+def _area_band(enriched, code):
+    area = _area(enriched, code)
+    return area["band"] if area else None
 
 
-def _p2_orientation(enriched):
-    meta = enriched["meta"]
-    who = meta["name"] or "you"
-    return _page(2, "ORIENTATION", "How to read this reflection",
-                 "This report is built to be read slowly. It begins with what is already supporting you, names what is stretched, shows how the two connect, and only then suggests what to try.", [
-        _callout("THE CENTRAL IDEA",
-                 "This is a picture of how your wellbeing is arranged right now. It is a season, not a personality type, and not a verdict. A future reflection may look different, because your life can look different.",
-                 variant="info"),
-        _cards([
-            ("FIRST", "Your whole picture",
-             "Nine areas of life are read together, so a strong part of your life is never erased by one difficult stretch, and a difficult stretch is never hidden behind a capable exterior."),
-            ("SECOND", "What moves together",
-             "Some areas rise and fall alongside each other. Noticing which ones travel together helps you find the place where a small effort is likely to reach furthest."),
-            ("THIRD", "The texture of your days",
-             "Your rhythm, your stress pattern, where tension settles in your body, and how the short exercises felt all add colour to the picture."),
-            ("FOURTH", "A right-sized next step",
-             "Suggestions are matched to the area asking for care, what gets in your way, the kind of support you prefer, and how much plan genuinely fits your life this month."),
-        ], columns=2),
-        {"type": "bandwords", "items": [
-            {"band": b, "gloss": BAND_GLOSS[b]}
-            for b in ("Running on empty", "Under pressure", "Steady", "Strong")
-        ]},
-        _para("These four words are used instead of scores on purpose. A single sitting can place you honestly within a broad range, and a broad range is what this report gives you. A number would suggest a precision that no short reflection can carry, and it would invite you to grade yourself rather than understand yourself."),
-        _callout("WHAT THIS REPORT CAN SAY, AND WHAT IT CANNOT",
-                 "It can say how your wellbeing feels arranged today, which areas seem to travel together, and which small change is most likely to be worth your effort. It cannot say what caused what, how you will feel next month, or anything about your health in a medical sense. Where this report is confident, it speaks plainly. Where it is less certain, it says so rather than pretending."),
-        _callout("A NOTE ON COMPARISON",
-                 "You will not find yourself ranked against other people here. Comparison tends to produce anxiety rather than insight, and the honest answer to how do I compare usually needs far more information than one reflection can gather. This report compares you only to yourself, and invites you to do the same when you retake it."),
-    ])
+def _join_names(names):
+    names = [n for n in names if n]
+    if not names:
+        return ""
+    if len(names) == 1:
+        return names[0]
+    if len(names) == 2:
+        return names[0] + " and " + names[1]
+    # Several area names already contain "and", so the final separator
+    # keeps its comma to stop the list reading as one long clause.
+    return ", ".join(names[:-1]) + ", and " + names[-1]
 
 
-def _p3_where_you_are(enriched):
-    ctx = enriched["context"]
-    portrait = enriched["portrait"] or {}
-    headline = PORTRAIT_HEADLINE.get(portrait.get("id"), "Where you are right now")
-    refine = PORTRAIT_REFINE.get(portrait.get("id"), "The full picture is described in the pages that follow.")
+def _prose(name):
+    """An area name as it should appear inside a sentence."""
+    return name.lower().replace(" & ", " and ") if name else name
 
-    arrival = ctx["arrival_word"]
-    if arrival:
-        opening = f'You arrived with one word: "{arrival}". {refine}'
-    else:
-        opening = f"However you arrived today, you are here, and that counts. {refine}"
 
-    bright = _area_name(enriched, enriched["bright_code"])
-    primary = _area_name(enriched, enriched["leverage"]["primary"])
-    downstream = [_area_name(enriched, c) for c in enriched["leverage"]["downstream"]]
-    anchor = _pick_anchor(enriched)
+def _band_legend(enriched):
+    """The band counts under the petal wheel, in band order."""
+    counts = {b: 0 for b in BAND_ORDER}
+    for area in enriched["areas"].values():
+        if area["band"]:
+            counts[area["band"]] += 1
+    return [{"band": b, "count": counts[b]} for b in reversed(BAND_ORDER) if counts[b]]
 
-    map_cards = []
-    strengths = [_area_name(enriched, c) for c in enriched["strength_codes"][:3]]
-    if strengths:
-        map_cards.append(("A PLACE TO STAND", " · ".join(s for s in strengths if s),
-                          "Your ground, doing real work. It holds you up."))
-    if primary:
-        star = " ★ Also what you said matters most" if _tension_matches_primary(enriched) else ""
-        map_cards.append(("ASKING FOR CARE", primary,
-                          f"Where effort may travel furthest right now.{star}"))
-    if downstream:
-        map_cards.append(("SITS DOWNSTREAM", " · ".join(d for d in downstream if d),
-                          "Often eases as the starting point eases."))
-    map_cards.append(("YOUR FIRST STEP", anchor["title"],
-                      "Small enough to survive a crowded day."))
 
-    blocks = [
-        _para(f"{headline}. This describes your current season, not the kind of person you are.", lead="YOUR REFLECTION"),
-        _para(opening),
-    ]
-
-    if enriched["safety"]["tier"] != "none":
-        blocks.append(_callout("A NOTE OF CARE, FIRST",
-            "A lot in your answers is asking for care right now. That is not a failure. It is information, and it deserves kindness. This report stays deliberately small and gentle because of it, and if things feel heavy, sharing how you are doing with someone you trust, or a qualified professional, is a real and worthwhile step.",
-            variant="care"))
-
-    blocks.append(_cards(map_cards, columns=2))
-
-    shape = enriched["lwi"]["shape"]
-    strengths_names = [s for s in strengths if s]
-    stretched_names = [_area_name(enriched, c) for c in enriched["stretched_codes"][:3]]
-    if shape == "uneven" and strengths_names:
-        blocks.append(_para(
-            f"Your reflection has a distinctly uneven shape, and that unevenness is worth understanding. "
-            f"{', '.join(strengths_names)}: these are not merely intact. They are doing real, load bearing work, and they are exactly why you keep functioning even when reserves run thin. They are also why the thinness can stay invisible to everyone around you."
-        ))
-        if stretched_names:
-            blocks.append(_para(
-                f"Underneath that, the pattern in {_join_names([_prose(n) for n in stretched_names])} reads stretched. Responsibility has been arriving on schedule. Recovery has not. The result is not simply feeling tired. It is having less usable reserve at the moment you want to begin something, and carrying the day further into the evening than you would choose."
-            ))
-    else:
-        blocks.append(_para(
-            "Your picture is fairly even across its areas. That evenness is itself useful information: no single part of life is dragging the rest, and the invitation is closer to maintenance than repair."
-        ))
-
-    if primary:
-        blocks.append(_para(
-            f"This is why the most useful starting point for you is not motivation, and it is not a bigger routine. It is one small, repeatable practice aimed at your {_prose(primary)}. If that reads as true to you, caring for it first may let the nearby areas ease on their own."
-        ))
-
-    tension = enriched["patterns"]["priority_tension"]
-    top_priority = ctx["top_priority"]
-    if top_priority:
-        confirmed = tension is not None and tension.get("firmness") == "plain"
-        if confirmed:
-            matters = (
-                f"When asked what matters most right now, you placed {_prose(str(top_priority))} at the top. It is also an area under real strain, and when that was reflected back to you, you confirmed it fits. That agreement is why this report speaks about it plainly rather than tentatively. The starting point is one you already recognise as yours."
-            )
-        else:
-            matters = (
-                f"When asked what matters most right now, you placed {_prose(str(top_priority))} at the top. This report keeps that priority in view throughout: what is suggested is chosen to protect what you said matters, not to compete with it."
-            )
-        blocks.append(_callout("WHAT MATTERS MOST TO YOU", matters))
-
-    return _page(3, "YOUR REFLECTION", "Where you are right now",
-                 f"{headline}. A season, not a type.", blocks)
+def _petals(enriched, variant):
+    """The nine-petal picture. Each petal reaches further the steadier that
+    area, in four discrete steps only. No number appears inside it."""
+    ordered = [enriched["areas"][c] for c in AREA_ORDER]
+    overall = enriched["lwi"]["band"] or "Steady"
+    shape = "but uneven" if enriched["lwi"]["shape"] == "uneven" else "and even"
+    return {
+        "type": "petals",
+        "variant": variant,
+        "overall": overall,
+        "shape": shape,
+        "items": [{"name": a["name"], "band": a["band"], "step": a["step"],
+                   "icon": AREA_ICONS[code]}
+                  for code, a in zip(AREA_ORDER, ordered)],
+        "legend": _band_legend(enriched),
+        "legend_label": "The further a petal reaches, the steadier that area",
+    }
 
 
 def _tension_matches_primary(enriched):
@@ -861,177 +954,532 @@ def _tension_matches_primary(enriched):
     return KEY_TO_SPEC_CODE.get(tension.get("dimension")) == enriched["leverage"]["primary"]
 
 
-def _p4_shape(enriched):
+# ---------------------------------------------------------------------------
+# Front matter: pages 1 and 2
+# ---------------------------------------------------------------------------
+
+def _p01_cover(enriched):
+    meta = enriched["meta"]
+    return _page(1, None, "Your complete wellbeing reflection", "Your LEWIS Insight Report",
+                 "Nine areas of your life, read together: what is holding you up, what is stretched, and where one small change travels furthest.", [
+        {"type": "prepared", "name": meta["name"], "date": meta["date"],
+         "location": meta["location"],
+         "note": "A private reflection, written to be read slowly and returned to."},
+        _petals(enriched, "cover"),
+        _cards([
+            ("WHAT THIS REPORT IS", None,
+             "A reading of how your wellbeing is arranged right now, across nine areas of life. It describes the season you are in, not the kind of person you are.",
+             "sparkles"),
+            ("HOW IT WAS BUILT", None,
+             "Your answers were read using wellbeing questionnaires tested and used in published research. The short exercises added texture. Every study is named at the end.",
+             "flask"),
+        ], columns=2),
+        _callout(None, NON_CLINICAL_LINE, variant="footer", icon="shield"),
+    ])
+
+
+def _p02_contents(enriched, pages):
+    """Built last, from the titles of the pages that were actually
+    produced, so the contents can never drift from the document."""
+    parts = []
+    for part_name in (PART_ONE, PART_TWO, PART_THREE, PART_FOUR, PART_FIVE, PART_SIX):
+        items = [{"title": p["title"], "page": p["number"]}
+                 for p in pages if p["part"] == part_name]
+        if items:
+            parts.append({"name": part_name, "icon": PART_ICONS[part_name], "items": items})
+    return _page(2, None, "Contents", "What is inside your report",
+                 "Six movements, read in order. Each part answers the question the part before it raises, so the report builds rather than lists.", [
+        {"type": "contents", "parts": parts},
+        _callout("IF YOU READ ONLY THREE PAGES",
+                 "Start with page 05 for the whole picture in one view, page 07 for the shape of your nine areas, and page 17 for the single practice this report would keep if it could keep only one. Everything else explains those three.",
+                 icon="book"),
+    ])
+
+
+# ---------------------------------------------------------------------------
+# Part one: orientation, pages 3 and 4
+# ---------------------------------------------------------------------------
+
+def _p03_how_to_read(enriched):
+    meta = enriched["meta"]
+    return _page(3, PART_ONE, "Orientation", "How to read this reflection",
+                 "Built to be read slowly. It begins with what already supports you, names what is stretched, shows how the two connect, and only then suggests what to try.", [
+        _row([
+            {"type": "profile", "label": "PREPARED FOR", "name": meta["name"] or "You",
+             "meta": " · ".join(x for x in [meta["location"]] if x) or None,
+             "status": "Full reflection completed"},
+            _callout("THE CENTRAL IDEA",
+                     "This is a picture of how your wellbeing is arranged right now. It is a season, not a personality type, and not a verdict. A future reflection may read differently, because your life can.",
+                     icon="sun"),
+        ]),
+        _numbered_cards([
+            ("Your whole picture",
+             "Nine areas are read together, so one strong part of your life never erases a difficult stretch, and a difficult stretch never hides behind a capable exterior.",
+             "grid", None),
+            ("What moves together",
+             "Some areas rise and fall in each other's company. Noticing which travel together shows where a small effort reaches furthest.",
+             "refresh", None),
+            ("The texture of your days",
+             "Your rhythm, your stress pattern, where tension settles, and how the short exercises felt all add colour to the picture.",
+             "waves", None),
+            ("A right sized next step",
+             "Suggestions are matched to the area asking for care, what gets in your way, the support you prefer, and how much plan fits your life this month.",
+             "target", "green"),
+        ]),
+        _cards([
+            ("WHAT IT CAN SAY, AND WHAT IT CANNOT", None,
+             "It can say how your wellbeing feels arranged today, which areas appear to travel together, and which small change is most likely to be worth your effort. It cannot say what caused what, how you will feel next month, or anything medical. Where it is confident, it speaks plainly. Where it is less certain, it says so rather than pretending.",
+             "scale", "neutral"),
+            ("A NOTE ON COMPARISON", None,
+             "You will not find yourself ranked against other people here. Comparison tends to produce anxiety rather than insight, and the honest answer to how do I compare needs far more than one reflection can gather. This report compares you only to yourself, and invites you to do the same when you retake it.",
+             "users", "neutral"),
+        ], columns=2),
+    ], next_line="The four words this report uses instead of scores, and why.")
+
+
+def _p04_four_words(enriched):
+    return _page(4, PART_ONE, "The language of this report", "The four words this report uses",
+                 "Every area of your life is described with one of four words. They are deliberately broad, and they are the same four words wherever they appear in this report.", [
+        {"type": "bandladder",
+         "items": [{"band": b, "step": BAND_STEP[b]} for b in BAND_ORDER],
+         "left": "Needs the gentlest care", "right": "A place to stand"},
+        {"type": "bandcards",
+         "items": [{"band": b, "gloss": BAND_GLOSS[b]} for b in BAND_ORDER]},
+        _row([
+            _callout("WHY FOUR WORDS INSTEAD OF A SCORE",
+                     "One sitting places you honestly inside a broad range, and that is what this report can give you truthfully. A number would suggest a precision no single reflection carries, and it would invite you to grade yourself rather than understand yourself. Words also travel better. Running on empty tells you what to do next. A number does not.",
+                     icon="scale"),
+            {"type": "checklist", "label": "HOW TO HOLD THEM", "items": [
+                {"text": "As a description of this season", "tone": "yes"},
+                {"text": "As a pointer to where effort is worth spending", "tone": "yes"},
+                {"text": "Never as a grade, a verdict, or a fixed trait", "tone": "no"},
+            ]},
+        ]),
+    ], next_line="Your whole picture in one page, beginning with your own word for it.")
+
+
+# ---------------------------------------------------------------------------
+# Part two: your picture, pages 5 to 8
+# ---------------------------------------------------------------------------
+
+def _p05_where_you_are(enriched):
+    ctx = enriched["context"]
+    portrait = enriched["portrait"] or {}
+    headline = PORTRAIT_HEADLINE.get(portrait.get("id"), "Where you are right now")
+    refine = PORTRAIT_REFINE.get(portrait.get("id"), "The full picture is described in the pages that follow.")
+
+    arrival = ctx["arrival_word"]
+    if arrival:
+        opening = 'You arrived with one word: "' + str(arrival) + '." ' + refine
+    else:
+        opening = "However you arrived today, you are here, and that counts. " + refine
+
+    primary = _area_name(enriched, enriched["leverage"]["primary"])
+    downstream_codes = enriched["leverage"]["downstream"]
+    strengths = [_area_name(enriched, c) for c in enriched["strength_codes"][:3]]
+    strengths = [s for s in strengths if s]
+    anchor = _pick_anchor(enriched)
+
+    downstream = []
+    for i, code in enumerate(downstream_codes):
+        name = _area_name(enriched, code)
+        if not name:
+            continue
+        downstream.append({
+            "name": name,
+            "band": _area_band(enriched, code),
+            "note": "often eases as the starting point eases" if i == 0 else "sits in the same loop",
+        })
+
+    read_bits = []
+    if strengths:
+        read_bits.append(_prose(strengths[0]) + " is holding you up")
+    if primary:
+        read_bits.append("your " + _prose(primary) + " is asking for care")
+    friction = (ctx.get("friction") or "").strip()
+    if friction:
+        read_bits.append(friction + " is in the way")
+    read_bits.append("one small practice is the gentlest way in")
+
+    blocks = [{"type": "pullquote", "variant": "opening", "text": opening, "icon": "quote"}]
+
+    if enriched["safety"]["tier"] != "none":
+        blocks.append(_callout("A NOTE OF CARE, FIRST",
+            "A lot in your answers is asking for care right now. That is not a failure. It is information, and it deserves kindness. This report stays deliberately small and gentle because of it, and if things feel heavy, sharing how you are doing with someone you trust, or a qualified professional, is a real and worthwhile step.",
+            variant="care", icon="heart"))
+
+    blocks.append({
+        "type": "map",
+        "ground": {"label": "A PLACE TO STAND", "names": strengths,
+                   "note": "Your ground, doing real work"},
+        "here": {"label": "YOU ARE HERE",
+                 "title": (enriched["lwi"]["band"] or "Steady"),
+                 "shape": "but uneven" if enriched["lwi"]["shape"] == "uneven" else "and even",
+                 "up": "holds you up", "down": "is straining"},
+        "care": ({"label": "ASKING FOR CARE", "name": primary,
+                  "band": _area_band(enriched, enriched["leverage"]["primary"]),
+                  "star": _tension_matches_primary(enriched)} if primary else None),
+        "downstream": downstream,
+        "first_step": {"label": "YOUR FIRST STEP", "title": anchor["title"],
+                       "note": "small enough to survive a crowded day"},
+        "read": "Read as one sentence. " + _join_names(read_bits).capitalize() + ".",
+    })
+
+    top_priority = ctx["top_priority"]
+    if top_priority:
+        tension = enriched["patterns"]["priority_tension"]
+        confirmed = tension is not None and tension.get("firmness") == "plain"
+        if confirmed:
+            matters = ("When asked what matters most right now, you placed " + _prose(str(top_priority))
+                       + " at the top. It is also an area under real strain, and you confirmed the fit when it was reflected back to you. That agreement is why this report speaks about it plainly rather than tentatively, from a starting point you already recognise as yours.")
+        else:
+            matters = ("When asked what matters most right now, you placed " + _prose(str(top_priority))
+                       + " at the top. This report keeps that priority in view throughout: what is suggested is chosen to protect what you said matters, not to compete with it.")
+        blocks.append(_callout("WHAT MATTERS MOST TO YOU", matters, icon="star"))
+
+    return _page(5, PART_TWO, "Your reflection", "Where you are right now",
+                 headline + ". This describes your current season, not the kind of person you are.",
+                 blocks, next_line="What that picture is telling you, in plain language.")
+
+
+def _p06_what_it_tells_you(enriched):
+    ctx = enriched["context"]
+    shape = enriched["lwi"]["shape"]
+    strengths = [_area_name(enriched, c) for c in enriched["strength_codes"][:3]]
+    strengths = [s for s in strengths if s]
+    stretched = [_area_name(enriched, c) for c in enriched["stretched_codes"][:3]]
+    stretched = [s for s in stretched if s]
+    primary = _area_name(enriched, enriched["leverage"]["primary"])
+
+    if shape == "uneven" and strengths:
+        deck = "Your reflection has an uneven shape, and the unevenness is the most useful thing in it."
+        holding = [
+            _join_names(strengths) + ": these are not merely intact. They are doing real, load bearing work, and they are exactly why you keep functioning even when reserves run thin.",
+            "Those same strengths are why the thinness underneath can stay invisible. You keep functioning well, so nothing looks wrong from outside, and little from inside either, until you try to begin something.",
+        ]
+    else:
+        deck = "Your reflection has a fairly even shape, and that evenness is itself the useful information in it."
+        holding = [
+            (_join_names(strengths) + ": these are carrying their share, quietly and without drama." if strengths
+             else "No single area is carrying the others, which is its own kind of steadiness."),
+            "An even picture means the invitation is closer to maintenance than repair. What already works is worth protecting before anything new is added.",
+        ]
+
+    if stretched:
+        thin = [
+            "The pattern in " + _join_names([_prose(n) for n in stretched]) + " reads stretched. Responsibility has been arriving on schedule. Recovery has not. The result is not simply feeling tired. It is having less usable reserve at the moment you want to begin something, and carrying the day further into the evening than you would choose.",
+        ]
+    else:
+        thin = [
+            "Nothing in your picture reads as stretched right now. That is worth naming plainly rather than hurrying past, because it is the condition under which small, protective habits are cheapest to build.",
+        ]
+    if primary:
+        thin.append("This is why your most useful starting point is not motivation, and it is not a bigger routine. It is one small, repeatable act of care aimed at your " + _prose(primary) + ".")
+
+    arc = ctx.get("energy_arc") or {}
+    slots = [s for s in ("morning", "afternoon", "evening", "night") if arc.get(s)]
+    timeline = None
+    if slots:
+        timeline = {
+            "type": "timeline",
+            "title": "THE SHAPE OF YOUR DAY, AS YOU DESCRIBED IT",
+            "segments": [{"label": s.title(), "level": arc[s]} for s in slots],
+            "note": "Drawn from how you described your own day. A pattern to notice, not a measurement.",
+        }
+
+    friction = (ctx.get("friction") or "").strip()
+    constraints = []
+    if friction:
+        constraints.append((None, friction.capitalize() + " is the friction",
+                            "Not willingness. Any plan that needs a clear half hour will lose to a crowded week, so this one does not ask for that.",
+                            "clock"))
+    if enriched["areas"]["AC"]["band"] in LOW_BANDS or enriched["handoff"]["lead_with"] == "down-regulation":
+        constraints.append((None, "Transitions cost most",
+                            "Ending, switching roles and restarting read as harder than the work itself. That is a timing problem, and timing is changeable.",
+                            "refresh"))
+    else:
+        constraints.append((None, "Reserve is the limit, not intent",
+                            "What is scarce in this season is the reserve behind a decision, rather than the willingness to make it. A plan has to fit the reserve you actually have.",
+                            "battery"))
+    sizing = enriched["handoff"]["habit_sizing"]
+    constraints.append((None, "So the start point is small",
+                        "One repeatable cue at the seam of your day, rather than a routine that assumes the evening is already yours."
+                        if sizing != "moderate" else
+                        "One repeatable cue, with room to grow only once it has proved it survives an ordinary week.",
+                        "target"))
+
+    return _page(6, PART_TWO, "Your reflection", "What your picture is telling you", deck, [
+        {"type": "columns", "items": [
+            {"label": "WHAT IS HOLDING YOU UP", "icon": "shield", "tone": "green", "paras": holding},
+            {"label": "WHAT IS THIN UNDERNEATH", "icon": "alert", "tone": "amber", "paras": thin},
+        ]},
+        {"type": "pullquote", "variant": "crux",
+         "text": PULL_QUOTES.get(enriched["handoff"]["lead_with"], PULL_QUOTES["steadiness"])},
+        timeline,
+        _cards(constraints[:3], columns=3),
+    ], next_line="All nine areas together, and the ones this report is least sure about.")
+
+
+def _p07_the_shape(enriched):
     areas_sorted = _sorted_areas(enriched)
     overall = enriched["lwi"]["band"] or "Steady"
     shape = enriched["lwi"]["shape"]
-
-    wheel_items = [{"name": a["name"], "band": a["band"], "step": a["step"]}
-                   for a in areas_sorted]
     unread = [a["name"] for a in enriched["areas"].values() if a["band"] is None]
 
     if shape == "uneven":
         shape_note = (
-            f"{overall} overall, but uneven. The overall word describes the whole field. It does not cancel the genuine "
+            overall + " overall, but uneven. The overall word describes the whole field. It does not cancel the genuine "
             "stretch in the areas asking for care. A shape like this usually means your strengths are quietly subsidising "
-            "the areas that are stretched, which works for a while and is worth noticing before it stops working."
+            "the areas that are stretched. That works for a while, and it is worth noticing before it stops working."
         )
     else:
         shape_note = (
-            f"{overall} overall, and fairly even. No single area is carrying the others, and no single area is dragging them. "
+            overall + " overall, and fairly even. No single area is carrying the others, and no single area is dragging them. "
             "The most useful move in an even season is usually protecting what already works."
         )
+    if unread:
+        shape_note += " " + _join_names(unread) + " stayed out of this picture rather than being guessed at."
 
-    table_rows = [[a["name"], a["band"], a["asking_about"]] for a in areas_sorted]
-    for name in unread:
-        area = next(x for x in enriched["areas"].values() if x["name"] == name)
-        table_rows.append([name, "Not read", area["asking_about"]])
+    return _page(7, PART_TWO, "The nine areas", "The shape of your wellbeing",
+                 "Nine areas of life, read together. The shape matters more than any single area: it shows where your strength is, and where your effort is most needed.", [
+        _row([
+            _petals(enriched, "page"),
+            {"type": "bands", "title": "YOUR AREAS, STRENGTHS FIRST",
+             "items": [{"name": a["name"], "band": a["band"], "step": a["step"]}
+                       for a in areas_sorted]},
+        ]),
+        _callout("THE OVERALL SHAPE", shape_note, icon="compass"),
+    ], next_line="What each of the nine areas is actually asking about.")
 
-    supported = [a["name"] for a in enriched["areas"].values()
-                 if a["read_type"] == "supported" and a["band"] is not None]
-    clear_count = sum(1 for a in enriched["areas"].values() if a["read_type"] == "clear")
-    certainty = (
-        f"Most of your areas can be spoken about plainly, because your answers were clear and consistent. "
-        + (f"{_join_names(supported)} are described a little more carefully. They rest on a smaller, more indirect set of questions, so this report offers them as a reading you are invited to test against your own experience rather than as a settled conclusion. You will notice the wording shift accordingly when you reach them."
-           if supported else
-           "Where any area rests on fewer questions, the wording softens accordingly, and you can trust that shift when you read it.")
-        + (f" {_join_names(unread)} were left unread rather than guessed." if unread else "")
-    )
 
-    return _page(4, "THE NINE AREAS", "The shape of your wellbeing",
-                 "Nine areas of life, read together. The shape matters more than any single area, because it shows you where your strength is and where your effort is most needed.", [
-        {"type": "wheel", "overall": overall, "items": wheel_items,
-         "note": "Each area grows in four steps only, matching the four words on the previous page."},
-        {"type": "bands", "title": "YOUR AREAS, STRENGTHS FIRST",
-         "items": wheel_items},
-        _callout("THE OVERALL SHAPE", shape_note),
-        {"type": "table", "title": "WHAT EACH AREA COVERS",
+def _p08_what_each_area_asks(enriched):
+    rows = []
+    for code in AREA_ORDER:
+        area = enriched["areas"][code]
+        rows.append([
+            {"text": area["name"], "icon": AREA_ICONS[code]},
+            {"text": area["band"] or "Not read", "band": area["band"] or "Not read"},
+            area["asking_about"],
+        ])
+
+    scored = [a for a in enriched["areas"].values() if a["band"] is not None]
+    total = len(enriched["areas"])
+    plain = [a["name"] for a in scored if a["read_type"] == "clear"]
+    offered = [a["name"] for a in scored if a["read_type"] == "supported"]
+    unread = [a["name"] for a in enriched["areas"].values() if a["band"] is None]
+
+    primary_name = _area_name(enriched, enriched["leverage"]["primary"])
+    if primary_name and primary_name in offered:
+        note = ("The areas held most carefully here are also the ones you most want answers about. "
+                "That is uncomfortable, and worth saying out loud rather than hiding behind confident language.")
+    elif unread:
+        note = ("Start with what is missing rather than what is firm. " + _join_names(unread)
+                + " stayed unread because the questions behind them were skipped, and nothing is filled in on your behalf. "
+                "Everything else here rests on answers you actually gave.")
+    else:
+        note = ("Most of this picture can be spoken about directly, and that is the useful headline. "
+                "Where the wording softens later in this report, the softening is deliberate and worth trusting.")
+
+    certainty = {
+        "type": "certainty",
+        "total": total,
+        "plain": {"label": "DESCRIBED PLAINLY", "count": len(plain),
+                  "body": ("A full set of clear, consistent answers stands behind these, so the report speaks about them directly."
+                           if plain else "No area in this reflection rests on a full set of answers.")},
+        "offered": {"label": "OFFERED TO TEST", "count": len(offered),
+                    "body": ((_join_names([_prose(n) for n in offered]).capitalize()
+                              + " rest on fewer questions. They are offered as a reading to test against your own experience.")
+                             if offered else "Every area read here rests on a full set of questions.")},
+        "unread": ({"label": "LEFT UNREAD", "count": len(unread),
+                    "body": _join_names(unread) + " were left unread rather than guessed."} if unread else None),
+        "note": note,
+    }
+
+    return _page(8, PART_TWO, "The nine areas", "What each area is asking about",
+                 "Each area asks about how a part of life feels to live in, not how well you are performing in it.", [
+        {"type": "table", "title": None, "icons": True,
          "columns": ["Area", "Your reading", "What this area is asking about"],
-         "rows": table_rows},
-        _callout("WHERE THIS REPORT IS MOST AND LEAST CERTAIN", certainty),
-    ])
+         "rows": rows},
+        certainty,
+    ], next_line="Which of these nine areas appear to move in each other's company.")
 
 
-def _join_names(names):
-    names = [n for n in names if n]
-    if not names:
-        return ""
-    if len(names) == 1:
-        return names[0]
-    return ", ".join(names[:-1]) + " and " + names[-1]
+# ---------------------------------------------------------------------------
+# Part three: how it connects, pages 9 to 12
+# ---------------------------------------------------------------------------
+
+def _one_sentence(enriched):
+    primary_name = _area_name(enriched, enriched["leverage"]["primary"])
+    downstream_names = [_area_name(enriched, c) for c in enriched["leverage"]["downstream"]]
+    downstream_names = [d for d in downstream_names if d]
+    strengths = [_area_name(enriched, c) for c in enriched["strength_codes"][:3]]
+    strengths = [s for s in strengths if s]
+
+    bits = []
+    if primary_name:
+        bits.append("your " + _prose(primary_name) + " is the clearest place to begin")
+    if downstream_names:
+        verb = "sits" if len(downstream_names) == 1 else "sit"
+        bits.append(_join_names([_prose(d) for d in downstream_names]) + " " + verb + " close alongside it")
+    if strengths:
+        bits.append("your strong areas stand apart as ground you can rely on while the rest steadies")
+    if not bits:
+        return "In short: no single area is pulling on the others, and the invitation is to protect what already works."
+    return "In short: " + ", ".join(bits) + "."
 
 
-def _prose(name):
-    """An area name as it should appear inside a sentence."""
-    return name.lower().replace(" & ", " and ") if name else name
+def _p09_moves_together(enriched):
+    primary = enriched["leverage"]["primary"]
+    strain, links = [], []
+    if _area_name(enriched, primary):
+        strain.append({"name": _area_name(enriched, primary),
+                       "band": _area_band(enriched, primary), "role": "start"})
+    for link in enriched["connections"]:
+        name = _area_name(enriched, link["b"])
+        from_name = _area_name(enriched, link["a"])
+        if not name or not from_name:
+            continue
+        strain.append({"name": name, "band": _area_band(enriched, link["b"]),
+                       "role": "linked" if link["rank"] == "clearest" else "loop"})
+        links.append({"from": from_name, "to": name,
+                      "style": "solid" if link["rank"] == "clearest" else "dashed"})
+    for code in enriched["stretched_codes"]:
+        name = _area_name(enriched, code)
+        if name and not any(s["name"] == name for s in strain):
+            strain.append({"name": name, "band": _area_band(enriched, code), "role": "loose"})
+
+    ground = [{"name": _area_name(enriched, c), "band": _area_band(enriched, c)}
+              for c in enriched["strength_codes"][:4]]
+    ground = [g for g in ground if g["name"]]
+
+    blocks = [{
+        "type": "connections",
+        "strain_label": "Where the strain sits",
+        "ground_label": "Ground you can rely on",
+        "start_label": "Start here",
+        "strain": strain,
+        "ground": ground,
+        "links": links,
+        "ground_note": ("These stand apart from the strained loop. That is what makes them useful."
+                        if ground else None),
+        "caption": "Only the active links are drawn, and the size of each shape follows its reading.",
+        "legend": [
+            {"style": "solid", "text": "A solid line means the two areas appear to travel together closely."},
+            {"style": "dashed", "text": "A dashed line means they sit in the same loop, more loosely."},
+            {"style": "none", "text": "No line means the area is holding independently of the strain."},
+        ],
+    }]
+    if not links:
+        blocks.append(_para(
+            "No area in your reflection stands out as pulling on the others. Your picture is balanced enough that no connection line would be honest, so none is drawn. The invitation is maintenance: keep doing what already works."))
+    blocks.append(_para(_one_sentence(enriched), lead="READ AS ONE SENTENCE"))
+
+    return _page(9, PART_THREE, "How it connects", "What seems to move together",
+                 "These links show areas that appear to rise and fall alongside each other in your reflection. They describe company, not cause. Knowing which travel together tells you where a single change is likely to reach more than one place.",
+                 blocks, next_line="What those links mean, and why they decide where you start.")
 
 
-def _p5_connections(enriched):
+def _p10_reading_connections(enriched):
     primary = enriched["leverage"]["primary"]
     primary_name = _area_name(enriched, primary)
-    connections = enriched["connections"]
-    blocks = []
+    blocks = [_para(_one_sentence(enriched))]
 
     link_cards = []
-    for i, link in enumerate(connections):
+    for link in enriched["connections"]:
         a_name = _area_name(enriched, link["a"])
         b_name = _area_name(enriched, link["b"])
         if not a_name or not b_name:
             continue
         label = "THE CLEAREST LINK" if link["rank"] == "clearest" else "THE SECOND LINK"
-        body = (
-            f"When {_prose(a_name)} is stretched, {_prose(b_name)} tends to feel it too. The two appear to move together in your reflection. This is company, not cause: it says where a single change is likely to reach more than one place, and nothing more."
-        )
-        link_cards.append((label, f"{a_name} and {_prose(b_name)}", body))
+        body = ("When " + _prose(a_name) + " is stretched, " + _prose(b_name)
+                + " tends to feel it too. The two appear to move together in your reflection. This is company, not cause: it says where a single change is likely to reach more than one place, and nothing more.")
+        link_cards.append((label, a_name + " and " + _prose(b_name), body, "refresh"))
 
-    strengths = [_area_name(enriched, c) for c in enriched["strength_codes"][:3]]
+    strengths = [_area_name(enriched, c) for c in enriched["strength_codes"][:2]]
     strengths = [s for s in strengths if s]
     if strengths:
         link_cards.append((
             "YOUR PROTECTIVE GROUND", _join_names(strengths),
-            "These are genuinely holding, and they are practical resources rather than pleasant extras. They can protect your time, hold you gently accountable, and supply patience with yourself while the rest steadies."
-        ))
+            "These are genuinely holding, and they are practical resources rather than pleasant extras. They can protect your time, hold you gently accountable, and supply patience with yourself while the rest steadies.",
+            "shield"))
 
     if primary_name:
         if enriched["leverage"]["is_lowest"]:
-            begin_body = (
-                f"Your {_prose(primary_name)} is both the area under the most strain and the one with the clearest links outward, which makes it the natural place to begin. A small change there is likely to travel further than effort spent anywhere else."
-            )
+            begin_body = ("Your " + _prose(primary_name)
+                          + " is both the area under the most strain and the one with the clearest links outward, which makes it the natural place to begin. A small change there is likely to travel further than effort spent anywhere else.")
         else:
             lowest_name = _area_name(enriched, enriched["leverage"]["lowest"])
-            begin_body = (
-                f"The most stretched area is not automatically the best place to start. Here, your {_prose(primary_name)} has the clearest links outward to what else is low"
-                + (f", including your {_prose(lowest_name)}" if lowest_name and lowest_name != primary_name else "")
-                + ", which means a small change there is likely to travel further than pushing directly at the lowest point."
-            )
-        link_cards.append(("WHERE TO BEGIN", primary_name, begin_body))
+            begin_body = ("The most stretched area is not automatically the best place to start. Here, your "
+                          + _prose(primary_name) + " has the clearest links outward to what else is low"
+                          + ((", including your " + _prose(lowest_name))
+                             if lowest_name and lowest_name != primary_name else "")
+                          + ", which means a small change there is likely to travel further than pushing directly at the lowest point.")
+        link_cards.append(("WHERE TO BEGIN", primary_name, begin_body, "target"))
 
     if link_cards:
         blocks.append(_cards(link_cards, columns=2))
-    else:
-        blocks.append(_para(
-            "No area in your reflection stands out as pulling on the others. Your picture is balanced enough that no connection line would be honest, so none is drawn. The invitation is maintenance: keep doing what already works."
-        ))
 
-    summary_bits = []
+    reach_items = []
     if primary_name:
-        summary_bits.append(f"your {_prose(primary_name)} is the clearest place to begin")
-    downstream_names = [_area_name(enriched, c) for c in enriched["leverage"]["downstream"]]
-    downstream_names = [d for d in downstream_names if d]
-    if downstream_names:
-        summary_bits.append(f"{_join_names([_prose(d) for d in downstream_names])} {'sits' if len(downstream_names) == 1 else 'sit'} close alongside it")
-    if strengths:
-        summary_bits.append("your strong areas stand apart as ground you can rely on while the rest steadies")
-    if summary_bits:
-        blocks.insert(0, _para("In short: " + ", ".join(summary_bits) + ".", lead="READ AS ONE SENTENCE"))
+        n = len(enriched["leverage"]["downstream"])
+        reach_items.append({"name": primary_name, "level": max(n, 1),
+                            "label": "Reaches two areas" if n >= 2 else
+                                     "Reaches one area" if n == 1 else "The place to begin"})
+    for code in enriched["leverage"]["downstream"]:
+        name = _area_name(enriched, code)
+        if name:
+            reach_items.append({"name": name, "level": 1, "label": "Sits downstream"})
+    if reach_items:
+        blocks.append({"type": "reach", "title": "HOW FAR A CHANGE IN EACH AREA IS LIKELY TO TRAVEL",
+                       "items": reach_items,
+                       "note": "Reach is drawn from the links in your own reflection, not from a general model. It is a reason to start somewhere, not a promise about the result."})
 
     blocks.append(_callout("WORTH HOLDING LIGHTLY",
-        "This reflection comes from a single sitting, on a particular day. It can point you toward a useful place to start, but it cannot tell you what caused what. The honest test is whether this pattern shifts when your life shifts, which is exactly what the thirty day experiment later in this report is designed to help you notice."))
+        "Everything here comes from a single sitting, on one particular day. It can point you toward a useful place to start. It cannot tell you what caused what. The real test is whether this pattern shifts when your life shifts, which is exactly what the thirty day experiment later in this report is built to help you notice.",
+        icon="info"))
 
-    return _page(5, "HOW IT CONNECTS", "What seems to move together",
-                 "These are areas that appear to rise and fall alongside each other in your reflection. They describe company, not cause. Knowing which areas travel together tells you where a single change is likely to reach more than one place.", blocks)
+    return _page(10, PART_THREE, "How it connects", "Reading the connections",
+                 "The links named in reader language, and what they mean for where you begin.",
+                 blocks, next_line="What your own description of a normal day says about how stress is arriving.")
 
 
-def _p6_stress(enriched):
+def _p11_how_stress_shows_up(enriched):
     ctx = enriched["context"]
     stress = enriched["patterns"]["stress"] or {}
-    load = enriched["patterns"]["recovery_load"] or {}
     blocks = []
 
     arc = ctx.get("energy_arc") or {}
-    if arc:
+    slots = [s for s in ("morning", "afternoon", "evening", "night") if arc.get(s)]
+    if slots:
         blocks.append({
-            "type": "daycurve",
-            "points": [{"slot": s.title(), "level": arc.get(s)} for s in ("morning", "afternoon", "evening", "night") if arc.get(s)],
+            "type": "dayrhythm",
+            "title": "YOUR DAY, AS YOU DESCRIBED IT",
+            "slots": [s.title() for s in slots],
+            "series": [{"label": "Your energy", "tone": "teal",
+                        "points": [arc[s] for s in slots]}],
             "note": "Drawn from how you described your own day. A pattern to notice, not a measurement.",
-        })
-
-    load_label = load.get("label")
-    if load_label:
-        level = {"Light load": 1, "Moderate load": 2, "Carrying a lot": 3}.get(load_label, 2)
-        blocks.append({
-            "type": "loadbar", "level": level, "label": load_label,
-            "note": "Your accumulated demands, weighed against how well rest has been restoring you.",
         })
 
     texture_cards = []
     stress_label = stress.get("label")
     if stress_label and stress_label != "Settled":
         texture_cards.append(("YOUR STRESS PATTERN", stress_label.replace("&", "and"),
-                              "Drawn from your own description of how pressure has been showing up lately."))
+                              "Drawn from your own description of how pressure has been showing up lately.",
+                              "waves"))
     elif stress_label == "Settled":
         texture_cards.append(("YOUR STRESS PATTERN", "Mostly settled",
-                              "Pressure is present, as it is for everyone, and it has not been running the day."))
+                              "Pressure is present, as it is for everyone, and it has not been running the day.",
+                              "waves"))
 
     before, after = ctx.get("breathing_before"), ctx.get("breathing_after")
     if before or after:
         if before and after and before != after:
-            b_body = "A small shift appeared between the start and the end of your breathing minute, when nothing was forced. That is genuinely useful information: gentle settling is available to you when the practice is unforced."
             b_title = "A little easier by the end"
+            b_body = "A small shift toward ease appeared when nothing was forced. Gentle settling is available to you."
         else:
-            b_body = "Your minute of quiet breathing stayed roughly where it began. That is information too: settling may need a slightly longer runway, which is why nothing in your plan relies on instant calm."
             b_title = "Steady through the minute"
-        texture_cards.append(("YOUR BREATHING MINUTE", b_title, b_body))
+            b_body = "Your minute of quiet breathing stayed roughly where it began. Settling may need a slightly longer runway, which is why nothing in your plan relies on instant calm."
+        texture_cards.append(("YOUR BREATHING MINUTE", b_title, b_body, "wind"))
 
     recovery_line = RECOVERY_LINES.get(ctx.get("recovery") or "")
     if recovery_line:
@@ -1041,76 +1489,127 @@ def _p6_stress(enriched):
             "still_tired": "Stopping is not yet fully restorative",
             "anxious_at_rest": "Stopping has felt uneasy",
         }.get(ctx.get("recovery"), "Your recovery")
-        texture_cards.append(("YOUR RECOVERY", rec_title, recovery_line))
+        texture_cards.append(("YOUR RECOVERY", rec_title, recovery_line, "moon"))
 
     if texture_cards:
         blocks.append(_cards(texture_cards, columns=3 if len(texture_cards) >= 3 else 2))
 
+    highs = [s for s in ("morning", "afternoon", "evening", "night") if arc.get(s) == "High"]
+    if "evening" in highs or "night" in highs:
+        reading = "Your energy is not uniformly low. It moves through the day and lifts again late, and your pressure tends to lift alongside it. That combination is what makes stopping feel strangely effortful: the body is tired, and the day has not fully released you. Evenings then risk becoming a second working day of planning, scrolling or problem solving, at the hour you most need a softer landing."
+    elif "morning" in highs:
+        reading = "Your day leads with its best energy and spends down from there. That shape rewards putting what matters earliest, and it means the later day should be planned as a descent rather than pushed as a second climb."
+    elif slots:
+        reading = "Your energy moves through the day in a shape worth knowing. Working with that shape, rather than overriding it, is the cheapest improvement available to you."
+    else:
+        reading = "You chose to skip most of the short exercises, so this page stays honest and short. Nothing about your rhythm is guessed in their absence."
+
+    if not blocks:
+        blocks.append(_para("You chose to skip the short exercises behind this page, so it stays honest and short. Nothing about your rhythm or your body is guessed in their absence."))
+
+    blocks.append(_callout("WHAT YOUR RHYTHM AND YOUR PRESSURE TOGETHER ARE SAYING", reading, icon="waves"))
+
+    return _page(11, PART_THREE, "Your rhythm", "How stress is showing up",
+                 "A picture of your lived pattern, drawn from your own words and choices. It is not a sleep study, and not a measurement of anything happening inside your body.",
+                 blocks, next_line="How much you have been carrying, and where it settles in your body.")
+
+
+def _p12_where_tension_settles(enriched):
+    ctx = enriched["context"]
+    load = enriched["patterns"]["recovery_load"] or {}
     zones = [BODY_ZONE_WORDS[z] for z in ctx["body_zones"] if z in BODY_ZONE_WORDS]
+    blocks = []
+
+    load_label = load.get("label")
+    if load_label:
+        level = {"Light load": 1, "Moderate load": 2, "Carrying a lot": 3}.get(load_label, 2)
+        blocks.append({
+            "type": "loadbar", "level": level, "label": load_label,
+            "title": "HOW MUCH YOU HAVE BEEN CARRYING",
+            "steps": ["Light", "Moderate", "Carrying a lot"],
+            "note": "Your accumulated demands, weighed against how well rest has been restoring you.",
+        })
     if zones:
-        blocks.append({"type": "bodymap", "zones": zones,
-                       "note": "Where you noticed tension."})
+        blocks.append({"type": "bodymap", "title": "WHERE YOU NOTICED TENSION",
+                       "zones": ctx["body_zones"], "words": zones,
+                       "note": "Marked from where you told this reflection tension had been gathering."})
 
     interp = []
-    if arc:
-        highs = [s for s in ("morning", "afternoon", "evening", "night") if arc.get(s) == "High"]
-        if "evening" in highs or "night" in highs:
-            interp.append("Your energy is not uniformly low. It moves through the day and lifts again late, and your pressure tends to lift alongside it. That combination is what makes stopping feel strangely effortful: the body is tired, but the day has not fully released you. Evenings then risk becoming a second working day in disguise, filled with planning, scrolling, or problem solving, when what you actually need is a softer landing.")
-        elif "morning" in highs:
-            interp.append("Your day leads with its best energy and spends down from there. That shape rewards putting what matters earliest, and it means the later day should be planned as descent rather than pushed as a second climb.")
-        else:
-            interp.append("Your energy moves through the day in a shape worth knowing. Working with that shape, rather than overriding it, is the cheapest improvement available to you.")
+    if load_label == "Carrying a lot":
+        interp.append("You are carrying a lot, and the weight is not evenly spread. What you described is a load that has been arriving steadily while the recovery that should follow it has not, so each day starts a little further behind the last.")
+    elif load_label:
+        interp.append("The load you described is real without being overwhelming, which is the stage where small changes still land quickly. The pattern has not hardened.")
+    before, after = ctx.get("breathing_before"), ctx.get("breathing_after")
     if before or after:
         interp.append("Your minute of quiet breathing is part of why your plan is sized the way it is. A modest shift, or none, points to a brief transition rather than a long routine. Small and repeatable will serve you better than ambitious and occasional.")
     if zones:
-        interp.append(f"Tension clustered around your {_join_names(zones)}, and you noticed it yourself. That matters. It means you are not disconnected from your body. You are carrying a lot in a body you can still hear, which is good news for how quickly small practices tend to land.")
+        interp.append("Tension gathered around your " + _join_names(zones) + ", and you noticed it yourself. That matters. It means you are not disconnected from your body. You are carrying a lot in a body you can still hear, which bodes well for how quickly small practices tend to land.")
     for text in interp:
         blocks.append(_para(text))
+
+    if zones:
+        upper = any(z in ("head", "neck", "back") for z in ctx["body_zones"])
+        blocks.append(_cards([
+            ("THE GOOD NEWS IN THIS", None,
+             "You can feel where your tension sits. Practices that ask you to notice will land quickly for you.", "check"),
+            ("THE PART TO RESPECT", None,
+             ("Most of the tension clusters above the shoulders, the area a long screen day loads most."
+              if upper else
+              "The tension you marked sits deep rather than surface level, and it responds to time and gentleness rather than to effort."),
+             "alert"),
+        ], columns=2))
+
     if not blocks:
-        blocks.append(_para("You chose to skip most of the short exercises, so this page stays honest and short. Nothing about your rhythm or your body is guessed in their absence."))
+        blocks.append(_para("You chose to skip the body map and the load questions, so this page stays honest and short. Nothing about where you carry tension is guessed in their absence."))
 
     lead = enriched["handoff"]["lead_with"]
     why_next = {
-        "down-regulation": "Because stopping is not yet fully restorative for you, intensive challenges and high commitment programs are not the right first move, even where they look appealing. The sequence that fits your current pattern is to downshift first, and build later.",
+        "down-regulation": "Because stopping is not yet fully restorative for you, intensive challenges and high commitment programs are not the right first move, however appealing they look. The sequence that fits your current pattern is to downshift first, and build later.",
         "gentle activation": "Because energy is the scarce resource right now, everything that follows is sized to add energy rather than spend it. Gentle beats ambitious in this season, and the plan is built accordingly.",
-        "simplification": "Because your days are carrying many open loops, the suggestions that follow simplify before they add. One clear seam in the day comes first; everything else stays optional.",
+        "simplification": "Because your days are carrying many open loops, the suggestions that follow simplify before they add. One clear seam in the day comes first, and everything else stays optional.",
         "gentleness": "Because your answers are asking for care, everything that follows is deliberately small, free, and optional. Nothing in this report asks you to push.",
         "steadiness": "Because your pattern is broadly holding, the suggestions that follow are about protecting what works and reinforcing it gently, rather than repairing anything.",
     }.get(lead, "The pattern on this page is what shapes the sequence of suggestions that follows.")
-    blocks.append(_callout("WHY THIS SHAPES WHAT COMES NEXT", why_next))
+    blocks.append(_callout("WHY THIS SHAPES WHAT COMES NEXT", why_next, variant="synthesis", icon="arrow"))
 
-    return _page(6, "YOUR RHYTHM", "How stress is showing up",
-                 "This is a picture of your lived pattern, drawn from your own words and choices. It is not a sleep study or a measurement of anything happening inside your body.", blocks)
+    return _page(12, PART_THREE, "Your rhythm", "Where the tension settles",
+                 "How much you have been carrying, weighed against how well rest has been restoring you, and where in your body you noticed it.",
+                 blocks, next_line="A closer look at the three areas nearest your starting point.")
 
 
 # ---------------------------------------------------------------------------
-# Pages 7 to 9: the closer look
+# Part four: a closer look, pages 13 to 15
 # ---------------------------------------------------------------------------
 
 REALISM_CODES = ("FW", "IG", "EC")
 
 
 def _cluster_areas(enriched):
-    """Page 7: the three areas nearest the starting point. Page 8: the
-    strengths. Page 9: money, growth, environment (what sets what is
+    """Page 13: the three areas nearest the starting point. Page 14: the
+    strengths. Page 15: money, growth, environment (what sets what is
     realistic). Unread areas join their natural page."""
-    inner = [c for c in ("MD", "RS", "AC", "EM", "PH", "EN")]
+    inner = ["MD", "RS", "AC", "EM", "PH", "EN"]
     primary = enriched["leverage"]["primary"]
 
     def sort_key(code):
-        a = enriched["areas"][code]
-        if a["score"] is None:
-            return 999
-        return a["score"]
+        score = enriched["areas"][code]["score"]
+        return 999 if score is None else score
 
     inner_sorted = sorted(inner, key=sort_key)
     if primary in inner_sorted:
         inner_sorted.remove(primary)
         inner_sorted.insert(0, primary)
-    p7 = inner_sorted[:3]
-    p8 = sorted(inner_sorted[3:], key=sort_key, reverse=True)
-    p9 = list(REALISM_CODES)
-    return p7, p8, p9
+
+    near = inner_sorted[:3]
+    # Within the page, the starting point leads and the rest follow the
+    # order the nine areas are defined in, so the page reads consistently.
+    near = ([primary] if primary in near else []) + [c for c in AREA_ORDER if c in near and c != primary]
+    rest = sorted(inner_sorted[3:], key=sort_key, reverse=True)
+    return near, rest, list(REALISM_CODES)
+
+
+def _closer_title(enriched, codes):
+    return "Your " + _join_names([AREA_SHORT[c] for c in codes])
 
 
 def _area_block(enriched, code):
@@ -1125,254 +1624,295 @@ def _area_block(enriched, code):
     return {
         "type": "area",
         "name": area["name"],
+        "icon": AREA_ICONS[code],
         "band": band_word,
         "stance": _stance_for(area),
         "paras": [{"label": l, "text": t} for (l, t) in paras],
     }
 
 
-def _p7_closer_one(enriched):
-    p7, _, _ = _cluster_areas(enriched)
-    names = _join_names([_area_name(enriched, c) for c in p7])
-    blocks = [_area_block(enriched, c) for c in p7]
+def _p13_closer_one(enriched):
+    near, _, _ = _cluster_areas(enriched)
+    blocks = [_area_block(enriched, c) for c in near]
 
-    supported = [enriched["areas"][c]["name"] for c in p7
+    supported = [enriched["areas"][c]["name"] for c in near
                  if enriched["areas"][c]["read_type"] == "supported" and enriched["areas"][c]["band"]]
-    clear = [enriched["areas"][c]["name"] for c in p7
+    clear = [enriched["areas"][c]["name"] for c in near
              if enriched["areas"][c]["read_type"] == "clear" and enriched["areas"][c]["band"]]
     synth = ""
     if clear:
-        synth += f"{_join_names(clear)} can be described plainly because your answers there were clear and consistent. "
+        synth += _join_names(clear) + " can be described plainly because your answers there were clear and consistent. "
     if supported:
-        synth += f"{_join_names(supported)} are offered a little more carefully, because they rest on a smaller set of questions. "
-    synth += "This is deliberate. Where the picture is firm, this report says so. Where it is thinner, it says that too, and invites you to be the one who decides whether it fits."
-    blocks.append(_callout("READING THESE TOGETHER", synth, variant="synthesis"))
+        synth += _join_names(supported) + " are offered a little more carefully, because they rest on a smaller set of questions. "
+    synth += "Where the picture is firm, this report says so. Where it is thinner, it says that too, and leaves you to decide whether it fits."
+    blocks.append(_callout("READING THESE THREE TOGETHER", synth, variant="synthesis", icon="eye"))
 
-    return _page(7, "A CLOSER LOOK · 1 OF 3", names,
-                 "The three areas closest to where you are being asked to begin. They are described together because, in this season, they are moving together.", blocks)
+    return _page(13, PART_FOUR, "A closer look · 1 of 3", _closer_title(enriched, near),
+                 "The three areas closest to where you are being asked to begin, described together because, in this season, they move together.",
+                 blocks, next_line="The areas carrying you through this, and what they cost you.")
 
 
-def _p8_closer_two(enriched):
-    _, p8, _ = _cluster_areas(enriched)
-    names = _join_names([_area_name(enriched, c) for c in p8])
-    blocks = [_area_block(enriched, c) for c in p8]
+def _p14_closer_two(enriched):
+    _, rest, _ = _cluster_areas(enriched)
+    blocks = [_area_block(enriched, c) for c in rest]
+    names = _join_names([_area_name(enriched, c) for c in rest])
     blocks.append(_callout(
         "YOUR STRENGTHS ARE THE PLAN, NOT THE BACKGROUND",
-        "It would be easy to read the stronger areas of this report as pleasant context and skip to the problems. That would be a mistake in your case. These are the resources that make any plan survivable. They protect your time, hold you accountable without shame, and supply the patience you will need on the days the plan does not go well. The suggestions ahead deliberately spend these strengths rather than leaving them idle.",
-        variant="synthesis"))
-    return _page(8, "A CLOSER LOOK · 2 OF 3", names,
-                 "The steadier areas carrying you through this season, and how to turn each one from comfort into structure.", blocks)
+        "It would be easy to read the stronger areas of this report as pleasant context and skip to the problems. That would be a mistake in your case. "
+        + (names + " are the resources that make any plan survivable. " if names else "")
+        + "They protect your time, hold you accountable without shame, and supply the patience you will need on the days the plan does not go well. The suggestions ahead deliberately spend these strengths rather than leaving them idle.",
+        variant="synthesis", icon="shield"))
+    return _page(14, PART_FOUR, "A closer look · 2 of 3", _closer_title(enriched, rest),
+                 "The steadier areas carrying you through this season, and how to turn each one from comfort into structure.",
+                 blocks, next_line="The quieter areas that decide what is realistic for you this month.")
 
 
-def _p9_closer_three(enriched):
-    _, _, p9 = _cluster_areas(enriched)
-    names = _join_names([_area_name(enriched, c) for c in p9])
-    blocks = [_area_block(enriched, c) for c in p9]
+def _p15_closer_three(enriched):
+    _, _, realism = _cluster_areas(enriched)
+    blocks = [_area_block(enriched, c) for c in realism]
 
     fw_band = enriched["areas"]["FW"]["band"]
     ig_band = enriched["areas"]["IG"]["band"]
     ec_band = enriched["areas"]["EC"]["band"]
-    bits = []
+    bounds = []
     if fw_band in ("Steady", "Strong"):
-        bits.append("Your money says a paid option is possible but never necessary.")
+        bounds.append("Money says a paid option is possible, and never necessary.")
     elif fw_band:
-        bits.append("Your money says the free path is the right path, and every suggestion here respects that.")
+        bounds.append("Money says the free path is the right path, and every suggestion here respects that.")
     if ig_band in LOW_BANDS:
-        bits.append("Your curiosity says keep any reading very short.")
+        bounds.append("Curiosity says keep any reading very short.")
     elif ig_band:
-        bits.append("Your curiosity says keep the reading short and honestly interesting.")
+        bounds.append("Curiosity says keep the reading short and honestly interesting.")
     if ec_band in ("Steady", "Strong"):
-        bits.append("Your belonging says stay close to familiar settings and small groups.")
+        bounds.append("Belonging says stay close to familiar settings, in small groups.")
     elif ec_band:
-        bits.append("Your surroundings say choose settings that ask little adaptation of you.")
-    synth = ("These areas do not need fixing first. What they do is set the boundaries of what is realistic for you. "
-             + " ".join(bits) + " Every suggestion in the next pages sits inside those boundaries.")
-    blocks.append(_callout("HOW THESE SHAPE YOUR PLAN", synth, variant="synthesis"))
-    return _page(9, "A CLOSER LOOK · 3 OF 3", names,
-                 "The areas that quietly shape what is realistic for you, and what kind of support is likely to fit.", blocks)
+        bounds.append("Surroundings say choose settings that ask little adaptation of you.")
+
+    blocks.append({"type": "list", "label": "HOW THESE THREE SET THE BOUNDARIES OF YOUR PLAN",
+                   "variant": "synthesis",
+                   "items": [{"text": t, "icon": "check"} for t in bounds] or
+                            [{"text": "These areas set no additional limit on what is suggested next.", "icon": "check"}]})
+
+    return _page(15, PART_FOUR, "A closer look · 3 of 3", _closer_title(enriched, realism),
+                 "Three quieter areas that shape what is realistic for you, and what kind of support is likely to fit.",
+                 blocks, next_line="The plan itself, and why it is deliberately smaller than you are expecting.")
 
 
 # ---------------------------------------------------------------------------
-# Pages 10 to 13: the suggestions
+# Part five: your plan, pages 16 to 21
 # ---------------------------------------------------------------------------
 
-def _p10_pathway(enriched):
+def _p16_pathway(enriched):
     anchor = _pick_anchor(enriched)
     primary = _area_name(enriched, enriched["leverage"]["primary"])
     downstream = [_area_name(enriched, c) for c in enriched["leverage"]["downstream"]]
     downstream = [d for d in downstream if d]
     ctx = enriched["context"]
-    sizing = enriched["handoff"]["habit_sizing"]
 
     steps = []
     if primary:
-        steps.append({"tag": "START HERE", "area": primary,
+        steps.append({"tag": "START HERE", "area": primary, "icon": "target",
                       "text": "Begin where a small change is most likely to travel. Give this area one reliable, repeatable act of care."})
     if downstream:
-        steps.append({"tag": "MAY RIPPLE TO", "area": downstream[0],
+        steps.append({"tag": "MAY RIPPLE TO", "area": downstream[0], "icon": "refresh",
                       "text": "Often eases as the starting point eases, without being worked on directly."})
     if len(downstream) > 1:
-        steps.append({"tag": "THEN SUPPORTS", "area": downstream[1],
+        steps.append({"tag": "THEN SUPPORTS", "area": downstream[1], "icon": "waves",
                       "text": "Sits in the same loop, and tends to follow once the first two steady."})
     if not steps:
-        steps.append({"tag": "PROTECT", "area": "What already works",
+        steps.append({"tag": "PROTECT", "area": "What already works", "icon": "shield",
                       "text": "Your picture is balanced, so the plan protects rather than repairs."})
 
     friction = (ctx.get("friction") or "").strip()
     friction_line = friction if friction else "your current load"
 
     priorities = [
-        ("YOUR FIRST PRIORITY", "Create one reliable seam",
-         "Give your day one repeatable cue it can learn to trust. The aim is not instant change. It is a recognisable transition your body can learn to expect, the way a door learns its own click."),
-        ("YOUR SECOND PRIORITY", "Watch one honest signal",
-         "Track only whether the thing this plan is aimed at feels slightly easier. That is more meaningful than chasing a dramatic difference, and considerably harder to fake."),
-        ("YOUR THIRD PRIORITY", "Use your strengths as structure",
-         "Let what is strong in your life decide what can wait, and let one trusted person witness the experiment. Your strengths become the conditions for change, rather than reasons to keep overextending."),
+        ("FIRST PRIORITY", "Create one reliable seam",
+         "Give your day one repeatable cue it can learn to trust. The aim is not instant change. It is a recognisable transition your body can learn to expect.", "clock"),
+        ("SECOND PRIORITY", "Watch one honest signal",
+         "Track only whether the thing this plan is aimed at feels slightly easier. That matters more than chasing a dramatic difference, and it is considerably harder to fake.", "eye"),
+        ("THIRD PRIORITY", "Spend your strengths",
+         "Let what is strong in your life decide what can wait, and let one trusted person witness the experiment. Your strengths become the conditions for change rather than reasons to keep overextending.", "shield"),
         ("YOUR PACING", "Focused, not full",
-         f"Your current picture caps how much plan is wise. One anchor plus one optional support is enough. Everything else stays a saved option rather than an obligation."),
+         "One anchor plus one optional support is enough. Everything else stays a saved option rather than an obligation.", "target"),
     ]
 
-    markers = (
-        "The seam you chose feels more distinct from the rest of your day. The thing you are caring for costs slightly less effort than it did. "
-        "Beginning is a little easier at the moment you choose to begin. You can miss a day without the whole experiment turning into failure. "
-        "These are things to observe rather than outcomes you are being promised. If the pattern does not move over the next month, that is useful information, and your next reflection should revise the starting point rather than asking you to try harder at the same one."
-    )
+    markers = [
+        "The seam you chose feels more distinct from the rest of your day.",
+        "The thing you are caring for costs slightly less effort than it did.",
+        "Beginning is a little easier at the moment you choose to begin.",
+        "You can miss a day without the whole experiment turning into failure.",
+    ]
 
     why_small = (
-        f"You told this reflection that {friction_line} is real, and your readings show a season with limited spare capacity. "
-        "A large plan under those conditions tends to fail in the first crowded week and leave you feeling worse than when you started. "
-        "A very small plan that survives contact with a real week is worth considerably more than an impressive one you abandon. "
-        "If it feels almost too easy, it has been sized correctly."
+        "Two things you told this reflection decided the size of this plan. " + friction_line.capitalize()
+        + " is real, and your readings show a season with limited spare capacity. Under those conditions a large plan tends to fail in the first crowded week and leave you feeling worse than when you started, because now there is evidence. A small plan that survives contact with a real week is worth considerably more than an impressive one you abandon. If it feels almost too easy, it has been sized correctly."
     )
 
-    return _page(10, "YOUR SUGGESTIONS · 1 OF 4", "Your improvement pathway",
+    return _page(16, PART_FIVE, "Your plan · 1 of 6", "Your improvement pathway",
                  "A focused plan, deliberately reduced to fit this particular season. Lower intensity is not lower ambition. It is the fit for right now.", [
-        {"type": "flow", "steps": steps, "first_move": f"Your first move: {anchor['first_move']}"},
+        {"type": "flow", "steps": steps,
+         "first_move_label": "YOUR FIRST MOVE", "first_move": anchor["first_move"]},
         _callout("THE SHAPE OF THE RECOMMENDATION",
                  ("Downshift before building. " if enriched["handoff"]["lead_with"] == "down-regulation" else "")
-                 + "Begin at the one place where your pressures, your pattern, and your day all meet. Keep the action small enough that a crowded day cannot defeat it. This plan is designed to survive your hardest ordinary day, not to impress your easiest one."),
-        _cards(priorities, columns=2),
-        _callout("WHAT IMPROVEMENT WOULD LOOK LIKE FOR YOU", markers),
-        _callout("WHY THIS PLAN IS SMALLER THAN YOU MIGHT EXPECT", why_small, variant="synthesis"),
-    ])
+                 + "Begin at the one place where your pressures, your pattern, and your day all meet. Keep the action small enough that a crowded day cannot defeat it. This plan is designed to survive your hardest ordinary day, not to impress your easiest one.",
+                 icon="compass"),
+        _cards(priorities, columns=4),
+        _list("WHAT IMPROVEMENT WOULD LOOK LIKE FOR YOU", markers),
+        _para("These are things to observe rather than outcomes you are being promised. If the pattern does not move over the next month, that is useful information, and your next reflection should revise the starting point rather than asking you to try harder at the same one."),
+        _callout("WHY THIS PLAN IS SMALLER THAN YOU MIGHT EXPECT", why_small,
+                 variant="synthesis", icon="scale"),
+    ], next_line="The one practice this report would keep if it could keep only one.")
 
 
-def _p11_anchor(enriched):
+def _p17_anchor(enriched):
     anchor = _pick_anchor(enriched)
-    return _page(11, "YOUR SUGGESTIONS · 2 OF 4", "Your anchor practice",
+    return _page(17, PART_FIVE, "Your plan · 2 of 6", "Your anchor practice",
                  "One practice, described properly. This is the single thing this report would ask you to keep if you kept nothing else.", [
         {"type": "practice", "tag": anchor["tag"], "title": anchor["title"], "cols": [
-            {"label": "WHEN", "text": anchor["when"]},
-            {"label": "WHAT YOU DO", "text": anchor["what"]},
-            {"label": "WHY IT IS THIS SMALL", "text": anchor["why_small"]},
+            {"label": "WHEN", "text": anchor["when"], "icon": "clock"},
+            {"label": "WHAT YOU DO", "text": anchor["what"], "icon": "wind"},
+            {"label": "WHY IT IS THIS SMALL", "text": anchor["why_small"], "icon": "scale"},
         ]},
+        {"type": "steps", "title": anchor["movements_title"].upper(),
+         "items": [{"title": t, "note": n} for (t, n) in anchor["movements"]]},
         _cards([
-            ("HOW TO SET IT UP TONIGHT", None, anchor["setup"]),
-            ("WHAT IT SHOULD FEEL LIKE", None, anchor["feel"]),
-            ("PERMISSIONS, SO THIS STAYS GENTLE", None, anchor["permissions"]),
-            ("IF YOU FORGET, WHICH YOU WILL", None, anchor["forget"]),
+            ("HOW TO SET IT UP TONIGHT", None, anchor["setup"], "pin"),
+            ("WHAT IT SHOULD FEEL LIKE", None, anchor["feel"], "sun"),
+            ("PERMISSIONS, SO THIS STAYS GENTLE", None, anchor["permissions"], "heart"),
+            ("IF YOU FORGET, WHICH YOU WILL", None, anchor["forget"], "refresh"),
         ], columns=2),
-        {"type": "sevendays", "title": "YOUR NEXT SEVEN DAYS",
+    ], next_line="Seven days, one small action each, and nothing more.")
+
+
+def _p18_seven_days(enriched):
+    anchor = _pick_anchor(enriched)
+    return _page(18, PART_FIVE, "Your plan · 3 of 6", "Your next seven days",
+                 "One action a day, and deliberately nothing more. If a day is missed, the week is not.", [
+        {"type": "sevendays", "title": None,
          "rows": [{"day": d, "focus": f, "action": a} for (d, f, a) in anchor["seven_days"]]},
-        _callout(anchor["why_this"][0], anchor["why_this"][1], variant="synthesis"),
-    ])
+        _cards([
+            ("WHAT COUNTS AS A GOOD WEEK", None, anchor["good_week"], "check"),
+            ("WHAT WOULD BE TOO MUCH", None, anchor["too_much"], "alert"),
+        ], columns=2),
+        _callout(anchor["why_this"][0], anchor["why_this"][1], variant="synthesis", icon="compass"),
+    ], next_line="Four small additions, and permission to take none of them.")
 
 
-def _p12_supports(enriched):
+def _p19_supports(enriched):
     supports = _build_supports(enriched)
-    choose_rows = [list(CHOOSE_ROWS[s["id"]]) for s in supports if s["id"] in CHOOSE_ROWS]
-    choose_rows.append(["You are already at capacity", "None of them",
-                        "The anchor alone is a complete plan. Additions are genuinely optional"])
-    adjustments = _adjustment_cards(enriched)
-    return _page(12, "YOUR SUGGESTIONS · 3 OF 4", "Your optional supports",
+    return _page(19, PART_FIVE, "Your plan · 4 of 6", "Your optional supports",
                  "Small additions, chosen for your specific pattern. Take one at a time, and only after the anchor is steady. This is a shelf to choose from, not a list to complete.", [
         {"type": "supports", "items": [
             {"tag": s["tag"], "title": s["title"], "body": s["body"], "why": s["why"]}
             for s in supports
         ]},
+        _callout(None,
+                 "The anchor alone is a complete plan. Every one of these is optional, and choosing none of them this month is a legitimate answer rather than a compromise.",
+                 variant="free", icon="check"),
+    ], next_line="How to choose between them, and small adjustments for your pattern.")
+
+
+def _p20_choosing(enriched):
+    supports = _build_supports(enriched)
+    choose_rows = [list(CHOOSE_ROWS[s["id"]]) for s in supports if s["id"] in CHOOSE_ROWS]
+    choose_rows.append(["You are already at capacity", "None of them",
+                        "The anchor alone is a complete plan. Additions are genuinely optional"])
+    adjustments = _adjustment_cards(enriched)
+    return _page(20, PART_FIVE, "Your plan · 5 of 6", "Choosing, and small adjustments",
+                 "Match the support to the situation you are actually in this week, then make the small changes that cost nothing.", [
         {"type": "table", "title": "HOW TO CHOOSE BETWEEN THEM",
          "columns": ["If this is your situation", "Try this one", "Because"],
          "rows": choose_rows},
-        _cards([(label, None, body) for (label, body) in adjustments], columns=2,),
-    ])
+        _cards([(None, label.title(), body, "arrow") for (label, body) in adjustments], columns=2),
+        _callout(None,
+                 "Everything on this page is designed to cost you nothing extra. Not one of these adjustments asks for more time, only for a decision made earlier, or a small physical change at a moment that is already happening.",
+                 variant="neutral", icon="info"),
+    ], next_line="The programs built for your pattern, and how to take your place.")
 
 
-def _p13_programs(enriched):
+def _p21_programs(enriched):
     cap = enriched["commerce"]["cap"]
+    location = enriched["meta"]["location"]
 
     # Suppressed cap (§13.3): nothing beyond one line pointing back to the
-    # free path. No booking language, no program cards.
+    # free path. No persuasion, no program cards, no booking language.
     if cap == "suppressed":
-        return _page(13, "YOUR SUGGESTIONS · 4 OF 4", "The free path is the plan",
+        return _page(21, PART_FIVE, "Your plan · 6 of 6", "The free path is the plan",
                      "Programs are optional at the best of times. Right now, the kindest and most effective plan is the free one.", [
             _callout("THE FREE PATH IS THE WHOLE RECOMMENDATION",
                      "No programs are suggested right now, and nothing about that is a limitation: the anchor practice and the optional supports are a complete plan. A future reflection can revisit guided options when more reserve is available.",
-                     variant="free"),
-        ])
+                     variant="free", icon="check"),
+        ], next_line="How to find out whether any of this is true for you, over thirty days.")
 
-    blocks = [
-        _callout("USE THE FREE PATH FIRST",
-                 "Give the seven day anchor a proper try before booking anything. A program should earn its place by offering what your own practice cannot: protected time, skilled facilitation, a suitable setting, or the accountability of showing up alongside other people.",
-                 variant="free"),
-    ]
+    primary_id, secondary_id, mention_id = _pick_programs(enriched)
 
-    primary_id, secondary_id, saved_id = _pick_programs(enriched)
-    later_note = cap == "free_low_cost_only"
-
-    def program_block(pid, force_tag=None):
+    def program_block(pid, tag):
         p = PROGRAMS[pid]
-        return {"type": "program", "tag": force_tag or p["tag"], "title": p["title"],
-                "what": p["what"], "why": p["why"], "check": p["check"]}
+        return {"type": "program", "tag": tag, "title": p["title"], "image": p["image"],
+                "what": p["what"], "chips": list(PROGRAM_CHIPS), "why": p["why"],
+                "walkaway": p["walkaway"]}
 
-    if later_note:
+    # Money is asking for care: no paid program may lead, and the
+    # persuasive framing is dropped entirely (§13.3).
+    if cap == "free_low_cost_only":
         reason = enriched["commerce"]["reason"] or "money is asking for care right now"
-        blocks.append(_callout("A CLEARLY LABELLED LATER, IF IT FITS",
-            f"Because {reason}, no paid program leads your plan. The options below are noted for later, if circumstances ease and only if they genuinely fit. Nothing in this report asks you to spend.",
-            variant="care"))
-        blocks.append(program_block(primary_id, force_tag="LATER, IF IT FITS"))
+        return _page(21, PART_FIVE, "Your plan · 6 of 6", "Guided support, noted for later",
+                     "The free path is your plan this month. What follows is noted for later, in case circumstances ease.", [
+            _callout("A CLEARLY LABELLED LATER, IF IT FITS",
+                     "Because " + reason + ", no paid program leads your plan. The option below is noted for later, if circumstances ease and only if it genuinely fits. Nothing in this report asks you to spend, and the anchor practice remains the whole recommendation.",
+                     variant="care", icon="heart"),
+            program_block(primary_id, "LATER, IF IT FITS"),
+        ], next_line="How to find out whether any of this is true for you, over thirty days.")
+
+    advantages = [PROGRAM_ADVANTAGES[k] for k in _advantage_keys(enriched)]
+    blocks = [
+        {"type": "programcase", "label": "WHY A GUIDED PROGRAM TAKES YOU FURTHER",
+         "items": [{"title": t, "body": b, "icon": ic} for (t, b, ic) in advantages]},
+        program_block(primary_id, "YOUR BEST FIT" + (" · " + location if location else "")),
+    ]
+    if secondary_id:
+        blocks.append(program_block(secondary_id, "ALSO MADE FOR YOU"))
+
+    good_to_know = []
+    if enriched["areas"]["EC"]["band"] in ("Steady", "Strong"):
+        good_to_know.append("close to home, in small culturally comfortable groups")
+    if enriched["handoff"]["lead_with"] in ("down-regulation", "gentleness"):
+        good_to_know.append("gently paced rather than intensive")
+    if good_to_know:
+        note = "Both programs are " + _join_names(good_to_know) + ", the format this report shows fits you best."
     else:
-        blocks.append(program_block(primary_id))
-        if secondary_id:
-            blocks.append(program_block(secondary_id))
+        note = "Both programs match the format this report shows fits you best."
+    if mention_id:
+        note += " " + PROGRAMS[mention_id]["title"] + " joins the same shelf whenever your circumstances open it up."
+    blocks.append(_callout("GOOD TO KNOW", note, icon="info"))
 
-    if saved_id and not later_note:
-        saved = PROGRAMS[saved_id]
-        blocks.append(_callout("SAVED FOR LATER",
-            f"{saved['title']}. A good fit for you in principle, and worth revisiting if your rhythm shifts. Parked rather than recommended, because your current pattern points elsewhere first."))
+    cta_body = ("These programs are the closest match"
+                + (" in " + location if location else "")
+                + " to the pattern this reflection found, chosen for your time, your setting and the exact thing you are working on. Small group places fill quickly, and the sooner you begin, the sooner your pattern can begin to change. Reserve your place, bring the practice you have already started, and let the room do the rest.")
+    blocks.append({"type": "cta", "label": "TAKE YOUR PLACE", "body": cta_body})
 
-    blocks.append(_callout("WHAT WOULD NOT SUIT YOU RIGHT NOW",
-        "An intensive residential reset, a high demand challenge, or a tightly scheduled multi day retreat. Your current pattern calls for less activation and lower commitment first. This is not about capability. It is that a demanding program asks for reserves that are better spent steadying the basics, and the most likely result is a good experience followed by a harder week afterwards."))
-
-    blocks.append(_cards([
-        ("QUESTIONS WORTH ASKING ANY HOST", None,
-         "Can you explain the full flow, the intensity, and what can be skipped? Does the timetable protect quiet transitions, or does it fill every minute? Are facilitator credentials, safety boundaries, cancellation terms, and accessibility all clear before you pay?"),
-        ("THE ONE QUESTION TEST", None,
-         "Would you still choose it if the program promised you no transformation at all, only a well held experience? If yes, it is probably a good fit. If no, keep your money and keep your anchor."),
-    ], columns=2))
-
-    blocks.append(_callout("AN HONEST WORD ABOUT FIT",
-        "These suggestions describe how well a program matches your pattern. They are not predictions about how you will feel afterwards. A good match makes a good outcome more likely, and no more than that. If a program ever promises you a specific result, treat that promise as a reason for caution rather than confidence."))
-
-    return _page(13, "YOUR SUGGESTIONS · 4 OF 4", "If you would like guided support",
-                 "Programs are optional, and they come second. Anything suggested here is suggested because it matches your pattern, not because you need it.", blocks)
+    return _page(21, PART_FIVE, "Your plan · 6 of 6", "The programs made for where you are",
+                 "Chosen for exactly the pattern this reflection found. This is where the work you have begun becomes something you do with expert guidance, in a room built for it.",
+                 blocks, next_line="How to find out whether any of this is true for you, over thirty days.")
 
 
 # ---------------------------------------------------------------------------
-# Pages 14 to 16
+# Part six: after this, pages 22 to 25
 # ---------------------------------------------------------------------------
 
-def _p14_thirty_days(enriched):
+def _p22_thirty_days(enriched):
     gentle = enriched["safety"]["tier"] != "none"
     weeks = [
         ("WEEK ONE", "Build the cue",
-         "Use your anchor on at least three days. Record only whether it felt easier, the same, or harder. Three honest days are worth more than seven forced ones."),
+         "Use your anchor on at least three days. Record only whether it felt easier, the same, or harder. Three honest days are worth more than seven forced ones.", "target"),
         ("WEEK TWO", "Protect one boundary",
-         "Choose one boundary that serves the anchor and let a trusted person know. Keep the cue even when the boundary slips. The cue is the experiment. The rest is just weather."),
+         "Choose one boundary that serves the anchor and let a trusted person know. Keep the cue even when the boundary slips. The cue is the experiment. The rest is just weather.", "shield"),
         ("WEEK THREE", "Add one gentle support" if not gentle else "Only if it feels kind",
          "Choose one optional support, whichever made things simpler in week one. Add only that one. Subtraction is always allowed." if not gentle else
-         "If, and only if, the anchor has felt kind, you may add one optional support. Not adding anything is an equally good outcome this week."),
+         "If, and only if, the anchor has felt kind, you may add one optional support. Not adding anything is an equally good outcome this week.", "sparkles"),
         ("WEEK FOUR", "Retake and choose",
-         "Repeat the reflection. Continue the free supports, consider a suitable program, or revise the starting point if the pattern did not move. All of these are useful outcomes."),
+         "Repeat the reflection. Continue the free supports, consider a suitable program, or revise the starting point if the pattern did not move. All of these are useful outcomes.", "refresh"),
     ]
     notice_rows = [
         ["After the anchor", "How did it feel?", "Easier, same, or harder", "Tests the core idea directly"],
@@ -1381,72 +1921,90 @@ def _p14_thirty_days(enriched):
         ["End of the week", "Did the plan fit real life?", "Fit, partly, or did not fit", "Separates whether it works from whether it is doable"],
     ]
     blocks = [
-        _cards([(w, t, b) for (w, t, b) in weeks], columns=2),
+        _cards(weeks, columns=4),
         {"type": "table", "title": "WHAT TO NOTICE, IN FOUR MOMENTS",
          "columns": ["Moment", "The question", "Your options", "Why it is worth noticing"],
          "rows": notice_rows},
-        _callout("WHEN TO REFLECT AGAIN",
-                 "A short check after seven days, and the complete reflection after thirty days or after a program. When you compare, look at direction and lived experience rather than small differences. What you are looking for is a repeatable pattern that also feels true to you. Your before and after pair is what turns this report from a snapshot into a story about your own year."),
-        _cards([
-            ("QUESTIONS WORTH CARRYING", None,
-             "What changes when your day has a clear seam in it, even if the workload does not? Which of your strengths best protects this experiment without becoming another demand? What is the smallest form of enough you can recognise in a real week?"),
-        ], columns=1),
+        _row([
+            _callout("WHEN TO REFLECT AGAIN",
+                     "A short check after seven days, and the complete reflection after thirty days or after a program. When you compare, look at direction and lived experience rather than small differences. Your before and after pair is what turns this report from a snapshot into a story about your own year.",
+                     icon="calendar"),
+            {"type": "list", "label": "QUESTIONS WORTH CARRYING", "icon": "arrow", "items": [
+                {"text": "What changes when your day has a clear seam in it, even if the workload does not?", "icon": "arrow"},
+                {"text": "Which of your strengths best protects this experiment without becoming another demand?", "icon": "arrow"},
+                {"text": "What is the smallest form of enough you can recognise in a real week?", "icon": "arrow"},
+            ]},
+        ]),
     ]
     if gentle:
         blocks.append(_callout("A GENTLE NOTE, WORTH TAKING SERIOUSLY",
             "Some of what you shared points to a heavier stretch right now. Feeling this way is more common than it looks from the inside, and it is worth taking seriously rather than pushing through. Sharing how you are doing with someone you trust, or with a qualified professional, is a real and worthwhile step, and it can sit alongside everything in this plan.",
-            variant="care"))
+            variant="care", icon="heart"))
     blocks.append(_callout("ON THE DAYS IT DOES NOT GO WELL",
         "You will miss days. That is expected, and it is built into the design of this plan rather than being a failure of it. A missed day tells you something about fit, which is genuinely useful information. If several days slip, the right response is to make the practice smaller rather than to try harder, and certainly rather than to think less of yourself. The plan should shrink before self judgement grows.",
-        variant="synthesis"))
-    return _page(14, "YOUR NEXT MONTH", "A thirty day experiment",
-                 "The purpose is to learn something about your own life, not to complete a perfect routine. One repeated cue becomes the spine. Everything else stays optional.", blocks)
+        variant="synthesis", icon="heart"))
+    return _page(22, PART_SIX, "Your next month", "A thirty day experiment",
+                 "The purpose is to learn something about your own life, not to complete a perfect routine. One repeated cue becomes the spine. Everything else stays optional.",
+                 blocks, next_line="What stands behind everything you have just read.")
 
 
-def _p15_behind(enriched):
+def _p23_what_stands_behind(enriched):
     supported = [a["name"] for a in enriched["areas"].values()
                  if a["read_type"] == "supported" and a["band"] is not None]
     unread = [a["name"] for a in enriched["areas"].values() if a["band"] is None]
     careful = (
-        (f"{_join_names(supported)} rest on fewer questions, so they are offered for you to test rather than asserted. " if supported else "")
-        + (f"{_join_names(unread)} were left unread rather than guessed. " if unread else "")
+        (_join_names(supported) + " rest on fewer questions, so they are offered for you to test rather than asserted. " if supported else "")
+        + (_join_names(unread) + " were left unread rather than guessed. " if unread else "")
         + "That difference in wording is deliberate, and it is worth trusting when you read it."
     )
-    return _page(15, "ABOUT THIS REFLECTION", "What stands behind this report",
+    return _page(23, PART_SIX, "About this reflection", "What stands behind this report",
                  "A report that asks for your trust should be equally clear about where it is confident, where it is not, and what happens to what you shared.", [
         _cards([
             ("HOW YOUR READING WAS FORMED", None,
-             "Each of the nine areas is read using established wellbeing questionnaires that have been tested and used in published research. They ask about how life feels rather than screening for any condition, and your answers were translated into the four broad words used throughout this report. The specific measures behind each area are listed in the appendix."),
+             "Each of the nine areas is read using established wellbeing questionnaires that have been tested and used in published research. They ask about how life feels rather than screening for any condition, and your answers were translated into the four broad words used throughout this report. The specific measures behind each area are listed in the appendix.",
+             "flask"),
             ("WHAT THE SHORT EXERCISES ADDED", None,
-             "The brief interactive moments, such as the breathing minute and the body map, add texture to the picture. They are sensitive to the kind of day you were having, so they are used to deepen or question what your answers already suggested. They are never used on their own to raise a concern."),
+             "The brief interactive moments, such as the breathing minute and the body map, add texture to the picture. They are sensitive to the kind of day you were having, so they are used to deepen or question what your answers already suggested. They are never used on their own to raise a concern.",
+             "waves"),
             ("HOW YOUR LIFE SHAPED THE SUGGESTIONS", None,
-             "What you told this reflection about your roles, your priorities, what gets in your way, and what you have already tried shaped the words in this report and the suggestions in it. Your circumstances change what is recommended to you. They never change how any area was read."),
+             "What you told this reflection about your roles, your priorities, what gets in your way, and what you have already tried shaped the words in this report and the suggestions in it. Your circumstances change what is recommended to you. They never change how any area was read.",
+             "home"),
             ("WHERE THIS REPORT SPEAKS CAREFULLY", None,
-             "Most of your areas rest on a full set of questions and are described plainly. " + careful),
+             "Most of your areas rest on a full set of questions and are described plainly. " + careful,
+             "scale"),
         ], columns=2),
         _callout("YOUR PRIVACY",
                  "This report belongs to you. Your individual answers, your readings, and your suggestions are never shared with an employer, and there is no route in the system for that to happen. Where organisations receive anything at all, it is combined across many people, with small groups withheld entirely so that no individual can be identified. Your name and identifying details are kept out of any pattern the system learns from. Nothing is collected that this reflection does not need.",
-                 variant="info"),
-        _cards([
-            ("ONE SITTING REFLECTS ONE DAY", None,
-             "This report describes how things feel now. It cannot establish what caused what, and a different week might read differently."),
-            ("THE SHORT EXERCISES ARE NOT TESTS", None,
-             "They are not measures of ability, intelligence, or health, and nothing in them is a medical reading."),
-            ("PROGRAM SUGGESTIONS DESCRIBE FIT", None,
-             "They match your pattern to a design. They are not predictions of benefit, and no outcome is promised anywhere in this report."),
-            ("THIS IS NOT CARE", None,
-             "If something feels persistently heavy, unsafe, painful, or hard to manage, speaking with someone you trust or a qualified professional is a real and worthwhile step."),
-        ], columns=2),
-        _para("The point of this report is not to explain you completely. It is to give you a truer place to begin.", lead="THE CLOSING LINE"),
-    ])
+                 icon="lock"),
+        {"type": "list", "label": "THE LIMITS OF A SINGLE REFLECTION", "items": [
+            {"text": "One sitting reflects one day. This report describes how things feel now. It cannot establish what caused what, and a different week might read differently.", "icon": "info"},
+            {"text": "The short exercises are not tests. They are not measures of ability, intelligence, or health, and nothing in them is a medical reading.", "icon": "info"},
+            {"text": "Program suggestions describe fit. They match your pattern to a design. They are not predictions of benefit, and no outcome is promised anywhere in this report.", "icon": "info"},
+            {"text": "This is not care. If something feels persistently heavy, unsafe, painful, or hard to manage, speaking with someone you trust or a qualified professional is a real and worthwhile step.", "icon": "info"},
+        ]},
+        _para("The point of this report is not to explain you completely. It is to give you a truer place to begin.",
+              lead="THE CLOSING LINE"),
+    ], next_line="The appendix: every measure and study named in full.")
 
 
-def _p16_appendix(enriched):
+def _p24_appendix_measures(enriched):
     scored_codes = {c for c, a in enriched["areas"].items() if a["band"] is not None}
-    order = ["MD", "RS", "EC", "IG", "AC", "FW", "EM", "PH", "EN"]
-    ordered = [c for c in order if c in scored_codes]
+    ordered = [c for c in AREA_ORDER if c in scored_codes]
     measure_rows = [[AREA_CODE_TO_NAME[c], MEASURE_ROWS[c][0], MEASURE_ROWS[c][1]] for c in ordered]
 
+    return _page(24, PART_SIX, "Appendix · 1 of 2", "The measures behind your reading",
+                 "For readers who would like to know what stands behind each part of this report. Nothing here is required in order to use your reflection, and none of it changes what your report says.", [
+        {"type": "table", "title": "THE MEASURES BEHIND EACH OF THE NINE AREAS",
+         "columns": ["Area", "Established measure used", "What it is designed to capture"],
+         "rows": measure_rows},
+        _para("These measures were chosen because they are published, widely used, and freely available, and because they ask about wellbeing rather than screening for illness. Their wording is never altered. Research practice treats short measures like these as indicating a broad range rather than a precise value, which is why this report speaks in four broad words rather than scores."),
+        _callout("THE RESEARCH BEHIND THE CONNECTIONS DESCRIBED IN YOUR REPORT",
+                 "The idea that effort carries a cost into the next day unless recovery follows it comes from research on work and recovery (Meijman and Mulder, 1998). The observation that strain in one area of life tends to spread into neighbouring areas, while intact strengths slow that spread, comes from work on personal resources (Hobfoll, 1989). Difficulty mentally switching off is one of the most consistently studied patterns in this field, and is associated with poorer rest and lower next morning energy across many studies (Sonnentag and Fritz, 2007; 2015). The reason your report treats the short interactive exercises as texture rather than evidence is that single session tasks are known to be informative about a day and unreliable about a person (Hedge, Powell and Sumner, 2018).",
+                 icon="book"),
+    ], next_line="The research behind your practices and the programs suggested to you.")
+
+
+def _p25_appendix_research(enriched):
     anchor = _pick_anchor(enriched)
     supports = _build_supports(enriched)
     practice_keys, seen = [], set()
@@ -1459,36 +2017,35 @@ def _p16_appendix(enriched):
     cap = enriched["commerce"]["cap"]
     program_prose = ""
     if cap != "suppressed":
-        primary_id, secondary_id, saved_id = _pick_programs(enriched)
-        keys, seenp = [], set()
-        for pid in [primary_id, secondary_id, saved_id]:
-            if pid and PROGRAMS[pid]["research_key"] not in seenp:
-                seenp.add(PROGRAMS[pid]["research_key"])
+        primary_id, secondary_id, mention_id = _pick_programs(enriched)
+        shown = [primary_id, mention_id] if cap == "free_low_cost_only" else [primary_id, secondary_id, mention_id]
+        keys, seen_p = [], set()
+        for pid in shown:
+            if pid and PROGRAMS[pid]["research_key"] not in seen_p:
+                seen_p.add(PROGRAMS[pid]["research_key"])
                 keys.append(PROGRAMS[pid]["research_key"])
         program_prose = " ".join(PROGRAM_RESEARCH[k] for k in keys if k in PROGRAM_RESEARCH)
 
-    blocks = [
-        _para("For readers who would like to know what stands behind each part of this report. Nothing here is required in order to use your reflection, and none of it changes what your report says."),
-        {"type": "table", "title": "THE MEASURES BEHIND EACH OF THE NINE AREAS",
-         "columns": ["Area", "Established measure used", "What it is designed to capture"],
-         "rows": measure_rows},
-        _para("These measures were chosen because they are published, widely used, and freely available, and because they ask about wellbeing rather than screening for illness. Their wording is never altered. Research practice treats short measures like these as indicating a broad range rather than a precise value, which is why this report speaks in four broad words rather than scores."),
-        _callout("THE RESEARCH BEHIND THE CONNECTIONS DESCRIBED IN YOUR REPORT",
-                 "The idea that effort carries a cost into the next day unless recovery follows it comes from research on work and recovery (Meijman and Mulder, 1998). The observation that strain in one area of life tends to spread into neighbouring areas, while intact strengths slow that spread, comes from work on personal resources (Hobfoll, 1989). Difficulty mentally switching off is one of the most consistently studied patterns in this field, and is associated with poorer rest and lower next morning energy across many studies (Sonnentag and Fritz, 2007; 2015). The reason your report treats the short interactive exercises as texture rather than evidence is that single session tasks are known to be informative about a day and unreliable about a person (Hedge, Powell and Sumner, 2018)."),
-        _callout("THE RESEARCH BEHIND YOUR SUGGESTED PRACTICES", practices_prose),
-    ]
-    if program_prose:
-        blocks.append(_callout("THE RESEARCH BEHIND THE PROGRAMS SUGGESTED TO YOU", program_prose))
-    blocks.append(_callout("HOW TO READ ANY OF THIS",
-        "Every study named here describes patterns across groups of people, which is the honest currency of wellbeing research. They are good reasons to expect that a practice or a program design is worth your time. They are not predictions about you specifically, and no finding here promises you a result. That distinction is the difference between evidence and marketing, and this report tries to stay firmly on the evidence side of it."))
     meta = enriched["meta"]
-    closing = " · ".join(x for x in [
-        f"Prepared for {meta['name']}" if meta["name"] else "Prepared for you",
+    prepared = " · ".join(x for x in [
+        "Prepared for " + meta["name"] if meta["name"] else "Prepared for you",
         meta["date"], meta["location"], "A private, non-clinical wellbeing reflection",
     ] if x)
-    blocks.append(_callout(None, closing + "  ·  LIFED", variant="footer"))
-    return _page(16, "APPENDIX", "The science behind your reading",
-                 "For readers who would like to know what stands behind each part of this report.", blocks)
+
+    blocks = [
+        _callout("BEHIND YOUR SUGGESTED PRACTICES", practices_prose, icon="book"),
+    ]
+    if program_prose:
+        blocks.append(_callout("BEHIND THE PROGRAMS SUGGESTED TO YOU", program_prose, icon="book"))
+    blocks.append(_callout("HOW TO READ ANY OF THIS",
+        "Every study named here describes patterns across groups of people, which is the honest currency of wellbeing research. They are good reasons to expect that a practice or a program design is worth your time. They are not predictions about you specifically, and no finding here promises you a result. That distinction is the difference between evidence and marketing, and this report stays firmly on the evidence side of it.",
+        variant="synthesis", icon="scale"))
+    blocks.append({"type": "colophon", "title": "Your LEWIS Insight Report",
+                   "prepared": prepared, "line": NON_CLINICAL_LINE})
+
+    return _page(25, PART_SIX, "Appendix · 2 of 2", "The research behind what was suggested",
+                 "Every practice and program in this report was chosen for a reason that can be named and checked. Here are those reasons in full.",
+                 blocks)
 
 
 # ---------------------------------------------------------------------------
@@ -1496,32 +2053,42 @@ def _p16_appendix(enriched):
 # ---------------------------------------------------------------------------
 
 def build_insight_report(enriched: dict) -> dict:
-    pages = [
-        _p1_cover(enriched),
-        _p2_orientation(enriched),
-        _p3_where_you_are(enriched),
-        _p4_shape(enriched),
-        _p5_connections(enriched),
-        _p6_stress(enriched),
-        _p7_closer_one(enriched),
-        _p8_closer_two(enriched),
-        _p9_closer_three(enriched),
-        _p10_pathway(enriched),
-        _p11_anchor(enriched),
-        _p12_supports(enriched),
-        _p13_programs(enriched),
-        _p14_thirty_days(enriched),
-        _p15_behind(enriched),
-        _p16_appendix(enriched),
+    body = [
+        _p03_how_to_read(enriched),
+        _p04_four_words(enriched),
+        _p05_where_you_are(enriched),
+        _p06_what_it_tells_you(enriched),
+        _p07_the_shape(enriched),
+        _p08_what_each_area_asks(enriched),
+        _p09_moves_together(enriched),
+        _p10_reading_connections(enriched),
+        _p11_how_stress_shows_up(enriched),
+        _p12_where_tension_settles(enriched),
+        _p13_closer_one(enriched),
+        _p14_closer_two(enriched),
+        _p15_closer_three(enriched),
+        _p16_pathway(enriched),
+        _p17_anchor(enriched),
+        _p18_seven_days(enriched),
+        _p19_supports(enriched),
+        _p20_choosing(enriched),
+        _p21_programs(enriched),
+        _p22_thirty_days(enriched),
+        _p23_what_stands_behind(enriched),
+        _p24_appendix_measures(enriched),
+        _p25_appendix_research(enriched),
     ]
+    pages = [_p01_cover(enriched), _p02_contents(enriched, body)] + body
+
     return {
-        "version": "3.0",
+        "version": "4.0",
         "meta": {
             "name": enriched["meta"]["name"],
             "date": enriched["meta"]["date"],
             "location": enriched["meta"]["location"],
             "footer": FOOTER,
             "non_clinical_line": NON_CLINICAL_LINE,
+            "appendix_header": "Appendix · the research behind this report",
         },
         "pages": pages,
     }

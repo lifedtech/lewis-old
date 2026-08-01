@@ -135,7 +135,7 @@ export default function Stage7_4SupportScreen() {
               What kind of support is most helpful to you when adopting new health behaviors or stress management habits?
             </p>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '-15px' }}>
             <SupportPreferencesIllustration />
           </div>
         </div>

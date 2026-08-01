@@ -1,14 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@500;700&display=swap');
 
-/* Allow scrolling when landing page is active */
+/* Allow scrolling when landing page or mirror report page is active */
 html:has(.landing-screen-wrapper),
 body:has(.landing-screen-wrapper),
-#root:has(.landing-screen-wrapper) {
+#root:has(.landing-screen-wrapper),
+html:has(.mirror-page-wrapper),
+body:has(.mirror-page-wrapper),
+#root:has(.mirror-page-wrapper) {
   height: auto !important;
   max-height: none !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   touch-action: auto !important;
+  scroll-behavior: smooth !important;
 }
 
 .landing-screen-wrapper {
@@ -23,8 +27,26 @@ body:has(.landing-screen-wrapper),
   overflow-y: auto !important;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  background: linear-gradient(135deg, #f4f4f4 0%, #ffffff 50%, #d6edea 100%);
+  background: radial-gradient(circle at 20% 15%, #ffffff 0%, #f4fbf9 40%, #e2f4f0 75%, #d6edea 100%);
   scroll-behavior: smooth !important;
+}
+
+.mirror-page-wrapper {
+  color: #414242;
+  font-family: 'Nunito', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: radial-gradient(120% 92% at 50% -8%, #f4f4f4, #d6edea);
+  scroll-behavior: smooth !important;
+  padding: 24px 20px 80px 20px;
+  box-sizing: border-box;
 }
 
 
@@ -62,24 +84,41 @@ body:has(.landing-screen-wrapper),
   color: #414242;
 }
 
-/* Constellation Ambient Glow & Floating Lines */
-.constellation-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+/* Premium Ambient Background Elements */
+.bg-ambient-orb-1 {
+  position: fixed;
+  top: -12vw;
+  right: -8vw;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(0, 174, 157, 0.14) 0%, rgba(95, 187, 70, 0.05) 55%, transparent 75%);
+  filter: blur(70px);
   pointer-events: none;
   z-index: 1;
 }
 
-.node-pulse {
-  /* Motion disabled per user preference */
-  animation: none;
+.bg-ambient-orb-2 {
+  position: fixed;
+  bottom: 5vh;
+  left: -12vw;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(0, 174, 157, 0.12) 0%, rgba(214, 237, 234, 0.4) 60%, transparent 75%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 1;
 }
 
-@keyframes lw-node-pulse {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(1.35); opacity: 1; filter: drop-shadow(0 0 6px #00ae9d); }
+.bg-dot-grid {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(0, 174, 157, 0.16) 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  opacity: 0.65;
+  z-index: 1;
+  mask-image: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.85) 15%, rgba(0,0,0,0) 80%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.85) 15%, rgba(0,0,0,0) 80%);
 }
 
 /* Infinite Marquee Ticker Scroller */
@@ -123,18 +162,27 @@ body:has(.landing-screen-wrapper),
 }
 
 /* Hero Section Typography matching exact screenshot */
+.landing-screen-wrapper h1,
+.landing-screen-wrapper h2 {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 .hero-lewis-title {
   font-family: 'Manrope', sans-serif;
   font-weight: 900;
-  font-size: clamp(120px, 18vw, 210px);
-  line-height: 0.86;
-  letter-spacing: -0.045em;
-  color: #414242;
-  background: linear-gradient(135deg, #102622 0%, #00ae9d 60%, #00ae9d 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 14px 30px rgba(0, 174, 157, 0.25));
-  display: inline-block;
+  font-size: clamp(42px, 4.8vw, 64px);
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  color: #000000 !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: #000000 !important;
+  filter: none !important;
+  display: block !important;
+  text-align: center !important;
+  margin: 0 auto 14px auto !important;
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 

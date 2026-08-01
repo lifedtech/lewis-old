@@ -2,13 +2,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
 const LABELS = [
-  { max: 15,  text: 'Very turbulent',   emoji: '🌊', color: '#e05c5c' },
-  { max: 30,  text: 'Quite turbulent',  emoji: '⛈️',  color: '#e07a3a' },
-  { max: 45,  text: 'A bit unsettled',  emoji: '🌦️',  color: '#d4a017' },
-  { max: 55,  text: 'In between',       emoji: '🌤️',  color: '#8fad52' },
-  { max: 70,  text: 'Mostly stable',    emoji: '☀️',  color: '#3aad8e' },
-  { max: 85,  text: 'Quite steady',     emoji: '🌿',  color: '#1a9e7a' },
-  { max: 101, text: 'Very steady',      emoji: '⚓',  color: '#00ae9d' },
+  { max: 15, text: 'Very turbulent', color: '#e05c5c' },
+  { max: 30, text: 'Quite turbulent', color: '#e07a3a' },
+  { max: 45, text: 'A bit unsettled', color: '#d4a017' },
+  { max: 55, text: 'In between', color: '#8fad52' },
+  { max: 70, text: 'Mostly stable', color: '#3aad8e' },
+  { max: 85, text: 'Quite steady', color: '#1a9e7a' },
+  { max: 101, text: 'Very steady', color: '#00ae9d' },
 ]
 
 function getLabel(v) {
@@ -104,7 +104,6 @@ export default function Stage1_2StabilityScreen() {
                 boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
               }}
             >
-              <span style={{ fontSize: '20px' }}>{label.emoji}</span>
               <span style={{
                 fontSize: '15px',
                 fontWeight: 700,
@@ -116,23 +115,79 @@ export default function Stage1_2StabilityScreen() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Custom Slider Track */}
-          <div style={{ width: '100%', maxWidth: '480px' }}>
+          {/* Classy Luxury Slider Component */}
+          <div style={{ width: '100%', maxWidth: '520px', position: 'relative', padding: '12px 0 6px' }}>
+            {/* Dynamic Floating Value Pill */}
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              marginBottom: '16px',
+              height: '32px'
+            }}>
+              <div style={{
+                position: 'absolute',
+                left: `${value}%`,
+                transform: 'translateX(-50%)',
+                background: '#414242',
+                color: '#ffffff',
+                fontSize: '12px',
+                fontWeight: 800,
+                fontFamily: '"IBM Plex Mono", monospace',
+                padding: '4px 14px',
+                borderRadius: '999px',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+                whiteSpace: 'nowrap',
+                transition: 'left 0.1s ease-out',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: label.color, display: 'inline-block' }} />
+                {value}%
+              </div>
+            </div>
+
+            {/* Custom Styled Range Input */}
             <input
               type="range"
               min={0}
               max={100}
               value={value}
               onChange={e => setProfileField('lifeStability', Number(e.target.value))}
+              className="classy-range-input"
               style={{
-                width: '100%',
-                accentColor: '#00ae9d',
-                cursor: 'pointer',
-                height: '8px',
+                background: `linear-gradient(90deg, ${label.color} 0%, ${label.color} ${value}%, #e2ece8 ${value}%, #e2ece8 100%)`
               }}
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '11px', fontWeight: 700, color: '#414242', fontFamily: '"IBM Plex Mono", monospace' }}>
+
+            {/* Milestone Tick Dots */}
+            <div style={{
+              position: 'absolute',
+              top: '61px',
+              left: '14px',
+              right: '14px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              pointerEvents: 'none'
+            }}>
+              {[0, 25, 50, 75, 100].map((step) => (
+                <div
+                  key={step}
+                  style={{
+                    width: '4px',
+                    height: '4px',
+                    borderRadius: '50%',
+                    background: value >= step ? '#ffffff' : 'rgba(65, 66, 66, 0.25)',
+                    boxShadow: '0 0 2px rgba(0,0,0,0.2)'
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* End & Mid Labels */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', fontSize: '11.5px', fontWeight: 800, color: '#414242', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.08em' }}>
               <span>TURBULENT</span>
+              <span style={{ opacity: 0.45 }}>BALANCED</span>
               <span>STEADY</span>
             </div>
           </div>

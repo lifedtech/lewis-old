@@ -5,9 +5,9 @@ import { useLewisStore } from '../store/useLewisStore.js'
 /* ── Circadian Arc Traveling Sun & Moon Illustration ── */
 const CircadianIllustration = () => (
   <motion.svg
-    viewBox="0 0 240 190"
+    viewBox="0 25 240 155"
     fill="none"
-    style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '0 auto' }}
+    style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '-18px auto 0 auto' }}
     initial={{ opacity: 0, scale: 0.92 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -171,7 +171,7 @@ export default function Stage1_13BodyRhythmScreen() {
       }}>
 
         {/* LEFT — Eyebrow + Title + Subtitle + Circadian Illustration */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', alignSelf: 'flex-start' }}>
           <div>
             <p style={{
               fontFamily: '"IBM Plex Mono", monospace',

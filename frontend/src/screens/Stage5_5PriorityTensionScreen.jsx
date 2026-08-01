@@ -123,7 +123,7 @@ export default function Stage5_5PriorityTensionScreen() {
               Where do you experience the biggest friction or "gap" between your listed priorities and where your daily energy actually goes?
             </p>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '-15px' }}>
             <SeesawTensionIllustration />
           </div>
         </div>

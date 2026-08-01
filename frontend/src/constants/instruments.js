@@ -28,7 +28,7 @@ export const INSTRUMENTS = {
 
   stage5_2Pss10: {
     slice: 'pss10', next: 'stage5_2Ucla3', topic: 'pss10',
-    eyebrow: 'PERCEIVED STRESS (PSS-10)',
+    eyebrow: 'PERCEIVED STRESS',
     title: ['Emotional &', 'Mental Stress'],
     subtitle: 'In the last month, how often have you experienced these thoughts or feelings?',
     progress: 'IN THE LAST MONTH',
@@ -52,7 +52,7 @@ export const INSTRUMENTS = {
 
   stage5_2Ucla3: {
     slice: 'ucla3', next: 'stage5_2Gse', topic: 'ucla3',
-    eyebrow: 'SOCIAL & RELATIONAL (UCLA-3)',
+    eyebrow: 'SOCIAL & RELATIONAL',
     title: ['Relationships &', 'Social Connection'],
     subtitle: 'Reflecting on your feelings of connection and companionship.',
     progress: 'HOW OFTEN DO YOU FEEL',

@@ -196,7 +196,7 @@ export default function App() {
         </div>
       )}
 
-      <div className="app-shell" style={currentScreen === 'landing' ? { padding: 0 } : {}}>
+      <div className="app-shell" style={currentScreen === 'landing' ? { padding: 0 } : (currentScreen === 'mirror' ? { height: 'auto', maxHeight: 'none', minHeight: '100vh', overflow: 'visible' } : {})}>
         {currentScreen !== 'landing' && (
           <header className="app-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -324,6 +324,12 @@ export default function App() {
               <ActiveScreen key={currentScreen} />
             </AnimatePresence>
           </main>
+        ) : currentScreen === 'mirror' ? (
+          <div style={{ width: '100%', maxWidth: '960px', margin: '0 auto', padding: '10px 20px 80px 20px', boxSizing: 'border-box' }}>
+            <AnimatePresence mode="wait">
+              <ActiveScreen key={currentScreen} />
+            </AnimatePresence>
+          </div>
         ) : (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 20px 32px 20px', boxSizing: 'border-box', overflow: 'hidden', minHeight: 0 }}>
             <div className={`main-card ${(currentScreen === 'stage1_0About' || currentScreen === 'preStage0Age' || currentScreen === 'stage1_1Identity') ? 'transparent-card' : ''}`} style={{

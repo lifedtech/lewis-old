@@ -67,7 +67,7 @@ export default function Stage3_2BodyMapScreen() {
           flex: 1,
         }}>
 
-          {/* LEFT — Interactive Body Figure SVG Card */}
+          {/* LEFT — Interactive Body Figure SVG Card (Single Figure) */}
           <div style={{
             height: '100%',
             maxHeight: '300px',
@@ -76,7 +76,7 @@ export default function Stage3_2BodyMapScreen() {
             border: '1.5px solid rgba(0,174,157,0.18)',
             padding: '16px',
             display: 'flex',
-            justify: 'center',
+            justifyContent: 'center',
             alignItems: 'center',
             boxSizing: 'border-box'
           }}>
@@ -91,6 +91,17 @@ export default function Stage3_2BodyMapScreen() {
                   <stop offset="100%" stopColor="#00ae9d" />
                 </linearGradient>
               </defs>
+
+              {/* Upper & Lower Back (Back Layer Contour behind Torso) */}
+              <rect
+                x="56" y="95" width="88" height="110" rx="14"
+                fill={isSelected('back') ? 'url(#bodySelected)' : '#f7faf9'}
+                stroke={isSelected('back') ? '#00ae9d' : '#d2dad6'}
+                strokeWidth={isSelected('back') ? '2.2' : '1.8'}
+                strokeDasharray={isSelected('back') ? 'none' : '4 3'}
+                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                onClick={() => toggleArrayItem('bodyMapZones', 'back')}
+              />
 
               {/* Head */}
               <circle
@@ -112,39 +123,29 @@ export default function Stage3_2BodyMapScreen() {
                 onClick={() => toggleArrayItem('bodyMapZones', 'neck')}
               />
 
-              {/* Chest */}
+              {/* Chest (Front Layer) */}
               <rect
-                x="65" y="100" width="70" height="50" rx="8"
-                fill={isSelected('chest') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
+                x="66" y="101" width="68" height="48" rx="8"
+                fill={isSelected('chest') ? 'url(#bodySelected)' : '#ffffff'}
                 stroke={isSelected('chest') ? '#00ae9d' : '#d2dad6'}
                 strokeWidth="2"
                 style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'chest')}
               />
 
-              {/* Upper & Lower Back */}
-              <path
-                d="M 68,102 L 68,200 L 132,200 L 132,102 Z"
-                fill="none"
-                stroke={isSelected('back') ? '#00ae9d' : 'transparent'}
-                strokeDasharray="4,4"
-                strokeWidth="2.5"
-                style={{ pointerEvents: 'none' }}
-              />
-
-              {/* Stomach & Abdomen */}
+              {/* Stomach & Abdomen (Front Layer) */}
               <rect
-                x="68" y="155" width="64" height="48" rx="8"
-                fill={isSelected('gut') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
+                x="69" y="154" width="62" height="46" rx="8"
+                fill={isSelected('gut') ? 'url(#bodySelected)' : '#ffffff'}
                 stroke={isSelected('gut') ? '#00ae9d' : '#d2dad6'}
                 strokeWidth="2"
                 style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'gut')}
               />
 
-              {/* Arms */}
+              {/* Arms (Limbs) */}
               <path
-                d="M 58,104 L 30,165 L 42,170 L 63,115 Z"
+                d="M 54,102 L 26,163 L 38,168 L 59,113 Z"
                 fill={isSelected('limbs') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
                 stroke={isSelected('limbs') ? '#00ae9d' : '#d2dad6'}
                 strokeWidth="2"
@@ -152,7 +153,7 @@ export default function Stage3_2BodyMapScreen() {
                 onClick={() => toggleArrayItem('bodyMapZones', 'limbs')}
               />
               <path
-                d="M 142,104 L 170,165 L 158,170 L 137,115 Z"
+                d="M 146,102 L 174,163 L 162,168 L 141,113 Z"
                 fill={isSelected('limbs') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
                 stroke={isSelected('limbs') ? '#00ae9d' : '#d2dad6'}
                 strokeWidth="2"
@@ -160,9 +161,9 @@ export default function Stage3_2BodyMapScreen() {
                 onClick={() => toggleArrayItem('bodyMapZones', 'limbs')}
               />
 
-              {/* Legs */}
+              {/* Legs (Limbs) */}
               <path
-                d="M 70,210 L 58,300 L 73,300 L 82,210 Z"
+                d="M 70,212 L 58,300 L 73,300 L 82,212 Z"
                 fill={isSelected('limbs') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
                 stroke={isSelected('limbs') ? '#00ae9d' : '#d2dad6'}
                 strokeWidth="2"
@@ -170,7 +171,7 @@ export default function Stage3_2BodyMapScreen() {
                 onClick={() => toggleArrayItem('bodyMapZones', 'limbs')}
               />
               <path
-                d="M 130,210 L 142,300 L 127,300 L 118,210 Z"
+                d="M 130,212 L 142,300 L 127,300 L 118,212 Z"
                 fill={isSelected('limbs') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
                 stroke={isSelected('limbs') ? '#00ae9d' : '#d2dad6'}
                 strokeWidth="2"

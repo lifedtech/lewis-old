@@ -12,7 +12,7 @@
 import os
 import logging
 from datetime import date
-from typing import Annotated, Any, Dict, List, Optional
+from typing import Annotated, Any, Dict, List, Optional, Union
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -54,14 +54,22 @@ if "*" in _origins:
     logger.critical("Wildcard CORS origin rejected; using localhost & Cloudflare dev origins instead.")
     _origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://lewis.cold-forest-a8ec.workers.dev"]
 
+# Order matters: the last middleware added is the outermost. CORS must wrap
+# the guardrail, or its 429/413 short-circuits (and 500s) come back without
+# CORS headers and the browser reports them as "server unreachable".
+app.add_middleware(GuardrailMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
+    # Vite picks whatever port is free (5173, 5174, ...), and a browser only
+    # sends a localhost Origin for a page actually served from localhost, so
+    # matching any local port costs nothing and stops the whole class of
+    # "dev server moved and the app went blank" failures.
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
-app.add_middleware(GuardrailMiddleware)
 
 
 @app.exception_handler(Exception)
@@ -164,7 +172,7 @@ class FullAssessmentInput(BaseModel):
     energyArc: Dict[str, ShortText] = Field(default={})
     stressPatternClusters: List[ShortText] = Field(default=[], max_length=20)
     recoveryResponsiveness: Optional[ShortText] = None
-    cumulativeLoad: Dict[str, Any] = Field(default={})
+    cumulativeLoad: Optional[Union[Dict[str, Any], ShortText]] = None
     soundPreference: Optional[ShortText] = None
     quickChoices: Dict[str, Any] = Field(default={})
     max_time_available: int = Field(default=5, ge=1, le=120)

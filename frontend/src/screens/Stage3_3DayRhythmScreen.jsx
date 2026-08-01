@@ -7,7 +7,7 @@ const DiurnalCycleIllustration = () => (
   <motion.svg
     viewBox="0 0 240 180"
     fill="none"
-    style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '10px 0' }}
+    style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '10px 0 10px 90px' }}
     initial={{ opacity: 0, scale: 0.92 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.6, ease: 'easeOut' }}

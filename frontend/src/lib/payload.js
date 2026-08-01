@@ -138,7 +138,7 @@ export function buildFullAssessmentPayload(store) {
     energyArc: store.energyArc,
     stressPatternClusters: store.stressPatternClusters,
     recoveryResponsiveness: store.recoveryResponsiveness,
-    cumulativeLoad: store.cumulativeLoad,
+    cumulativeLoad: typeof store.cumulativeLoad === 'string' ? store.cumulativeLoad : null,
     soundPreference: store.soundPreference,
     quickChoices: store.quickChoices,
     // Friction flags from Stage 7.8 (previously dropped on the floor);
