@@ -76,7 +76,7 @@ export default function Stage8_3RecoveryScreen() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
-      <div style={{
+      <div className="stage-split" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1.8fr',
         gap: 'clamp(20px, 3vw, 36px)',

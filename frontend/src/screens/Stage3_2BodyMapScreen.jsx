@@ -59,7 +59,7 @@ export default function Stage3_2BodyMapScreen() {
         </div>
 
         {/* MAIN 2-COLUMN SECTION (Body figure card left, 6 stacked option rows right) */}
-        <div style={{
+        <div className="stage-split" style={{
           display: 'grid',
           gridTemplateColumns: '220px 1fr',
           gap: 'clamp(16px, 3vw, 36px)',

@@ -117,7 +117,7 @@ export default function Stage9QuickChoicesScreen() {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
     >
-      <div style={{
+      <div className="stage-split" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1.65fr',
         gap: 'clamp(24px, 4vw, 52px)',

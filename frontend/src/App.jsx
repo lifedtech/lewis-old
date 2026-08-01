@@ -196,7 +196,7 @@ export default function App() {
         </div>
       )}
 
-      <div className="app-shell" style={currentScreen === 'landing' ? { padding: 0 } : (currentScreen === 'mirror' ? { height: 'auto', maxHeight: 'none', minHeight: '100vh', overflow: 'visible' } : {})}>
+      <div className="app-shell" style={currentScreen === 'landing' ? { padding: 0 } : (currentScreen === 'mirror' ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible' } : {})}>
         {currentScreen !== 'landing' && (
           <header className="app-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -335,14 +335,14 @@ export default function App() {
             <div className={`main-card ${(currentScreen === 'stage1_0About' || currentScreen === 'preStage0Age' || currentScreen === 'stage1_1Identity') ? 'transparent-card' : ''}`} style={{
               width: '100%',
               maxWidth: (currentScreen === 'preStage0Age' || currentScreen === 'ageStop') ? '480px' : '860px',
-              maxHeight: 'calc(100vh - 160px)',
+              maxHeight: 'calc(100dvh - 160px)',
               display: 'flex',
               flexDirection: 'column',
               position: 'relative',
               boxSizing: 'border-box',
               transition: 'max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
-              <main style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+              <main style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch' }}>
                 <AnimatePresence mode="wait">
                   <ActiveScreen key={currentScreen} />
                 </AnimatePresence>

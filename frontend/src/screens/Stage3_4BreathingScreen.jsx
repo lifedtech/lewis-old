@@ -156,7 +156,7 @@ export default function Stage3_4BreathingScreen() {
       exit={{ opacity: 0, y: -20 }}
       style={{ overflow: 'visible' }}
     >
-      <div style={{
+      <div className="stage-split" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1.65fr',
         gap: 'clamp(24px, 4vw, 52px)',
