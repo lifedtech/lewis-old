@@ -10,7 +10,7 @@
 # scoring, pattern, safety and leverage layers already concluded, in the
 # vocabulary the report contract requires.
 
-from scoring import KEY_TO_SPEC_CODE, SPEC_CODE_TO_KEY, W_MATRIX
+from scoring import KEY_TO_SPEC_CODE, W_MATRIX
 
 # Internal band -> the four reader-facing words (rulebook, fixed set).
 REPORT_BAND = {

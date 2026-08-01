@@ -1,23 +1,25 @@
-import {  useState, useEffect, useRef  } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import './landing.css'
 
 const DOMAINS = [
-  { name: 'Sleep & Recovery', field: 'Chronobiology', icon: '🌙', tag: 'Rest quality, rhythm and restoration.', score: 62, desc: 'How well your body repairs itself. Lewis looks at sleep duration, consistency and how recovered you actually feel — the domain that quietly powers every other one.' },
-  { name: 'Nutrition', field: 'Metabolic science', icon: '🥗', tag: 'What fuels you, and how it lands.', score: 74, desc: 'Not diets — patterns. Lewis maps eating rhythm, quality and relationship with food against what metabolic research says sustains energy and mood.' },
-  { name: 'Movement', field: 'Exercise physiology', icon: '🏃', tag: 'Activity, strength and daily motion.', score: 81, desc: 'From structured training to everyday motion. Lewis measures whether your week gives your body the stimulus it is built to expect.' },
-  { name: 'Stress & Resilience', field: 'Psychoneuroimmunology', icon: '🛡️', tag: 'Load, recovery and coping capacity.', score: 58, desc: 'Stress is not the enemy — unrecovered stress is. Lewis tracks your load against your capacity to bounce back.' },
+  { name: 'Sleep & Recovery', field: 'Chronobiology', icon: '🌙', tag: 'Rest quality, rhythm and restoration.', score: 62, desc: 'How well your body repairs itself. LEWIS looks at sleep duration, consistency and how recovered you actually feel — the domain that quietly powers every other one.' },
+  { name: 'Nutrition', field: 'Metabolic science', icon: '🥗', tag: 'What fuels you, and how it lands.', score: 74, desc: 'Not diets — patterns. LEWIS maps eating rhythm, quality and relationship with food against what metabolic research says sustains energy and mood.' },
+  { name: 'Movement', field: 'Exercise physiology', icon: '🏃', tag: 'Activity, strength and daily motion.', score: 81, desc: 'From structured training to everyday motion. LEWIS measures whether your week gives your body the stimulus it is built to expect.' },
+  { name: 'Stress & Resilience', field: 'Psychoneuroimmunology', icon: '🛡️', tag: 'Load, recovery and coping capacity.', score: 58, desc: 'Stress is not the enemy — unrecovered stress is. LEWIS tracks your load against your capacity to bounce back.' },
   { name: 'Emotional Balance', field: 'Affective science', icon: '🪞', tag: 'Mood, regulation and self-awareness.', score: 77, desc: 'How you feel, how often, and how well you can name and steer it. Emotional granularity is one of the strongest predictors of long-term wellbeing.' },
-  { name: 'Cognitive Health', field: 'Neuroscience', icon: '🧠', tag: 'Focus, clarity and mental energy.', score: 79, desc: 'Attention, memory and mental stamina. Lewis detects the early signature of cognitive strain long before burnout does.' },
-  { name: 'Social Connection', field: 'Social epidemiology', icon: '🤝', tag: 'Relationships and belonging.', score: 84, desc: 'The strongest longevity predictor we know. Lewis assesses the depth, not just the count, of your connections.' },
-  { name: 'Purpose & Meaning', field: 'Existential psychology', icon: '🧭', tag: 'Direction, values and motivation.', score: 71, desc: 'A felt sense of "why". People with clear purpose recover faster, sleep better and live longer — Lewis measures how anchored yours is.' },
-  { name: 'Environment', field: 'Environmental health', icon: '🌿', tag: 'Spaces, light, nature and noise.', score: 68, desc: 'Where you live and work shapes your biology daily. Lewis evaluates light exposure, nature contact, noise and the spaces you spend your hours in.' }
+  { name: 'Cognitive Health', field: 'Neuroscience', icon: '🧠', tag: 'Focus, clarity and mental energy.', score: 79, desc: 'Attention, memory and mental stamina. LEWIS detects the early signature of cognitive strain long before burnout does.' },
+  { name: 'Social Connection', field: 'Social epidemiology', icon: '🤝', tag: 'Relationships and belonging.', score: 84, desc: 'The strongest longevity predictor we know. LEWIS assesses the depth, not just the count, of your connections.' },
+  { name: 'Purpose & Meaning', field: 'Existential psychology', icon: '🧭', tag: 'Direction, values and motivation.', score: 71, desc: 'A felt sense of "why". People with clear purpose recover faster, sleep better and live longer — LEWIS measures how anchored yours is.' },
+  { name: 'Environment', field: 'Environmental health', icon: '🌿', tag: 'Spaces, light, nature and noise.', score: 68, desc: 'Where you live and work shapes your biology daily. LEWIS evaluates light exposure, nature contact, noise and the spaces you spend your hours in.' }
 ];
 
 export default function LandingScreen() {
   const { setScreen } = useLewisStore()
   const [active, setActive] = useState(0)
+  const [contactSubmitted, setContactSubmitted] = useState(false)
+  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' })
   const revealRefs = useRef([])
 
   const handleNext = (e) => {
@@ -30,6 +32,13 @@ export default function LandingScreen() {
     const el = document.getElementById(id)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
+  const handleContactSubmit = (e) => {
+    if (e) e.preventDefault()
+    if (contactForm.name && contactForm.email && contactForm.message) {
+      setContactSubmitted(true)
     }
   }
 
@@ -64,43 +73,17 @@ export default function LandingScreen() {
   const activeDomain = active != null ? DOMAINS[active] : null
 
   return (
-    <motion.div 
+    <motion.div
       className="landing-screen-wrapper"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
     >
-      {/* Constellation Vector Mesh Overlay matching screenshot */}
-      <svg className="constellation-svg" viewBox="0 0 1440 900" preserveAspectRatio="none">
-        {/* Left Constellation Mesh */}
-        <g stroke="#d6edea" strokeWidth="1.2" opacity="0.6" fill="none">
-          <line x1="150" y1="180" x2="310" y2="120" />
-          <line x1="310" y1="120" x2="265" y2="300" />
-          <line x1="150" y1="180" x2="265" y2="300" />
-          <line x1="310" y1="120" x2="720" y2="90" />
-          <line x1="265" y1="300" x2="155" y2="840" />
-        </g>
-        <g fill="#00ae9d">
-          <circle cx="150" cy="180" r="4.5" className="node-pulse" />
-          <circle cx="310" cy="120" r="5.5" className="node-pulse" />
-          <circle cx="265" cy="300" r="5" className="node-pulse" />
-          <circle cx="720" cy="90" r="4" className="node-pulse" />
-          <circle cx="155" cy="840" r="4" className="node-pulse" />
-        </g>
-
-        {/* Right Constellation Mesh */}
-        <g stroke="#d6edea" strokeWidth="1.2" opacity="0.6" fill="none">
-          <line x1="1130" y1="150" x2="1215" y2="265" />
-          <line x1="1215" y1="265" x2="1265" y2="565" />
-          <line x1="1215" y1="265" x2="1340" y2="120" />
-        </g>
-        <g fill="#00ae9d">
-          <circle cx="1130" cy="150" r="4.5" className="node-pulse" />
-          <circle cx="1215" cy="265" r="5.5" className="node-pulse" />
-          <circle cx="1265" cy="565" r="4" className="node-pulse" />
-        </g>
-      </svg>
+      {/* Premium Luminescent Ambient Background Layers */}
+      <div className="bg-ambient-orb-1" />
+      <div className="bg-ambient-orb-2" />
+      <div className="bg-dot-grid" />
 
       {/* TOP NAVIGATION HEADER */}
       <header data-screen-label="Nav" style={{
@@ -126,8 +109,8 @@ export default function LandingScreen() {
             flexShrink: 0,
           }} />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '20px', color: '#414242', letterSpacing: '-0.02em' }}>Lewis</span>
-            <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '9px', fontWeight: 700, letterSpacing: '0.14em', color: '#414242', marginTop: '2px' }}>BY LIFED</span>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '20px', color: '#414242', letterSpacing: '-0.02em' }}>LEWIS</span>
+            <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '9px', fontWeight: 700, letterSpacing: '0.14em', color: '#414242', marginTop: '2px' }}>BY Lifed</span>
           </div>
         </div>
 
@@ -135,6 +118,9 @@ export default function LandingScreen() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
           <a href="#how" onClick={(e) => scrollTo(e, 'how')} className="hide-on-mobile" style={{ fontSize: '14.5px', fontWeight: 600, color: '#414242', transition: 'color 0.2s' }}>
             How it works
+          </a>
+          <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} className="hide-on-mobile" style={{ fontSize: '14.5px', fontWeight: 600, color: '#414242', transition: 'color 0.2s' }}>
+            Contact us
           </a>
           <a href="#begin" onClick={handleNext} className="landing-header-btn" style={{
             display: 'flex',
@@ -169,8 +155,18 @@ export default function LandingScreen() {
         padding: '120px 24px 80px',
         boxSizing: 'border-box',
       }}>
-        <div style={{ textAlign: 'center', maxWidth: '820px', position: 'relative', zIndex: 2 }}>
-          
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          maxWidth: '900px',
+          width: '100%',
+          margin: '0 auto',
+          position: 'relative',
+          zIndex: 2
+        }}>
+
           {/* Eyebrow with horizontal accent lines matching screenshot */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '22px' }}>
             <span style={{ width: '32px', height: '1.5px', background: '#00ae9d', display: 'inline-block', opacity: 0.7 }} />
@@ -181,17 +177,20 @@ export default function LandingScreen() {
           </div>
 
           {/* Huge Main Headline matching screenshot */}
-          <h1 className="hero-lewis-title" style={{ margin: '0 0 14px 0' }}>
-            Lewis
+          <h1 className="hero-lewis-title" style={{ fontSize: 'clamp(42px, 4.8vw, 64px)', color: '#000000', margin: '0 auto 14px auto', textAlign: 'center', width: '100%' }}>
+            LEWIS
           </h1>
 
           {/* Subtitle matching screenshot */}
           <h2 style={{
             fontFamily: "'Manrope', sans-serif",
-            fontSize: 'clamp(32px, 5.2vw, 64px)',
-            letterSpacing: '-0.035em',
-            lineHeight: 1.05,
-            margin: '0 0 28px 0',
+            fontSize: 'clamp(20px, 2.4vw, 28px)',
+            fontWeight: 700,
+            letterSpacing: '-0.03em',
+            lineHeight: 1.15,
+            margin: '0 auto 28px auto',
+            textAlign: 'center',
+            width: '100%',
           }}>
             <span style={{ fontWeight: 400, color: '#414242' }}>wellbeing </span>
             <span style={{ fontWeight: 800, color: '#414242' }}>made intelligent</span>
@@ -206,7 +205,7 @@ export default function LandingScreen() {
             maxWidth: '680px',
             margin: '0 auto 36px auto',
           }}>
-            Answer a few gentle questions. Lewis reads the signals your body<br className="hide-on-mobile" />
+            Answer a few gentle questions. LEWIS reads the signals your body<br className="hide-on-mobile" />
             and life already produce, and turns them into <strong style={{ color: '#00ae9d', fontWeight: 700 }}>one living picture of you</strong>.
           </p>
 
@@ -277,6 +276,9 @@ export default function LandingScreen() {
             <a href="#report" onClick={(e) => scrollTo(e, 'report')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
               Adaptive
             </a>
+            <span className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+              Non-clinical
+            </span>
           </div>
         </div>
       </section>
@@ -315,19 +317,19 @@ export default function LandingScreen() {
           {DOMAINS.map((d, i) => {
             const isSelected = active === i
             return (
-              <div 
-                key={i} 
-                ref={addToRefs} 
-                onClick={() => setActive(i)} 
-                className="landing-reveal-element landing-domain-card" 
-                style={{ 
-                  position: 'relative', 
-                  background: isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.75)', 
-                  backdropFilter: 'blur(16px)', 
-                  WebkitBackdropFilter: 'blur(16px)', 
-                  border: isSelected ? '2px solid #00ae9d' : '1.5px solid #f4f4f4', 
-                  borderRadius: '20px', 
-                  padding: '24px 22px', 
+              <div
+                key={i}
+                ref={addToRefs}
+                onClick={() => setActive(i)}
+                className="landing-reveal-element landing-domain-card"
+                style={{
+                  position: 'relative',
+                  background: isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.75)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: isSelected ? '2px solid #00ae9d' : '1.5px solid #f4f4f4',
+                  borderRadius: '20px',
+                  padding: '24px 22px',
                   cursor: 'pointer',
                   boxShadow: isSelected ? '0 12px 32px rgba(0,174,157,0.15)' : '0 4px 14px rgba(0,0,0,0.02)',
                 }}
@@ -351,22 +353,22 @@ export default function LandingScreen() {
 
         {/* Dynamic Domain Details Drawer */}
         {activeDomain && (
-          <motion.div 
+          <motion.div
             key={active}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
-            style={{ 
-              marginTop: '28px', 
-              background: '#414242', 
-              color: '#ffffff', 
-              borderRadius: '24px', 
-              padding: '30px 34px', 
-              display: 'flex', 
-              flexWrap: 'wrap', 
-              alignItems: 'center', 
+            style={{
+              marginTop: '28px',
+              background: '#414242',
+              color: '#ffffff',
+              borderRadius: '24px',
+              padding: '30px 34px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
               justifyContent: 'space-between',
-              gap: '28px', 
+              gap: '28px',
               boxShadow: '0 20px 50px rgba(65, 66, 66, 0.25)',
               border: '1.5px solid rgba(0, 174, 157, 0.4)',
             }}
@@ -392,7 +394,7 @@ export default function LandingScreen() {
                 <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5fbb46)', width: `${activeDomain.score}%`, transition: 'width 0.6s ease' }} />
               </div>
               <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'rgba(255, 255, 255, 0.5)', fontStyle: 'italic' }}>
-                Analyzed via Lewis Adaptive Engine
+                Analyzed via LEWIS Adaptive Engine
               </div>
             </div>
           </motion.div>
@@ -408,7 +410,7 @@ export default function LandingScreen() {
           Intelligence, not averages.
         </h2>
         <p ref={addToRefs} className="landing-reveal-element" style={{ margin: '0 0 32px 0', maxWidth: '640px', fontSize: '15.5px', lineHeight: 1.6, color: '#414242' }}>
-          Answer a few gentle questions. Lewis translates your life signals into one clear, actionable picture of your wellbeing.
+          Answer a few gentle questions. LEWIS translates your life signals into one clear, actionable picture of your wellbeing.
         </p>
 
         {/* System Brief Overview Banner */}
@@ -438,7 +440,7 @@ export default function LandingScreen() {
               LEWIS SYSTEM OVERVIEW BRIEF
             </div>
             <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.65, color: '#414242' }}>
-              LEWIS (The Lifed Everyday Wellbeing Intelligence System) evaluates your responses across 9 validated scientific life dimensions using standardized scales like WHO-5 and PSS-10. Instead of giving generic advice, Lewis uses a deterministic cross-domain influence matrix to calculate where a single micro-habit creates the largest positive ripple effect across your health, mood, and resilience.
+              LEWIS (The Lifed Everyday Wellbeing Intelligence System) evaluates your responses across 9 validated scientific life dimensions using standardized scales like WHO-5 and PSS-10. Instead of giving generic advice, LEWIS uses a deterministic cross-domain influence matrix to calculate where a single micro-habit creates the largest positive ripple effect across your health, mood, and resilience.
             </p>
           </div>
         </div>
@@ -456,7 +458,7 @@ export default function LandingScreen() {
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', marginBottom: '16px', fontFamily: '"IBM Plex Mono", monospace' }}>02 — ANALYZE</div>
             <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>Cross-domain intelligence</div>
             <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#414242' }}>
-              Lewis weighs how your domains interact — because sleep debt shows up in mood, and stress impacts every single domain.
+              LEWIS weighs how your domains interact — because sleep debt shows up in mood, and stress impacts every single domain.
             </p>
           </div>
 
@@ -470,87 +472,19 @@ export default function LandingScreen() {
         </div>
       </section>
 
-      {/* SECTION 03 — THE SCIENCE & ARCHITECTURE OF LEWIS */}
-      <section id="science" data-screen-label="The Science" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'rgba(255,255,255,0.45)' }}>
-        <div ref={addToRefs} className="landing-reveal-element" style={{ marginBottom: '48px' }}>
-          <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
-            [ 03 ] THE SCIENCE &amp; ARCHITECTURE
-          </div>
-          <h2 style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em', maxWidth: '780px', lineHeight: 1.1 }}>
-            Deterministic intelligence, zero-PII privacy, &amp; 10,000-profile benchmarking.
-          </h2>
-          <p style={{ margin: 0, maxWidth: '640px', fontSize: '15.5px', lineHeight: 1.65, color: '#414242' }}>
-            LEWIS (The Lifed Everyday Wellbeing Intelligence System) is built on validated psychological scales and a deterministic leverage engine — turning your signals into actionable clarity.
-          </p>
-        </div>
-
-        {/* 4 Core Pillars Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-          
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#00ae9d', marginBottom: '14px', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.1em' }}>
-              ⚡ 9×9 INFLUENCE MATRIX
-            </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>
-              W-Matrix Leverage Engine
-            </div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#414242' }}>
-              Maps how your 9 domains interact. Instead of treating symptoms, Lewis calculates where a small micro-habit change creates the biggest positive ripple effect across your entire life.
-            </p>
-          </div>
-
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#00ae9d', marginBottom: '14px', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.1em' }}>
-              📊 10K SEED CORPUS (k-NN)
-            </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>
-              10,000-Profile Benchmark
-            </div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#414242' }}>
-              Maps your profile against a 10k synthetic dataset using state-only k-NN matching. You receive coarse-position context (<strong style={{ color: '#00ae9d' }}>Thriving, Steady, Strained, Depleted</strong>) without punitive scores.
-            </p>
-          </div>
-
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#00ae9d', marginBottom: '14px', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.1em' }}>
-              🔬 CLINICAL INSTRUMENTS
-            </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>
-              Validated Scientific Scales
-            </div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#414242' }}>
-              Integrates WHO-5 (Wellbeing), PSS-10 (Calm), UCLA-3 (Relationships), GSE (Agency), CFPB-5 (Financial Peace), and PROMIS (Purpose). All distress scales are inverted at source into positive wellbeing polarity.
-            </p>
-          </div>
-
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', borderRadius: '22px', padding: '30px 28px', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#00ae9d', marginBottom: '14px', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.1em' }}>
-              🛡️ FAIL-SAFE PRIVACY
-            </div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>
-              Zero-PII &amp; Safety Lattice
-            </div>
-            <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.65, color: '#414242' }}>
-              Private by design. Answers live only for the request duration. If severe depletion is detected, Gentle Mode automatically engages to deliver grounding micro-habits and care signposts.
-            </p>
-          </div>
-
-        </div>
-      </section>
-
-      {/* SECTION 04 — SAMPLE REPORT PREVIEW */}
+      {/* SECTION 03 — SAMPLE REPORT PREVIEW */}
       <section id="report" data-screen-label="Report preview" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'rgba(214, 237, 234, 0.35)' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '56px', alignItems: 'center', justifyContent: 'space-between' }}>
-          
+
           <div ref={addToRefs} className="landing-reveal-element" style={{ flex: 1, minWidth: '300px', maxWidth: '520px' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
-              [ 04 ] YOUR WELLBEING REPORT
+              [ 03 ] YOUR WELLBEING REPORT
             </div>
             <h2 style={{ margin: '0 0 18px', fontSize: 'clamp(32px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#414242', lineHeight: 1.08 }}>
               Nine signals.<br />One honest number.
             </h2>
             <p style={{ margin: '0 0 32px', fontSize: '15px', lineHeight: 1.65, color: '#414242' }}>
-              Your Lewis Score distills all nine domains into a single trajectory you can actually move — showing you exactly which habit unlocks the biggest impact.
+              Your LEWIS Score distills all nine domains into a single trajectory you can actually move — showing you exactly which habit unlocks the biggest impact.
             </p>
             <a href="#begin" onClick={handleNext} className="landing-primary-btn" style={{
               display: 'inline-flex',
@@ -601,7 +535,7 @@ export default function LandingScreen() {
                     {score}
                   </div>
                   <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#414242', marginTop: '4px', fontFamily: '"IBM Plex Mono", monospace' }}>
-                    Lewis score
+                    LEWIS score
                   </div>
                 </div>
               </div>
@@ -631,6 +565,214 @@ export default function LandingScreen() {
         </div>
       </section>
 
+      {/* SECTION — CONTACT US / SUPPORT */}
+      <section id="contact" data-screen-label="Contact Us" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'rgba(255, 255, 255, 0.65)' }}>
+        <div ref={addToRefs} className="landing-reveal-element" style={{ maxWidth: '900px', margin: '0 auto' }}>
+
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
+              [ GET IN TOUCH ]
+            </div>
+            <h2 style={{ margin: '0 0 16px 0', fontSize: 'clamp(28px, 3.6vw, 44px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+              Support &amp; Contact Us
+            </h2>
+            <p style={{ margin: '0 auto', maxWidth: '580px', fontSize: '15.5px', lineHeight: 1.6, color: '#414242' }}>
+              Have questions, feedback, or need assistance? Fill out your query below or mail us directly.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', alignItems: 'stretch' }}>
+
+            {/* Direct Email Option Card */}
+            <div style={{
+              background: 'linear-gradient(135deg, #ffffff 0%, #f4fbf9 100%)',
+              border: '1.5px solid rgba(0, 174, 157, 0.25)',
+              borderRadius: '24px',
+              padding: '36px 30px',
+              boxShadow: '0 10px 30px rgba(0, 174, 157, 0.08)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '24px'
+            }}>
+              <div>
+                <div style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '16px',
+                  background: 'rgba(0, 174, 157, 0.12)',
+                  display: 'grid',
+                  placeItems: 'center',
+                  fontSize: '24px',
+                  marginBottom: '20px'
+                }}>✉️</div>
+
+                <h3 style={{ margin: '0 0 10px 0', fontSize: '22px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242' }}>
+                  Mail us directly
+                </h3>
+                <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.6, color: '#414242' }}>
+                  Prefer sending a direct email? Reach our support team directly and we'll respond promptly.
+                </p>
+              </div>
+
+              <div style={{ paddingTop: '16px', borderTop: '1px solid rgba(0, 174, 157, 0.15)' }}>
+                <span style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', opacity: 0.7, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  Direct Support Email
+                </span>
+                <a
+                  href="mailto:support@lifedhealth.com"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    background: '#00ae9d',
+                    color: '#ffffff',
+                    padding: '14px 22px',
+                    borderRadius: '999px',
+                    fontWeight: 700,
+                    fontSize: '14.5px',
+                    textDecoration: 'none',
+                    boxShadow: '0 6px 18px rgba(0, 174, 157, 0.25)',
+                    transition: 'transform 0.2s'
+                  }}
+                >
+                  support@lifedhealth.com →
+                </a>
+              </div>
+            </div>
+
+            {/* Fill Your Query Form Card */}
+            <div style={{
+              background: '#ffffff',
+              border: '1.5px solid #eef4f2',
+              borderRadius: '24px',
+              padding: '36px 30px',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.04)'
+            }}>
+              <h3 style={{ margin: '0 0 20px 0', fontSize: '22px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242' }}>
+                Fill your query
+              </h3>
+
+              {contactSubmitted ? (
+                <div style={{
+                  background: 'rgba(0, 174, 157, 0.08)',
+                  border: '1.5px solid #00ae9d',
+                  borderRadius: '16px',
+                  padding: '28px 20px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>✅</div>
+                  <h4 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: 700, color: '#414242' }}>Query Sent!</h4>
+                  <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#414242', lineHeight: 1.5 }}>
+                    Thank you, {contactForm.name || 'there'}! We have received your message and will reply to <strong>{contactForm.email}</strong> soon.
+                  </p>
+                  <button
+                    onClick={() => { setContactSubmitted(false); setContactForm({ name: '', email: '', message: '' }); }}
+                    style={{ background: 'transparent', border: 'none', color: '#00ae9d', fontWeight: 700, cursor: 'pointer', fontSize: '13.5px' }}
+                  >
+                    Send another query
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Sarah Jenkins"
+                      value={contactForm.name}
+                      onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        border: '1.5px solid #e2e8e5',
+                        fontSize: '14px',
+                        fontFamily: "'Nunito', sans-serif",
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="name@example.com"
+                      value={contactForm.email}
+                      onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        border: '1.5px solid #e2e8e5',
+                        fontSize: '14px',
+                        fontFamily: "'Nunito', sans-serif",
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
+                      Your Query
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      placeholder="Type your message or query here..."
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        border: '1.5px solid #e2e8e5',
+                        fontSize: '14px',
+                        fontFamily: "'Nunito', sans-serif",
+                        outline: 'none',
+                        resize: 'vertical',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="landing-primary-btn"
+                    style={{
+                      background: '#00ae9d',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '14px',
+                      borderRadius: '12px',
+                      fontWeight: 700,
+                      fontSize: '15px',
+                      cursor: 'pointer',
+                      marginTop: '4px',
+                      boxShadow: '0 6px 18px rgba(0, 174, 157, 0.25)'
+                    }}
+                  >
+                    Submit Query →
+                  </button>
+                </form>
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer data-screen-label="Footer" style={{
         position: 'relative',
@@ -647,11 +789,9 @@ export default function LandingScreen() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>
           <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#00ae9d', display: 'inline-block' }}></span>
-          © 2026 Lewis — LIFED Health Intelligence
+          © 2026- Holobiont Private Limited
         </div>
-        <div style={{ display: 'flex', gap: '24px', fontSize: '13px' }}>
-          <a href="#domains" onClick={(e) => scrollTo(e, 'domains')} className="landing-footer-link" style={{ color: 'rgba(255,255,255,0.7)' }}>The Science</a>
-          <a href="#report" onClick={(e) => scrollTo(e, 'report')} className="landing-footer-link" style={{ color: 'rgba(255,255,255,0.7)' }}>Sample Report</a>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap', fontSize: '13px' }}>
           <a href="#top" onClick={(e) => scrollTo(e, 'top')} className="landing-footer-link" style={{ color: 'rgba(255,255,255,0.7)' }}>Privacy</a>
         </div>
       </footer>

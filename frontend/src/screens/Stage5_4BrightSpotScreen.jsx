@@ -130,7 +130,7 @@ export default function Stage5_4BrightSpotScreen() {
               What is currently your greatest source of resilience, calm, or strength? How does it protect you during difficult weeks?
             </p>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '-15px' }}>
             <BrightSpotIllustration />
           </div>
         </div>

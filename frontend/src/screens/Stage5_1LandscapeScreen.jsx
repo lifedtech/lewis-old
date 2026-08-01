@@ -178,7 +178,7 @@ export default function Stage5_1LandscapeScreen() {
             justifyContent: 'center',
             boxSizing: 'border-box',
           }}>
-            <div style={{ width: '100%', maxWidth: '320px', aspectRatio: '1/1' }}>
+            <div style={{ width: '100%', maxWidth: '320px', aspectRatio: '1/1', marginLeft: '28px' }}>
               <svg viewBox="0 0 400 400" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
                 {nodes.map(d => (
                   <line

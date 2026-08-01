@@ -118,9 +118,10 @@ export default function Stage1_9FinancialScreen() {
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              textWrap: 'balance',
             }}>
-              Financial<br />Wellness Pulse
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Financial</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Wellness</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Pulse</span>
             </h1>
             <p style={{
               margin: '12px 0 0 2px',

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
 export default function Stage1_1IdentityScreen() {
-  const { setScreen, toggleArrayItem, identityRoles } = useLewisStore()
+  const { setScreen, setProfileField, identityRoles } = useLewisStore()
 
   const roles = [
     'Parent / Caregiver',
@@ -49,7 +49,7 @@ export default function Stage1_1IdentityScreen() {
           textTransform: 'uppercase',
           margin: '0 0 10px 0',
         }}>
-          SELECT ALL THAT APPLY
+          SELECT ONE
         </p>
 
         {/* Title */}
@@ -72,7 +72,7 @@ export default function Stage1_1IdentityScreen() {
           color: '#414242',
           fontFamily: "'Nunito', sans-serif",
         }}>
-          Which of these describes you right now? Select all that apply.
+          Which of these describes you right now? Select one.
         </p>
 
         {/* Options Grid */}
@@ -89,7 +89,7 @@ export default function Stage1_1IdentityScreen() {
             return (
               <button
                 key={val}
-                onClick={() => toggleArrayItem('identityRoles', val)}
+                onClick={() => setProfileField('identityRoles', active ? [] : [val])}
                 style={{
                   display: 'flex',
                   alignItems: 'center',

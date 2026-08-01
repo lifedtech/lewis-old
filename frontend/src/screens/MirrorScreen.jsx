@@ -6,6 +6,8 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import ReactMarkdown from 'react-markdown'
 import InsightReport from '../report/InsightReport.jsx'
 import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
+import Icon from '../report/icons.jsx'
+import './landing.css'
 /* ── Backend Connection Error Vector Line Art ── */
 const BackendConnectionErrorIllustration = () => (
   <motion.svg
@@ -62,8 +64,10 @@ export default function MirrorScreen() {
   const [loading, setLoading] = useState(true)
   const [analysis, setAnalysis] = useState(null)
   const [error, setError] = useState(null)
+  const [errorDetail, setErrorDetail] = useState(null)
   const [missing, setMissing] = useState(null)
   const [loadingStepIdx, setLoadingStepIdx] = useState(0)
+  const [attempt, setAttempt] = useState(0)
 
   const loadingSteps = [
     "Scoring WHO-5 Emotional Wellbeing & Resilience...",
@@ -83,6 +87,7 @@ export default function MirrorScreen() {
   }, [loading, loadingSteps.length])
 
   useEffect(() => {
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
     async function fetchAnalysis() {
       try {
         const { payload, missing } = buildFullAssessmentPayload(useLewisStore.getState())
@@ -92,26 +97,29 @@ export default function MirrorScreen() {
           return
         }
 
-        const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
         const response = await fetch(`${API_BASE}/assessment/full`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         })
 
-        if (!response.ok) throw new Error('Failed to fetch analysis')
+        if (!response.ok) {
+          const detail = await response.text()
+          throw new Error(`${response.status}: ${detail.slice(0, 300)}`)
+        }
 
         const data = await response.json()
         setAnalysis(data)
         setLoading(false)
       } catch (err) {
         console.error(err)
-        setError('Could not generate your narrative. Please ensure the backend is running.')
+        setError('We could not put your synthesis together just now. Please try again in a little while.')
+        setErrorDetail(`POST ${API_BASE}/assessment/full — ${err.message}`)
         setLoading(false)
       }
     }
     fetchAnalysis()
-  }, [])
+  }, [attempt])
 
   if (loading) {
     return (
@@ -290,7 +298,7 @@ export default function MirrorScreen() {
                 color: '#414242',
                 textWrap: 'balance',
               }}>
-                Unable to<br />Synthesize
+                Unable to Load<br />Your Synthesis
               </h1>
               <p style={{
                 margin: '12px 0 0 2px',
@@ -335,7 +343,7 @@ export default function MirrorScreen() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <span style={{ fontSize: '22px' }}>⚠️</span>
                 <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: '18px', color: '#991b1b' }}>
-                  Backend Service Offline
+                  Synthesis Unavailable
                 </span>
               </div>
               <p style={{
@@ -345,15 +353,43 @@ export default function MirrorScreen() {
                 fontFamily: "'Nunito', sans-serif",
                 lineHeight: 1.5,
               }}>
-                The LEWIS backend analysis server is unreachable. Please verify that the API server is running on <code style={{ background: '#fca5a5', padding: '2px 6px', borderRadius: '4px', color: '#7f1d1d' }}>http://127.0.0.1:8000</code> and click Try Again.
+                Your responses are safe. LEWIS just needs a moment before it can synthesise them. Please try again after a while.
               </p>
+              {/* The real status and body, dev only: this card is the one place
+                  a failure is visible, and "try again later" is not a diagnosis. */}
+              {import.meta.env.DEV && errorDetail && (
+                <pre style={{
+                  margin: 0,
+                  padding: '10px 12px',
+                  borderRadius: '10px',
+                  background: '#fee2e2',
+                  color: '#7f1d1d',
+                  fontFamily: '"IBM Plex Mono", monospace',
+                  fontSize: '11.5px',
+                  lineHeight: 1.45,
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  maxHeight: '190px',
+                  overflow: 'auto',
+                }}>
+                  {errorDetail}
+                </pre>
+              )}
             </div>
 
             {/* Action button pinned at bottom right */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '16px', flexShrink: 0 }}>
               <button
                 className="btn-primary"
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  // Retry the request, never reload: a reload resets the store
+                  // and the whole assessment has to be answered again.
+                  setError(null)
+                  setErrorDetail(null)
+                  setLoadingStepIdx(0)
+                  setLoading(true)
+                  setAttempt((n) => n + 1)
+                }}
                 style={{ padding: '12px 38px' }}
               >
                 Try Again
@@ -395,31 +431,66 @@ export default function MirrorScreen() {
   }
 
   return (
-    <motion.section 
-      className="screen active"
-      initial={{ opacity: 0, y: 10 }}
+    <motion.div
+      className="mirror-page-wrapper"
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
+      exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.5, ease: [0.2, 0.7, 0.3, 1] }}
-      style={{ display: 'flex', paddingBottom: '60px' }}
     >
-      <p className="eyebrow" style={{ textAlign: 'center' }}>The Mirror</p>
-      <h1 className="headline" style={{ marginBottom: '40px' }}>Your systemic overview.</h1>
+      <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
+      {/* Hero Page Header */}
+      <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+        <span style={{
+          fontSize: '11px',
+          fontWeight: 800,
+          letterSpacing: '0.12em',
+          color: 'var(--dawn)',
+          textTransform: 'uppercase',
+          background: 'rgba(0, 174, 157, 0.1)',
+          padding: '6px 14px',
+          borderRadius: '999px',
+          display: 'inline-block',
+          marginBottom: '12px'
+        }}>
+          Systemic Overview
+        </span>
+        <h1 style={{
+          fontFamily: "'Manrope', sans-serif",
+          fontSize: 'clamp(32px, 4vw, 48px)',
+          fontWeight: 800,
+          color: 'var(--text)',
+          margin: '0 0 8px 0',
+          letterSpacing: '-0.03em'
+        }}>
+          The Mirror
+        </h1>
+        <p style={{
+          fontFamily: "'Nunito', sans-serif",
+          fontSize: '16px',
+          color: 'var(--text-mute)',
+          margin: 0
+        }}>
+          Your complete reflection of wellbeing, stability, and growth resources.
+        </p>
+      </div>
 
       {/* Care note first: safety renders before everything else (INV-06/08) */}
       {analysis?.safety?.care_note && (
         <div className="mirror-card care-note-card" style={{
           display: 'flex',
           flexDirection: 'column',
-          padding: '24px',
-          marginBottom: '32px',
-          border: '1.5px solid rgba(167, 139, 250, 0.4)',
-          background: 'linear-gradient(135deg, rgba(167, 139, 250, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%)',
+          padding: '24px 28px',
           borderRadius: '20px',
-          boxShadow: '0 8px 24px rgba(167, 139, 250, 0.12)'
+          border: '1.5px solid rgba(95, 187, 70, 0.35)',
+          background: 'linear-gradient(135deg, rgba(95, 187, 70, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%)',
+          boxShadow: '0 8px 24px rgba(95, 187, 70, 0.12)'
         }}>
-          <p className="mirror-label bright" style={{ color: '#00ae9d', marginBottom: '12px', fontWeight: 700 }}>A note of care</p>
-          <p className="mirror-text" style={{ fontSize: '15px', lineHeight: '1.7', color: 'var(--text)', margin: 0 }}>
+          <p className="mirror-label" style={{ color: 'var(--sage)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+            <Icon name="heart" size={16} />
+            A note of care
+          </p>
+          <p className="mirror-text" style={{ fontSize: '15.5px', lineHeight: '1.7', color: 'var(--text)', margin: 0 }}>
             {analysis.safety.care_note}
           </p>
         </div>
@@ -427,117 +498,157 @@ export default function MirrorScreen() {
 
       {dims && (
         <>
-          {/* Prominent Resolution Card at the top */}
-          <div className="mirror-card resolution-card" style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            padding: '28px', 
-            marginBottom: '32px',
-            border: '1.5px solid var(--dawn)',
-            background: 'linear-gradient(135deg, rgba(0, 174, 157, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%)',
-            boxShadow: '0 8px 24px rgba(0, 174, 157, 0.15)',
-            borderRadius: '20px'
+          {/* Prominent Resolution Card */}
+          <div className="mirror-card resolution-card" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '28px 32px',
+            borderRadius: '24px',
+            border: '1.5px solid rgba(0, 174, 157, 0.35)',
+            background: 'linear-gradient(135deg, rgba(0, 174, 157, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%)',
+            boxShadow: '0 10px 30px rgba(0, 174, 157, 0.12)'
           }}>
-            <p className="mirror-label bright" style={{ color: 'var(--dawn)', marginBottom: '12px', fontWeight: 700 }}>Your Resolution</p>
-            <h3 style={{ color: 'var(--text)', fontSize: '22px', marginBottom: '8px', fontWeight: '700' }}>{analysis?.prescription?.habit_title}</h3>
-            <p className="mirror-text" style={{ fontSize: '15px', lineHeight: '1.6', color: 'var(--text-mute)', margin: 0 }}>
+            <p className="mirror-label" style={{ color: 'var(--dawn)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+              <Icon name="compass" size={16} />
+              Your Resolution
+            </p>
+            <h3 style={{ color: 'var(--text)', fontSize: '24px', marginBottom: '8px', fontWeight: '800', fontFamily: "'Manrope', sans-serif" }}>
+              {analysis?.prescription?.habit_title}
+            </h3>
+            <p className="mirror-text" style={{ fontSize: '15.5px', lineHeight: '1.6', color: 'var(--text-mute)', margin: 0 }}>
               {analysis?.prescription?.micro_action}
             </p>
           </div>
 
-          <div className="mirror-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '30px', position: 'relative', overflow: 'hidden', marginBottom: '24px', borderRadius: '20px' }}>
-            <p className="mirror-label bright" style={{ color: 'var(--dawn)', fontWeight: 700 }}>Resilience Radar</p>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at center, rgba(0, 174, 157, 0.08), transparent 70%)', pointerEvents: 'none' }}></div>
-            
-            <div style={{ width: '100%', height: '300px', marginTop: '20px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-                  <PolarGrid stroke="rgba(0,0,0,0.12)" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                  <Radar
-                    name="You"
-                    dataKey="A"
-                    stroke="var(--dawn)"
-                    strokeWidth={2.5}
-                    fill="var(--dawn)"
-                    fillOpacity={0.25}
-                  />
-                </RadarChart>
-              </ResponsiveContainer>
+          {/* Visual Overview Dashboard Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
+            gap: '24px',
+            width: '100%'
+          }}>
+            {/* Resilience Radar Card */}
+            <div className="mirror-card" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: '28px',
+              background: '#ffffff',
+              borderRadius: '24px',
+              border: '1.5px solid rgba(0,0,0,0.06)',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <p className="mirror-label" style={{ color: 'var(--dawn)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, alignSelf: 'flex-start' }}>
+                <Icon name="target" size={16} />
+                Resilience Radar
+              </p>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at center, rgba(0, 174, 157, 0.08), transparent 70%)', pointerEvents: 'none' }}></div>
+              
+              <div style={{ width: '100%', height: '300px', marginTop: '16px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
+                    <PolarGrid stroke="rgba(0,0,0,0.12)" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar
+                      name="You"
+                      dataKey="A"
+                      stroke="var(--dawn)"
+                      strokeWidth={2.5}
+                      fill="var(--dawn)"
+                      fillOpacity={0.25}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-          </div>
 
-          <div className="mirror-card" style={{ display: 'flex', flexDirection: 'column', padding: '30px', marginBottom: '24px', borderRadius: '20px' }}>
-            <p className="mirror-label bright" style={{ color: 'var(--dawn)', fontWeight: 700, alignSelf: 'flex-start' }}>The Wellbeing Landscape</p>
-            <p className="mirror-text" style={{ fontSize: '14px', marginBottom: '24px', color: 'var(--text-mute)' }}>Ranked from your strongest resources to the areas asking for attention.</p>
-            
-            <div style={{ width: '100%', height: '350px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="gradThriving" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#34d399" stopOpacity={0.8} />
-                      <stop offset="100%" stopColor="#00ae9d" stopOpacity={1} />
-                    </linearGradient>
-                    <linearGradient id="gradSteady" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#fde047" stopOpacity={0.8} />
-                      <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
-                    </linearGradient>
-                    <linearGradient id="gradStretched" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="var(--dawn-glow)" stopOpacity={0.8} />
-                      <stop offset="100%" stopColor="var(--dawn)" stopOpacity={1} />
-                    </linearGradient>
-                    <linearGradient id="gradDepleted" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#f472b6" stopOpacity={0.8} />
-                      <stop offset="100%" stopColor="#be123c" stopOpacity={1} />
-                    </linearGradient>
-                  </defs>
-                  
-                  <XAxis type="number" domain={[0, 100]} hide />
-                  <YAxis 
-                    dataKey="subject" 
-                    type="category" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: 'var(--text)', fontSize: 13, fontWeight: 600, letterSpacing: '0.02em' }} 
-                    width={130} 
-                  />
-                  <Tooltip 
-                    cursor={{fill: 'rgba(0,0,0,0.04)'}} 
-                    contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', borderColor: 'var(--dawn)', borderRadius: '12px', backdropFilter: 'blur(10px)', color: 'var(--text)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
-                    itemStyle={{ color: 'var(--text)', fontWeight: 700 }}
-                  />
-                  <Bar 
-                    dataKey="A" 
-                    radius={[0, 8, 8, 0]} 
-                    barSize={28}
-                    animationDuration={1500}
-                    animationEasing="ease-out"
-                  >
-                    {sortedData.map((entry, index) => {
-                      let fillId = "url(#gradDepleted)"
-                      if (entry.A >= 70) fillId = "url(#gradThriving)"
-                      else if (entry.A >= 55) fillId = "url(#gradSteady)"
-                      else if (entry.A >= 40) fillId = "url(#gradStretched)"
-                      return <Cell key={`cell-${index}`} fill={fillId} />
-                    })}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+            {/* Wellbeing Landscape Card */}
+            <div className="mirror-card" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '28px',
+              background: '#ffffff',
+              borderRadius: '24px',
+              border: '1.5px solid rgba(0,0,0,0.06)',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.04)'
+            }}>
+              <p className="mirror-label" style={{ color: 'var(--dawn)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+                <Icon name="waves" size={16} />
+                The Wellbeing Landscape
+              </p>
+              <p className="mirror-text" style={{ fontSize: '13.5px', marginBottom: '16px', color: 'var(--text-mute)' }}>
+                Ranked from your strongest resources to areas asking for attention.
+              </p>
+              
+              <div style={{ width: '100%', height: '300px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="gradThriving" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#34d399" stopOpacity={0.8} />
+                        <stop offset="100%" stopColor="#00ae9d" stopOpacity={1} />
+                      </linearGradient>
+                      <linearGradient id="gradSteady" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#fde047" stopOpacity={0.8} />
+                        <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
+                      </linearGradient>
+                      <linearGradient id="gradStretched" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="var(--dawn-glow)" stopOpacity={0.8} />
+                        <stop offset="100%" stopColor="var(--dawn)" stopOpacity={1} />
+                      </linearGradient>
+                      <linearGradient id="gradDepleted" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#f472b6" stopOpacity={0.8} />
+                        <stop offset="100%" stopColor="#be123c" stopOpacity={1} />
+                      </linearGradient>
+                    </defs>
+                    
+                    <XAxis type="number" domain={[0, 100]} hide />
+                    <YAxis 
+                      dataKey="subject" 
+                      type="category" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600 }} 
+                      width={110} 
+                    />
+                    <Tooltip 
+                      cursor={{fill: 'rgba(0,0,0,0.04)'}} 
+                      contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', borderColor: 'var(--dawn)', borderRadius: '12px', backdropFilter: 'blur(10px)', color: 'var(--text)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+                      itemStyle={{ color: 'var(--text)', fontWeight: 700 }}
+                    />
+                    <Bar 
+                      dataKey="A" 
+                      radius={[0, 8, 8, 0]} 
+                      barSize={24}
+                      animationDuration={1500}
+                      animationEasing="ease-out"
+                    >
+                      {sortedData.map((entry, index) => {
+                        let fillId = "url(#gradDepleted)"
+                        if (entry.A >= 70) fillId = "url(#gradThriving)"
+                        else if (entry.A >= 55) fillId = "url(#gradSteady)"
+                        else if (entry.A >= 40) fillId = "url(#gradStretched)"
+                        return <Cell key={`cell-${index}`} fill={fillId} />
+                      })}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         </>
       )}
 
-      {/* The full 16-page Insight Report (rulebook v3.0), downloadable as PDF.
-          Falls back to the legacy markdown narrative if the report is absent. */}
+      {/* The full Insight Report (v4.0 25-page layout), downloadable as PDF */}
       {analysis?.insight_report ? (
-        <div style={{ marginBottom: '40px' }}>
+        <div style={{ marginTop: '16px' }}>
           <InsightReport report={analysis.insight_report} />
         </div>
       ) : (
-        <div className="mirror-card ai-report-content" style={{ marginBottom: '40px' }}>
+        <div className="mirror-card ai-report-content" style={{ padding: '32px', background: '#ffffff', borderRadius: '24px', border: '1.5px solid rgba(0,0,0,0.06)' }}>
           <ReactMarkdown
             components={{
               h1: ({ ...props }) => <h2 className="mirror-label notice" style={{ marginTop: '32px', marginBottom: '16px', fontSize: '16px' }} {...props} />,
@@ -554,8 +665,11 @@ export default function MirrorScreen() {
         </div>
       )}
 
-      <p className="closing-line">LEWIS reflects. It never diagnoses.</p>
+      <p className="closing-line" style={{ textAlign: 'center', color: 'var(--text-mute)', fontSize: '13.5px', marginTop: '16px' }}>
+        LEWIS reflects. It never diagnoses.
+      </p>
+      </div>
 
-    </motion.section>
+    </motion.div>
   )
 }
