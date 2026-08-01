@@ -1,4 +1,72 @@
-# LEWIS Core Engine - Updates (Version 1.3.0 - 22 July 2026)
+# LEWIS Core Engine - Updates (Version 1.4.0 - 1 August 2026)
+
+This release delivers the **25-page Insight Report v4.0 redesign**, a **unified InstrumentScreen**, a full **report CSS design system**, and comprehensive **UI standardisation** across all 50 journey screens.
+
+## 1. 25-Page Insight Report — v4.0 Rulebook Complete (`backend/insight_report.py`, `backend/enrich.py`)
+
+The Insight Report is upgraded from 16 pages to the full **25-page format** specified in `doc/LEWIS_Insight_Report_Generation_Rulebook_v4.0_FINAL.md`:
+
+- **Six parts** behind a cover and contents page: Orientation → Your Picture → How It Connects → A Closer Look → Your Plan → After This.
+- Every v3.0 crowded page is split into two dedicated pages (e.g., orientation → "How to read" + "The four band words"; connections → "What moves together" + "Reading the connections").
+- `enrich.py` upgraded to map all pipeline outputs to the v4.0 enriched object: nine areas with v4.0 band words (Running on empty / Under pressure / Steady / Strong), `read_type` per dimension, licensed connections, distress tier, commerce cap, handoff.
+- `insight_report.py` generates all 25 pages as structured JSON blocks: cover, contents, orientation, picture (opening, picture-telling, nine-petal wheel, area table), connections (diagram, reading, stress, tension), closer-look (3 pages), plan (pathway, anchor, 7-days, supports, choosing, programs), after-this (30-day experiment, what-stands-behind, appendix ×2).
+- `report_gate.py` updated to verify all new required blocks (season-not-type p3/p5, single-sitting p10, why-small p16, lapse p17+p22, privacy p23, free-path-first before p21).
+
+## 2. Full Report CSS Design System (`frontend/src/report/report.css`)
+
+Complete CSS system for all 25+ block types — 2,300+ lines, zero inline styles in JSX:
+
+- **A4 page layout**: `.ir-page` with `aspect-ratio: 210/297` (screen) and `@page { size: 210mm 297mm; }` (print). `max-width: 840px`, `min-height: 1120px`.
+- **Block styles added**: `.ir-reach` (3-column progress bar rows), `.ir-rhythm` (day-curve SVG container with axis labels), `.ir-timeline` (horizontal day segment bar), `.ir-load` (3-step load indicator), `.ir-bodymap` (body contour SVG + word pills), `.ir-flow` (3-step arrow flow diagram), `.ir-area` (deep-dive area with icon tile + band chip), `.ir-practice` (3-column experiment box with tag badge), `.ir-steps` (numbered step sequence), `.ir-sevendays` / `.ir-day` (7-row guide table), `.ir-supports` / `.ir-support` (recommendation cards), `.ir-program-card` (2-column program card with image), `.ir-cta` (green gradient call-to-action banner), `.ir-colophon` (signoff block with LIFED logo).
+- **Print rules**: `break-inside: avoid !important` on all block containers. `-webkit-print-color-adjust: exact` on all coloured elements.
+- **Badge fixes**: `.ir-conn-start` (START HERE pill) uses `display: inline-flex; align-items: center; justify-content: center; line-height: 1` for pixel-perfect vertical centering.
+
+## 3. Consolidated InstrumentScreen (`frontend/src/screens/InstrumentScreen.jsx`)
+
+Six separate psychometric scale screens (Stage5_2SwlsScreen, Stage5_2GseScreen, Stage5_2PromisScreen, Stage5_2Cfpb5Screen, Stage5_2DienerScreen, Stage5_2Ucla3Screen) replaced by a single unified `InstrumentScreen.jsx`:
+
+- Drives from `constants/instruments.js` — question text, anchors, and scoring metadata in one place.
+- Shared neomorphic slider styling, answer persistence, completion detection.
+- `constants/instruments.check.js` — completion validators for each instrument.
+- Deleted: `Stage5_2SwlsScreen.jsx`, `Stage5_2GseScreen.jsx`, `Stage5_2PromisScreen.jsx`, `Stage5_2Cfpb5Screen.jsx`, `Stage5_2DienerScreen.jsx`, `Stage5_2Ucla3Screen.jsx`.
+
+## 4. Icons System (`frontend/src/report/icons.jsx`)
+
+Dedicated SVG line icon component library for the report:
+
+- Consistent `<Icon name="..." size={N} />` interface.
+- Icons: compass, check, info, clock, leaf, zap, shield, link, arrow, target, chart, calendar, heart, star, moon, sun, and more.
+- Used throughout all block components — no raw SVG in JSX.
+
+## 5. UI Standardisation & Screen Corrections
+
+Across all 50 journey screens and the report:
+
+- **Page 05 Systemic Map**: `.ir-map-grid` 3-column node grid with connective arrows; `.ir-map-hub` highlighted centre card; `.ir-map-step` action banner callout.
+- **Page 06 Columns**: `.ir-columns` side-by-side green & amber tinted cards; `.ir-column-head` flex gap separating icons from titles.
+- **Page 07 Petal Wheel**: SVG `viewBox` expanded to `0 0 660 470`, `cx = 330`; `tspan dy="16"` vertical offset corrected; `.ir-band-row` 3-column grid with `.ir-meter` step bars.
+- **Page 08 Area Table**: `.ir-table-area` (`display: inline-flex` with 10px gap); `.ir-certainty-cards` 2-column confidence card grid.
+- **Page 09 Connections Nodes**: `.ir-conn-cols` 2-column side-by-side grid (`minmax(320px, 1fr)`); `.ir-conn-node` (`justify-content: space-between`, `12px` gap); `white-space: nowrap` on `.ir-conn-name`; `.ir-conn-legend` 3-row legend with line samples.
+- **Page 10 Reach Bars**: `.ir-reach-row` 3-column grid (`180px 1fr 140px`) — name, gradient fill bar, right-aligned label.
+- **All pages**: removed `page.next` teaser footer block from `ReportPage` component.
+
+## 6. AI Model Update
+
+- Model selection updated to Claude Sonnet 4.6 (Thinking) for agent-assisted development sessions (no change to the LEWIS pipeline model — Nemotron is unchanged).
+
+## 7. Documentation Updates
+
+- `README.md` — rewritten for v1.4.0 with full architecture diagram, feature list, repo layout, version history table.
+- `learning_doc.md` — updated for v1.4.0: InstrumentScreen consolidation, report rendering pipeline explanation, icons.jsx, report.css architecture, updated development rules.
+- `lewis doc.md` — updated for v1.4.0: new Insight Report System section (25-page structure, block type table, CSS system table, gate checklist), updated data model (name/location/flags), enrichment pipeline, band word mapping table.
+
+## 8. Git Branch Merge
+
+- Merged `ui/complete-assessment-redesign` into `main` (74 files, 12,180 insertions) and deleted the feature branch. Development continues directly on `main`.
+
+---
+
+
 
 This release lands **Supabase PostgreSQL cloud database integration**, complete **onboarding database isolation**, **de-identified dataset anonymization**, **enterprise security guardrails**, and **Cloudflare/Railway cloud deployment**.
 
