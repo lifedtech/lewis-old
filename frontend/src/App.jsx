@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useLewisStore } from './store/useLewisStore.js'
 
@@ -178,6 +179,69 @@ export default function App() {
 
   const currentIndex = SCREEN_ORDER.indexOf(currentScreen)
 
+  const stageWrapRef = useRef(null)
+  const stageMainRef = useRef(null)
+  const mainCardRef = useRef(null)
+
+  // Browsers can leave a scrollable ancestor's scrollTop at a stray non-zero
+  // value after its content changes - e.g. auto-scrolling to reveal a newly
+  // focused button deeper in an instrument questionnaire's next sub-question -
+  // silently cropping the new content from the top. Reset on navigation, on
+  // any DOM change within the card (multi-step screens swap content
+  // internally without changing currentScreen), and undo any scroll that
+  // wasn't a real continuous-scroll gesture (wheel/touchmove).
+  useLayoutEffect(() => {
+    const wrap = stageWrapRef.current
+    const main = stageMainRef.current
+    const card = mainCardRef.current
+    const resetScroll = () => {
+      if (wrap) wrap.scrollTop = 0
+      if (main) main.scrollTop = 0
+    }
+    resetScroll()
+    if (!card) return
+
+    let raf = 0
+    const scheduleReset = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(resetScroll)
+    }
+    const mo = new MutationObserver(scheduleReset)
+    mo.observe(card, { childList: true, subtree: true, attributes: true })
+
+    let userScrolling = false
+    let userScrollTimer = 0
+    const markUserScroll = () => {
+      userScrolling = true
+      clearTimeout(userScrollTimer)
+      userScrollTimer = setTimeout(() => { userScrolling = false }, 400)
+    }
+    const scrollables = [wrap, main].filter(Boolean)
+    const scrollHandlers = scrollables.map((el) => {
+      const handler = () => { if (!userScrolling && el.scrollTop !== 0) el.scrollTop = 0 }
+      el.addEventListener('scroll', handler, { passive: true })
+      return [el, handler]
+    })
+    // Only real continuous-scroll gestures count as "user is scrolling" -
+    // pointerdown/touchstart also fire on a plain click (e.g. the Continue
+    // button), whose resulting browser auto-scroll is exactly what this
+    // effect needs to undo, not protect.
+    const gestureEvents = ['wheel', 'touchmove']
+    scrollables.forEach((el) => {
+      gestureEvents.forEach((evt) => el.addEventListener(evt, markUserScroll, { passive: true }))
+    })
+
+    return () => {
+      mo.disconnect()
+      cancelAnimationFrame(raf)
+      clearTimeout(userScrollTimer)
+      scrollHandlers.forEach(([el, handler]) => el.removeEventListener('scroll', handler))
+      scrollables.forEach((el) => {
+        gestureEvents.forEach((evt) => el.removeEventListener(evt, markUserScroll))
+      })
+    }
+  }, [currentScreen])
+
   return (
     <>
       {currentScreen === 'landing' && <Background3D />}
@@ -331,8 +395,8 @@ export default function App() {
             </AnimatePresence>
           </div>
         ) : (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 20px 32px 20px', boxSizing: 'border-box', overflow: 'hidden', minHeight: 0 }}>
-            <div className={`main-card ${(currentScreen === 'stage1_0About' || currentScreen === 'preStage0Age' || currentScreen === 'stage1_1Identity') ? 'transparent-card' : ''}`} style={{
+          <div ref={stageWrapRef} className="main-stage-wrap" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 20px 32px 20px', boxSizing: 'border-box', overflow: 'hidden', minHeight: 0 }}>
+            <div ref={mainCardRef} className={`main-card ${(currentScreen === 'stage1_0About' || currentScreen === 'preStage0Age' || currentScreen === 'stage1_1Identity') ? 'transparent-card' : ''}`} style={{
               width: '100%',
               maxWidth: (currentScreen === 'preStage0Age' || currentScreen === 'ageStop') ? '480px' : '860px',
               maxHeight: 'calc(100dvh - 160px)',
@@ -342,7 +406,7 @@ export default function App() {
               boxSizing: 'border-box',
               transition: 'max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
-              <main style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch' }}>
+              <main ref={stageMainRef} style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', overflowAnchor: 'none' }}>
                 <AnimatePresence mode="wait">
                   <ActiveScreen key={currentScreen} />
                 </AnimatePresence>

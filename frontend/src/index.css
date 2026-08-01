@@ -745,6 +745,7 @@ h1.headline em {
   box-sizing: border-box;
   margin: 0 auto;
   width: 100%;
+  overflow-anchor: none;
   transition: background 0.45s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1),
@@ -805,6 +806,21 @@ h1.headline em {
     height: auto !important;
     max-height: none !important;
     gap: clamp(18px, 4vh, 28px) !important;
+  }
+}
+
+/* ---------- Prevent top-of-card cropping on phones/tablets ----------
+   .main-stage-wrap vertically centers .main-card with overflow:hidden;
+   whenever card content is taller than the available space that clips
+   equally off the top and bottom instead of just the bottom. Below
+   1024px, anchor to the top and scroll instead of clipping. */
+@media screen and (max-width: 1024px) {
+  .main-stage-wrap {
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overflow-anchor: none !important;
   }
 }
 
