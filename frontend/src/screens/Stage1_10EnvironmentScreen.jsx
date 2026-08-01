@@ -3,7 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Environmental line illustration ── */
 const EnvironmentIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 240 200"
     fill="none"
     style={{ width: '100%', maxWidth: '200px', display: 'block', margin: '0 auto' }}

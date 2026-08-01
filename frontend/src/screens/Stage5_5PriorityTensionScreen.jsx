@@ -3,7 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Seesaw Priority Tension Animated Vector Illustration ── */
 const SeesawTensionIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 200 180"
     fill="none"
     style={{ width: '100%', maxWidth: '160px', display: 'block', margin: '0' }}

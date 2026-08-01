@@ -4,7 +4,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Circadian Arc Traveling Sun & Moon Illustration ── */
 const CircadianIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 25 240 155"
     fill="none"
     style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '-18px auto 0 auto' }}

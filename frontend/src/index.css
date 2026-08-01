@@ -809,6 +809,17 @@ h1.headline em {
   }
 }
 
+/* ---------- Hide decorative illustrations on phones ----------
+   Purely width-based, so it needs no device detection: switching a mobile
+   browser to "Desktop site" mode widens the effective viewport past this
+   breakpoint and the illustration reappears automatically, same as a normal
+   desktop page. */
+@media screen and (max-width: 760px) {
+  .stage-illustration {
+    display: none !important;
+  }
+}
+
 /* ---------- Prevent top-of-card cropping on phones/tablets ----------
    .main-stage-wrap vertically centers .main-card with overflow:hidden;
    whenever card content is taller than the available space that clips

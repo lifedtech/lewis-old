@@ -10,7 +10,7 @@ import Icon from '../report/icons.jsx'
 import './landing.css'
 /* ── Backend Connection Error Vector Line Art ── */
 const BackendConnectionErrorIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 240 190"
     fill="none"
     style={{ width: '100%', maxWidth: '200px', display: 'block', margin: '0 auto' }}

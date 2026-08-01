@@ -3,7 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Energy Arc Vector Illustration with Sequential Energy Wave Motion ── */
 const EnergyArcIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 200 170"
     fill="none"
     style={{ width: '100%', maxWidth: '170px', display: 'block', margin: '0 auto' }}

@@ -10,7 +10,7 @@ const ButterflyIllustration = ({ isOrange = false, onClick }) => (
     whileTap={{ scale: 0.95 }}
     style={{ cursor: 'pointer', position: 'relative', width: '100%', maxWidth: '220px', margin: '0 auto' }}
   >
-    <motion.svg
+    <motion.svg className="stage-illustration"
       viewBox="0 0 240 190"
       fill="none"
       style={{ width: '100%', display: 'block' }}

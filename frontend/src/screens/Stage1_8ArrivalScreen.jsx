@@ -3,7 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Exact Arrival Arch Vector Line Art with Motion ── */
 const ArrivalStateIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 240 180"
     fill="none"
     style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '10px 0' }}

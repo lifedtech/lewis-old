@@ -3,7 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Nervous System Line Art Illustration ── */
 const NervousSystemIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 240 190"
     fill="none"
     style={{ width: '100%', maxWidth: '220px', display: 'block', margin: '0 auto' }}

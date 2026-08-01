@@ -4,7 +4,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── AI Neural Core Mirror Synthesis Vector Line Art Illustration with Motion ── */
 const MirrorSynthesisIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 240 200"
     fill="none"
     style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '0 auto' }}

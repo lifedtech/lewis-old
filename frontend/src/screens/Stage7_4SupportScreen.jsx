@@ -3,7 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Support Preferences Vector Illustration ── */
 const SupportPreferencesIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 240 190"
     fill="none"
     style={{ width: '100%', maxWidth: '170px', display: 'block', margin: '0 auto' }}

@@ -3,7 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Bright Spot Animated Glowing Sunburst Vector Illustration ── */
 const BrightSpotIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 200 200"
     fill="none"
     style={{ width: '100%', maxWidth: '160px', display: 'block', margin: '0' }}

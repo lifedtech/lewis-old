@@ -4,7 +4,7 @@ import RhythmTimeIcon from '../components/RhythmTimeIcon.jsx'
 
 /* ── Diurnal Energy Cycle Vector Line Art ── */
 const DiurnalCycleIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 240 180"
     fill="none"
     style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '10px 0 10px 90px' }}

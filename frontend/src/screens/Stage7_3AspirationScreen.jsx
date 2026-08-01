@@ -3,7 +3,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 
 /* ── Sprouting Plant Star Blossom Vector Illustration with Motion ── */
 const AspirationPlantIllustration = () => (
-  <motion.svg
+  <motion.svg className="stage-illustration"
     viewBox="0 0 200 180"
     fill="none"
     style={{ width: '100%', maxWidth: '160px', display: 'block', margin: '0 auto' }}
