@@ -1005,7 +1005,7 @@ def _p03_how_to_read(enriched):
     return _page(3, PART_ONE, "Orientation", "How to read this reflection",
                  "Built to be read slowly. It begins with what already supports you, names what is stretched, shows how the two connect, and only then suggests what to try.", [
         _row([
-            {"type": "profile", "label": "PREPARED FOR", "name": meta["name"] or "You",
+            {"type": "profile", "label": "PREPARED FOR", "name": meta["name"] or "User",
              "meta": " · ".join(x for x in [meta["location"]] if x) or None,
              "status": "Full reflection completed"},
             _callout("THE CENTRAL IDEA",
@@ -2028,7 +2028,7 @@ def _p25_appendix_research(enriched):
 
     meta = enriched["meta"]
     prepared = " · ".join(x for x in [
-        "Prepared for " + meta["name"] if meta["name"] else "Prepared for you",
+        "Prepared for " + meta["name"] if meta["name"] else "Prepared for User",
         meta["date"], meta["location"], "A private, non-clinical wellbeing reflection",
     ] if x)
 

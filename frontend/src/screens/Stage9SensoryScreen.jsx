@@ -66,10 +66,10 @@ export default function Stage9SensoryScreen() {
   }
 
   const options = [
-    { title: 'Forest ambience', icon: '🌲', desc: 'Natural woodland sounds, gentle leaves, and birdsong.' },
-    { title: 'Ocean waves', icon: '🌊', desc: 'Calming rhythmic ocean tides and soft water surges.' },
-    { title: 'Binaural beats / White noise', icon: '🎧', desc: 'Steady frequency hums for deep focus and relaxation.' },
-    { title: 'Silence', icon: '🤫', desc: 'Pure stillness without background audio.' }
+    { title: 'Forest ambience', desc: 'Natural woodland sounds, gentle leaves, and birdsong.' },
+    { title: 'Ocean waves', desc: 'Calming rhythmic ocean tides and soft water surges.' },
+    { title: 'Binaural beats / White noise', desc: 'Steady frequency hums for deep focus and relaxation.' },
+    { title: 'Silence', desc: 'Pure stillness without background audio.' }
   ]
 
   return (
@@ -191,7 +191,6 @@ export default function Stage9SensoryScreen() {
                   {/* Content Details */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                      <span style={{ fontSize: '16px' }}>{opt.icon}</span>
                       <span style={{
                         fontFamily: "'Nunito', sans-serif",
                         fontWeight: 700,

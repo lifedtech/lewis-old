@@ -32,11 +32,14 @@ a:hover{color:#00907f}
 <header data-screen-label="Nav" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(255,255,255,0.28);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.4)">
   <div style="display:flex;align-items:center;gap:18px">
     <a href="#top" style="display:flex;align-items:center;gap:9px;color:#414242">
-      <span style="position:relative;width:20px;height:20px;display:inline-block">
-        <span style="position:absolute;left:0;top:0;width:14px;height:14px;border-radius:50%;background:#00ae9d"></span>
-        <span style="position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#5fbb46;mix-blend-mode:multiply"></span>
-      </span>
-      <span style="font-weight:600;font-size:17px;letter-spacing:-0.02em">Lewis</span>
+      <svg width="24" height="24" viewBox="0 0 82 82" style="flex:none">
+        <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"></path>
+        <circle cx="41" cy="41" r="11" fill="#00AE9D"></circle>
+        <circle cx="71" cy="11" r="7" fill="#5FBB46"></circle>
+        <circle cx="11" cy="71" r="7" fill="#00AE9D"></circle>
+      </svg>
+      <span style="font-weight:700;font-size:18px;letter-spacing:-0.02em;font-family:'Manrope',sans-serif">Lewis</span>
     </a>
     <div style="display:flex;gap:14px;font-size:10.5px;font-family:ui-monospace,Menlo,monospace;letter-spacing:0.08em;text-transform:uppercase;color:rgba(65,66,66,0.55)">
       <span>Wellbeing Intelligence</span>
@@ -44,7 +47,6 @@ a:hover{color:#00907f}
     </div>
   </div>
   <a href="#report" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.75);box-shadow:inset 0 1px 0 rgba(255,255,255,0.8),0 6px 18px rgba(0,80,70,0.08);border-radius:999px;padding:8px 18px;font-size:12.5px;font-weight:500;color:#414242" style-hover="border-color:#00ae9d;color:#00ae9d">
-    <span style="width:8px;height:8px;border-radius:50%;background:#00ae9d;display:inline-block"></span>
     Get your report
   </a>
 </header>

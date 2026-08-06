@@ -1,7 +1,28 @@
 /* eslint-disable react-hooks/purity, react-hooks/immutability */
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, Component } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+
+class WebGLErrorBoundary extends Component {
+  state = { hasError: false }
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+  componentDidCatch(err) {
+    console.warn('WebGL 3D background unavailable, using fallback background:', err)
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
+          background: 'radial-gradient(circle at 50% 35%, rgba(0, 174, 157, 0.08) 0%, rgba(255, 255, 255, 0) 70%)'
+        }} />
+      )
+    }
+    return this.props.children
+  }
+}
 
 const NUM_NEURONS = 70
 const CONNECTION_DISTANCE = 3.5
@@ -188,10 +209,12 @@ function NeuralNetwork() {
 
 export default function Background3D() {
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', background: 'transparent' }}>
-      <Canvas camera={{ position: [0, 0, 10], fov: 55 }} dpr={[1, 2]}>
-        <NeuralNetwork />
-      </Canvas>
-    </div>
+    <WebGLErrorBoundary>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', background: 'transparent' }}>
+        <Canvas camera={{ position: [0, 0, 10], fov: 55 }} dpr={[1, 2]}>
+          <NeuralNetwork />
+        </Canvas>
+      </div>
+    </WebGLErrorBoundary>
   )
 }

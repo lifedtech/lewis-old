@@ -1,82 +1,100 @@
-import {  useState, useEffect  } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import { buildFullAssessmentPayload } from '../lib/payload.js'
 
-/* ── AI Neural Core Mirror Synthesis Vector Line Art Illustration with Motion ── */
-const MirrorSynthesisIllustration = () => (
-  <motion.svg className="stage-illustration"
-    viewBox="0 0 240 200"
-    fill="none"
-    style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '0 auto' }}
-    initial={{ opacity: 0, scale: 0.9 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.6 }}
-  >
-    <defs>
-      <radialGradient id="synthGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#00AE9D" stopOpacity="0.25" />
-        <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="synthGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#00ae9d" />
-        <stop offset="100%" stopColor="#00ae9d" />
-      </linearGradient>
-    </defs>
+/* ── 9-Petal Wheel Synthesis Geometry Illustration ── */
+const MirrorSynthesisIllustration = () => {
+  const angles = [0, 40, 80, 120, 160, 200, 240, 280, 320]
+  return (
+    <motion.svg className="stage-illustration"
+      viewBox="-120 -120 240 240"
+      fill="none"
+      style={{ width: '100%', maxWidth: '220px', display: 'block', margin: '0 auto' }}
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      <defs>
+        <radialGradient id="synthGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#00AE9D" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#00AE9D" stopOpacity="0" />
+        </radialGradient>
+      </defs>
 
-    {/* Background Soft Glow */}
-    <circle cx="120" cy="95" r="75" fill="url(#synthGlow)" />
+      {/* Background Soft Glow */}
+      <circle cx="0" cy="0" r="100" fill="url(#synthGlow)" />
 
-    {/* Rotating Concentric Neural Orbit Rings */}
-    <motion.circle
-      cx="120" cy="95" r="50"
-      stroke="#00AE9D" strokeWidth="1.8" strokeDasharray="6 6" fill="none"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
-      style={{ transformOrigin: '120px 95px' }}
-    />
-    <motion.circle
-      cx="120" cy="95" r="32"
-      stroke="#00ae9d" strokeWidth="1.8" strokeDasharray="4 4" fill="none"
-      animate={{ rotate: -360 }}
-      transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
-      style={{ transformOrigin: '120px 95px' }}
-    />
+      {/* Rotating 9-Petal Wheel Guide Geometry */}
+      <motion.g
+        animate={{ rotate: 360 }}
+        transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
+      >
+        {/* Concentric Guide Circles */}
+        <circle cx="0" cy="0" r="32" stroke="#00AE9D" strokeWidth="1.2" strokeDasharray="3 3" strokeOpacity="0.35" fill="none" />
+        <circle cx="0" cy="0" r="54" stroke="#00AE9D" strokeWidth="1.2" strokeDasharray="3 3" strokeOpacity="0.3" fill="none" />
+        <circle cx="0" cy="0" r="76" stroke="#00AE9D" strokeWidth="1.2" strokeDasharray="3 3" strokeOpacity="0.25" fill="none" />
+        <circle cx="0" cy="0" r="98" stroke="#00AE9D" strokeWidth="1.2" strokeDasharray="3 3" strokeOpacity="0.2" fill="none" />
 
-    {/* Center AI Synthesis Diamond Core */}
-    <motion.polygon
-      points="120,65 140,95 120,125 100,95"
-      fill="rgba(0, 174, 157, 0.08)" stroke="url(#synthGrad)" strokeWidth="2.5" strokeLinejoin="round"
-      animate={{ scale: [1, 1.08, 1] }}
-      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-      style={{ transformOrigin: '120px 95px' }}
-    />
-    <circle cx="120" cy="95" r="6" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
+        {/* 9 Radiating Axes */}
+        {angles.map((deg, i) => {
+          const rad = (deg - 90) * (Math.PI / 180)
+          const x2 = Math.cos(rad) * 98
+          const y2 = Math.sin(rad) * 98
+          return (
+            <line
+              key={`axis-${i}`}
+              x1="0" y1="0"
+              x2={x2} y2={y2}
+              stroke="#00AE9D" strokeWidth="1" strokeOpacity="0.2"
+            />
+          )
+        })}
 
-    {/* Orbit Sparkle Nodes */}
-    <motion.circle cx="120" cy="45" r="4" fill="#00AE9D" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
-    <motion.circle cx="170" cy="95" r="4" fill="#00ae9d" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} />
-    <motion.circle cx="120" cy="145" r="4" fill="#00ae9d" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} />
-    <motion.circle cx="70" cy="95" r="4" fill="#00AE9D" animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 1.5 }} />
+        {/* 9 Animated Petal Shapes with Pulsing Nodes */}
+        {angles.map((deg, i) => {
+          const rad = (deg - 90) * (Math.PI / 180)
+          const rPetal = 48 + (i % 3) * 18
+          const cx = Math.cos(rad) * rPetal
+          const cy = Math.sin(rad) * rPetal
+          const isTeal = i % 2 === 0
+          return (
+            <g key={`petal-${i}`}>
+              <motion.line
+                x1="0" y1="0" x2={cx} y2={cy}
+                stroke={isTeal ? "#00AE9D" : "#5FBB46"}
+                strokeWidth="2" strokeOpacity="0.75"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 1.5, delay: i * 0.1 }}
+              />
+              <motion.circle
+                cx={cx} cy={cy} r="4"
+                fill={isTeal ? "#00AE9D" : "#5FBB46"}
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
+              />
+            </g>
+          )
+        })}
+      </motion.g>
 
-    {/* Wavy Horizon Lines */}
-    <motion.path
-      d="M 28,165 Q 85,156 135,169 T 222,161"
-      stroke="#00AE9D" strokeWidth="3.2" strokeLinecap="round" fill="none"
-      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-      transition={{ duration: 1.2 }}
-    />
-    <motion.path
-      d="M 38,181 Q 95,172 145,185 T 212,177"
-      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
-      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-      transition={{ duration: 1.2, delay: 0.2 }}
-    />
-  </motion.svg>
-)
+      {/* Center Hub with LEWIS Logo Mark */}
+      <circle cx="0" cy="0" r="26" fill="#ffffff" stroke="#00AE9D" strokeWidth="1.5" />
+      <g transform="translate(-16, -16) scale(0.39)">
+        <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+        <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+      </g>
+    </motion.svg>
+  )
+}
 
 export default function Stage10GeneratingScreen() {
   const { setScreen } = useLewisStore()
   const [stepIdx, setStepIdx] = useState(0)
+  const [progressPercent, setProgressPercent] = useState(15)
 
   const steps = [
     "Scoring emotional well-being & psychological metrics...",
@@ -88,20 +106,77 @@ export default function Stage10GeneratingScreen() {
   ]
 
   useEffect(() => {
-    if (stepIdx < steps.length - 1) {
-      const timer = setTimeout(() => {
-        setStepIdx(stepIdx + 1)
-      }, 700)
-      return () => clearTimeout(timer)
-    } else {
-      const timer = setTimeout(() => {
-        setScreen('mirror')
-      }, 800)
-      return () => clearTimeout(timer)
-    }
-  }, [stepIdx, setScreen, steps.length])
+    let mounted = true
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
 
-  const progressPercent = Math.round(((stepIdx + 1) / steps.length) * 100)
+    // Smooth active progress ticker while fetching backend data
+    const interval = setInterval(() => {
+      setProgressPercent((prev) => {
+        if (prev < 92) {
+          const next = prev + Math.floor(Math.random() * 6 + 3)
+          const targetStep = Math.min(steps.length - 1, Math.floor((next / 92) * (steps.length - 1)))
+          setStepIdx(targetStep)
+          return Math.min(92, next)
+        }
+        return prev
+      })
+    }, 350)
+
+    async function fetchAnalysis() {
+      try {
+        const { payload, missing } = buildFullAssessmentPayload(useLewisStore.getState())
+        if (missing.length > 0) {
+          useLewisStore.setState({ analysisMissing: missing, analysisData: null, analysisError: null })
+          if (mounted) {
+            clearInterval(interval)
+            setProgressPercent(100)
+            setStepIdx(steps.length - 1)
+            setTimeout(() => setScreen('mirror'), 400)
+          }
+          return
+        }
+
+        const response = await fetch(`${API_BASE}/assessment/full`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+
+        if (!response.ok) {
+          const detail = await response.text()
+          throw new Error(`${response.status}: ${detail.slice(0, 300)}`)
+        }
+
+        const data = await response.json()
+        useLewisStore.setState({ analysisData: data, analysisMissing: null, analysisError: null })
+
+        if (mounted) {
+          clearInterval(interval)
+          setProgressPercent(100)
+          setStepIdx(steps.length - 1)
+          setTimeout(() => setScreen('mirror'), 400)
+        }
+      } catch (err) {
+        console.error(err)
+        useLewisStore.setState({
+          analysisError: 'We could not put your synthesis together just now. Please try again in a little while.',
+          analysisData: null
+        })
+        if (mounted) {
+          clearInterval(interval)
+          setProgressPercent(100)
+          setTimeout(() => setScreen('mirror'), 400)
+        }
+      }
+    }
+
+    fetchAnalysis()
+
+    return () => {
+      mounted = false
+      clearInterval(interval)
+    }
+  }, [setScreen, steps.length])
 
   return (
     <motion.div
@@ -136,13 +211,11 @@ export default function Stage10GeneratingScreen() {
           border: '1px solid #00ae9d',
           marginBottom: '16px',
         }}>
-          <span style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            background: '#00ae9d',
-            boxShadow: '0 0 8px #00ae9d',
-          }} />
+          <svg width="12" height="12" viewBox="0 0 82 82" style={{ flexShrink: 0 }}>
+            <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+          </svg>
           <span style={{
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: '11px',

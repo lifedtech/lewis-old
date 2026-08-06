@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Lewis by Lifed - Stacked Lockup">
+  <title>Lewis vertical stacked lockup</title>
+  <g transform="translate(59, 20)">
+    <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"></path>
+    <circle cx="41" cy="41" r="11" fill="#00AE9D"></circle>
+    <circle cx="71" cy="11" r="7" fill="#5FBB46"></circle>
+    <circle cx="11" cy="71" r="7" fill="#00AE9D"></circle>
+  </g>
+  <text x="100" y="142" text-anchor="middle" font-family="Manrope, Helvetica, Arial, sans-serif" font-weight="800" font-size="32" letter-spacing="-0.8" fill="#16302B">Lewis</text>
+  <text x="100" y="165" text-anchor="middle" font-family="Nunito, Helvetica, Arial, sans-serif" font-weight="700" font-size="11" letter-spacing="2.6" fill="#16302B" fill-opacity="0.5">BY LIFED</text>
+</svg>

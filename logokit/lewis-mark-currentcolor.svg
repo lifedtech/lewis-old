@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82 82" width="82" height="82" role="img" aria-label="Lewis" fill="currentColor">
+  <title>Lewis mark, inherits colour</title>
+  <path d="M11 41 V11 H41" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"></path>
+  <path d="M71 41 V71 H41" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"></path>
+  <circle cx="41" cy="41" r="11" fill="currentColor"></circle>
+  <circle cx="71" cy="11" r="7" fill="currentColor"></circle>
+  <circle cx="11" cy="71" r="7" fill="currentColor"></circle>
+</svg>

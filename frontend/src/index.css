@@ -441,12 +441,7 @@ button:focus-visible,
 }
 
 .mini-orb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--dawn-soft), var(--dawn) 60%, transparent 100%);
-  box-shadow: 0 0 14px var(--dawn-glow);
-  animation: breathe 7s ease-in-out infinite;
+  display: none;
 }
 
 /* ---------- Stage track ---------- */

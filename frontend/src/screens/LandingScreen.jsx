@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import LewisLogo from '../components/LewisLogo.jsx'
 import './landing.css'
 
 const DOMAINS = [
@@ -99,20 +100,7 @@ export default function LandingScreen() {
         background: 'transparent',
       }}>
         {/* Brand Emblem */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '34px',
-            height: '34px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle at 35% 35%, #00ae9d 0%, #00AE9D 65%, #414242 100%)',
-            boxShadow: '0 4px 14px rgba(0, 174, 157, 0.35)',
-            flexShrink: 0,
-          }} />
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '20px', color: '#414242', letterSpacing: '-0.02em' }}>LEWIS</span>
-            <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '9px', fontWeight: 700, letterSpacing: '0.14em', color: '#414242', marginTop: '2px' }}>BY Lifed</span>
-          </div>
-        </div>
+        <LewisLogo size={34} showText={true} />
 
         {/* Header Right Nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
@@ -136,7 +124,6 @@ export default function LandingScreen() {
             color: '#414242',
             cursor: 'pointer',
           }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#5fbb46', display: 'inline-block' }} />
             Get your report
           </a>
         </div>
@@ -288,7 +275,6 @@ export default function LandingScreen() {
         <div className="landing-marquee-track">
           {[...DOMAINS, ...DOMAINS, ...DOMAINS].map((d, i) => (
             <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>
-              <span style={{ fontSize: '16px' }}>{d.icon}</span>
               <span>{d.name}</span>
               <span style={{ color: '#00ae9d', fontSize: '11px', margin: '0 8px' }}>✦</span>
             </div>
@@ -434,7 +420,11 @@ export default function LandingScreen() {
             display: 'grid',
             placeItems: 'center',
             flexShrink: 0,
-          }}>💡</div>
+          }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg></div>
           <div>
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>
               LEWIS SYSTEM OVERVIEW BRIEF
@@ -779,7 +769,7 @@ export default function LandingScreen() {
         zIndex: 2,
         display: 'flex',
         flexWrap: 'wrap',
-        justify: 'space-between',
+        justifyContent: 'space-between',
         alignItems: 'center',
         gap: '16px',
         padding: '28px 32px',

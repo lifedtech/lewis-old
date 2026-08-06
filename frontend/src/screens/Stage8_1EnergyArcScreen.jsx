@@ -87,10 +87,10 @@ export default function Stage8_1EnergyArcScreen() {
   }
 
   const timesOfDay = [
-    { key: 'morning', label: 'Morning', icon: '🌅' },
-    { key: 'afternoon', label: 'Afternoon', icon: '☀️' },
-    { key: 'evening', label: 'Evening', icon: '🌇' },
-    { key: 'night', label: 'Night', icon: '🌙' }
+    { key: 'morning', label: 'Morning' },
+    { key: 'afternoon', label: 'Afternoon' },
+    { key: 'evening', label: 'Evening' },
+    { key: 'night', label: 'Night' }
   ]
 
   const levels = ['High', 'Medium', 'Low']
@@ -204,7 +204,6 @@ export default function Stage8_1EnergyArcScreen() {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '17px' }}>{tod.icon}</span>
                       <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '14.5px', color: '#414242' }}>
                         {tod.label}
                       </span>

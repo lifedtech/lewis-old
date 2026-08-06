@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import LewisLogo from '../components/LewisLogo.jsx'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
 import InsightReport from '../report/InsightReport.jsx'
-import BreathingFluidBlob from '../components/BreathingFluidBlob.jsx'
 import Icon from '../report/icons.jsx'
 import './landing.css'
 /* ── Backend Connection Error Vector Line Art ── */
@@ -59,43 +59,34 @@ const BackendConnectionErrorIllustration = () => (
 )
 
 export default function MirrorScreen() {
-  const setScreen = useLewisStore((s) => s.setScreen)
+  const { setScreen } = useLewisStore()
+  const storeAnalysis = useLewisStore((s) => s.analysisData)
+  const storeMissing = useLewisStore((s) => s.analysisMissing)
+  const storeError = useLewisStore((s) => s.analysisError)
 
-  const [loading, setLoading] = useState(true)
-  const [analysis, setAnalysis] = useState(null)
-  const [error, setError] = useState(null)
+  const [localError, setLocalError] = useState(null)
   const [errorDetail, setErrorDetail] = useState(null)
-  const [missing, setMissing] = useState(null)
-  const [loadingStepIdx, setLoadingStepIdx] = useState(0)
   const [attempt, setAttempt] = useState(0)
+  const [loadProgress, setLoadProgress] = useState(25)
 
-  const loadingSteps = [
-    "Scoring WHO-5 Emotional Wellbeing & Resilience...",
-    "Normalizing PSS-10 Perceived Stress Load...",
-    "Evaluating Social Bonds & Financial Peace...",
-    "Running Systemic Cascade Impact Matrix...",
-    "Synthesizing Personalized Narrative & Actionable Prescription...",
-    "Preparing Your Mirror Overview..."
-  ]
+  const analysis = storeAnalysis
+  const missing = storeMissing
+  const error = localError || storeError
 
   useEffect(() => {
-    if (!loading) return
+    if (storeAnalysis) {
+      setLoadProgress(100)
+      return
+    }
+
     const interval = setInterval(() => {
-      setLoadingStepIdx(prev => (prev < loadingSteps.length - 1 ? prev + 1 : prev))
-    }, 1200)
-    return () => clearInterval(interval)
-  }, [loading, loadingSteps.length])
+      setLoadProgress((prev) => (prev < 92 ? prev + Math.floor(Math.random() * 6 + 3) : prev))
+    }, 350)
 
-  useEffect(() => {
     const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
     async function fetchAnalysis() {
       try {
-        const { payload, missing } = buildFullAssessmentPayload(useLewisStore.getState())
-        if (missing.length > 0) {
-          setMissing(missing)
-          setLoading(false)
-          return
-        }
+        const { payload } = buildFullAssessmentPayload(useLewisStore.getState())
 
         const response = await fetch(`${API_BASE}/assessment/full`, {
           method: 'POST',
@@ -109,150 +100,79 @@ export default function MirrorScreen() {
         }
 
         const data = await response.json()
-        setAnalysis(data)
-        setLoading(false)
+        setLoadProgress(100)
+        useLewisStore.setState({ analysisData: data, analysisMissing: null, analysisError: null })
       } catch (err) {
         console.error(err)
-        setError('We could not put your synthesis together just now. Please try again in a little while.')
+        const msg = 'We could not put your synthesis together just now. Please try again in a little while.'
+        setLocalError(msg)
         setErrorDetail(`POST ${API_BASE}/assessment/full — ${err.message}`)
-        setLoading(false)
+        useLewisStore.setState({ analysisError: msg })
+      } finally {
+        clearInterval(interval)
       }
     }
     fetchAnalysis()
-  }, [attempt])
 
-  if (loading) {
+    return () => clearInterval(interval)
+  }, [attempt, storeAnalysis])
+
+  if (!analysis && !error) {
     return (
-      <motion.div 
+      <motion.div
         className="screen-container"
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0 }}
-        style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          minHeight: '70vh', 
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '60vh',
           width: '100%',
-          position: 'relative' 
         }}
       >
-        <div style={{
+        <div className="mirror-card" style={{
           width: '100%',
-          maxWidth: '560px',
+          maxWidth: '520px',
           padding: '44px 36px',
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(24px)',
-          borderRadius: '32px',
-          border: '1.5px solid rgba(255, 148, 102, 0.3)',
-          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.08), 0 0 45px rgba(255, 148, 102, 0.18)',
+          background: 'rgba(255, 255, 255, 0.92)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '28px',
+          border: '1.5px solid rgba(0, 174, 157, 0.25)',
+          boxShadow: '0 16px 48px rgba(0, 174, 157, 0.12)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          textAlign: 'center',
-          position: 'relative',
-          overflow: 'hidden'
+          textAlign: 'center'
         }}>
-          {/* Ambient Glow Aura */}
-          <div style={{
-            position: 'absolute',
-            top: '-40px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '240px',
-            height: '240px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(0, 174, 157, 0.35) 0%, rgba(255, 148, 102, 0.25) 50%, transparent 80%)',
-            filter: 'blur(35px)',
-            pointerEvents: 'none'
-          }} />
-
-          {/* Dynamic Morphing Fluid Core */}
-          <div style={{ marginBottom: '28px', position: 'relative', zIndex: 1 }}>
-            <BreathingFluidBlob size={135} duration={3} />
+          <div style={{ marginBottom: '20px' }}>
+            <LewisLogo size={52} layout="stacked" showText={false} animated={true} />
           </div>
-
-          {/* Engine Header Eyebrow */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', zIndex: 1 }}>
-            <motion.span 
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              style={{ 
-                width: '8px', 
-                height: '8px', 
-                borderRadius: '50%', 
-                background: 'var(--dawn)', 
-                boxShadow: '0 0 10px var(--dawn)' 
-              }} 
-            />
-            <span style={{ 
-              fontFamily: '"IBM Plex Mono", monospace', 
-              fontSize: '11px', 
-              letterSpacing: '0.14em', 
-              color: 'var(--dawn)', 
-              fontWeight: 600,
-              textTransform: 'uppercase'
-            }}>
-              LEWIS ASSESSMENT ENGINE
-            </span>
-          </div>
-
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text)', margin: '0 0 14px 0', zIndex: 1 }}>
+          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', letterSpacing: '0.14em', color: '#00ae9d', fontWeight: 700, textTransform: 'uppercase', marginBottom: '10px' }}>
+            LEWIS ASSESSMENT ENGINE
+          </span>
+          <h2 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '24px', fontWeight: 800, color: '#414242', margin: '0 0 12px 0' }}>
             Synthesizing Your Mirror
           </h2>
-
-          {/* Animated Step Messages */}
-          <div style={{ height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', zIndex: 1 }}>
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={loadingStepIdx}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.35, ease: "easeInOut" }}
-                style={{ fontSize: '14px', color: 'var(--text-mute)', margin: 0, fontWeight: 500 }}
-              >
-                {loadingSteps[loadingStepIdx]}
-              </motion.p>
-            </AnimatePresence>
-          </div>
-
-          {/* Glowing Animated Progress Bar */}
-          <div style={{ width: '80%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', margin: '24px 0 14px', overflow: 'hidden', zIndex: 1 }}>
-            <motion.div 
-              style={{ height: '100%', background: 'linear-gradient(90deg, #00ae9d 0%, #FF9466 100%)' }}
-              animate={{ width: ['10%', '98%'] }}
-              transition={{ duration: 7, ease: "easeInOut" }}
+          <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: '14px', color: '#666666', margin: '0 0 24px 0', lineHeight: 1.5 }}>
+            LEWIS is compiling your psychological metrics and cross-domain influence matrix into your complete insight report...
+          </p>
+          <div style={{ width: '80%', height: '6px', background: 'rgba(0, 174, 157, 0.12)', borderRadius: '6px', overflow: 'hidden', margin: '0 auto 8px' }}>
+            <motion.div
+              style={{ height: '100%', background: '#00ae9d', borderRadius: '6px' }}
+              animate={{ width: `${loadProgress}%` }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
             />
           </div>
-
-          <p style={{ fontSize: '12px', color: 'var(--text-faint)', fontStyle: 'italic', margin: 0, zIndex: 1 }}>
-            LEWIS compiles your psychological metrics into personalized systemic insights.
-          </p>
+          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, color: '#00ae9d' }}>
+            {loadProgress}%
+          </span>
         </div>
       </motion.div>
     )
   }
 
-  if (missing) {
-    return (
-      <motion.section className="screen active" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-        <p className="eyebrow" style={{ textAlign: 'center' }}>Almost there</p>
-        <h1 className="headline" style={{ textAlign: 'center' }}>A few check-ins still need answers.</h1>
-        <p className="sub" style={{ textAlign: 'center', maxWidth: '480px', marginBottom: '24px' }}>
-          LEWIS only reflects what you actually shared — unanswered questions are
-          never guessed or filled in for you.
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', maxWidth: '360px' }}>
-          {missing.map((m) => (
-            <button key={m.screen} className="btn-primary" style={{ width: '100%' }} onClick={() => setScreen(m.screen)}>
-              Finish: {m.label}
-            </button>
-          ))}
-        </div>
-      </motion.section>
-    )
-  }
+
 
   if (error) {
     return (
@@ -341,7 +261,11 @@ export default function MirrorScreen() {
               boxSizing: 'border-box',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '22px' }}>⚠️</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#991b1b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
                 <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: '18px', color: '#991b1b' }}>
                   Synthesis Unavailable
                 </span>
@@ -382,12 +306,9 @@ export default function MirrorScreen() {
               <button
                 className="btn-primary"
                 onClick={() => {
-                  // Retry the request, never reload: a reload resets the store
-                  // and the whole assessment has to be answered again.
-                  setError(null)
+                  setLocalError(null)
                   setErrorDetail(null)
-                  setLoadingStepIdx(0)
-                  setLoading(true)
+                  useLewisStore.setState({ analysisError: null, analysisData: null, analysisMissing: null })
                   setAttempt((n) => n + 1)
                 }}
                 style={{ padding: '12px 38px' }}
@@ -438,23 +359,47 @@ export default function MirrorScreen() {
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.5, ease: [0.2, 0.7, 0.3, 1] }}
     >
-      <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
-      {/* Hero Page Header */}
-      <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+      {/* Full-width Edge-to-Edge Header Bar */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        padding: '16px clamp(20px, 4vw, 48px)',
+        marginBottom: '24px',
+        borderBottom: '1px solid rgba(65, 66, 66, 0.08)',
+        boxSizing: 'border-box'
+      }}>
+        <LewisLogo size={36} layout="horizontal" showText={true} animated={false} />
+
         <span style={{
+          fontFamily: '"IBM Plex Mono", monospace',
           fontSize: '11px',
-          fontWeight: 800,
-          letterSpacing: '0.12em',
-          color: 'var(--dawn)',
-          textTransform: 'uppercase',
-          background: 'rgba(0, 174, 157, 0.1)',
-          padding: '6px 14px',
-          borderRadius: '999px',
-          display: 'inline-block',
-          marginBottom: '12px'
+          fontWeight: 700,
+          letterSpacing: '0.14em',
+          color: '#414242',
+          textTransform: 'uppercase'
         }}>
-          Systemic Overview
+          THE MIRROR
         </span>
+
+        <span style={{
+          fontFamily: '"IBM Plex Mono", monospace',
+          fontSize: '11px',
+          fontWeight: 700,
+          letterSpacing: '0.14em',
+          color: '#414242',
+          textTransform: 'uppercase'
+        }}>
+          WELLBEING INTELLIGENCE
+        </span>
+      </div>
+
+      <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
+
+
+      {/* Hero Page Header */}
+      <div style={{ textAlign: 'center', marginBottom: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <h1 style={{
           fontFamily: "'Manrope', sans-serif",
           fontSize: 'clamp(32px, 4vw, 48px)',
@@ -463,7 +408,7 @@ export default function MirrorScreen() {
           margin: '0 0 8px 0',
           letterSpacing: '-0.03em'
         }}>
-          The Mirror
+          Your LEWIS Mirror
         </h1>
         <p style={{
           fontFamily: "'Nunito', sans-serif",
@@ -544,7 +489,6 @@ export default function MirrorScreen() {
                 <Icon name="target" size={16} />
                 Resilience Radar
               </p>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at center, rgba(0, 174, 157, 0.08), transparent 70%)', pointerEvents: 'none' }}></div>
               
               <div style={{ width: '100%', height: '300px', marginTop: '16px' }}>
                 <ResponsiveContainer width="100%" height="100%">

@@ -1,6 +1,7 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useLewisStore } from './store/useLewisStore.js'
+import LewisLogo from './components/LewisLogo.jsx'
 
 import LandingScreen from './screens/LandingScreen.jsx'
 import PreStage0AgeScreen from './screens/PreStage0AgeScreen.jsx'
@@ -175,9 +176,12 @@ const SCREEN_ORDER = [
 
 export default function App() {
   const { currentScreen, setScreen, isAuthenticated, authUser, logout } = useLewisStore()
-  const ActiveScreen = SCREENS[currentScreen] || LandingScreen
+  
+  // Guard against invalid/undefined screen names so app NEVER goes blank
+  const validScreen = SCREENS[currentScreen] ? currentScreen : 'landing'
+  const ActiveScreen = SCREENS[validScreen]
 
-  const currentIndex = SCREEN_ORDER.indexOf(currentScreen)
+  const currentIndex = SCREEN_ORDER.indexOf(validScreen)
 
   const stageWrapRef = useRef(null)
   const stageMainRef = useRef(null)
@@ -242,10 +246,34 @@ export default function App() {
     }
   }, [currentScreen])
 
+  // Sync with system backward / forward navigation (Browser Back, Mobile gesture, Android Hardware Back)
+  useEffect(() => {
+    const hash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : ''
+    const initialScreen = (hash && SCREENS[hash]) ? hash : useLewisStore.getState().currentScreen
+
+    if (initialScreen && initialScreen !== useLewisStore.getState().currentScreen) {
+      useLewisStore.getState().setScreen(initialScreen, { skipHistory: true })
+    }
+
+    if (typeof window !== 'undefined' && window.history.state?.screen !== initialScreen) {
+      window.history.replaceState({ screen: initialScreen }, '', `#${initialScreen}`)
+    }
+
+    const handlePopState = (event) => {
+      const targetScreen = event.state?.screen || (window.location.hash ? window.location.hash.replace('#', '') : 'landing')
+      if (targetScreen && SCREENS[targetScreen]) {
+        useLewisStore.getState().setScreen(targetScreen, { skipHistory: true })
+      }
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
   return (
     <>
-      {currentScreen === 'landing' && <Background3D />}
-      {currentScreen !== 'landing' && (
+      {validScreen === 'landing' && <Background3D />}
+      {validScreen !== 'landing' && validScreen !== 'mirror' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute', width: '520px', height: '520px', left: '-160px', top: '-120px',
@@ -260,13 +288,21 @@ export default function App() {
         </div>
       )}
 
-      <div className="app-shell" style={currentScreen === 'landing' ? { padding: 0 } : (currentScreen === 'mirror' ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible' } : {})}>
-        {currentScreen !== 'landing' && (
+      <div className="app-shell" style={validScreen === 'landing' ? { padding: 0 } : (validScreen === 'mirror' ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible' } : {})}>
+        {validScreen !== 'landing' && (
           <header className="app-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               {currentIndex > 0 && (
                 <button
-                  onClick={() => setScreen(SCREEN_ORDER[currentIndex - 1])}
+                  onClick={() => {
+                    if (typeof window !== 'undefined' && window.history.state?.screen) {
+                      window.history.back()
+                    } else if (currentIndex > 0 && SCREEN_ORDER[currentIndex - 1]) {
+                      setScreen(SCREEN_ORDER[currentIndex - 1])
+                    } else {
+                      setScreen('landing')
+                    }
+                  }}
                   style={{
                     background: 'none', border: 'none', padding: 0,
                     color: 'var(--text-mute)', cursor: 'pointer',
@@ -285,13 +321,13 @@ export default function App() {
                   </svg>
                 </button>
               )}
-              <div className="wordmark">LEWIS<span>BY LIFED</span></div>
+              <LewisLogo size={32} showText={true} animated={false} />
             </div>
             <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               {isAuthenticated && authUser ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0, 174, 157, 0.1)', padding: '4px 12px 4px 10px', borderRadius: '999px', border: '1px solid rgba(0, 174, 157, 0.25)' }}>
                   <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--dawn)' }}>
-                    👤 {authUser.name || authUser.email}
+                    {authUser.name || authUser.email}
                   </span>
                   <button
                     onClick={logout}
@@ -302,14 +338,16 @@ export default function App() {
                   </button>
                 </div>
               ) : null}
+              <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#414242', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: "'Nunito', sans-serif" }}>
+                Wellbeing Intelligence
+              </span>
               <span className="proto-tag">Version 1.1.12</span>
-              <div className="mini-orb" aria-hidden="true"></div>
             </div>
           </header>
         )}
 
         {/* Premium Stage Progress Indicator (hidden on terminal screens) */}
-        {currentScreen !== 'landing' && currentIndex !== -1 && (() => {
+        {validScreen !== 'landing' && currentIndex !== -1 && (() => {
           const STAGE_NAMES = [
             'Setup',
             'Life Context',
@@ -341,7 +379,7 @@ export default function App() {
             return { num: 0, name: STAGE_NAMES[0] }
           }
 
-          const stageInfo = getStageInfo(currentScreen)
+          const stageInfo = getStageInfo(validScreen)
           const percent = ((currentIndex / (SCREEN_ORDER.length - 1)) * 100).toFixed(1)
 
           return (
@@ -382,23 +420,23 @@ export default function App() {
           )
         })()}
 
-        {currentScreen === 'landing' ? (
+        {validScreen === 'landing' ? (
           <main style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
             <AnimatePresence mode="wait">
-              <ActiveScreen key={currentScreen} />
+              <ActiveScreen key={validScreen} />
             </AnimatePresence>
           </main>
-        ) : currentScreen === 'mirror' ? (
+        ) : validScreen === 'mirror' ? (
           <div style={{ width: '100%', maxWidth: '960px', margin: '0 auto', padding: '10px 20px 80px 20px', boxSizing: 'border-box' }}>
             <AnimatePresence mode="wait">
-              <ActiveScreen key={currentScreen} />
+              <ActiveScreen key={validScreen} />
             </AnimatePresence>
           </div>
         ) : (
           <div ref={stageWrapRef} className="main-stage-wrap" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 20px 32px 20px', boxSizing: 'border-box', overflow: 'hidden', minHeight: 0 }}>
-            <div ref={mainCardRef} className={`main-card ${(currentScreen === 'stage1_0About' || currentScreen === 'preStage0Age' || currentScreen === 'stage1_1Identity') ? 'transparent-card' : ''}`} style={{
+            <div ref={mainCardRef} className={`main-card ${(validScreen === 'stage1_0About' || validScreen === 'preStage0Age' || validScreen === 'stage1_1Identity') ? 'transparent-card' : ''}`} style={{
               width: '100%',
-              maxWidth: (currentScreen === 'preStage0Age' || currentScreen === 'ageStop') ? '480px' : '860px',
+              maxWidth: (validScreen === 'preStage0Age' || validScreen === 'ageStop') ? '480px' : '860px',
               maxHeight: 'calc(100dvh - 160px)',
               display: 'flex',
               flexDirection: 'column',
@@ -408,7 +446,7 @@ export default function App() {
             }}>
               <main ref={stageMainRef} style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', overflowAnchor: 'none' }}>
                 <AnimatePresence mode="wait">
-                  <ActiveScreen key={currentScreen} />
+                  <ActiveScreen key={validScreen} />
                 </AnimatePresence>
               </main>
             </div>

@@ -1,10 +1,22 @@
 import { create } from 'zustand'
 
-// Load persisted auth from localStorage if available
-const savedToken = typeof window !== 'undefined' ? localStorage.getItem('lewis_auth_token') : null
-const savedUser = (typeof window !== 'undefined' && localStorage.getItem('lewis_user')) 
-  ? JSON.parse(localStorage.getItem('lewis_user')) 
-  : null
+// Load persisted auth from localStorage safely
+let savedToken = null
+let savedUser = null
+
+if (typeof window !== 'undefined') {
+  try {
+    savedToken = localStorage.getItem('lewis_auth_token') || null
+    const rawUser = localStorage.getItem('lewis_user')
+    if (rawUser && rawUser !== 'undefined' && rawUser !== 'null') {
+      savedUser = JSON.parse(rawUser)
+    }
+  } catch (e) {
+    console.warn('Failed to parse saved auth from localStorage:', e)
+    savedToken = null
+    savedUser = null
+  }
+}
 
 // Every piece of journey state lives here, so reset() can restore all of
 // it in one call. Defaults use fresh objects/arrays per call (a shared
@@ -103,24 +115,49 @@ const initialState = () => ({
   // Stage 9 Sensory
   soundPreference: '',
   quickChoices: {},
+
+  // Assessment Analysis Cache
+  analysisData: null,
+  analysisMissing: null,
+  analysisError: null,
 })
 
 export const useLewisStore = create((set) => ({
   ...initialState(),
 
-  setScreen: (screenName) => set({ currentScreen: screenName }),
+  setScreen: (screenName, options = {}) => {
+    const target = (typeof screenName === 'string' && screenName.trim()) ? screenName.trim() : 'landing'
+    set({ currentScreen: target })
+    if (typeof window !== 'undefined' && (!options || !options.skipHistory)) {
+      try {
+        if (window.history.state?.screen !== target) {
+          window.history.pushState({ screen: target }, '', `#${target}`)
+        }
+      } catch (e) {
+        console.warn('History pushState error:', e)
+      }
+    }
+  },
 
   setAuth: (user, token) => {
-    if (token) {
-      localStorage.setItem('lewis_auth_token', token)
-      localStorage.setItem('lewis_user', JSON.stringify(user))
+    if (token && user) {
+      try {
+        localStorage.setItem('lewis_auth_token', token)
+        localStorage.setItem('lewis_user', JSON.stringify(user))
+      } catch (e) {
+        console.warn('Failed to save auth to localStorage:', e)
+      }
     }
     set({ isAuthenticated: true, authUser: user, authToken: token })
   },
 
   logout: () => {
-    localStorage.removeItem('lewis_auth_token')
-    localStorage.removeItem('lewis_user')
+    try {
+      localStorage.removeItem('lewis_auth_token')
+      localStorage.removeItem('lewis_user')
+    } catch (e) {
+      console.warn('Failed to clear auth from localStorage:', e)
+    }
     set({ isAuthenticated: false, authUser: null, authToken: null })
   },
 

@@ -3,8 +3,8 @@ import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
 export default function Stage1_0AboutScreen() {
-  const { setScreen, setProfileField, ageCategory, gender } = useLewisStore()
-  const [name, setName] = useState('')
+  const { setScreen, setProfileField, ageCategory, gender, name: storeName } = useLewisStore()
+  const [name, setName] = useState(storeName || '')
 
   const handleNext = () => {
     if (!name.trim()) return
@@ -90,7 +90,10 @@ export default function Stage1_0AboutScreen() {
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value)
+                setProfileField('name', e.target.value)
+              }}
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleNext() } }}
               placeholder="Your name"
               style={{

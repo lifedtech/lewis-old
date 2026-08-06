@@ -1,6 +1,7 @@
 import {  useState  } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import LewisLogo from '../components/LewisLogo.jsx'
 
 export default function LoginScreen() {
   const { setScreen, setAuth } = useLewisStore()
@@ -70,6 +71,11 @@ export default function LoginScreen() {
         border: '1.5px solid rgba(0, 174, 157, 0.25)',
         boxShadow: '0 16px 48px rgba(0, 174, 157, 0.12)'
       }}>
+
+        <div style={{ marginBottom: '14px' }}>
+          <LewisLogo size={44} layout="stacked" showText={false} />
+        </div>
+
         {/* Header Eyebrow */}
         <p className="eyebrow" style={{ textAlign: 'center', marginBottom: '6px', color: 'var(--dawn)', fontWeight: 700 }}>
           SECURE ACCESS
@@ -297,7 +303,7 @@ export default function LoginScreen() {
         </form>
 
         <p style={{ marginTop: '24px', fontSize: '12px', color: 'var(--text-mute)', textAlign: 'center', lineHeight: '1.5' }}>
-          🔒 Your data is encrypted and private. LEWIS never sells or shares your reflections.
+          Your data is encrypted and private. LEWIS never sells or shares your reflections.
         </p>
       </div>
     </motion.section>

@@ -32,6 +32,7 @@ export default function PreStage0AgeScreen() {
         boxSizing: 'border-box',
         textAlign: 'center',
       }}>
+
         {/* Eyebrow */}
         <p style={{
           fontFamily: '"IBM Plex Mono", monospace',

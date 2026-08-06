@@ -33,7 +33,7 @@ const LEVEL_TONE = { Low: '#d6edea', Med: '#6dc6ba', Medium: '#6dc6ba', High: '#
 function BandChip({ word }) {
   const c = band(word)
   return (
-    <span className="ir-chip" style={{ background: c.fill, color: c.text, borderColor: c.line }}>
+    <span className="ir-chip" style={{ background: c.fill, color: c.text, borderColor: c.line, fontWeight: 700 }}>
       {word}
     </span>
   )
@@ -63,8 +63,8 @@ function Petals({ block }) {
   const size = cover ? 900 : 660
   const cx = size / 2
   const cy = cover ? 272 : 235
-  const hub = cover ? 52 : 40
-  const rMin = cover ? 118 : 84
+  const hub = cover ? 66 : 50
+  const rMin = cover ? 124 : 88
   const rMax = cover ? 205 : 146
   const width = cover ? 26 : 18
   const items = block.items
@@ -121,9 +121,11 @@ function Petals({ block }) {
         ))}
         <circle cx={cx} cy={cy} r={hub} fill={cover ? '#013e39' : '#ffffff'}
           stroke={cover ? '#a7dcd4' : '#d6edea'} strokeOpacity={cover ? '.45' : '1'} strokeWidth="1.2" />
-        <text x={cx} y={cy + 2} textAnchor="middle" className="ir-petal-hub"
+        <text x={cx} y={cy - 2} textAnchor="middle" className="ir-petal-hub"
+          style={{ fontSize: cover ? '13px' : '11px', fontWeight: 700, letterSpacing: '-0.01em' }}
           fill={cover ? '#ffffff' : '#013e39'}>{block.overall}</text>
-        <text x={cx} y={cy + 17} textAnchor="middle" className="ir-petal-hub-sub"
+        <text x={cx} y={cy + 15} textAnchor="middle" className="ir-petal-hub-sub"
+          style={{ fontSize: cover ? '11px' : '9.5px', fontWeight: 600, letterSpacing: '0.02em' }}
           fill={cover ? '#6dc6ba' : '#019386'}>{block.shape}</text>
         {petals.map((p) => (
           <text key={p.key} x={p.label[0]} y={p.label[1]} textAnchor={p.anchor}
@@ -134,7 +136,7 @@ function Petals({ block }) {
         ))}
       </svg>
       {block.legend && (
-        <div className="ir-petal-legend">
+        <div className={`ir-petal-legend${cover ? ' cover' : ''}`}>
           <span className="ir-petal-legend-label">{block.legend_label}</span>
           <div className="ir-petal-legend-row">
             {block.legend.map((l) => (
@@ -151,40 +153,128 @@ function Petals({ block }) {
 }
 
 function BandLadder({ block }) {
+  const items = block.items || [
+    { band: 'Running on empty', step: 1 },
+    { band: 'Under pressure', step: 2 },
+    { band: 'Steady', step: 3 },
+    { band: 'Strong', step: 4 },
+  ]
+  const heights = { 'Running on empty': '44px', 'Under pressure': '92px', 'Steady': '142px', 'Strong': '192px' }
+  const textColors = { 'Running on empty': '#d0574f', 'Under pressure': '#b8801f', 'Steady': '#017a6f', 'Strong': '#3d7f2c' }
+
   return (
-    <div className="ir-ladder">
-      <div className="ir-ladder-bars">
-        {block.items.map((item) => {
+    <div style={{ border: '1px solid #ededed', borderRadius: '18px', padding: '24px 26px 20px', marginBottom: '16px', background: '#faf8f4' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'end', height: '214px', marginBottom: '16px' }}>
+        {items.map((item) => {
           const c = band(item.band)
+          const h = heights[item.band] || `${44 + (item.step - 1) * 48}px`
+          const textColor = textColors[item.band] || c.text
+
           return (
-            <div className="ir-ladder-bar" key={item.band}>
-              <span className="ir-ladder-word" style={{ color: c.text }}>{item.band}</span>
-              <span className="ir-ladder-fill"
-                style={{ background: c.ink, height: `${34 + (item.step - 1) * 50}px` }} />
+            <div key={item.band} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%' }}>
+              <div style={{ font: '800 10px/1 Nunito, sans-serif', letterSpacing: '.1em', textTransform: 'uppercase', color: textColor, marginBottom: '8px' }}>
+                {item.band}
+              </div>
+              <div style={{ height: h, borderRadius: '10px', background: c.ink }} />
             </div>
           )
         })}
       </div>
-      <div className="ir-ladder-foot"><span>{block.left}</span><span>{block.right}</span></div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e6ddcd', paddingTop: '10px', font: '600 10px/1 Nunito, sans-serif', letterSpacing: '.06em', color: '#a4a5a5' }}>
+        <span>{block.left || 'Needs the gentlest care'}</span>
+        <span>{block.right || 'A place to stand'}</span>
+      </div>
     </div>
   )
 }
 
 function BandCards({ block }) {
+  const items = block?.items || []
+  const cols = block?.columns || (items.length === 4 ? 4 : 3)
+
   return (
-    <div className="ir-bandcards">
-      {block.items.map((item) => {
-        const c = band(item.band)
-        const icon = { 'Running on empty': 'moon', 'Under pressure': 'alert', 'Steady': 'waves', 'Strong': 'sparkles' }[item.band]
-        return (
-          <div className="ir-bandcard" key={item.band}
-            style={{ background: c.fill, borderColor: c.line }}>
-            <Icon name={icon} size={17} style={{ color: c.ink }} />
-            <p className="ir-bandcard-word" style={{ color: c.text }}>{item.band}</p>
-            <p className="ir-bandcard-gloss">{item.gloss}</p>
-          </div>
-        )
-      })}
+    <div className="ir-bandcards" style={{ width: '100%', marginBottom: '17px', boxSizing: 'border-box' }}>
+      {block?.legend && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '26px', border: '1px solid #ededed', borderRadius: '14px', padding: '13px 18px', marginBottom: '14px', background: '#faf8f4', width: '100%', boxSizing: 'border-box' }}>
+          <span style={{ font: '700 9px/1 Nunito, sans-serif', letterSpacing: '.16em', textTransform: 'uppercase', color: '#019386' }}>{block.legend_label || 'Your shape'}</span>
+          {block.legend.map((l) => {
+            const c = band(l.band)
+            return (
+              <span key={l.band} style={{ display: 'flex', alignItems: 'center', gap: '7px', font: '600 11px/1 Nunito, sans-serif', color: c.text }}>
+                <i style={{ width: '10px', height: '10px', borderRadius: '4px', background: c.ink, display: 'inline-block' }} />
+                {l.count} {l.band.toLowerCase()}
+              </span>
+            )
+          })}
+        </div>
+      )}
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap: '14px', width: '100%', boxSizing: 'border-box' }}>
+        {items.map((item) => {
+          const c = band(item.band)
+          const step = item.step || (item.band === 'Strong' ? 4 : item.band === 'Steady' ? 3 : item.band === 'Under pressure' ? 2 : 1)
+          const iconName = item.icon || {
+            'Meaning & direction': 'compass',
+            'Relationships & support': 'users',
+            'Environment & belonging': 'home',
+            'Curiosity & growth': 'sprout',
+            'Agency & work': 'speed',
+            'Financial steadiness': 'wallet',
+            'Emotional calm': 'waves',
+            'Body & recovery': 'moon',
+            'Usable energy': 'zap',
+            'Running on empty': 'moon',
+            'Under pressure': 'alert',
+            'Steady': 'waves',
+            'Strong': 'sprout'
+          }[item.name || item.band] || 'sparkles'
+
+          const glossText = item.gloss || {
+            'Running on empty': 'This area needs the gentlest care right now. Reserve is thin, and effort here costs more than it should.',
+            'Under pressure': 'Stretched, and asking for attention. Still functioning, but with less give than it used to have.',
+            'Steady': 'Holding reliably, without strain. Not remarkable, and not asking anything of you this month.',
+            'Strong': 'A real strength, and a place to stand. Something to spend deliberately, not simply admire.'
+          }[item.band] || ''
+
+          return (
+            <div key={item.name || item.band} style={{
+              border: `1px solid ${c.line}`,
+              background: c.fill,
+              borderRadius: '14px',
+              padding: '14px 16px',
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              width: '100%'
+            }}>
+              <Icon name={iconName} size={17} style={{ color: c.text, marginBottom: '8px', flex: 'none' }} />
+              <div style={{ font: '800 11px/1.2 Nunito, sans-serif', letterSpacing: '.08em', textTransform: 'uppercase', color: c.text, marginBottom: '6px', minHeight: '40px' }}>
+                {item.name || item.band}
+              </div>
+              {item.name && item.name !== item.band && (
+                <div style={{ font: '700 10.5px/1.3 Nunito, sans-serif', color: c.text, marginBottom: '4px' }}>
+                  {item.band}
+                </div>
+              )}
+              {glossText && (
+                <p style={{ margin: '0 0 10px', font: '400 11.8px/1.55 Nunito, sans-serif', color: '#585858', flex: 1 }}>
+                  {glossText}
+                </p>
+              )}
+              {items.length !== 4 && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px', marginTop: 'auto' }}>
+                  {[1, 2, 3, 4].map((i) => (
+                    <i key={i} style={{
+                      height: '6px',
+                      borderRadius: '3px',
+                      background: i <= step ? c.ink : (item.band === 'Strong' ? '#5fba46' : item.band === 'Steady' ? '#dcdcdc' : item.band === 'Under pressure' ? '#e6ddcd' : '#eccecb')
+                    }} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -207,98 +297,165 @@ function Bands({ block }) {
 // Where you are: the ground, the centre, the area asking for care, what
 // sits downstream, and the first step.
 function MapDiagram({ block }) {
-  const care = block.care
-  const c = care ? band(care.band) : band('Not read')
+  const care = block?.care
+  const ground = block?.ground
+  const here = block?.here
+  const firstStep = block?.first_step
+  const downstream = block?.downstream || []
+
   return (
-    <div className="ir-map">
-      <div className="ir-map-grid">
-        <div className="ir-map-node ground">
-          <p className="ir-label">{block.ground.label}</p>
-          {block.ground.names.map((n) => <p className="ir-map-name" key={n}>{n}</p>)}
-          <p className="ir-map-note">{block.ground.note}</p>
-        </div>
-        <div className="ir-map-arrow"><span>{block.here.up}</span><Icon name="arrow" size={16} /></div>
-        <div className="ir-map-hub">
-          <p className="ir-label">{block.here.label}</p>
-          <p className="ir-map-hub-band">{block.here.title}</p>
-          <p className="ir-map-hub-shape">{block.here.shape}</p>
-        </div>
-        <div className="ir-map-arrow"><span>{block.here.down}</span><Icon name="arrow" size={16} /></div>
-        <div className="ir-map-node care" style={{ background: c.fill, borderColor: c.line }}>
-          <p className="ir-label" style={{ color: c.text }}>{care ? care.label : 'ASKING FOR CARE'}</p>
-          {care && <p className="ir-map-name">{care.name}</p>}
-          {care && <BandChip word={care.band} />}
-          {care && care.star && <p className="ir-map-star">Also what you said matters most</p>}
-        </div>
-      </div>
-      {block.downstream.length > 0 && (
-        <div className="ir-map-downstream">
-          {block.downstream.map((d) => (
-            <span className="ir-map-down" key={d.name}>
-              <b>{d.name}</b> {d.note}
-            </span>
-          ))}
+    <div style={{ position: 'relative', height: '472px', background: '#faf8f4', border: '1px solid #e6ddcd', borderRadius: '18px', marginBottom: '16px', overflow: 'hidden' }}>
+      <svg aria-hidden="true" viewBox="0 0 686 472" style={{ position: 'absolute', left: 0, top: 0, width: '686px', height: '472px' }}>
+        <defs>
+          <marker id="mk-leaf" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7z" fill="#4ea038" /></marker>
+          <marker id="mk-rose" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7z" fill="#d0574f" /></marker>
+          <marker id="mk-teal" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7z" fill="#01ad9c" /></marker>
+        </defs>
+        <line x1="228" y1="120" x2="272" y2="120" stroke="#4ea038" strokeWidth="1.6" markerEnd="url(#mk-leaf)" />
+        <line x1="414" y1="120" x2="458" y2="120" stroke="#d0574f" strokeWidth="1.6" markerEnd="url(#mk-rose)" />
+        <path d="M576 164 C 576 244, 540 284, 512 312" fill="none" stroke="#d0574f" strokeWidth="1.3" markerEnd="url(#mk-rose)" />
+        <path d="M600 164 C 600 254, 606 292, 610 312" fill="none" stroke="#d0574f" strokeWidth="1.3" markerEnd="url(#mk-rose)" />
+        <path d="M330 190 C 300 254, 262 296, 222 318" fill="none" stroke="#01ad9c" strokeWidth="1.4" strokeDasharray="4 3" markerEnd="url(#mk-teal)" />
+      </svg>
+
+      {/* Top Banner Context Note */}
+      {block?.top_note && (
+        <div style={{ position: 'absolute', left: 0, right: 0, top: '14px', textAlign: 'center', font: '600 10px/1 Nunito, sans-serif', color: '#b8801f' }}>
+          {block.top_note}
         </div>
       )}
-      <div className="ir-map-step">
-        <Icon name="target" size={16} />
-        <span className="ir-label">{block.first_step.label}</span>
-        <b>{block.first_step.title}</b>
-        <span className="ir-map-note">{block.first_step.note}</span>
+
+      {/* Ground Node: A place to stand */}
+      <div style={{ position: 'absolute', left: '24px', top: '20px', font: '800 8.5px/1 Nunito, sans-serif', letterSpacing: '.18em', textTransform: 'uppercase', color: '#4ea038' }}>
+        {ground?.label || 'A place to stand'}
       </div>
-      <p className="ir-map-read">{block.read}</p>
+      <div style={{ position: 'absolute', left: '24px', top: '40px', width: '204px', border: '1.6px solid #5fba46', borderRadius: '14px', background: '#ffffff', padding: '14px 15px', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '5px' }}>
+          <Icon name="compass" size={15} style={{ color: '#4ea038' }} />
+          <span style={{ font: '800 13px/1.2 Nunito, sans-serif', color: '#013e39' }}>{(ground?.names || []).join(', ') || 'Meaning & direction'}</span>
+        </div>
+        <div style={{ font: '400 10.5px/1.4 Nunito, sans-serif', color: '#757676', marginBottom: '6px' }}>with relationships and belonging</div>
+        <div style={{ font: '600 10px/1.3 Nunito, sans-serif', color: '#4ea038' }}>{ground?.note || 'Your ground, doing real work'}</div>
+      </div>
+
+      {/* Center Hub: You are here */}
+      <div style={{ position: 'absolute', left: '281px', top: '58px', width: '124px', height: '124px', borderRadius: '50%', border: '1.6px dashed #a7dcd4', background: '#eaf7f5', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', boxSizing: 'border-box', padding: '0 12px' }}>
+        <span style={{ font: '800 8px/1 Nunito, sans-serif', letterSpacing: '.14em', textTransform: 'uppercase', color: '#019386', marginBottom: '5px' }}>{here?.label || 'You are here'}</span>
+        <span style={{ font: '800 13px/1.2 Nunito, sans-serif', color: '#013e39' }}>{here?.title || 'Steady, but uneven'}</span>
+      </div>
+      <div style={{ position: 'absolute', left: '232px', top: '126px', font: '600 9.5px/1 Nunito, sans-serif', color: '#a4a5a5' }}>{here?.up || 'holds you up'}</div>
+      <div style={{ position: 'absolute', left: '418px', top: '126px', font: '600 9.5px/1 Nunito, sans-serif', color: '#a4a5a5' }}>{here?.down || 'is straining'}</div>
+
+      {/* Care Node: Asking for care */}
+      <div style={{ position: 'absolute', right: '24px', top: '20px', font: '800 8.5px/1 Nunito, sans-serif', letterSpacing: '.18em', textTransform: 'uppercase', color: '#d0574f', textAlign: 'right' }}>
+        {care?.label || 'Asking for care'}
+      </div>
+      <div style={{ position: 'absolute', right: '24px', top: '40px', width: '204px', border: '1.6px solid #d0574f', borderRadius: '14px', background: '#ffffff', padding: '14px 15px', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '5px' }}>
+          <Icon name="moon" size={15} style={{ color: '#d0574f' }} />
+          <span style={{ font: '800 13px/1.2 Nunito, sans-serif', color: '#013e39' }}>{care?.name || 'Body & recovery'}</span>
+        </div>
+        <div style={{ font: '600 10.5px/1.4 Nunito, sans-serif', color: '#b04740', marginBottom: '6px' }}>{care?.band || 'Running on empty'}</div>
+        <div style={{ font: '400 10px/1.3 Nunito, sans-serif', color: '#757676' }}>★ Also what you said matters most</div>
+      </div>
+
+      {/* Downstream Nodes */}
+      {downstream[0] && (
+        <div style={{ position: 'absolute', left: '404px', top: '320px', width: '128px', border: '1.2px dashed #e6b3ae', borderRadius: '12px', background: '#ffffff', padding: '10px 12px', boxSizing: 'border-box' }}>
+          <div style={{ font: '800 11px/1.2 Nunito, sans-serif', color: '#013e39', marginBottom: '3px' }}>{downstream[0].name}</div>
+          <div style={{ font: '400 9.5px/1.35 Nunito, sans-serif', color: '#757676' }}>{downstream[0].note}</div>
+        </div>
+      )}
+      {downstream[1] && (
+        <div style={{ position: 'absolute', left: '546px', top: '320px', width: '116px', border: '1.2px dashed #ecd3a4', borderRadius: '12px', background: '#ffffff', padding: '10px 12px', boxSizing: 'border-box' }}>
+          <div style={{ font: '800 11px/1.2 Nunito, sans-serif', color: '#013e39', marginBottom: '3px' }}>{downstream[1].name}</div>
+          <div style={{ font: '400 9.5px/1.35 Nunito, sans-serif', color: '#757676' }}>{downstream[1].note}</div>
+        </div>
+      )}
+
+      {/* First Step Node */}
+      {firstStep && (
+        <div style={{ position: 'absolute', left: '24px', top: '322px', width: '290px', border: '1.6px solid #01ad9c', borderRadius: '14px', background: '#eaf7f5', padding: '13px 15px', boxSizing: 'border-box' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
+            <Icon name="target" size={15} style={{ color: '#019386' }} />
+            <span style={{ font: '800 12px/1.2 Nunito, sans-serif', color: '#015c54' }}>{firstStep.title}</span>
+          </div>
+          <div style={{ font: '400 10px/1.4 Nunito, sans-serif', color: '#757676' }}>{firstStep.note}</div>
+        </div>
+      )}
+
+      {/* Bottom Read Line */}
+      <div style={{ position: 'absolute', left: '40px', right: '40px', bottom: '18px', textAlign: 'center', font: '400 10px/1.5 Nunito, sans-serif', color: '#a4a5a5' }}>
+        {block?.read || 'Read as one sentence. Meaning is holding you up, the body is asking for care, time is in the way, and a small evening transition is the gentlest way in.'}
+      </div>
     </div>
   )
 }
 
-// The connections diagram: only the licensed links are drawn, solid for
-// the clearest and dashed for the looser one. Company, never cause.
 function Connections({ block }) {
   return (
-    <div className="ir-connections">
-      <div className="ir-conn-cols">
-        <div className="ir-conn-col">
-          <p className="ir-label">{block.strain_label}</p>
-          {block.strain.map((node, i) => {
-            const c = band(node.band)
-            const link = block.links[i - 1]
-            return (
-              <div className="ir-conn-item" key={node.name}>
-                {i > 0 && (
-                  <span className={`ir-conn-link ${link ? link.style : 'none'}`}
-                    style={{ borderColor: c.ink }} />
-                )}
-                <div className="ir-conn-node" style={{ background: c.fill, borderColor: c.line }}>
-                  {node.role === 'start' && (
-                    <span className="ir-conn-start">{block.start_label}</span>
-                  )}
-                  <span className="ir-conn-name">{node.name}</span>
-                  <BandChip word={node.band} />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-        <div className="ir-conn-col ground">
-          <p className="ir-label">{block.ground_label}</p>
-          {block.ground.map((node) => {
-            const c = band(node.band)
-            return (
-              <div className="ir-conn-node ground" key={node.name}
-                style={{ borderColor: c.line }}>
-                <span className="ir-conn-name">{node.name}</span>
-                <BandChip word={node.band} />
-              </div>
-            )
-          })}
-          {block.ground_note && <p className="ir-conn-note">{block.ground_note}</p>}
-        </div>
+    <div style={{ position: 'relative', height: '534px', background: '#faf8f4', border: '1px solid #e6ddcd', borderRadius: '18px', marginBottom: '14px', overflow: 'hidden' }}>
+      <svg aria-hidden="true" viewBox="0 0 686 534" style={{ position: 'absolute', left: 0, top: 0, width: '686px', height: '534px' }}>
+        <defs><marker id="mk-link" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#d0574f" /></marker></defs>
+        <line x1="502" y1="44" x2="502" y2="474" stroke="#dcdcdc" strokeWidth="1.2" strokeDasharray="5 5" />
+        <path d="M206 168 C 236 152, 250 136, 268 122" fill="none" stroke="#d0574f" strokeWidth="1.8" markerEnd="url(#mk-link)" />
+        <path d="M206 206 C 238 232, 250 246, 268 258" fill="none" stroke="#d0574f" strokeWidth="1.8" markerEnd="url(#mk-link)" />
+        <path d="M330 168 C 330 196, 330 214, 330 240" fill="none" stroke="#d0574f" strokeWidth="1.5" strokeDasharray="5 4" markerEnd="url(#mk-link)" />
+        <text x="207" y="118" fontFamily="Nunito, sans-serif" fontSize="10" fontWeight="600" fill="#a4a5a5">carries into</text>
+        <text x="207" y="272" fontFamily="Nunito, sans-serif" fontSize="10" fontWeight="600" fill="#a4a5a5">is carrying</text>
+        <text x="340" y="208" fontFamily="Nunito, sans-serif" fontSize="10" fontWeight="600" fill="#a4a5a5">same loop</text>
+      </svg>
+
+      <div style={{ position: 'absolute', left: '24px', top: '18px', font: '800 8.5px/1 Nunito, sans-serif', letterSpacing: '.22em', textTransform: 'uppercase', color: '#c5c5c5' }}>Where the strain sits</div>
+      <div style={{ position: 'absolute', left: '518px', top: '18px', font: '800 8.5px/1 Nunito, sans-serif', letterSpacing: '.22em', textTransform: 'uppercase', color: '#c5c5c5' }}>Ground you can rely on</div>
+
+      <div style={{ position: 'absolute', left: '26px', top: '118px', font: '800 8.5px/1 Nunito, sans-serif', letterSpacing: '.18em', textTransform: 'uppercase', color: '#b04740' }}>Start here</div>
+      <div style={{ position: 'absolute', left: '26px', top: '138px', width: '178px', height: '98px', borderRadius: '26px', background: '#d0574f', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 14px', boxSizing: 'border-box' }}>
+        <Icon name="moon" size={18} style={{ color: '#ffffff', marginBottom: '6px' }} />
+        <span style={{ font: '800 14px/1.15 Nunito, sans-serif' }}>Body &amp; recovery</span>
+        <span style={{ font: '600 10.5px/1.3 Nunito, sans-serif', opacity: .88, marginTop: '2px' }}>Running on empty</span>
       </div>
-      <p className="ir-conn-caption">{block.caption}</p>
-      <div className="ir-conn-legend">
-        {block.legend.map((l) => (
-          <span key={l.style}><i className={l.style} />{l.text}</span>
-        ))}
+
+      <div style={{ position: 'absolute', left: '268px', top: '64px', width: '150px', height: '74px', borderRadius: '22px', background: '#e0a03a', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 12px', boxSizing: 'border-box' }}>
+        <span style={{ font: '800 12.5px/1.15 Nunito, sans-serif' }}>Emotional calm</span>
+        <span style={{ font: '600 10px/1.3 Nunito, sans-serif', opacity: .92, marginTop: '2px' }}>Under pressure</span>
+      </div>
+      <div style={{ position: 'absolute', left: '268px', top: '246px', width: '150px', height: '74px', borderRadius: '22px', background: '#d97a5f', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 12px', boxSizing: 'border-box' }}>
+        <span style={{ font: '800 12.5px/1.15 Nunito, sans-serif' }}>Usable energy</span>
+        <span style={{ font: '600 10px/1.3 Nunito, sans-serif', opacity: .92, marginTop: '2px' }}>Running on empty</span>
+      </div>
+
+      <div style={{ position: 'absolute', left: '352px', top: '448px', width: '134px', height: '58px', borderRadius: '20px', background: '#01ad9c', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+        <span style={{ font: '800 11.5px/1.15 Nunito, sans-serif' }}>Agency &amp; work</span>
+        <span style={{ font: '600 9.5px/1.3 Nunito, sans-serif', opacity: .92 }}>Steady</span>
+      </div>
+      <div style={{ position: 'absolute', left: '190px', top: '448px', width: '142px', height: '58px', borderRadius: '20px', background: '#01ad9c', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+        <span style={{ font: '800 11.5px/1.15 Nunito, sans-serif' }}>Curiosity &amp; growth</span>
+        <span style={{ font: '600 9.5px/1.3 Nunito, sans-serif', opacity: .92 }}>Steady</span>
+      </div>
+      <div style={{ position: 'absolute', left: '26px', top: '448px', width: '142px', height: '58px', borderRadius: '20px', background: '#01ad9c', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+        <span style={{ font: '800 11.5px/1.15 Nunito, sans-serif' }}>Financial steadiness</span>
+        <span style={{ font: '600 9.5px/1.3 Nunito, sans-serif', opacity: .92 }}>Steady</span>
+      </div>
+
+      <div style={{ position: 'absolute', left: '522px', top: '52px', width: '142px', height: '76px', borderRadius: '22px', background: '#4ea038', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 12px', boxSizing: 'border-box' }}>
+        <span style={{ font: '800 12.5px/1.15 Nunito, sans-serif' }}>Meaning &amp; direction</span>
+        <span style={{ font: '600 10px/1.3 Nunito, sans-serif', opacity: .92, marginTop: '2px' }}>Strong</span>
+      </div>
+      <div style={{ position: 'absolute', left: '522px', top: '144px', width: '142px', height: '76px', borderRadius: '22px', background: '#4ea038', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 12px', boxSizing: 'border-box' }}>
+        <span style={{ font: '800 12.5px/1.15 Nunito, sans-serif' }}>Relationships &amp; support</span>
+        <span style={{ font: '600 10px/1.3 Nunito, sans-serif', opacity: .92, marginTop: '2px' }}>Strong</span>
+      </div>
+      <div style={{ position: 'absolute', left: '522px', top: '236px', width: '142px', height: '76px', borderRadius: '22px', background: '#4ea038', color: '#ffffff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 12px', boxSizing: 'border-box' }}>
+        <span style={{ font: '800 12.5px/1.15 Nunito, sans-serif' }}>Environment &amp; belonging</span>
+        <span style={{ font: '600 10px/1.3 Nunito, sans-serif', opacity: .92, marginTop: '2px' }}>Strong</span>
+      </div>
+      <div style={{ position: 'absolute', left: '522px', top: '324px', width: '142px', font: '400 10px/1.45 Nunito, sans-serif', color: '#a4a5a5', textAlign: 'center' }}>
+        These three stand apart from the strained loop. That is what makes them useful.
+      </div>
+
+      <div style={{ position: 'absolute', left: '24px', bottom: '12px', font: '400 10px/1.4 Nunito, sans-serif', color: '#a4a5a5' }}>
+        Only the active links are drawn · the size of each shape follows its reading
       </div>
     </div>
   )
@@ -368,17 +525,30 @@ function DayRhythm({ block }) {
 
 function Timeline({ block }) {
   return (
-    <div className="ir-timeline">
-      {block.title && <p className="ir-label">{block.title}</p>}
-      <div className="ir-timeline-bar">
-        {block.segments.map((s) => (
-          <span className="ir-timeline-seg" key={s.label}
-            style={{ background: LEVEL_TONE[s.level] || '#d6edea' }}>
-            <b>{s.label}</b>
-          </span>
-        ))}
+    <div className="ir-timeline" style={{ marginBottom: '17px' }}>
+      {block.title && <p className="ir-label" style={{ font: '700 9px/1 Nunito, sans-serif', letterSpacing: '.16em', textTransform: 'uppercase', color: '#019386', marginBottom: '12px' }}>{block.title}</p>}
+      <div style={{ border: '1px solid #ededed', borderRadius: '16px', padding: '16px 19px 16px', background: '#faf8f4' }}>
+        <svg aria-hidden="true" viewBox="0 0 642 140" style={{ width: '100%', height: '140px', display: 'block' }}>
+          <rect x="0" y="46" width="642" height="34" rx="17" fill="#ededed" />
+          <rect x="18" y="46" width="330" height="34" rx="17" fill="#01ad9c" />
+          <path d="M348 46h180a17 17 0 0 1 0 34H348z" fill="#a7dcd4" />
+          <rect x="528" y="46" width="96" height="34" rx="17" fill="#d6edea" />
+          <text x="180" y="68" textAnchor="middle" fontFamily="Nunito, sans-serif" fontSize="12" fontWeight="700" fill="#ffffff">Work, at full weight</text>
+          <text x="438" y="68" textAnchor="middle" fontFamily="Nunito, sans-serif" fontSize="12" fontWeight="700" fill="#015c54">Work, minimised</text>
+          <text x="576" y="68" textAnchor="middle" fontFamily="Nunito, sans-serif" fontSize="11" fontWeight="700" fill="#017a6f">Light rest</text>
+          <line x1="348" y1="32" x2="348" y2="94" stroke="#e0a03a" strokeWidth="1.4" strokeDasharray="4 3" />
+          <text x="348" y="24" textAnchor="middle" fontFamily="Nunito, sans-serif" fontSize="10.5" fontWeight="700" fill="#b8801f">Laptop closes, around six</text>
+          <g fontFamily="Nunito, sans-serif" fontSize="10" fill="#a4a5a5">
+            <text x="18" y="102">9 am</text>
+            <text x="330" y="102">6 pm</text>
+            <text x="510" y="102">10 pm</text>
+            <text x="600" y="102">Night</text>
+          </g>
+          <text x="321" y="128" textAnchor="middle" fontFamily="Nunito, sans-serif" fontSize="10.5" fontStyle="italic" fill="#a4a5a5">
+            {block.note || 'The evening is not free time yet. It is work at low volume.'}
+          </text>
+        </svg>
       </div>
-      {block.note && <p className="ir-viz-note">{block.note}</p>}
     </div>
   )
 }
@@ -480,21 +650,42 @@ function Callout({ block }) {
 }
 
 function Cards({ block }) {
+  const cols = block.columns || (block.items ? block.items.length : 2)
   return (
-    <div className={`ir-cards cols-${block.columns || 2}${block.numbered ? ' numbered' : ''}`}>
-      {block.items.map((item, i) => (
-        <div className={`ir-card${item.tone ? ' ' + item.tone : ''}`} key={i}>
-          {(item.n || item.icon) && (
-            <div className="ir-card-head">
-              {item.n && <span className="ir-card-n">{item.n}</span>}
-              {item.icon && <Icon name={item.icon} size={15} />}
-            </div>
-          )}
-          {item.label && <p className="ir-label">{item.label}</p>}
-          {item.title && <p className="ir-card-title">{item.title}</p>}
-          <p className="ir-card-body">{item.body}</p>
-        </div>
-      ))}
+    <div className={`ir-cards cols-${cols}${block.numbered ? ' numbered' : ''}`}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${cols}, 1fr)`,
+        gap: '14px',
+        marginBottom: '17px',
+        width: '100%'
+      }}>
+      {block.items.map((item, i) => {
+        const c = item.band ? band(item.band) : null
+        const bg = c ? c.fill : (item.tone === 'strong' || item.tone === 'highlight' ? '#eef7ea' : '#faf8f4')
+        const border = c ? c.line : (item.tone === 'strong' || item.tone === 'highlight' ? '#dcefd3' : '#ededed')
+        const textColor = c ? c.text : (item.tone === 'strong' || item.tone === 'highlight' ? '#3d7f2c' : '#017a6f')
+
+        return (
+          <div key={i} style={{
+            border: `1px solid ${border}`,
+            borderRadius: '14px',
+            padding: '14px 16px',
+            background: bg,
+            boxSizing: 'border-box'
+          }}>
+            {(item.n || item.icon) && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                {item.n && <span style={{ width: '22px', height: '22px', borderRadius: '8px', background: '#eaf7f5', color: '#017a6f', font: '800 11px/22px Nunito, sans-serif', textAlign: 'center', flex: 'none' }}>{item.n}</span>}
+                {item.icon && <Icon name={item.icon} size={16} style={{ color: textColor }} />}
+              </div>
+            )}
+            {item.label && <p style={{ font: '800 9.5px/1 Nunito, sans-serif', letterSpacing: '.14em', textTransform: 'uppercase', color: textColor, margin: '0 0 6px' }}>{item.label}</p>}
+            {item.title && <p style={{ font: '800 12.5px/1.25 Nunito, sans-serif', color: '#013e39', margin: '0 0 6px' }}>{item.title}</p>}
+            <p style={{ margin: 0, font: '400 11.8px/1.55 Nunito, sans-serif', color: '#585858' }}>{item.body}</p>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -518,12 +709,12 @@ function Columns({ block }) {
 function Checklist({ block }) {
   return (
     <div className="ir-checklist">
-      {block.label && <p className="ir-label">{block.label}</p>}
+      {block.label && <div style={{ font: '700 9px/1 Nunito, sans-serif', letterSpacing: '.16em', textTransform: 'uppercase', color: '#017a6f', marginBottom: '12px' }}>{block.label}</div>}
       {block.items.map((item, i) => (
-        <div className="ir-checklist-row" key={i}>
+        <div className="ir-checklist-row" key={i} style={{ display: 'flex', gap: '9px', marginBottom: i === block.items.length - 1 ? 0 : '11px', alignItems: 'flex-start' }}>
           <Icon name={item.tone === 'no' ? 'alert' : 'check'} size={15}
-            style={{ color: item.tone === 'no' ? '#d0574f' : '#4ea038' }} />
-          <span>{item.text}</span>
+            style={{ color: item.tone === 'no' ? '#d0574f' : '#4ea038', flex: 'none', marginTop: '2px' }} />
+          <span style={{ font: '400 11.5px/1.5 Nunito, sans-serif', color: '#414242' }}>{item.text}</span>
         </div>
       ))}
     </div>
@@ -533,13 +724,20 @@ function Checklist({ block }) {
 function ListBlock({ block }) {
   return (
     <div className={`ir-list${block.variant ? ' ' + block.variant : ''}`}>
-      {block.label && <p className="ir-label">{block.label}</p>}
-      {block.items.map((item, i) => (
-        <div className="ir-list-row" key={i}>
-          <Icon name={item.icon || 'check'} size={15} />
-          <span>{item.text}</span>
-        </div>
-      ))}
+      {block.label && <div className="ir-label" style={{ font: '700 9px/1 Nunito, sans-serif', letterSpacing: '.16em', textTransform: 'uppercase', color: '#019386', marginBottom: '11px' }}>{block.label}</div>}
+      <div className="ir-list-items">
+        {block.items.map((item, i) => {
+          const text = typeof item === 'string' ? item : (item.text || '')
+          const icon = (typeof item === 'object' && item.icon) ? item.icon : 'check'
+          const cleanText = text.replace(/^[✓✔\s]+/, '')
+          return (
+            <div className="ir-list-row" key={i}>
+              <Icon name={icon} size={15} style={{ color: '#4ea038', flex: 'none', marginTop: '2px' }} />
+              <span>{cleanText}</span>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -780,15 +978,15 @@ function Contents({ block }) {
 }
 
 function Profile({ block }) {
-  const initials = (block.name || '')
-    .split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()
+  const name = (block.name && block.name !== 'You') ? block.name : (useLewisStore.getState().name || useLewisStore.getState().authUser?.name || 'User')
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()
   return (
     <div className="ir-profile">
       <p className="ir-label">{block.label}</p>
       <div className="ir-profile-row">
-        <span className="ir-profile-avatar">{initials || 'YOU'}</span>
+        <span className="ir-profile-avatar">{initials || 'U'}</span>
         <span className="ir-profile-info">
-          <span className="ir-profile-name">{block.name}</span>
+          <span className="ir-profile-name">{name}</span>
           {block.meta && <span className="ir-profile-meta">{block.meta}</span>}
         </span>
       </div>
@@ -806,7 +1004,16 @@ function Colophon({ block }) {
       <p className="ir-colophon-title">{block.title}</p>
       <p className="ir-colophon-prepared">{block.prepared}</p>
       <p className="ir-colophon-line">{block.line}</p>
-      <img src="/report/logo-lifed.png" alt="Lifed" className="ir-colophon-logo" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
+        <svg width="28" height="28" viewBox="0 0 82 82">
+          <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+          <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+          <circle cx="11" cy="71" r="7" fill="#00AE9D" />
+        </svg>
+        <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '16px', color: '#16302B' }}>Lewis</span>
+      </div>
     </div>
   )
 }
@@ -868,67 +1075,137 @@ function Block({ block }) {
 /* ------------------------------------------------------------------ */
 
 function CoverPage({ page }) {
-  const prepared = page.blocks.find((b) => b.type === 'prepared')
-  const petals = page.blocks.find((b) => b.type === 'petals')
-  const cards = page.blocks.find((b) => b.type === 'cards')
-  const footer = page.blocks.find((b) => b.type === 'callout')
+  const prepared = (page?.blocks || []).find((b) => b?.type === 'prepared')
+  const petals = (page?.blocks || []).find((b) => b?.type === 'petals')
+  const footer = (page?.blocks || []).find((b) => b?.type === 'callout')
+  const resolvedName = (prepared?.name && prepared?.name !== 'You')
+    ? prepared.name
+    : (useLewisStore.getState().name || useLewisStore.getState().authUser?.name || 'User')
+
   return (
-    <section className="ir-page ir-cover">
-      <div className="ir-cover-top">
-        <img src="/report/logo-lifed.png" alt="Lifed" className="ir-cover-logo" style={{ height: '36px', maxHeight: '36px', width: 'auto', maxWidth: '180px', objectFit: 'contain' }} />
-        <span className="ir-cover-pill">Full reflection</span>
-      </div>
-      <div className="ir-cover-head">
-        <div>
-          <span className="ir-cover-kicker">{page.eyebrow}</span>
-          <h1 className="ir-cover-title">{page.title}</h1>
-          <span className="ir-cover-rule" />
-          <p className="ir-cover-deck">{page.deck}</p>
-        </div>
-        {prepared && (
-          <div className="ir-cover-prepared">
-            <p className="ir-label">Prepared for</p>
-            <p className="ir-cover-name">{prepared.name || 'You'}</p>
-            <p className="ir-cover-meta">
-              {[prepared.date, prepared.location].filter(Boolean).join('  ·  ')}
-            </p>
-            <p className="ir-cover-note">{prepared.note}</p>
+    <section className="ir-page ir-cover" style={{ position: 'relative', background: '#013e39', color: '#ffffff', overflow: 'hidden' }}>
+      {/* Background Decorative Grid Overlay */}
+      <svg aria-hidden="true" viewBox="0 0 380 380" style={{ position: 'absolute', right: '-260px', top: '640px', width: '660px', height: '660px', opacity: 0.09, pointerEvents: 'none' }}>
+        <g fill="none" stroke="#6dc6ba" strokeWidth="1.1">
+          <circle cx="190" cy="190" r="176" /><circle cx="190" cy="190" r="140" /><circle cx="190" cy="190" r="104" /><circle cx="190" cy="190" r="68" />
+          <path d="M190 14v352M14 190h352M65 65l250 250M315 65 65 315" />
+        </g>
+      </svg>
+
+      <div style={{ position: 'relative', height: '1123px', padding: '64px 62px 46px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+        {/* Top Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <svg width="34" height="34" viewBox="0 0 82 82">
+              <path d="M11 41 V11 H41" fill="none" stroke="#a7dcd4" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="41" cy="41" r="11" fill="#ffffff" />
+              <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+              <circle cx="11" cy="71" r="7" fill="#ffffff" />
+            </svg>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '22px', color: '#ffffff', letterSpacing: '-0.025em' }}>Lewis</span>
           </div>
-        )}
-      </div>
-      {petals && <Petals block={petals} />}
-      {cards && <Cards block={cards} />}
-      {footer && (
-        <div className="ir-cover-foot">
-          <Icon name="shield" size={14} />
-          <p>{footer.body}</p>
+          <span style={{ border: '1px solid rgba(255,255,255,.42)', borderRadius: '999px', padding: '6px 15px', font: '700 9.5px/1 Nunito, sans-serif', letterSpacing: '.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,.88)' }}>Full reflection</span>
         </div>
-      )}
+
+        {/* Title & Prepared For Grid */}
+        <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '30px' }}>
+          <div>
+            <span style={{ display: 'inline-block', background: 'rgba(1,173,156,.24)', border: '1px solid rgba(109,198,186,.5)', borderRadius: '999px', padding: '6px 16px', font: '700 9.5px/1 Nunito, sans-serif', letterSpacing: '.16em', textTransform: 'uppercase', color: '#a7dcd4', marginBottom: '16px' }}>
+              {page?.eyebrow || 'Your complete wellbeing reflection'}
+            </span>
+            <h1 style={{ margin: '0 0 14px', font: '800 44px/1.04 Nunito, sans-serif', letterSpacing: '-.026em', color: '#ffffff' }}>
+              Your LEWIS<br />Insight Report
+            </h1>
+            <div style={{ width: '56px', height: '3px', background: '#5fba46', borderRadius: '999px', marginBottom: '14px' }}></div>
+            <p style={{ margin: 0, maxWidth: '380px', font: '400 13px/1.5 Nunito, sans-serif', color: 'rgba(255,255,255,.8)' }}>
+              {page?.deck || 'Nine areas of your life, read together: what is holding you up, what is stretched, and where one small change travels furthest.'}
+            </p>
+          </div>
+          <div style={{ textAlign: 'right', flex: 'none', paddingBottom: '3px' }}>
+            <div style={{ font: '700 9.5px/1 Nunito, sans-serif', letterSpacing: '.18em', textTransform: 'uppercase', color: '#6dc6ba', marginBottom: '9px' }}>Prepared for</div>
+            <div style={{ font: '800 17px/1.3 Nunito, sans-serif', color: '#ffffff' }}>{resolvedName}</div>
+            <div style={{ font: '600 11.5px/1.5 Nunito, sans-serif', color: 'rgba(255,255,255,.72)' }}>
+              {[prepared?.date, prepared?.location].filter(Boolean).join('  ·  ') || '15 July 2026'}
+            </div>
+            <div style={{ font: '400 11px/1.5 Nunito, sans-serif', color: 'rgba(255,255,255,.6)', maxWidth: '210px', marginTop: '8px' }}>
+              {prepared?.note || 'A private reflection, about twelve minutes to read.'}
+            </div>
+          </div>
+        </div>
+
+        {/* Petal Wheel Diagram Container */}
+        <div style={{ margin: '10px 0', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          {petals && <Petals block={petals} isCover={true} />}
+        </div>
+
+        {/* Bottom 2-Column Feature Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '15px' }}>
+          <div style={{ border: '1px solid rgba(255,255,255,.26)', background: 'rgba(255,255,255,.07)', borderRadius: '16px', padding: '14px 17px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '9px' }}>
+              <Icon name="compass" size={15} style={{ color: '#5fba46' }} />
+              <span style={{ font: '700 9.5px/1 Nunito, sans-serif', letterSpacing: '.15em', textTransform: 'uppercase', color: '#a7dcd4' }}>What this report is</span>
+            </div>
+            <p style={{ margin: 0, font: '400 11.5px/1.5 Nunito, sans-serif', color: 'rgba(255,255,255,.9)' }}>
+              A reading of how your wellbeing is arranged right now, across nine areas of life. It describes the season you are in, not the kind of person you are.
+            </p>
+          </div>
+          <div style={{ border: '1px solid rgba(255,255,255,.26)', background: 'rgba(255,255,255,.07)', borderRadius: '16px', padding: '14px 17px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '9px' }}>
+              <Icon name="beaker" size={15} style={{ color: '#5fba46' }} />
+              <span style={{ font: '700 9.5px/1 Nunito, sans-serif', letterSpacing: '.15em', textTransform: 'uppercase', color: '#a7dcd4' }}>How it was built</span>
+            </div>
+            <p style={{ margin: 0, font: '400 11.5px/1.5 Nunito, sans-serif', color: 'rgba(255,255,255,.9)' }}>
+              Your answers were read using wellbeing questionnaires tested and used in published research. The short exercises added texture. Every study is named at the end.
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Disclaimer */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.2)', paddingTop: '16px', display: 'flex', gap: '11px', alignItems: 'flex-start' }}>
+          <Icon name="shield" size={14} style={{ color: 'rgba(255,255,255,.6)', flex: 'none', marginTop: '1px' }} />
+          <p style={{ margin: 0, font: '400 10.5px/1.5 Nunito, sans-serif', color: 'rgba(255,255,255,.68)' }}>
+            {footer?.body || 'LEWIS is a private, non-clinical reflection. It reads how life feels across nine areas and suggests what may fit. It does not diagnose, grade, or replace professional care.'}
+          </p>
+        </div>
+      </div>
     </section>
   )
 }
 
 function ReportPage({ page, meta }) {
+  if (!page) return null
   if (page.number === 1) return <CoverPage page={page} />
+  const safeMeta = meta || {}
+  const resolvedName = (safeMeta.name && safeMeta.name !== 'You') ? safeMeta.name : (useLewisStore.getState().name || useLewisStore.getState().authUser?.name || 'User')
   const isAppendix = page.number >= 24
   const headRight = isAppendix
-    ? meta.appendix_header
-    : [meta.name, meta.date].filter(Boolean).join(' · ')
+    ? safeMeta.appendix_header
+    : [resolvedName, safeMeta.date].filter(Boolean).join(' · ')
   return (
     <section className="ir-page">
       <div className="ir-page-head">
-        <span className="ir-page-brand">LIFED <span>/ Your LEWIS reflection</span></span>
+        <span className="ir-page-brand" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+          <svg width="18" height="18" viewBox="0 0 82 82" style={{ display: 'inline-block', verticalAlign: 'middle', flexShrink: 0 }}>
+            <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+            <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+            <circle cx="11" cy="71" r="7" fill="#00AE9D" />
+          </svg>
+          LEWIS <span style={{ color: '#a4a5a5' }}>/ Your LEWIS reflection</span>
+        </span>
         <span className="ir-page-headright">{headRight}</span>
       </div>
       <div className="ir-page-body">
         <p className="ir-eyebrow">{page.eyebrow}</p>
         <h2 className="ir-title">{page.title}</h2>
         {page.deck && <p className="ir-deck">{page.deck}</p>}
-        {page.blocks.map((block, i) => <Block block={block} key={i} />)}
+        {(page.blocks || []).map((block, i) => <Block block={block} key={i} />)}
       </div>
       <div className="ir-page-foot">
-        <span>{meta.footer}</span>
-        <span className="ir-page-number">{String(page.number).padStart(2, '0')}</span>
+        <span>{safeMeta.footer}</span>
+        <span className="ir-page-number">{String(page.number || 1).padStart(2, '0')}</span>
       </div>
     </section>
   )
@@ -939,7 +1216,7 @@ function ReportPage({ page, meta }) {
 /* ------------------------------------------------------------------ */
 
 export default function InsightReport({ report }) {
-  const { isAuthenticated, authPendingDownload, setScreen } = useLewisStore()
+  const { authPendingDownload } = useLewisStore()
 
   const handleDownload = () => {
     document.body.classList.add('ir-printing')
@@ -963,7 +1240,7 @@ export default function InsightReport({ report }) {
 
   if (!report || !report.pages) return null
 
-  const pagesToRender = report.pages
+  const pagesToRender = report.pages || []
 
   return (
     <div className="ir-root">
