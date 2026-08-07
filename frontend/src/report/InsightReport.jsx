@@ -190,17 +190,30 @@ function BandLadder({ block }) {
 
 function BandCards({ block }) {
   const items = block?.items || []
-  const cols = block?.columns || (items.length === 4 ? 4 : 3)
 
   return (
-    <div className="ir-bandcards" style={{ width: '100%', marginBottom: '17px', boxSizing: 'border-box' }}>
+    <div className="ir-bandcards" style={{ width: '100%', marginBottom: '24px', boxSizing: 'border-box' }}>
       {block?.legend && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '26px', border: '1px solid #ededed', borderRadius: '14px', padding: '13px 18px', marginBottom: '14px', background: '#faf8f4', width: '100%', boxSizing: 'border-box' }}>
-          <span style={{ font: '700 9px/1 Nunito, sans-serif', letterSpacing: '.16em', textTransform: 'uppercase', color: '#019386' }}>{block.legend_label || 'Your shape'}</span>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '24px',
+          flexWrap: 'wrap',
+          border: '1.5px solid #ededed',
+          borderRadius: '16px',
+          padding: '14px 20px',
+          marginBottom: '18px',
+          background: '#faf8f4',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
+          <span style={{ font: '700 10px/1 Nunito, sans-serif', letterSpacing: '.16em', textTransform: 'uppercase', color: '#019386' }}>
+            {block.legend_label || 'Your shape'}
+          </span>
           {block.legend.map((l) => {
             const c = band(l.band)
             return (
-              <span key={l.band} style={{ display: 'flex', alignItems: 'center', gap: '7px', font: '600 11px/1 Nunito, sans-serif', color: c.text }}>
+              <span key={l.band} style={{ display: 'flex', alignItems: 'center', gap: '8px', font: '600 12px/1 Nunito, sans-serif', color: c.text }}>
                 <i style={{ width: '10px', height: '10px', borderRadius: '4px', background: c.ink, display: 'inline-block' }} />
                 {l.count} {l.band.toLowerCase()}
               </span>
@@ -208,7 +221,9 @@ function BandCards({ block }) {
           })}
         </div>
       )}
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap: '14px', width: '100%', boxSizing: 'border-box' }}>
+
+      {/* 4 Vertically Stacked Band Cards Column */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%', maxWidth: '580px' }}>
         {items.map((item) => {
           const c = band(item.band)
           const step = item.step || (item.band === 'Strong' ? 4 : item.band === 'Steady' ? 3 : item.band === 'Under pressure' ? 2 : 1)
@@ -237,39 +252,36 @@ function BandCards({ block }) {
 
           return (
             <div key={item.name || item.band} style={{
-              border: `1px solid ${c.line}`,
+              border: `1.5px solid ${c.line}`,
               background: c.fill,
-              borderRadius: '14px',
-              padding: '14px 16px',
+              borderRadius: '18px',
+              padding: '18px 22px',
               boxSizing: 'border-box',
               display: 'flex',
               flexDirection: 'column',
-              width: '100%'
+              width: '100%',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.02)'
             }}>
-              <Icon name={iconName} size={17} style={{ color: c.text, marginBottom: '8px', flex: 'none' }} />
-              <div style={{ font: '800 11px/1.2 Nunito, sans-serif', letterSpacing: '.08em', textTransform: 'uppercase', color: c.text, marginBottom: '6px', minHeight: '40px' }}>
-                {item.name || item.band}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                <Icon name={iconName} size={18} style={{ color: c.text, flexShrink: 0 }} />
+                <div style={{
+                  font: '800 12.5px/1.3 Nunito, sans-serif',
+                  letterSpacing: '.06em',
+                  textTransform: 'uppercase',
+                  color: c.text
+                }}>
+                  {item.name || item.band}
+                </div>
               </div>
               {item.name && item.name !== item.band && (
-                <div style={{ font: '700 10.5px/1.3 Nunito, sans-serif', color: c.text, marginBottom: '4px' }}>
+                <div style={{ font: '700 11px/1.3 Nunito, sans-serif', color: c.text, marginBottom: '6px' }}>
                   {item.band}
                 </div>
               )}
               {glossText && (
-                <p style={{ margin: '0 0 10px', font: '400 11.8px/1.55 Nunito, sans-serif', color: '#585858', flex: 1 }}>
+                <p style={{ margin: 0, font: '400 13px/1.55 Nunito, sans-serif', color: '#414242', opacity: 0.9 }}>
                   {glossText}
                 </p>
-              )}
-              {items.length !== 4 && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px', marginTop: 'auto' }}>
-                  {[1, 2, 3, 4].map((i) => (
-                    <i key={i} style={{
-                      height: '6px',
-                      borderRadius: '3px',
-                      background: i <= step ? c.ink : (item.band === 'Strong' ? '#5fba46' : item.band === 'Steady' ? '#dcdcdc' : item.band === 'Under pressure' ? '#e6ddcd' : '#eccecb')
-                    }} />
-                  ))}
-                </div>
               )}
             </div>
           )
@@ -575,37 +587,157 @@ function LoadBar({ block }) {
 }
 
 const ZONE_POINTS = {
-  head: [[60, 26]], neck: [[60, 60]], chest: [[60, 96]],
-  back: [[60, 128]], gut: [[60, 158]], limbs: [[24, 196], [96, 196]],
+  head: [[60, 26]],
+  'head & jaw': [[60, 26]],
+  'head and jaw': [[60, 26]],
+  neck: [[60, 48]],
+  'neck & shoulders': [[60, 48]],
+  'neck and shoulders': [[60, 48]],
+  shoulders: [[60, 56]],
+  chest: [[60, 74]],
+  'chest & heart': [[60, 74]],
+  'chest & heart center': [[60, 74]],
+  back: [[60, 84]],
+  'upper back': [[60, 84]],
+  'upper & lower back': [[60, 88]],
+  'lower back': [[60, 98]],
+  gut: [[60, 108]],
+  stomach: [[60, 108]],
+  'stomach & abdomen': [[60, 108]],
+  abdomen: [[60, 108]],
+  limbs: [[28, 100], [92, 100], [48, 160], [72, 160]],
+  arms: [[28, 100], [92, 100]],
+  'arms & legs': [[28, 100], [92, 100], [48, 160], [72, 160]],
+  legs: [[48, 160], [72, 160]],
+  'legs & knees': [[48, 160], [72, 160]],
 }
 
 function BodyMap({ block }) {
   const marks = []
   ;(block.zones || []).forEach((zone) => {
-    (ZONE_POINTS[zone] || []).forEach((p) => marks.push({ zone, p }))
+    const key = String(zone).toLowerCase().trim()
+    const points = ZONE_POINTS[key] || ZONE_POINTS[zone] || []
+    points.forEach((p) => marks.push({ zone, p }))
   })
+
   return (
-    <div className="ir-bodymap">
-      {block.title && <p className="ir-label">{block.title}</p>}
-      <div className="ir-bodymap-inner">
-        <svg viewBox="0 0 120 250" role="img" aria-label="Where you noticed tension">
-          <g fill="none" stroke="#d6edea" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="60" cy="26" r="17" />
-            <path d="M60 43v6" />
-            <path d="M42 55h36a6 6 0 0 1 6 6v58a8 8 0 0 1-8 8H44a8 8 0 0 1-8-8V61a6 6 0 0 1 6-6z" />
-            <path d="M42 60 24 96v44M78 60l18 36v44" />
-            <path d="M48 127v66M72 127v66" />
-          </g>
-          {marks.map((m, i) => (
-            <circle key={i} cx={m.p[0]} cy={m.p[1]} r="8.5"
-              fill="#d0574f" fillOpacity=".18" stroke="#d0574f" strokeWidth="1.4" />
+    <div className="ir-bodymap" style={{
+      background: '#ffffff',
+      border: '1.5px solid #eef4f2',
+      borderRadius: '20px',
+      padding: '24px 28px',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.02)',
+      margin: '0 0 20px',
+      boxSizing: 'border-box'
+    }}>
+      {block.title && (
+        <p className="ir-label" style={{
+          font: '700 11px/1 Nunito, sans-serif',
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          color: '#00ae9d',
+          marginBottom: '16px',
+          fontFamily: '"IBM Plex Mono", monospace'
+        }}>
+          {block.title}
+        </p>
+      )}
+      <div className="ir-bodymap-inner" style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        gap: '28px',
+        flexWrap: 'wrap'
+      }}>
+        {/* SVG Figure resized cleanly to compact dimensions */}
+        <div style={{
+          width: '140px',
+          height: '240px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexShrink: 0
+        }}>
+          <svg viewBox="0 0 120 220" style={{ width: '100%', height: '100%', maxHeight: '230px' }} role="img" aria-label="Where you noticed tension">
+            <defs>
+              <filter id="spotGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+
+            {/* Human Silhouette Contour Lines */}
+            <g fill="none" stroke="#a7dcd4" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              {/* Head */}
+              <circle cx="60" cy="26" r="17" fill="#f7fbf9" />
+              {/* Neck */}
+              <path d="M60 43v6" />
+              {/* Torso */}
+              <path d="M42 55h36a6 6 0 0 1 6 6v58a8 8 0 0 1-8 8H44a8 8 0 0 1-8-8V61a6 6 0 0 1 6-6z" fill="#f7fbf9" />
+              {/* Arms */}
+              <path d="M42 60 L24 96 v40 M78 60 L96 96 v40" />
+              {/* Legs */}
+              <path d="M48 127 v66 M72 127 v66" />
+            </g>
+
+            {/* Accurately Positioned Tension Spots */}
+            {marks.map((m, i) => (
+              <g key={i}>
+                <circle
+                  cx={m.p[0]}
+                  cy={m.p[1]}
+                  r="9.5"
+                  fill="rgba(235, 87, 87, 0.28)"
+                  stroke="#eb5757"
+                  strokeWidth="1.8"
+                  filter="url(#spotGlow)"
+                />
+                <circle cx={m.p[0]} cy={m.p[1]} r="3.5" fill="#eb5757" />
+              </g>
+            ))}
+          </svg>
+        </div>
+
+        {/* Selected Zone Pill Tags on Right */}
+        <div className="ir-bodymap-words" style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          alignItems: 'flex-start',
+          flex: 1,
+          minWidth: '140px'
+        }}>
+          {(block.words || block.zones || []).map((w, idx) => (
+            <span key={idx} style={{
+              font: '700 12px/1 Nunito, sans-serif',
+              background: 'rgba(235, 87, 87, 0.12)',
+              color: '#eb5757',
+              border: '1px solid rgba(235, 87, 87, 0.3)',
+              padding: '6px 14px',
+              borderRadius: '999px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <i style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#eb5757', display: 'inline-block' }} />
+              {String(w)}
+            </span>
           ))}
-        </svg>
-        <div className="ir-bodymap-words">
-          {(block.words || []).map((w) => <span key={w}>{w}</span>)}
         </div>
       </div>
-      {block.note && <p className="ir-viz-note">{block.note}</p>}
+
+      {block.note && (
+        <p className="ir-viz-note" style={{
+          margin: '16px 0 0 0',
+          font: '400 12px/1.5 Nunito, sans-serif',
+          color: '#85918e',
+          fontStyle: 'italic',
+          borderTop: '1px solid #f4f4f4',
+          paddingTop: '10px'
+        }}>
+          {block.note}
+        </p>
+      )}
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
+import LewisFooter from '../components/LewisFooter.jsx'
 import './landing.css'
 
 const DOMAINS = [
@@ -20,7 +21,8 @@ export default function LandingScreen() {
   const { setScreen } = useLewisStore()
   const [active, setActive] = useState(0)
   const [contactSubmitted, setContactSubmitted] = useState(false)
-  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '', topic: 'General Inquiry' })
   const revealRefs = useRef([])
 
   const handleNext = (e) => {
@@ -39,9 +41,42 @@ export default function LandingScreen() {
   const handleContactSubmit = (e) => {
     if (e) e.preventDefault()
     if (contactForm.name && contactForm.email && contactForm.message) {
-      setContactSubmitted(true)
+      setIsSubmitting(true)
+      setTimeout(() => {
+        setIsSubmitting(false)
+        setContactSubmitted(true)
+      }, 500)
     }
   }
+
+  const [headerOpacity, setHeaderOpacity] = useState(1)
+  const [headerY, setHeaderY] = useState(0)
+
+  useEffect(() => {
+    const wrapper = document.querySelector('.landing-screen-wrapper')
+    
+    const handleScroll = () => {
+      const scrollTop = wrapper ? wrapper.scrollTop : (window.scrollY || 0)
+      // Fade out header smoothly over first 160px of scroll
+      const opacity = Math.max(0, 1 - scrollTop / 160)
+      // Translate header upward along with scroll
+      const translateY = -Math.min(60, scrollTop * 0.4)
+      
+      setHeaderOpacity(opacity)
+      setHeaderY(translateY)
+    }
+
+    if (wrapper) {
+      wrapper.addEventListener('scroll', handleScroll, { passive: true })
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+
+    return () => {
+      if (wrapper) wrapper.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   useEffect(() => {
     const container = document.querySelector('.landing-screen-wrapper')
@@ -88,7 +123,7 @@ export default function LandingScreen() {
 
       {/* TOP NAVIGATION HEADER */}
       <header data-screen-label="Nav" style={{
-        position: 'fixed',
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
@@ -98,6 +133,10 @@ export default function LandingScreen() {
         justifyContent: 'space-between',
         padding: '20px 48px',
         background: 'transparent',
+        opacity: headerOpacity,
+        transform: `translateY(${headerY}px)`,
+        pointerEvents: headerOpacity < 0.05 ? 'none' : 'auto',
+        transition: 'opacity 0.15s ease-out, transform 0.15s ease-out'
       }}>
         {/* Brand Emblem */}
         <LewisLogo size={34} showText={true} />
@@ -440,7 +479,7 @@ export default function LandingScreen() {
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', marginBottom: '16px', fontFamily: '"IBM Plex Mono", monospace' }}>01 — LISTEN</div>
             <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>An assessment that fits your day</div>
             <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#414242' }}>
-              Validated questions across all nine domains — choose a 3–5 minute Pulse or the full deep dive. No wearables required.
+              Validated questions across all nine domains — choose a 3–5 minute reflection or the full deep dive. No wearables required.
             </p>
           </div>
 
@@ -557,114 +596,104 @@ export default function LandingScreen() {
 
       {/* SECTION — CONTACT US / SUPPORT */}
       <section id="contact" data-screen-label="Contact Us" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'rgba(255, 255, 255, 0.65)' }}>
-        <div ref={addToRefs} className="landing-reveal-element" style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <div ref={addToRefs} className="landing-reveal-element" style={{ maxWidth: '640px', margin: '0 auto' }}>
 
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
-              [ GET IN TOUCH ]
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '6px 16px',
+              borderRadius: '999px',
+              background: '#e4f4ee',
+              border: '1px solid #00ae9d',
+              marginBottom: '14px'
+            }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00ae9d' }} />
+              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', fontFamily: '"IBM Plex Mono", monospace' }}>
+                GET IN TOUCH
+              </span>
             </div>
-            <h2 style={{ margin: '0 0 16px 0', fontSize: 'clamp(28px, 3.6vw, 44px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em', lineHeight: 1.15 }}>
-              Support &amp; Contact Us
+            <h2 style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 44px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+              Let's Start a Conversation
             </h2>
-            <p style={{ margin: '0 auto', maxWidth: '580px', fontSize: '15.5px', lineHeight: 1.6, color: '#414242' }}>
-              Have questions, feedback, or need assistance? Fill out your query below or mail us directly.
+            <p style={{ margin: '0 auto', maxWidth: '540px', fontSize: '16px', lineHeight: 1.6, color: '#414242' }}>
+              Have questions about your wellbeing assessment, feedback, or need assistance? We're here to help.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', alignItems: 'stretch' }}>
-
-            {/* Direct Email Option Card */}
-            <div style={{
-              background: 'linear-gradient(135deg, #ffffff 0%, #f4fbf9 100%)',
-              border: '1.5px solid rgba(0, 174, 157, 0.25)',
-              borderRadius: '24px',
-              padding: '36px 30px',
-              boxShadow: '0 10px 30px rgba(0, 174, 157, 0.08)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: '24px'
-            }}>
-              <div>
-                <div style={{
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: '16px',
-                  background: 'rgba(0, 174, 157, 0.12)',
-                  display: 'grid',
-                  placeItems: 'center',
-                  fontSize: '24px',
-                  marginBottom: '20px'
-                }}>✉️</div>
-
-                <h3 style={{ margin: '0 0 10px 0', fontSize: '22px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242' }}>
-                  Mail us directly
-                </h3>
-                <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.6, color: '#414242' }}>
-                  Prefer sending a direct email? Reach our support team directly and we'll respond promptly.
-                </p>
-              </div>
-
-              <div style={{ paddingTop: '16px', borderTop: '1px solid rgba(0, 174, 157, 0.15)' }}>
-                <span style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', opacity: 0.7, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  Direct Support Email
-                </span>
-                <a
-                  href="mailto:support@lifedhealth.com"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    background: '#00ae9d',
-                    color: '#ffffff',
-                    padding: '14px 22px',
-                    borderRadius: '999px',
-                    fontWeight: 700,
-                    fontSize: '14.5px',
-                    textDecoration: 'none',
-                    boxShadow: '0 6px 18px rgba(0, 174, 157, 0.25)',
-                    transition: 'transform 0.2s'
-                  }}
-                >
-                  support@lifedhealth.com →
-                </a>
-              </div>
-            </div>
-
-            {/* Fill Your Query Form Card */}
-            <div style={{
-              background: '#ffffff',
-              border: '1.5px solid #eef4f2',
-              borderRadius: '24px',
-              padding: '36px 30px',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.04)'
-            }}>
-              <h3 style={{ margin: '0 0 20px 0', fontSize: '22px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242' }}>
-                Fill your query
+          {/* Centered Interactive Form Card */}
+          <div style={{
+            background: '#ffffff',
+            border: '1.5px solid #eef4f2',
+            borderRadius: '28px',
+            padding: '40px 36px',
+            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.04)'
+          }}>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', letterSpacing: '-0.02em' }}>
+                Send us a message
               </h3>
+              <p style={{ margin: '0 0 24px 0', fontSize: '14.5px', color: '#414242', opacity: 0.8 }}>
+                Select a topic and fill out your message below:
+              </p>
+
+              {/* Topic Selector Pills */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
+                {['General Inquiry', 'Assessment Support', 'Feedback', 'Partnership'].map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setContactForm({ ...contactForm, topic: t })}
+                    style={{
+                      padding: '7px 14px',
+                      borderRadius: '999px',
+                      fontSize: '12.5px',
+                      fontWeight: 700,
+                      fontFamily: "'Nunito', sans-serif",
+                      cursor: 'pointer',
+                      border: contactForm.topic === t ? '1.5px solid #00ae9d' : '1.5px solid #e2e8e5',
+                      background: contactForm.topic === t ? '#e4f4ee' : '#ffffff',
+                      color: contactForm.topic === t ? '#00ae9d' : '#414242',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
 
               {contactSubmitted ? (
                 <div style={{
                   background: 'rgba(0, 174, 157, 0.08)',
                   border: '1.5px solid #00ae9d',
-                  borderRadius: '16px',
-                  padding: '28px 20px',
+                  borderRadius: '20px',
+                  padding: '36px 24px',
                   textAlign: 'center'
                 }}>
-                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>✅</div>
-                  <h4 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: 700, color: '#414242' }}>Query Sent!</h4>
-                  <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#414242', lineHeight: 1.5 }}>
-                    Thank you, {contactForm.name || 'there'}! We have received your message and will reply to <strong>{contactForm.email}</strong> soon.
+                  <div style={{ fontSize: '42px', marginBottom: '14px' }}>✨</div>
+                  <h4 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800, color: '#414242', fontFamily: "'Manrope', sans-serif" }}>Message Received!</h4>
+                  <p style={{ margin: '0 0 20px 0', fontSize: '14.5px', color: '#414242', lineHeight: 1.6 }}>
+                    Thank you, <strong>{contactForm.name}</strong>! We have received your query regarding <em>{contactForm.topic || 'General Inquiry'}</em> and will reply to <strong>{contactForm.email}</strong> shortly.
                   </p>
                   <button
-                    onClick={() => { setContactSubmitted(false); setContactForm({ name: '', email: '', message: '' }); }}
-                    style={{ background: 'transparent', border: 'none', color: '#00ae9d', fontWeight: 700, cursor: 'pointer', fontSize: '13.5px' }}
+                    onClick={() => { setContactSubmitted(false); setContactForm({ name: '', email: '', message: '', topic: 'General Inquiry' }); }}
+                    style={{
+                      background: '#00ae9d',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '10px 22px',
+                      borderRadius: '999px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '13.5px',
+                      boxShadow: '0 4px 12px rgba(0, 174, 157, 0.25)'
+                    }}
                   >
-                    Send another query
+                    Send another message
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
                       Your Name
@@ -677,13 +706,14 @@ export default function LandingScreen() {
                       onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                       style={{
                         width: '100%',
-                        padding: '12px 16px',
-                        borderRadius: '12px',
+                        padding: '13px 16px',
+                        borderRadius: '14px',
                         border: '1.5px solid #e2e8e5',
-                        fontSize: '14px',
+                        fontSize: '14.5px',
                         fontFamily: "'Nunito', sans-serif",
                         outline: 'none',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        transition: 'border-color 0.2s'
                       }}
                     />
                   </div>
@@ -700,91 +730,81 @@ export default function LandingScreen() {
                       onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                       style={{
                         width: '100%',
-                        padding: '12px 16px',
-                        borderRadius: '12px',
+                        padding: '13px 16px',
+                        borderRadius: '14px',
                         border: '1.5px solid #e2e8e5',
-                        fontSize: '14px',
+                        fontSize: '14.5px',
                         fontFamily: "'Nunito', sans-serif",
                         outline: 'none',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        transition: 'border-color 0.2s'
                       }}
                     />
                   </div>
 
                   <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
-                      Your Query
+                      Your Message
                     </label>
                     <textarea
                       required
                       rows={4}
-                      placeholder="Type your message or query here..."
+                      placeholder="How can we help you?"
                       value={contactForm.message}
                       onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                       style={{
                         width: '100%',
-                        padding: '12px 16px',
-                        borderRadius: '12px',
+                        padding: '13px 16px',
+                        borderRadius: '14px',
                         border: '1.5px solid #e2e8e5',
-                        fontSize: '14px',
+                        fontSize: '14.5px',
                         fontFamily: "'Nunito', sans-serif",
                         outline: 'none',
                         resize: 'vertical',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        transition: 'border-color 0.2s'
                       }}
                     />
                   </div>
 
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="landing-primary-btn"
                     style={{
                       background: '#00ae9d',
                       color: '#ffffff',
                       border: 'none',
-                      padding: '14px',
-                      borderRadius: '12px',
+                      padding: '15px',
+                      borderRadius: '14px',
                       fontWeight: 700,
-                      fontSize: '15px',
+                      fontSize: '15.5px',
                       cursor: 'pointer',
                       marginTop: '4px',
-                      boxShadow: '0 6px 18px rgba(0, 174, 157, 0.25)'
+                      boxShadow: '0 6px 20px rgba(0, 174, 157, 0.28)',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
                     }}
                   >
-                    Submit Query →
+                    {isSubmitting ? (
+                      <span>Sending message...</span>
+                    ) : (
+                      <span>Send Message →</span>
+                    )}
                   </button>
                 </form>
               )}
 
             </div>
 
-          </div>
-
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer data-screen-label="Footer" style={{
-        position: 'relative',
-        zIndex: 2,
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '16px',
-        padding: '28px 32px',
-        background: '#414242',
-        color: '#ffffff',
-        borderTop: '1px solid rgba(255,255,255,0.1)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>
-          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#00ae9d', display: 'inline-block' }}></span>
-          © 2026- Holobiont Private Limited
-        </div>
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap', fontSize: '13px' }}>
-          <a href="#top" onClick={(e) => scrollTo(e, 'top')} className="landing-footer-link" style={{ color: 'rgba(255,255,255,0.7)' }}>Privacy</a>
-        </div>
-      </footer>
+      <LewisFooter />
     </motion.div>
   )
 }

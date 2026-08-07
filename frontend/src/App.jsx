@@ -1,12 +1,13 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useLewisStore } from './store/useLewisStore.js'
 import LewisLogo from './components/LewisLogo.jsx'
+import LewisLoadingScreen from './components/LewisLoadingScreen.jsx'
+import PageTransition from './components/PageTransition.jsx'
 
 import LandingScreen from './screens/LandingScreen.jsx'
 import PreStage0AgeScreen from './screens/PreStage0AgeScreen.jsx'
 import AgeStopScreen from './screens/AgeStopScreen.jsx'
-import Background3D from './components/Background3D.jsx'
 import Stage1_0AboutScreen from './screens/Stage1_0AboutScreen.jsx'
 import Stage1_1IdentityScreen from './screens/Stage1_1IdentityScreen.jsx'
 import Stage1_2StabilityScreen from './screens/Stage1_2StabilityScreen.jsx'
@@ -176,6 +177,14 @@ const SCREEN_ORDER = [
 
 export default function App() {
   const { currentScreen, setScreen, isAuthenticated, authUser, logout } = useLewisStore()
+  const [bootLoading, setBootLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setBootLoading(false)
+    }, 1400)
+    return () => clearTimeout(timer)
+  }, [])
   
   // Guard against invalid/undefined screen names so app NEVER goes blank
   const validScreen = SCREENS[currentScreen] ? currentScreen : 'landing'
@@ -272,7 +281,17 @@ export default function App() {
 
   return (
     <>
-      {validScreen === 'landing' && <Background3D />}
+      <AnimatePresence mode="wait">
+        {bootLoading && (
+          <LewisLoadingScreen
+            key="boot-loader"
+            onComplete={() => {
+              setBootLoading(false)
+              setScreen('landing')
+            }}
+          />
+        )}
+      </AnimatePresence>
       {validScreen !== 'landing' && validScreen !== 'mirror' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
           <div style={{
@@ -341,7 +360,6 @@ export default function App() {
               <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#414242', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: "'Nunito', sans-serif" }}>
                 Wellbeing Intelligence
               </span>
-              <span className="proto-tag">Version 1.1.12</span>
             </div>
           </header>
         )}
@@ -384,14 +402,13 @@ export default function App() {
 
           return (
             <nav className="stage-track-v2" style={{ marginBottom: '16px', userSelect: 'none' }} aria-label="Journey progress">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', fontSize: '10px', fontFamily: "'IBM Plex Mono', monospace" }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', fontSize: '13px', fontFamily: "'Nunito', sans-serif" }}>
                 <span style={{
-                  color: 'var(--dawn)', fontWeight: 700, letterSpacing: '0.08em',
-                  background: 'rgba(0, 174, 157, 0.1)', padding: '6px 12px', borderRadius: '16px'
+                  color: 'var(--dawn)', fontWeight: 700, letterSpacing: '0.04em', fontSize: '13px'
                 }}>
-                  STAGE {stageInfo.num} - {stageInfo.name.toUpperCase()}
+                  Stage {stageInfo.num} — {stageInfo.name}
                 </span>
-                <span style={{ color: 'var(--text-faint)', fontWeight: 600 }}>
+                <span style={{ color: '#85918e', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Nunito', sans-serif" }}>
                   {currentIndex + 1} / {SCREEN_ORDER.length} ({Math.round(percent)}%)
                 </span>
               </div>
@@ -423,13 +440,17 @@ export default function App() {
         {validScreen === 'landing' ? (
           <main style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
             <AnimatePresence mode="wait">
-              <ActiveScreen key={validScreen} />
+              <PageTransition key={validScreen}>
+                <ActiveScreen />
+              </PageTransition>
             </AnimatePresence>
           </main>
         ) : validScreen === 'mirror' ? (
           <div style={{ width: '100%', maxWidth: '960px', margin: '0 auto', padding: '10px 20px 80px 20px', boxSizing: 'border-box' }}>
             <AnimatePresence mode="wait">
-              <ActiveScreen key={validScreen} />
+              <PageTransition key={validScreen}>
+                <ActiveScreen />
+              </PageTransition>
             </AnimatePresence>
           </div>
         ) : (
@@ -442,11 +463,13 @@ export default function App() {
               flexDirection: 'column',
               position: 'relative',
               boxSizing: 'border-box',
-              transition: 'max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1)'
             }}>
               <main ref={stageMainRef} style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', overflowAnchor: 'none' }}>
                 <AnimatePresence mode="wait">
-                  <ActiveScreen key={validScreen} />
+                  <PageTransition key={validScreen}>
+                    <ActiveScreen />
+                  </PageTransition>
                 </AnimatePresence>
               </main>
             </div>

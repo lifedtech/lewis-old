@@ -615,17 +615,26 @@ h1.headline em {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  transition: border-color .25s ease, transform .25s ease, background .25s ease;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.25s ease;
+  will-change: transform, box-shadow;
 }
 
 .choice-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.008);
+  box-shadow: 0 10px 28px rgba(0, 174, 157, 0.12);
+}
+
+.choice-card:active {
+  transform: translateY(0px) scale(0.985);
 }
 
 .choice-card.selected {
   border-color: var(--dawn);
   background: linear-gradient(180deg, rgba(255, 148, 102, 0.10), var(--panel));
-  box-shadow: 0 0 0 1px var(--dawn) inset;
+  box-shadow: 0 0 0 1.5px var(--dawn) inset, 0 8px 24px rgba(0, 174, 157, 0.15);
 }
 
 @media (min-width:760px) {
@@ -651,23 +660,27 @@ h1.headline em {
   align-items: center;
   justify-content: center;
   box-shadow: none;
-  transition: opacity .2s ease, transform .2s ease;
+  transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   align-self: flex-end !important;
   min-width: 140px;
+  will-change: transform, opacity;
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
+  opacity: 0.95;
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 8px 24px rgba(0, 174, 157, 0.28);
 }
 
 .btn-primary:disabled {
   opacity: 0.5;
   box-shadow: none;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-primary:not(:disabled):active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .scale-opt {
@@ -680,10 +693,14 @@ h1.headline em {
   padding: 12px 18px 12px 48px !important;
   font-size: 14.5px !important;
   font-weight: 600 !important;
-  transition: all .25s ease;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.25s ease,
+              border-color 0.25s ease,
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  will-change: transform, box-shadow;
 }
 
 .scale-opt::before {
@@ -697,13 +714,19 @@ h1.headline em {
   border-radius: 50%;
   border: 2px solid #cbd5e1;
   background: #ffffff;
-  transition: all .2s ease;
+  transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .scale-opt:hover {
   border-color: #00ae9d !important;
   background: #ffffff !important;
   color: #414242 !important;
+  transform: translateY(-2px) scale(1.006) !important;
+  box-shadow: 0 8px 24px rgba(0, 174, 157, 0.12) !important;
+}
+
+.scale-opt:active {
+  transform: translateY(0px) scale(0.985) !important;
 }
 
 .scale-opt.selected {
@@ -711,7 +734,8 @@ h1.headline em {
   border-color: #00ae9d !important;
   color: #414242 !important;
   font-weight: 700 !important;
-  box-shadow: 0 6px 20px rgba(0, 174, 157, 0.15) !important;
+  transform: scale(1.01) !important;
+  box-shadow: 0 8px 26px rgba(0, 174, 157, 0.2) !important;
 }
 
 .scale-opt.selected::before {

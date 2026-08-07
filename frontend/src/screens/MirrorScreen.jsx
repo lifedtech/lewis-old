@@ -6,6 +6,7 @@ import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
 import InsightReport from '../report/InsightReport.jsx'
+import RecommendedProgramsCarousel from '../components/RecommendedProgramsCarousel.jsx'
 import Icon from '../report/icons.jsx'
 import './landing.css'
 /* ── Backend Connection Error Vector Line Art ── */
@@ -585,6 +586,9 @@ export default function MirrorScreen() {
           </div>
         </>
       )}
+
+      {/* Recommended Programs for You Carousel */}
+      <RecommendedProgramsCarousel />
 
       {/* The full Insight Report (v4.0 25-page layout), downloadable as PDF */}
       {analysis?.insight_report ? (

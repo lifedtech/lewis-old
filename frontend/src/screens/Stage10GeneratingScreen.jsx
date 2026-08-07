@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
+import LewisMotionLogo from '../components/LewisMotionLogo.jsx'
 
 /* ── 9-Petal Wheel Synthesis Geometry Illustration ── */
 const MirrorSynthesisIllustration = () => {
@@ -79,13 +80,20 @@ const MirrorSynthesisIllustration = () => {
         })}
       </motion.g>
 
-      {/* Center Hub with LEWIS Logo Mark */}
+      {/* Center Hub with LEWIS 5-Element Motion Logo Mark */}
       <circle cx="0" cy="0" r="26" fill="#ffffff" stroke="#00AE9D" strokeWidth="1.5" />
       <g transform="translate(-16, -16) scale(0.39)">
+        {/* Upper Teal Arm */}
         <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Lower Green Arm (Section 8 Rotational Turn) */}
+        <g style={{ transformOrigin: '41px 41px', animation: 'lwTurn 3.6s cubic-bezier(.6,0,.2,1) infinite' }}>
+          <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+        {/* Center Disc */}
         <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+        {/* Counterpoint Dots */}
         <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+        <circle cx="11" cy="71" r="7" fill="#00AE9D" />
       </g>
     </motion.svg>
   )

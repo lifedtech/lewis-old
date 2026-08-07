@@ -1970,6 +1970,13 @@
   align-items: center;
 }
 
+.ir-row.first-bandcards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
 /* ------------------------------------------------------------------ */
 /* Bands List Table (Page 7 Strengths First)                          */
 /* ------------------------------------------------------------------ */
