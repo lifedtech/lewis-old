@@ -122,7 +122,7 @@ const initialState = () => ({
   analysisError: null,
 })
 
-export const useLewisStore = create((set) => ({
+export const useLewisStore = create((set, get) => ({
   ...initialState(),
 
   setScreen: (screenName, options = {}) => {
@@ -151,7 +151,12 @@ export const useLewisStore = create((set) => ({
     set({ isAuthenticated: true, authUser: user, authToken: token })
   },
 
-  logout: () => {
+  logout: async () => {
+    const token = get().authToken
+
+    // Clear local state first so the user is logged out in the UI
+    // immediately, even if the server-side revoke call below fails,
+    // hangs, or the network is down entirely.
     try {
       localStorage.removeItem('lewis_auth_token')
       localStorage.removeItem('lewis_user')
@@ -159,6 +164,22 @@ export const useLewisStore = create((set) => ({
       console.warn('Failed to clear auth from localStorage:', e)
     }
     set({ isAuthenticated: false, authUser: null, authToken: null })
+
+    // Best-effort server-side session revocation (SEC-003). If this
+    // fails, the user is still logged out locally; the server-side
+    // session simply expires on its own TTL instead of being revoked
+    // immediately.
+    if (token) {
+      try {
+        const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+        await fetch(`${API_BASE}/auth/logout`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      } catch (e) {
+        console.warn('Server-side logout failed (session will expire on its own TTL):', e)
+      }
+    }
   },
 
   setAffect: (x, y) => set({ affect: { x, y } }),

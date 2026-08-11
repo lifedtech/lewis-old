@@ -1,12 +1,10 @@
-# security.py — High-security guardrails, rate limiting, sanitization & data leak protection
+# security.py — High-security guardrails, rate limiting & data leak protection
 import os
 import time
 import re
-import html
 import threading
 import logging
 from collections import deque
-from typing import Any
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
@@ -61,6 +59,17 @@ root_logger.addFilter(SensitiveDataFilter())
 
 
 # --- Sliding Window Rate Limiter ---
+# In-memory, per-process state. Correct for a single Uvicorn worker (current
+# deployment: Procfile runs one process, no --workers flag). If this app
+# ever runs multiple workers or multiple horizontally-scaled instances, this
+# state is NOT shared between them and the effective limit multiplies by
+# instance count. At that point, swap the limiter backing this class's
+# allow(key, limit) -> bool with a Redis-backed implementation (e.g. a
+# sliding-window counter via Redis sorted sets or INCR+EXPIRE) behind the
+# same allow() signature — GuardrailMiddleware only calls self._limiter.allow(),
+# so no other code needs to change. Not introducing Redis now: a single
+# instance doesn't need it, and adding infrastructure ahead of an actual
+# scaling need is its own risk.
 class SlidingWindowLimiter:
     def __init__(self, window_seconds: float = 60.0):
         self._window = window_seconds
@@ -83,19 +92,20 @@ class SlidingWindowLimiter:
             return True
 
 
-def sanitize_input(value: Any) -> Any:
-    """Sanitize strings against XSS and Script Injection."""
-    if isinstance(value, str):
-        # Escape HTML tags and script injections
-        clean = html.escape(value.strip())
-        # Remove dangerous JS protocols
-        clean = re.sub(r'javascript:', '', clean, flags=re.IGNORECASE)
-        return clean
-    elif isinstance(value, dict):
-        return {k: sanitize_input(v) for k, v in value.items()}
-    elif isinstance(value, list):
-        return [sanitize_input(v) for v in value]
-    return value
+# SEC-006: an input-side HTML-escaping sanitizer (sanitize_input) used to
+# live here but was never actually called anywhere in the app (dead code —
+# it looked like active protection but wasn't wired to anything). It was
+# removed rather than wired in, because it was also the wrong control for
+# this architecture: the frontend is React, which HTML-escapes all text
+# content by default at render time (contextual output encoding) — there is
+# no `dangerouslySetInnerHTML` anywhere in the frontend (verified). Escaping
+# on the way IN, instead, would have double-escaped legitimate punctuation
+# on render, and would have corrupted the same free-text answers before
+# they reach the de-identified analytics corpus, where HTML entities are
+# not meaningful. If a future consumer of this data (an admin dashboard, a
+# non-React client) ever renders it as raw HTML, escape it there, at the
+# point where the HTML actually gets built — that is the correct trust
+# boundary for this data, not the API input layer.
 
 
 class GuardrailMiddleware(BaseHTTPMiddleware):
@@ -128,6 +138,25 @@ class GuardrailMiddleware(BaseHTTPMiddleware):
                 )
 
         # 2. Strict Rate Limiting (Auth vs Heavy vs Normal)
+        #
+        # request.client.host is only the real end-user IP if uvicorn is
+        # launched with --proxy-headers --forwarded-allow-ips=<trusted proxy
+        # IPs> (see Procfile / railway.json) AND that env var
+        # (LEWIS_TRUSTED_PROXY_IPS) is actually set to the deploying
+        # platform's real edge/proxy IP range (SEC-004). Left unset, uvicorn
+        # does not trust X-Forwarded-For at all and this falls back to the
+        # raw TCP peer, which on Railway/Render is very likely the
+        # platform's own proxy for every request — i.e. every user shares
+        # one bucket. That is the safe-but-degraded default: it never
+        # trusts an attacker-supplied X-Forwarded-For (which is spoofable
+        # the moment you tell uvicorn to trust '*'), it just doesn't fix
+        # the shared-bucket problem until the operator supplies the real
+        # trusted proxy range. Determine that value by checking what
+        # request.client.host actually resolves to once deployed (e.g. via
+        # the 429 log line below, or a temporary debug log) and set
+        # LEWIS_TRUSTED_PROXY_IPS accordingly — never set it to '*' unless
+        # the app is verified to be genuinely unreachable except through
+        # that proxy.
         client_ip = request.client.host if request.client else "unknown"
         path = request.url.path
 

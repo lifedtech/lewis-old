@@ -1,4 +1,14 @@
 .env
 .env.*
+!.env.example
 __pycache__/
 *.pyc
+.pytest_cache/
+
+# SEC-013: local SQLite fallback DB — real password hashes / session
+# tokens once populated, must never be committed. Was previously tracked
+# (empty at the time it was removed from git); see SECURITY_REMEDIATION
+# notes for details.
+db/*.db
+db/*.sqlite
+db/*.sqlite3

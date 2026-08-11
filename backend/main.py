@@ -6,10 +6,16 @@
 #   -> Road A deterministic report (always) -> optional Road B voicing
 #   -> validator (fail-closed to Road A) -> response.
 #
-# Nothing is persisted server-side: answers live only for the lifetime of
-# the request.
+# For an anonymous (unauthenticated) caller, nothing is persisted: answers
+# live only for the lifetime of the request. For an authenticated caller
+# (a valid Bearer token attached), a de-identified copy of the scores,
+# narrative, and answers IS persisted — see save_assessment_submission()
+# below and auth.py's deidentify_data() for exactly what that means and
+# does not guarantee (SEC-012: this comment used to claim nothing is ever
+# persisted, which was only true for the anonymous path).
 
 import os
+import hmac
 import logging
 from datetime import date
 from typing import Annotated, Any, Dict, List, Optional, Union
@@ -37,13 +43,23 @@ from security import GuardrailMiddleware
 from enrich import build_enriched_object
 from insight_report import build_insight_report
 from report_gate import check_report
-from auth import register_user, login_user, verify_token, save_assessment_submission, get_user_assessments, get_onboarding_analytics_summary
+from auth import register_user, login_user, verify_token, revoke_session, save_assessment_submission, get_user_assessments, get_onboarding_analytics_summary, IS_PRODUCTION
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("lewis.api")
 
-app = FastAPI(title="LEWIS Core Engine", version="1.1")
+# SEC-009: /docs, /redoc, and the raw OpenAPI schema are attacker recon for
+# free (full endpoint/field map) and have no reason to be public once this
+# is a real deployment. Gated by the same ENVIRONMENT=production signal
+# used for the secret-config fail-fast checks in auth.py.
+app = FastAPI(
+    title="LEWIS Core Engine",
+    version="1.1",
+    docs_url=None if IS_PRODUCTION else "/docs",
+    redoc_url=None if IS_PRODUCTION else "/redoc",
+    openapi_url=None if IS_PRODUCTION else "/openapi.json",
+)
 
 # --- CORS: explicit origins only; a wildcard is never honored -----------------
 _raw_origins = os.getenv("FRONTEND_URL", "http://localhost:5173,http://127.0.0.1:5173,https://lewis.cold-forest-a8ec.workers.dev")
@@ -217,6 +233,20 @@ def auth_me(request: Request):
     return {"status": "success", "user": user}
 
 
+@app.post("/auth/logout")
+def auth_logout(request: Request):
+    """Revoke the caller's own session server-side (SEC-003). Idempotent:
+    logging out an already-revoked or unknown token still returns success —
+    the desired end state (this token no longer authenticates) already
+    holds either way, so there is nothing to reveal or error about."""
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = auth_header.split(" ")[1]
+    revoke_session(token)
+    return {"status": "success", "message": "Logged out"}
+
+
 @app.get("/auth/assessments")
 def auth_user_assessments(request: Request):
     auth_header = request.headers.get("Authorization")
@@ -231,8 +261,22 @@ def auth_user_assessments(request: Request):
 
 
 @app.get("/analytics/onboarding")
-def onboarding_analytics():
-    """Return anonymized usage metrics for the Onboarding system."""
+def onboarding_analytics(request: Request):
+    """Return aggregate usage metrics for the Onboarding system integration
+    only (SEC-010). Not end-user data, but not public either — internal
+    business metrics (registered-user counts, completion counts) were
+    previously readable by anyone with no auth at all. This isn't a normal
+    user's resource, so a user Bearer token isn't the right check either
+    (that would let any registered user see site-wide business metrics);
+    it's gated behind a dedicated internal shared key instead, matching who
+    this endpoint actually serves. Disabled entirely if the key isn't
+    configured, rather than defaulting open."""
+    analytics_key = os.getenv("LEWIS_ANALYTICS_API_KEY", "")
+    if not analytics_key:
+        raise HTTPException(status_code=404, detail="Not found")
+    provided = request.headers.get("X-Internal-Key", "")
+    if not provided or not hmac.compare_digest(provided, analytics_key):
+        raise HTTPException(status_code=401, detail="Unauthorized")
     summary = get_onboarding_analytics_summary()
     return {"status": "success", "analytics": summary}
 

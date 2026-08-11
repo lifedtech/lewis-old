@@ -30,8 +30,10 @@ export async function exportReportPdf(filename = 'LEWIS-Insight-Report.pdf') {
       if (i === 0 && btn) btn.style.visibility = 'hidden'
 
       const bounds = el.getBoundingClientRect()
-      const width = Math.ceil(bounds.width)
-      const height = Math.ceil(bounds.height)
+      // Keep the browser's fractional CSS geometry; rounding here can add
+      // a visible blank strip to the right or bottom edge of a page.
+      const width = bounds.width
+      const height = bounds.height
       const pageBackground = getComputedStyle(el).backgroundColor || '#ffffff'
 
       let canvas
@@ -51,10 +53,9 @@ export async function exportReportPdf(filename = 'LEWIS-Insight-Report.pdf') {
           allowTaint: false,
           imageTimeout: 0,
           logging: false,
-          onclone: (clonedDocument) => {
-            // html2canvas clones the page being captured, so it is the first
-            // report page in the cloned document on every iteration.
-            const clonedPage = clonedDocument.querySelector('.ir-page')
+          onclone: (_clonedDocument, clonedPage) => {
+            // html2canvas clones the whole document; its second callback
+            // argument is the cloned page being captured.
             clonedPage?.style.setProperty('background-color', pageBackground, 'important')
           },
         })
@@ -66,7 +67,14 @@ export async function exportReportPdf(filename = 'LEWIS-Insight-Report.pdf') {
       // diagrams. JPEG introduced visible halos and flattened the cover.
       const imgData = canvas.toDataURL('image/png')
 
-      if (!pdf) pdf = new jsPDF({ unit: 'px', format: [width, height], compress: true })
+      if (!pdf) {
+        pdf = new jsPDF({
+          unit: 'px',
+          format: [width, height],
+          hotfixes: ['px_scaling'],
+          compress: true,
+        })
+      }
       else pdf.addPage([width, height])
       pdf.addImage(imgData, 'PNG', 0, 0, width, height, undefined, 'FAST')
     }
@@ -77,7 +85,5 @@ export async function exportReportPdf(filename = 'LEWIS-Insight-Report.pdf') {
   }
 }
 
-// Note: do NOT pass `hotfixes: ['px_scaling']` to the jsPDF constructor above.
-// That flag reinstates jsPDF's legacy unit:'px' behavior (1px == 1pt); the
-// current default already treats 'px' as a real CSS pixel (1/96 inch), which
-// is what makes el.offsetWidth/offsetHeight a correct page size.
+// `px_scaling` maps CSS pixels to PDF points at 96 CSS px/in,
+// keeping the physical PDF page size consistent with the web layout.
