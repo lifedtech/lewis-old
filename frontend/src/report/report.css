@@ -27,7 +27,7 @@
 
   --ir-serif: 'Nunito', system-ui, -apple-system, sans-serif;
   --ir-sans: 'Nunito', system-ui, -apple-system, sans-serif;
-  --ir-mono: 'IBM Plex Mono', monospace;
+  --ir-mono: 'Nunito', system-ui, -apple-system, sans-serif;
 
   width: 100%;
   max-width: 840px;
@@ -36,26 +36,6 @@
   flex-direction: column;
   gap: 36px;
   align-items: center;
-}
-
-@media print {
-  .ir-root {
-    --ir-paper: #ffffff;
-    --ir-ink: #414242;
-    --ir-sub: #55595e;
-    --ir-mute: #8a8f94;
-    --ir-hairline: #f4f4f4;
-    --ir-tint: #f4f4f4;
-    --ir-tint-deep: #d6edea;
-    --ir-card-bg: #ffffff;
-    --ir-card-border: #f4f4f4;
-    --ir-accent: #00ae9d;
-    --ir-lavender: #00ae9d;
-    --ir-empty: #00ae9d;
-    --ir-pressure: #5fbb46;
-    --ir-steady: #00ae9d;
-    --ir-strong: #5fbb46;
-  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -2427,64 +2407,6 @@
 
 .ir-petal-legend.cover .ir-petal-legend-item {
   color: rgba(255, 255, 255, 0.9) !important;
-}
-
-/* ------------------------------------------------------------------ */
-/* Print: exact A4, report only                                        */
-/* ------------------------------------------------------------------ */
-
-@page {
-  size: 210mm 297mm;
-  margin: 0;
-}
-
-@media print {
-  body.ir-printing { background: #fff !important; }
-  body.ir-printing * { visibility: hidden; }
-  body.ir-printing .ir-root, body.ir-printing .ir-root * { visibility: visible; }
-  body.ir-printing .ir-root {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    max-width: none !important;
-    gap: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  body.ir-printing .ir-toolbar { display: none !important; }
-  .ir-page {
-    width: 210mm !important;
-    min-height: 296mm !important;
-    height: auto !important;
-    max-height: none !important;
-    margin: 0 auto !important;
-    padding: 14mm 16mm 10mm !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    border: none !important;
-    box-sizing: border-box !important;
-    page-break-after: always !important;
-    break-after: page !important;
-    font-size: 11pt !important;
-    overflow: visible !important;
-  }
-  .ir-page:last-child {
-    page-break-after: auto !important;
-    break-after: auto !important;
-  }
-  .ir-title { font-size: 24pt !important; }
-  .ir-cover-title { font-size: 34pt !important; }
-  .ir-page, .ir-card, .ir-callout, .ir-practice, .ir-support, .ir-program, .ir-column, .ir-map-node {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  .ir-card, .ir-callout, .ir-area, .ir-support, .ir-program, .ir-flow-step,
-  .ir-table-wrap, .ir-practice, .ir-bands, .ir-daycurve, .ir-loadbar, .ir-bodymap,
-  .ir-map, .ir-columns, .ir-bandcards, .ir-contents, .ir-profile, .ir-ladder, .ir-checklist-row {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-  }
 }
 
 /* ------------------------------------------------------------------ */

@@ -313,7 +313,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
     }
 
     if (t.includes('swls') || t.includes('satisfaction') || t.includes('life')) {
-      // Global Life Satisfaction: Golden Horizon Sun & balanced harmony arc
+      // Life Satisfaction: Golden Horizon Sun & balanced harmony arc
       return (
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <defs>

@@ -37,6 +37,23 @@ const PATHS = {
   zap: ['M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z'],
   wallet: ['M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1', 'M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'],
   download: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'M7 10l5 5 5-5', 'M12 15V3'],
+  brain: ['M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z', 'M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z', 'M12 5v13'],
+  utensils: ['M18 2v6a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V2', 'M12 2v20', 'M12 10v12'],
+  activity: ['M22 12h-4l-3 9L9 3l-3 9H2'],
+  trees: ['M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z', 'M7 16v6', 'M13 19v3'],
+  badgeCheck: ['M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z', 'm9 12 2 2 4-4'],
+  timer: ['M10 2h4', 'M12 14l3-3', 'circle:12,14,8'],
+  leaf: ['M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 7 0 6-4.5 11-10 11Z', 'M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12'],
+  programDay: ['circle:12,11,4', 'M12 3v1.6', 'm5.4 5.4 1.2 1.2', 'm18.6 5.4-1.2 1.2', 'M3 11h1.6', 'M19.4 11H21', 'M3 20h18'],
+  programStay: ['M4 11.5 12 5.5l8 6', 'M6 10.6V20', 'M18 10.6V20', 'M3 20h18'],
+  flower: ['M12 7.5a4.5 4.5 0 1 1 4.5 4.5', 'M12 7.5A4.5 4.5 0 1 0 7.5 12', 'M12 7.5V12', 'M12 12a4.5 4.5 0 1 0 4.5 4.5', 'M12 12a4.5 4.5 0 1 1-4.5 4.5'],
+  handHeart: ['M11 14h2a2 2 0 1 0 0-4h-3.5', 'M12 4.6A1.8 1.8 0 0 0 10.3 3h-.6A1.8 1.8 0 0 0 8 4.8V11', 'M18 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 15.5 3'],
+  salad: ['M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z', 'M12 7V3', 'M8 8V5', 'M16 8V5'],
+  bed: ['M2 4v16', 'M2 8h20v12', 'M2 12h20', 'circle:7,6,2'],
+  coffee: ['M17 8h1a4 4 0 0 1 0 8h-1', 'rect:3,8,14,8,2', 'M6 2v2', 'M10 2v2', 'M14 2v2'],
+  gift: ['rect:3,8,18,12,2', 'M12 8v12', 'M3 12h18', 'M12 8a3 3 0 0 0-3-3c-1.5 0-2.5 1-2.5 2.5S7.5 8 12 8z', 'M12 8a3 3 0 0 1 3-3c1.5 0 2.5 1 2.5 2.5S16.5 8 12 8z'],
+  mountain: ['m8 3 4 8 5-5 5 13H2z'],
+  cupSoda: ['M7 8h10l-1.5 12a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2Z', 'M5 8h14', 'M15 2l-3 6']
 }
 
 export default function Icon({ name, size = 16, className = '', style }) {
@@ -59,5 +76,35 @@ export default function Icon({ name, size = 16, className = '', style }) {
         })}
       </g>
     </svg>
+  )
+}
+
+/**
+ * LifedIconBadge - Badge wrapper matching pure LIFED Teal Green (#00ae9d / #017a6f).
+ * All icon badges use #eaf7f5 background & #017a6f deep teal stroke.
+ */
+export function LifedIconBadge({ name, size = 44, iconSize = 20, className = '', style }) {
+  const bg = '#eaf7f5'
+  const strokeColor = '#017a6f'
+
+  return (
+    <div
+      className={`lifed-icon-badge ${className}`}
+      style={{
+        width: size,
+        height: size,
+        minWidth: size,
+        borderRadius: '12px',
+        background: bg,
+        color: strokeColor,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+        ...style
+      }}
+    >
+      <Icon name={name} size={iconSize} style={{ stroke: strokeColor }} />
+    </div>
   )
 }

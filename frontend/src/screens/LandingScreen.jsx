@@ -3,18 +3,19 @@ import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
+import Icon from '../report/icons.jsx'
 import './landing.css'
 
 const DOMAINS = [
-  { name: 'Sleep & Recovery', field: 'Chronobiology', icon: '🌙', tag: 'Rest quality, rhythm and restoration.', score: 62, desc: 'How well your body repairs itself. LEWIS looks at sleep duration, consistency and how recovered you actually feel — the domain that quietly powers every other one.' },
-  { name: 'Nutrition', field: 'Metabolic science', icon: '🥗', tag: 'What fuels you, and how it lands.', score: 74, desc: 'Not diets — patterns. LEWIS maps eating rhythm, quality and relationship with food against what metabolic research says sustains energy and mood.' },
-  { name: 'Movement', field: 'Exercise physiology', icon: '🏃', tag: 'Activity, strength and daily motion.', score: 81, desc: 'From structured training to everyday motion. LEWIS measures whether your week gives your body the stimulus it is built to expect.' },
-  { name: 'Stress & Resilience', field: 'Psychoneuroimmunology', icon: '🛡️', tag: 'Load, recovery and coping capacity.', score: 58, desc: 'Stress is not the enemy — unrecovered stress is. LEWIS tracks your load against your capacity to bounce back.' },
-  { name: 'Emotional Balance', field: 'Affective science', icon: '🪞', tag: 'Mood, regulation and self-awareness.', score: 77, desc: 'How you feel, how often, and how well you can name and steer it. Emotional granularity is one of the strongest predictors of long-term wellbeing.' },
-  { name: 'Cognitive Health', field: 'Neuroscience', icon: '🧠', tag: 'Focus, clarity and mental energy.', score: 79, desc: 'Attention, memory and mental stamina. LEWIS detects the early signature of cognitive strain long before burnout does.' },
-  { name: 'Social Connection', field: 'Social epidemiology', icon: '🤝', tag: 'Relationships and belonging.', score: 84, desc: 'The strongest longevity predictor we know. LEWIS assesses the depth, not just the count, of your connections.' },
-  { name: 'Purpose & Meaning', field: 'Existential psychology', icon: '🧭', tag: 'Direction, values and motivation.', score: 71, desc: 'A felt sense of "why". People with clear purpose recover faster, sleep better and live longer — LEWIS measures how anchored yours is.' },
-  { name: 'Environment', field: 'Environmental health', icon: '🌿', tag: 'Spaces, light, nature and noise.', score: 68, desc: 'Where you live and work shapes your biology daily. LEWIS evaluates light exposure, nature contact, noise and the spaces you spend your hours in.' }
+  { name: 'Sleep & Recovery', field: 'Chronobiology', iconKey: 'moon', icon: '🌙', tag: 'Rest quality, rhythm and restoration.', score: 62, desc: 'How well your body repairs itself. LEWIS looks at sleep duration, consistency and how recovered you actually feel — the domain that quietly powers every other one.' },
+  { name: 'Nutrition', field: 'Metabolic science', iconKey: 'utensils', icon: '🥗', tag: 'What fuels you, and how it lands.', score: 74, desc: 'Not diets — patterns. LEWIS maps eating rhythm, quality and relationship with food against what metabolic research says sustains energy and mood.' },
+  { name: 'Movement', field: 'Exercise physiology', iconKey: 'activity', icon: '🏃', tag: 'Activity, strength and daily motion.', score: 81, desc: 'From structured training to everyday motion. LEWIS measures whether your week gives your body the stimulus it is built to expect.' },
+  { name: 'Stress & Resilience', field: 'Psychoneuroimmunology', iconKey: 'wind', icon: '🛡️', tag: 'Load, recovery and coping capacity.', score: 58, desc: 'Stress is not the enemy — unrecovered stress is. LEWIS tracks your load against your capacity to bounce back.' },
+  { name: 'Emotional Balance', field: 'Affective science', iconKey: 'scale', icon: '🪞', tag: 'Mood, regulation and self-awareness.', score: 77, desc: 'How you feel, how often, and how well you can name and steer it. Emotional granularity is one of the strongest predictors of long-term wellbeing.' },
+  { name: 'Cognitive Health', field: 'Neuroscience', iconKey: 'brain', icon: '🧠', tag: 'Focus, clarity and mental energy.', score: 79, desc: 'Attention, memory and mental stamina. LEWIS detects the early signature of cognitive strain long before burnout does.' },
+  { name: 'Social Connection', field: 'Social epidemiology', iconKey: 'users', icon: '🤝', tag: 'Relationships and belonging.', score: 84, desc: 'The strongest longevity predictor we know. LEWIS assesses the depth, not just the count, of your connections.' },
+  { name: 'Purpose & Meaning', field: 'Existential psychology', iconKey: 'compass', icon: '🧭', tag: 'Direction, values and motivation.', score: 71, desc: 'A felt sense of "why". People with clear purpose recover faster, sleep better and live longer — LEWIS measures how anchored yours is.' },
+  { name: 'Environment', field: 'Environmental health', iconKey: 'trees', icon: '🌿', tag: 'Spaces, light, nature and noise.', score: 68, desc: 'Where you live and work shapes your biology daily. LEWIS evaluates light exposure, nature contact, noise and the spaces you spend your hours in.' }
 ];
 
 export default function LandingScreen() {
@@ -54,14 +55,14 @@ export default function LandingScreen() {
 
   useEffect(() => {
     const wrapper = document.querySelector('.landing-screen-wrapper')
-    
+
     const handleScroll = () => {
       const scrollTop = wrapper ? wrapper.scrollTop : (window.scrollY || 0)
       // Fade out header smoothly over first 160px of scroll
       const opacity = Math.max(0, 1 - scrollTop / 160)
       // Translate header upward along with scroll
       const translateY = -Math.min(60, scrollTop * 0.4)
-      
+
       setHeaderOpacity(opacity)
       setHeaderY(translateY)
     }
@@ -142,29 +143,16 @@ export default function LandingScreen() {
         <LewisLogo size={34} showText={true} />
 
         {/* Header Right Nav */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-          <a href="#how" onClick={(e) => scrollTo(e, 'how')} className="hide-on-mobile" style={{ fontSize: '14.5px', fontWeight: 600, color: '#414242', transition: 'color 0.2s' }}>
-            How it works
-          </a>
-          <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} className="hide-on-mobile" style={{ fontSize: '14.5px', fontWeight: 600, color: '#414242', transition: 'color 0.2s' }}>
-            Contact us
-          </a>
-          <a href="#begin" onClick={handleNext} className="landing-header-btn" style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: '#ffffff',
-            border: '1.5px solid rgba(226, 232, 229, 0.85)',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.04)',
-            borderRadius: '999px',
-            padding: '9px 22px',
-            fontSize: '13.5px',
-            fontWeight: 600,
-            color: '#414242',
-            cursor: 'pointer',
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{
+            fontSize: '14px',
+            fontWeight: 700,
+            fontFamily: "'Nunito', sans-serif",
+            color: '#00ae9d',
+            letterSpacing: '0.02em'
           }}>
-            Get your report
-          </a>
+            Wellbeing Intelligence by Lifed
+          </span>
         </div>
       </header>
 
@@ -183,80 +171,83 @@ export default function LandingScreen() {
       }}>
         <div style={{
           display: 'flex',
-          flexDirection: 'column',
+          flexWrap: 'wrap',
           alignItems: 'center',
-          textAlign: 'center',
-          maxWidth: '900px',
+          justifyContent: 'space-between',
+          maxWidth: '1100px',
           width: '100%',
           margin: '0 auto',
           position: 'relative',
-          zIndex: 2
+          zIndex: 2,
+          gap: '36px'
         }}>
+          {/* Left-Aligned Main Text Content Block */}
+          <div style={{ flex: '1 1 560px', maxWidth: '680px', textAlign: 'left' }}>
+            {/* Eyebrow with left accent line */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px' }}>
+              <span style={{ width: '28px', height: '2px', background: '#00ae9d', display: 'inline-block', opacity: 0.8 }} />
+              <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11.5px', fontWeight: 800, letterSpacing: '0.18em', color: '#00ae9d', textTransform: 'uppercase' }}>
+                WELLBEING INTELLIGENCE
+              </span>
+            </div>
 
-          {/* Eyebrow with horizontal accent lines matching screenshot */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '22px' }}>
-            <span style={{ width: '32px', height: '1.5px', background: '#00ae9d', display: 'inline-block', opacity: 0.7 }} />
-            <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.18em', color: '#00ae9d', textTransform: 'uppercase' }}>
-              WELLBEING INTELLIGENCE
-            </span>
-            <span style={{ width: '32px', height: '1.5px', background: '#00ae9d', display: 'inline-block', opacity: 0.7 }} />
+            {/* Main LEWIS Title */}
+            <h1 className="hero-lewis-title" style={{ fontSize: 'clamp(64px, 7.5vw, 105px)', color: '#000000', margin: '0 0 12px 0', textAlign: 'left', width: '100%', fontWeight: 700, lineHeight: 1.0, letterSpacing: '-0.02em' }}>
+              LEWIS
+            </h1>
+
+            {/* Left Aligned Subtitle */}
+            <h2 style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 'clamp(22px, 2.6vw, 32px)',
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.15,
+              margin: '0 0 20px 0',
+              textAlign: 'left',
+              width: '100%',
+            }}>
+              <span style={{ fontWeight: 400, color: '#414242' }}>wellbeing </span>
+              <span style={{ fontWeight: 800, color: '#414242' }}>made intelligent</span>
+            </h2>
+
+            {/* Left Aligned Description */}
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 'clamp(16px, 1.8vw, 19px)',
+              color: '#414242',
+              lineHeight: 1.6,
+              maxWidth: '600px',
+              margin: 0,
+              textAlign: 'left'
+            }}>
+              Answer a few gentle questions. LEWIS reads the signals your body
+              and life already produce, and turns them into <strong style={{ color: '#00ae9d', fontWeight: 700 }}>one living picture of you</strong>.
+            </p>
           </div>
 
-          {/* Huge Main Headline matching screenshot */}
-          <h1 className="hero-lewis-title" style={{ fontSize: 'clamp(42px, 4.8vw, 64px)', color: '#000000', margin: '0 auto 14px auto', textAlign: 'center', width: '100%' }}>
-            LEWIS
-          </h1>
-
-          {/* Subtitle matching screenshot */}
-          <h2 style={{
-            fontFamily: "'Manrope', sans-serif",
-            fontSize: 'clamp(20px, 2.4vw, 28px)',
-            fontWeight: 700,
-            letterSpacing: '-0.03em',
-            lineHeight: 1.15,
-            margin: '0 auto 28px auto',
-            textAlign: 'center',
-            width: '100%',
-          }}>
-            <span style={{ fontWeight: 400, color: '#414242' }}>wellbeing </span>
-            <span style={{ fontWeight: 800, color: '#414242' }}>made intelligent</span>
-          </h2>
-
-          {/* Description matching screenshot */}
-          <p style={{
-            fontFamily: "'Nunito', sans-serif",
-            fontSize: 'clamp(16px, 1.8vw, 19px)',
-            color: '#414242',
-            lineHeight: 1.6,
-            maxWidth: '680px',
-            margin: '0 auto 36px auto',
-          }}>
-            Answer a few gentle questions. LEWIS reads the signals your body<br className="hide-on-mobile" />
-            and life already produce, and turns them into <strong style={{ color: '#00ae9d', fontWeight: 700 }}>one living picture of you</strong>.
-          </p>
-
-          {/* Action Buttons Row matching screenshot */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '24px' }}>
+          {/* Right Side Action Button */}
+          <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <button
               onClick={handleNext}
               className="landing-primary-btn"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '10px',
+                gap: '12px',
                 background: '#00ae9d',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '999px',
-                padding: '16px 36px',
-                fontSize: '16px',
+                padding: '18px 42px',
+                fontSize: '17px',
                 fontFamily: "'Nunito', sans-serif",
                 fontWeight: 700,
                 boxShadow: '0 10px 28px rgba(0, 174, 157, 0.3)',
                 cursor: 'pointer',
               }}
             >
-              Let's begin <span style={{ fontSize: '18px' }}>→</span>
+              Let's begin <span style={{ fontSize: '19px' }}>→</span>
             </button>
           </div>
         </div>
@@ -275,34 +266,32 @@ export default function LandingScreen() {
           zIndex: 2,
         }}>
           <div style={{
-            background: 'rgba(255, 255, 255, 0.65)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255, 255, 255, 0.85)',
+            background: 'rgba(0, 174, 157, 0.10)',
+            border: '1.5px solid rgba(0, 174, 157, 0.4)',
             borderRadius: '16px',
             padding: '12px 20px',
             maxWidth: '360px',
-            boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)',
+            boxShadow: '0 6px 20px rgba(0, 174, 157, 0.08)',
           }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '4px', fontFamily: '"IBM Plex Mono", monospace' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '4px', fontFamily: '"Nunito", sans-serif' }}>
               WELLBEING INTELLIGENCE
             </div>
-            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.5, color: '#414242' }}>
+            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.5, color: '#252626' }}>
               Nine scientific domains, one living picture of you.
             </p>
           </div>
 
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <a href="#domains" onClick={(e) => scrollTo(e, 'domains')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+            <a href="#domains" onClick={(e) => scrollTo(e, 'domains')} className="landing-domain-btn">
               9 Domains
             </a>
-            <a href="#how" onClick={(e) => scrollTo(e, 'how')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+            <a href="#how" onClick={(e) => scrollTo(e, 'how')} className="landing-domain-btn">
               Science-backed
             </a>
-            <a href="#report" onClick={(e) => scrollTo(e, 'report')} className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+            <a href="#report" onClick={(e) => scrollTo(e, 'report')} className="landing-domain-btn">
               Adaptive
             </a>
-            <span className="landing-domain-btn" style={{ border: '1.5px solid rgba(0, 174, 157, 0.3)', borderRadius: '999px', padding: '8px 18px', fontSize: '12.5px', fontWeight: 700, color: '#414242', background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+            <span className="landing-domain-btn">
               Non-clinical
             </span>
           </div>
@@ -322,13 +311,13 @@ export default function LandingScreen() {
       </div>
 
       {/* SECTION 01 — THE NINE DOMAINS */}
-      <section id="domains" data-screen-label="Domains" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw 80px', background: 'rgba(255,255,255,0.45)' }}>
+      <section id="domains" data-screen-label="Domains" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw 80px', background: 'transparent' }}>
         <div ref={addToRefs} className="landing-reveal-element" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', marginBottom: '44px' }}>
           <div>
-            <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '10px', fontFamily: '"IBM Plex Mono", monospace' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '10px', fontFamily: '"Nunito", sans-serif' }}>
               [ 01 ] THE NINE DOMAINS
             </div>
-            <h2 style={{ margin: 0, fontSize: 'clamp(32px, 4vw, 50px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#414242', lineHeight: 1.08, maxWidth: '640px' }}>
+            <h2 style={{ margin: 0, fontSize: 'clamp(32px, 4vw, 50px)', fontFamily: "'Nunito', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#414242', lineHeight: 1.08, maxWidth: '640px' }}>
               One score is a lie.<br />Nine tell the truth.
             </h2>
           </div>
@@ -360,12 +349,25 @@ export default function LandingScreen() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <span style={{ fontSize: '20px' }}>{d.icon}</span>
-                  <span style={{ fontSize: '10.5px', fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? '#00ae9d' : '#414242' }}>
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '12px',
+                    background: isSelected ? '#00ae9d' : '#eaf7f5',
+                    color: isSelected ? '#ffffff' : '#017a6f',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.25s ease',
+                    boxShadow: isSelected ? '0 4px 14px rgba(0,174,157,0.3)' : 'none'
+                  }}>
+                    <Icon name={d.iconKey} size={20} />
+                  </div>
+                  <span style={{ fontSize: '10.5px', fontFamily: '"Nunito", sans-serif', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? '#00ae9d' : '#414242' }}>
                     {d.field}
                   </span>
                 </div>
-                <div style={{ fontSize: '18px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '6px' }}>
+                <div style={{ fontSize: '18px', fontWeight: 800, fontFamily: "'Nunito', sans-serif", color: '#414242', marginBottom: '6px' }}>
                   {d.name}
                 </div>
                 <div style={{ fontSize: '13px', lineHeight: 1.5, color: '#414242' }}>
@@ -385,8 +387,8 @@ export default function LandingScreen() {
             transition={{ duration: 0.35, ease: 'easeOut' }}
             style={{
               marginTop: '28px',
-              background: '#414242',
-              color: '#ffffff',
+              background: 'rgba(0, 174, 157, 0.10)',
+              color: '#414242',
               borderRadius: '24px',
               padding: '30px 34px',
               display: 'flex',
@@ -394,31 +396,34 @@ export default function LandingScreen() {
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '28px',
-              boxShadow: '0 20px 50px rgba(65, 66, 66, 0.25)',
-              border: '1.5px solid rgba(0, 174, 157, 0.4)',
+              boxShadow: '0 8px 24px rgba(0, 174, 157, 0.08)',
+              border: '1px solid rgba(0, 174, 157, 0.25)',
             }}
           >
             <div style={{ flex: 1, minWidth: '280px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#5fbb46', marginBottom: '8px', fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700 }}>
+              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '8px', fontFamily: '"Nunito", sans-serif', fontWeight: 800 }}>
                 DOMAIN 0{active + 1} / 09 · {activeDomain.field}
               </div>
-              <div style={{ fontSize: '24px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span>{activeDomain.icon}</span> {activeDomain.name}
+              <div style={{ fontSize: '24px', fontWeight: 800, fontFamily: "'Nunito', sans-serif", color: '#008e82', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#ffffff', color: '#00ae9d', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0, 174, 157, 0.12)' }}>
+                  <Icon name={activeDomain?.iconKey || 'sparkles'} size={20} />
+                </div>
+                {activeDomain.name}
               </div>
-              <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: 'rgba(255, 255, 255, 0.8)', maxWidth: '580px' }}>
+              <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.6, color: 'rgba(0, 70, 60, 0.82)', maxWidth: '580px' }}>
                 {activeDomain.desc}
               </p>
             </div>
 
-            <div style={{ minWidth: '240px', flex: '0 0 auto', background: 'rgba(255,255,255,0.06)', borderRadius: '18px', padding: '20px 22px', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '10px' }}>
+            <div style={{ minWidth: '240px', flex: '0 0 auto', background: '#ffffff', borderRadius: '18px', padding: '20px 22px', border: '1.5px solid rgba(0, 174, 157, 0.2)', boxShadow: '0 4px 16px rgba(0, 174, 157, 0.08)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#414242', fontWeight: 700, marginBottom: '10px' }}>
                 <span>Benchmark Score</span>
-                <span style={{ color: '#5fbb46', fontWeight: 800 }}>{activeDomain.score} / 100</span>
+                <span style={{ color: '#00ae9d', fontWeight: 800 }}>{activeDomain.score} / 100</span>
               </div>
-              <div style={{ height: '8px', borderRadius: '999px', background: 'rgba(255,255,255,0.15)', overflow: 'hidden' }}>
-                <div style={{ height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #00ae9d, #5fbb46)', width: `${activeDomain.score}%`, transition: 'width 0.6s ease' }} />
+              <div style={{ height: '8px', borderRadius: '999px', background: 'rgba(0, 174, 157, 0.15)', overflow: 'hidden' }}>
+                <div style={{ height: '100%', borderRadius: '999px', background: '#00ae9d', width: `${activeDomain.score}%`, transition: 'width 0.6s ease' }} />
               </div>
-              <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'rgba(255, 255, 255, 0.5)', fontStyle: 'italic' }}>
+              <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'rgba(65, 66, 66, 0.55)', fontStyle: 'italic' }}>
                 Analyzed via LEWIS Adaptive Engine
               </div>
             </div>
@@ -427,11 +432,11 @@ export default function LandingScreen() {
       </section>
 
       {/* SECTION 02 — HOW LEWIS WORKS */}
-      <section id="how" data-screen-label="How it works" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'rgba(244,249,247,0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
-        <div ref={addToRefs} className="landing-reveal-element" style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
+      <section id="how" data-screen-label="How it works" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'transparent' }}>
+        <div ref={addToRefs} className="landing-reveal-element" style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"Nunito", sans-serif' }}>
           [ 02 ] HOW LEWIS WORKS
         </div>
-        <h2 ref={addToRefs} className="landing-reveal-element" style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em' }}>
+        <h2 ref={addToRefs} className="landing-reveal-element" style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 48px)', fontFamily: "'Nunito', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em' }}>
           Intelligence, not averages.
         </h2>
         <p ref={addToRefs} className="landing-reveal-element" style={{ margin: '0 0 32px 0', maxWidth: '640px', fontSize: '15.5px', lineHeight: 1.6, color: '#414242' }}>
@@ -440,7 +445,9 @@ export default function LandingScreen() {
 
         {/* System Brief Overview Banner */}
         <div ref={addToRefs} className="landing-reveal-element" style={{
-          background: '#ffffff',
+          background: 'rgba(255, 255, 255, 0.72)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
           border: '1.5px solid rgba(0, 174, 157, 0.25)',
           borderRadius: '22px',
           padding: '24px 28px',
@@ -460,12 +467,12 @@ export default function LandingScreen() {
             placeItems: 'center',
             flexShrink: 0,
           }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="16" x2="12" y2="12" />
-            <line x1="12" y1="8" x2="12.01" y2="8" />
-          </svg></div>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg></div>
           <div>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 800, color: '#00ae9d', fontFamily: '"Nunito", sans-serif', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>
               LEWIS SYSTEM OVERVIEW BRIEF
             </div>
             <p style={{ margin: 0, fontSize: '14.5px', lineHeight: 1.65, color: '#414242' }}>
@@ -475,25 +482,25 @@ export default function LandingScreen() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', marginBottom: '16px', fontFamily: '"IBM Plex Mono", monospace' }}>01 — LISTEN</div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>An assessment that fits your day</div>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1.5px solid rgba(0, 174, 157, 0.2)', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 800, color: '#00ae9d', marginBottom: '16px', fontFamily: "'Nunito', sans-serif" }}>01 — LISTEN</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Nunito', sans-serif", color: '#414242', marginBottom: '10px' }}>An assessment that fits your day</div>
             <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#414242' }}>
               Validated questions across all nine domains — choose a 3–5 minute reflection or the full deep dive. No wearables required.
             </p>
           </div>
 
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', marginBottom: '16px', fontFamily: '"IBM Plex Mono", monospace' }}>02 — ANALYZE</div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>Cross-domain intelligence</div>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1.5px solid rgba(0, 174, 157, 0.2)', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 800, color: '#00ae9d', marginBottom: '16px', fontFamily: "'Nunito', sans-serif" }}>02 — ANALYZE</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Nunito', sans-serif", color: '#414242', marginBottom: '10px' }}>Cross-domain intelligence</div>
             <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#414242' }}>
               LEWIS weighs how your domains interact — because sleep debt shows up in mood, and stress impacts every single domain.
             </p>
           </div>
 
-          <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', border: '1.5px solid #f4f4f4', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', marginBottom: '16px', fontFamily: '"IBM Plex Mono", monospace' }}>03 — GUIDE</div>
-            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', marginBottom: '10px' }}>A report that acts</div>
+          <div ref={addToRefs} className="landing-reveal-element" style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1.5px solid rgba(0, 174, 157, 0.2)', boxShadow: '0 6px 20px rgba(0, 80, 70, 0.04)', borderRadius: '22px', padding: '30px 26px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 800, color: '#00ae9d', marginBottom: '16px', fontFamily: "'Nunito', sans-serif" }}>03 — GUIDE</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Nunito', sans-serif", color: '#414242', marginBottom: '10px' }}>A report that acts</div>
             <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#414242' }}>
               Your report ranks what to change first, and adapts continuously every time you check back in.
             </p>
@@ -501,15 +508,15 @@ export default function LandingScreen() {
         </div>
       </section>
 
-      {/* SECTION 03 — SAMPLE REPORT PREVIEW */}
-      <section id="report" data-screen-label="Report preview" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'rgba(214, 237, 234, 0.35)' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '56px', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* SECTION 03 — YOUR WELLBEING REPORT */}
+      <section id="report" data-screen-label="Why LEWIS" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'transparent' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '48px' }}>
 
           <div ref={addToRefs} className="landing-reveal-element" style={{ flex: 1, minWidth: '300px', maxWidth: '520px' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"IBM Plex Mono", monospace' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '12px', fontFamily: '"Nunito", sans-serif' }}>
               [ 03 ] YOUR WELLBEING REPORT
             </div>
-            <h2 style={{ margin: '0 0 18px', fontSize: 'clamp(32px, 3.8vw, 48px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#414242', lineHeight: 1.08 }}>
+            <h2 style={{ margin: '0 0 18px', fontSize: 'clamp(32px, 3.8vw, 48px)', fontFamily: "'Nunito', sans-serif", fontWeight: 800, letterSpacing: '-0.03em', color: '#414242', lineHeight: 1.08 }}>
               Nine signals.<br />One honest number.
             </h2>
             <p style={{ margin: '0 0 32px', fontSize: '15px', lineHeight: 1.65, color: '#414242' }}>
@@ -536,8 +543,10 @@ export default function LandingScreen() {
           <div ref={addToRefs} className="landing-reveal-element" style={{
             flex: '0 1 480px',
             minWidth: '320px',
-            background: '#ffffff',
-            border: '1.5px solid #f4f4f4',
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1.5px solid rgba(0, 174, 157, 0.2)',
             borderRadius: '26px',
             padding: '32px 30px',
             boxShadow: '0 20px 50px rgba(0, 80, 70, 0.08)',
@@ -595,210 +604,206 @@ export default function LandingScreen() {
       </section>
 
       {/* SECTION — CONTACT US / SUPPORT */}
-      <section id="contact" data-screen-label="Contact Us" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'rgba(255, 255, 255, 0.65)' }}>
-        <div ref={addToRefs} className="landing-reveal-element" style={{ maxWidth: '640px', margin: '0 auto' }}>
+      <section id="contact" data-screen-label="Contact Us" style={{ position: 'relative', zIndex: 2, padding: '100px 6vw', background: 'transparent' }}>
+        <div ref={addToRefs} className="landing-reveal-element" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '48px', maxWidth: '1100px', margin: '0 auto' }}>
 
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 16px',
-              borderRadius: '999px',
-              background: '#e4f4ee',
-              border: '1px solid #00ae9d',
-              marginBottom: '14px'
-            }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00ae9d' }} />
-              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', fontFamily: '"IBM Plex Mono", monospace' }}>
-                GET IN TOUCH
-              </span>
+          {/* Left Column: Left-Aligned Title and Information */}
+          <div style={{ flex: '1 1 340px', maxWidth: '460px', textAlign: 'left' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00ae9d', marginBottom: '14px', fontFamily: '"Nunito", sans-serif' }}>
+              [ 04 ] GET IN TOUCH
             </div>
-            <h2 style={{ margin: '0 0 16px 0', fontSize: 'clamp(30px, 3.8vw, 44px)', fontFamily: "'Manrope', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+            <h2 style={{ margin: '0 0 16px 0', fontSize: 'clamp(32px, 3.8vw, 48px)', fontFamily: "'Nunito', sans-serif", fontWeight: 800, color: '#414242', letterSpacing: '-0.03em', lineHeight: 1.12, textAlign: 'left' }}>
               Let's Start a Conversation
             </h2>
-            <p style={{ margin: '0 auto', maxWidth: '540px', fontSize: '16px', lineHeight: 1.6, color: '#414242' }}>
+            <p style={{ margin: 0, fontSize: '16px', lineHeight: 1.65, color: '#414242', textAlign: 'left' }}>
               Have questions about your wellbeing assessment, feedback, or need assistance? We're here to help.
             </p>
           </div>
 
-          {/* Centered Interactive Form Card */}
+          {/* Right Column: Interactive Send Us Your Query Container */}
           <div style={{
-            background: '#ffffff',
-            border: '1.5px solid #eef4f2',
+            flex: '1 1 480px',
+            maxWidth: '560px',
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1.5px solid rgba(0, 174, 157, 0.2)',
             borderRadius: '28px',
-            padding: '40px 36px',
+            padding: '38px 34px',
             boxShadow: '0 12px 36px rgba(0, 0, 0, 0.04)'
           }}>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 800, fontFamily: "'Manrope', sans-serif", color: '#414242', letterSpacing: '-0.02em' }}>
-                Send us a message
-              </h3>
-              <p style={{ margin: '0 0 24px 0', fontSize: '14.5px', color: '#414242', opacity: 0.8 }}>
-                Select a topic and fill out your message below:
-              </p>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 800, fontFamily: "'Nunito', sans-serif", color: '#414242', letterSpacing: '-0.02em' }}>
+              Send us a message
+            </h3>
+            <p style={{ margin: '0 0 24px 0', fontSize: '14.5px', color: '#414242', opacity: 0.8, fontFamily: "'Nunito', sans-serif" }}>
+              Select a topic and fill out your message below:
+            </p>
 
-              {/* Topic Selector Pills */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
-                {['General Inquiry', 'Assessment Support', 'Feedback', 'Partnership'].map((t) => (
+            {/* Topic Selector — Clean Selectable Text Links */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '24px' }}>
+              {['General Inquiry', 'Assessment Support', 'Feedback', 'Partnership'].map((t) => {
+                const isSelected = contactForm.topic === t
+                return (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setContactForm({ ...contactForm, topic: t })}
                     style={{
-                      padding: '7px 14px',
-                      borderRadius: '999px',
-                      fontSize: '12.5px',
-                      fontWeight: 700,
+                      background: 'none',
+                      border: 'none',
+                      padding: '4px 0',
+                      fontSize: '13.5px',
+                      fontWeight: isSelected ? 800 : 600,
                       fontFamily: "'Nunito', sans-serif",
+                      color: isSelected ? '#00ae9d' : 'rgba(65, 66, 66, 0.7)',
                       cursor: 'pointer',
-                      border: contactForm.topic === t ? '1.5px solid #00ae9d' : '1.5px solid #e2e8e5',
-                      background: contactForm.topic === t ? '#e4f4ee' : '#ffffff',
-                      color: contactForm.topic === t ? '#00ae9d' : '#414242',
-                      transition: 'all 0.2s'
+                      borderBottom: isSelected ? '2px solid #00ae9d' : '2px solid transparent',
+                      transition: 'all 0.2s ease'
                     }}
                   >
                     {t}
                   </button>
-                ))}
-              </div>
-
-              {contactSubmitted ? (
-                <div style={{
-                  background: 'rgba(0, 174, 157, 0.08)',
-                  border: '1.5px solid #00ae9d',
-                  borderRadius: '20px',
-                  padding: '36px 24px',
-                  textAlign: 'center'
-                }}>
-                  <div style={{ fontSize: '42px', marginBottom: '14px' }}>✨</div>
-                  <h4 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800, color: '#414242', fontFamily: "'Manrope', sans-serif" }}>Message Received!</h4>
-                  <p style={{ margin: '0 0 20px 0', fontSize: '14.5px', color: '#414242', lineHeight: 1.6 }}>
-                    Thank you, <strong>{contactForm.name}</strong>! We have received your query regarding <em>{contactForm.topic || 'General Inquiry'}</em> and will reply to <strong>{contactForm.email}</strong> shortly.
-                  </p>
-                  <button
-                    onClick={() => { setContactSubmitted(false); setContactForm({ name: '', email: '', message: '', topic: 'General Inquiry' }); }}
-                    style={{
-                      background: '#00ae9d',
-                      color: '#ffffff',
-                      border: 'none',
-                      padding: '10px 22px',
-                      borderRadius: '999px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      fontSize: '13.5px',
-                      boxShadow: '0 4px 12px rgba(0, 174, 157, 0.25)'
-                    }}
-                  >
-                    Send another message
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Sarah Jenkins"
-                      value={contactForm.name}
-                      onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '13px 16px',
-                        borderRadius: '14px',
-                        border: '1.5px solid #e2e8e5',
-                        fontSize: '14.5px',
-                        fontFamily: "'Nunito', sans-serif",
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                        transition: 'border-color 0.2s'
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="name@example.com"
-                      value={contactForm.email}
-                      onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '13px 16px',
-                        borderRadius: '14px',
-                        border: '1.5px solid #e2e8e5',
-                        fontSize: '14.5px',
-                        fontFamily: "'Nunito', sans-serif",
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                        transition: 'border-color 0.2s'
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
-                      Your Message
-                    </label>
-                    <textarea
-                      required
-                      rows={4}
-                      placeholder="How can we help you?"
-                      value={contactForm.message}
-                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '13px 16px',
-                        borderRadius: '14px',
-                        border: '1.5px solid #e2e8e5',
-                        fontSize: '14.5px',
-                        fontFamily: "'Nunito', sans-serif",
-                        outline: 'none',
-                        resize: 'vertical',
-                        boxSizing: 'border-box',
-                        transition: 'border-color 0.2s'
-                      }}
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="landing-primary-btn"
-                    style={{
-                      background: '#00ae9d',
-                      color: '#ffffff',
-                      border: 'none',
-                      padding: '15px',
-                      borderRadius: '14px',
-                      fontWeight: 700,
-                      fontSize: '15.5px',
-                      cursor: 'pointer',
-                      marginTop: '4px',
-                      boxShadow: '0 6px 20px rgba(0, 174, 157, 0.28)',
-                      transition: 'transform 0.2s, box-shadow 0.2s',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }}
-                  >
-                    {isSubmitting ? (
-                      <span>Sending message...</span>
-                    ) : (
-                      <span>Send Message →</span>
-                    )}
-                  </button>
-                </form>
-              )}
-
+                )
+              })}
             </div>
+
+            {contactSubmitted ? (
+              <div style={{
+                background: 'rgba(0, 174, 157, 0.08)',
+                border: '1.5px solid #00ae9d',
+                borderRadius: '20px',
+                padding: '36px 24px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '42px', marginBottom: '14px' }}>✨</div>
+                <h4 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800, color: '#414242', fontFamily: "'Manrope', sans-serif" }}>Message Received!</h4>
+                <p style={{ margin: '0 0 20px 0', fontSize: '14.5px', color: '#414242', lineHeight: 1.6 }}>
+                  Thank you, <strong>{contactForm.name}</strong>! We have received your query regarding <em>{contactForm.topic || 'General Inquiry'}</em> and will reply to <strong>{contactForm.email}</strong> shortly.
+                </p>
+                <button
+                  onClick={() => { setContactSubmitted(false); setContactForm({ name: '', email: '', message: '', topic: 'General Inquiry' }); }}
+                  style={{
+                    background: '#00ae9d',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '10px 22px',
+                    borderRadius: '999px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontSize: '13.5px',
+                    boxShadow: '0 4px 12px rgba(0, 174, 157, 0.25)'
+                  }}
+                >
+                  Send another message
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Mary Jane"
+                    value={contactForm.name}
+                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '13px 16px',
+                      borderRadius: '14px',
+                      border: '1.5px solid #e2e8e5',
+                      fontSize: '14.5px',
+                      fontFamily: "'Nunito', sans-serif",
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      transition: 'border-color 0.2s'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="name@example.com"
+                    value={contactForm.email}
+                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '13px 16px',
+                      borderRadius: '14px',
+                      border: '1.5px solid #e2e8e5',
+                      fontSize: '14.5px',
+                      fontFamily: "'Nunito', sans-serif",
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      transition: 'border-color 0.2s'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#414242', marginBottom: '6px' }}>
+                    Your Message
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    placeholder="How can we help you?"
+                    value={contactForm.message}
+                    onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '13px 16px',
+                      borderRadius: '14px',
+                      border: '1.5px solid #e2e8e5',
+                      fontSize: '14.5px',
+                      fontFamily: "'Nunito', sans-serif",
+                      outline: 'none',
+                      resize: 'vertical',
+                      boxSizing: 'border-box',
+                      transition: 'border-color 0.2s'
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="landing-primary-btn"
+                  style={{
+                    background: '#00ae9d',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '15px',
+                    borderRadius: '14px',
+                    fontWeight: 700,
+                    fontSize: '15.5px',
+                    cursor: 'pointer',
+                    marginTop: '4px',
+                    boxShadow: '0 6px 20px rgba(0, 174, 157, 0.28)',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  {isSubmitting ? (
+                    <span>Sending message...</span>
+                  ) : (
+                    <span>Send Message →</span>
+                  )}
+                </button>
+              </form>
+            )}
+
+          </div>
 
         </div>
       </section>

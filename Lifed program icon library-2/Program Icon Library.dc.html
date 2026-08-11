@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#faf8f4}
+a{color:#01ad9c;text-decoration:none}
+a:hover{color:#017a6f}
+</style>
+</helmet>
+
+<div style="background:#faf8f4;padding:56px 48px 72px;font-family:Nunito,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+<div style="max-width:1180px;margin:0 auto">
+
+<header style="display:flex;flex-direction:column;gap:14px">
+<span style="font:700 13px/1.2 Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#01ad9c">Lifed Design System · Program pages</span>
+<h1 style="margin:0;font:800 44px/1.14 Nunito,sans-serif;letter-spacing:-.01em;color:#252626;max-width:760px;text-wrap:pretty">Program page icon library</h1>
+<p style="margin:0;font:400 17px/1.55 Nunito,sans-serif;color:#585858;max-width:680px;text-wrap:pretty">One icon per meaning, across every section of a program page. Two program types share the same set: icons marked teal are Day Program only, leaf are Residential only, and unmarked icons are used by both.</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+<span style="font:600 12px/1 Nunito,sans-serif;color:#585858;background:#ffffff;border:1px solid #ededed;border-radius:999px;padding:9px 14px">Lucide 0.544</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#585858;background:#ffffff;border:1px solid #ededed;border-radius:999px;padding:9px 14px">24 × 24 grid</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#585858;background:#ffffff;border:1px solid #ededed;border-radius:999px;padding:9px 14px">1.7px stroke</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#585858;background:#ffffff;border:1px solid #ededed;border-radius:999px;padding:9px 14px">Round caps &amp; joins</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#585858;background:#ffffff;border:1px solid #ededed;border-radius:999px;padding:9px 14px">currentColor fill: none</span>
+</div>
+</header>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px">
+
+<div style="background:#ffffff;border:1px solid #d6edea;border-radius:20px;padding:26px 26px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:16px">
+<div style="width:72px;height:72px;border-radius:20px;background:#eaf7f5;color:#017a6f;display:flex;align-items:center;justify-content:center;flex:0 0 auto">
+<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="11" r="4"></circle><path d="M12 3v1.6"></path><path d="M5.4 5.4l1.2 1.2"></path><path d="M18.6 5.4l-1.2 1.2"></path><path d="M3 11h1.6"></path><path d="M19.4 11H21"></path><path d="M3 20h18"></path></svg>
+</div>
+<div style="display:flex;flex-direction:column;gap:5px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#01ad9c">Program type mark</span>
+<h2 style="margin:0;font:700 24px/1.25 Nunito,sans-serif;color:#252626">Day Program</h2>
+</div>
+<button type="button" onClick="{{ dlDay }}" title="Download SVG" style="margin-left:auto;align-self:center;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:5px;font:700 11px/1 Nunito,sans-serif;letter-spacing:.04em;color:#017a6f;background:#eaf7f5;border:1px solid #d6edea;border-radius:999px;padding:8px 12px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#01ad9c;color:#ffffff;border-color:#01ad9c">SVG</button>
+</div>
+<p style="margin:0;font:400 15px/1.55 Nunito,sans-serif;color:#585858;text-wrap:pretty">Sessions only, no overnight stay. The sun over a horizon line reads as a single day, bounded start to finish. Teal is its accent colour throughout the page.</p>
+<div style="display:flex;flex-wrap:wrap;gap:7px">
+<span style="font:600 12px/1 Nunito,sans-serif;color:#017a6f;background:#eaf7f5;border-radius:999px;padding:8px 12px">Type badge</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#017a6f;background:#eaf7f5;border-radius:999px;padding:8px 12px">Meta bar</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#017a6f;background:#eaf7f5;border-radius:999px;padding:8px 12px">Booking panel</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#017a6f;background:#eaf7f5;border-radius:999px;padding:8px 12px">Search cards</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#017a6f;background:#eaf7f5;border-radius:999px;padding:8px 12px">Review chips</span>
+</div>
+</div>
+
+<div style="background:#ffffff;border:1px solid #dcefd3;border-radius:20px;padding:26px 26px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:16px">
+<div style="width:72px;height:72px;border-radius:20px;background:#eef7ea;color:#3d7f2c;display:flex;align-items:center;justify-content:center;flex:0 0 auto">
+<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 5.5l8 6"></path><path d="M6 10.6V20"></path><path d="M18 10.6V20"></path><path d="M3 20h18"></path><g transform="translate(8.7,10.4) scale(0.28)"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" stroke-width="6.1"></path></g></svg>
+</div>
+<div style="display:flex;flex-direction:column;gap:5px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#4ea038">Program type mark</span>
+<h2 style="margin:0;font:700 24px/1.25 Nunito,sans-serif;color:#252626">Residential Program</h2>
+</div>
+<button type="button" onClick="{{ dlStay }}" title="Download SVG" style="margin-left:auto;align-self:center;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:5px;font:700 11px/1 Nunito,sans-serif;letter-spacing:.04em;color:#3d7f2c;background:#eef7ea;border:1px solid #dcefd3;border-radius:999px;padding:8px 12px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#5fba46;color:#ffffff;border-color:#5fba46">SVG</button>
+</div>
+<p style="margin:0;font:400 15px/1.55 Nunito,sans-serif;color:#585858;text-wrap:pretty">Stay-inclusive, one or more nights on site. The same roofline as the day mark, with a moon held inside it: the program continues after dark. Leaf is its accent colour.</p>
+<div style="display:flex;flex-wrap:wrap;gap:7px">
+<span style="font:600 12px/1 Nunito,sans-serif;color:#3d7f2c;background:#eef7ea;border-radius:999px;padding:8px 12px">Type badge</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#3d7f2c;background:#eef7ea;border-radius:999px;padding:8px 12px">Meta bar</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#3d7f2c;background:#eef7ea;border-radius:999px;padding:8px 12px">Stay &amp; rooms</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#3d7f2c;background:#eef7ea;border-radius:999px;padding:8px 12px">Itinerary</span>
+<span style="font:600 12px/1 Nunito,sans-serif;color:#3d7f2c;background:#eef7ea;border-radius:999px;padding:8px 12px">Search cards</span>
+</div>
+</div>
+
+</div>
+
+<div style="position:sticky;top:0;z-index:5;margin-top:36px;padding:14px 0;background:#faf8f4;display:flex;flex-wrap:wrap;align-items:center;gap:18px;border-bottom:1px solid #ededed">
+<div style="display:flex;gap:8px">
+<button type="button" onClick="{{ setAll }}" style="cursor:pointer;font:700 13px/1 Nunito,sans-serif;border:1px solid #ededed;border-radius:999px;padding:11px 18px;background:{{ allBg }};color:{{ allFg }}">All icons</button>
+<button type="button" onClick="{{ setDay }}" style="cursor:pointer;font:700 13px/1 Nunito,sans-serif;border:1px solid #ededed;border-radius:999px;padding:11px 18px;background:{{ dayBg }};color:{{ dayFg }}">Day Program</button>
+<button type="button" onClick="{{ setStay }}" style="cursor:pointer;font:700 13px/1 Nunito,sans-serif;border:1px solid #ededed;border-radius:999px;padding:11px 18px;background:{{ stayBg }};color:{{ stayFg }}">Residential</button>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:16px;margin-left:auto">
+<span style="display:flex;align-items:center;gap:7px;font:500 12px/1 Nunito,sans-serif;color:#585858"><span style="width:7px;height:7px;border-radius:50%;background:#01ad9c"></span>Day only</span>
+<span style="display:flex;align-items:center;gap:7px;font:500 12px/1 Nunito,sans-serif;color:#585858"><span style="width:7px;height:7px;border-radius:50%;background:#5fba46"></span>Residential only</span>
+<span style="display:flex;align-items:center;gap:7px;font:500 12px/1 Nunito,sans-serif;color:#585858"><span style="width:7px;height:7px;border-radius:50%;background:#dcdcdc"></span>Shared</span>
+</div>
+</div>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">01</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Meta bar &amp; quick facts</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">The strip under the program title, and the details list in the booking panel. Always icon plus label, never icon alone.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ meta }}" as="i" hint-placeholder-count="10">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">02</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Type, delivery mode &amp; format</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">The "What this is &amp; how it works" block. One category, one delivery mode, one booking format per program.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ type }}" as="i" hint-placeholder-count="10">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<sc-if value="{{ hasDay }}" hint-placeholder-val="{{ true }}">
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">03</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Day Program specifics</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">Session mechanics for programs that start and finish the same day. Never shown on a residential page.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ day }}" as="i" hint-placeholder-count="8">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #d6edea;border-radius:14px" style-hover="border-color:#01ad9c">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:#eaf7f5">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ hasStay }}" hint-placeholder-val="{{ true }}">
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#4ea038">04</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Residential specifics</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">Stay, room and arrival detail. These appear in the itinerary, the accommodation block and the packing list.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ stay }}" as="i" hint-placeholder-count="12">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #dcefd3;border-radius:14px" style-hover="border-color:#5fba46">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#3d7f2c;background:#eef7ea">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">05</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Experience flow &amp; inclusions</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">What happens in the program and what the price covers. Practice icons carry the session type; inclusion icons carry the deliverable.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ inclusions }}" as="i" hint-placeholder-count="12">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">06</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Food &amp; nourishment</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">Day programs show refreshments; residential programs show full board. Same icon family either way.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ food }}" as="i" hint-placeholder-count="7">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">07</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Outcomes &amp; what you take away</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">Outcome chips are abstract, so the icon does the recognition work. Keep one icon locked to one outcome across the whole catalogue.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ outcomes }}" as="i" hint-placeholder-count="10">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">08</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">The space &amp; setting</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">Setting highlights and location. Residential pages add property-level icons; day pages stop at the room.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ setting }}" as="i" hint-placeholder-count="10">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">09</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Who it's for</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">Audience chips in the overview block, and group size in booking.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ audience }}" as="i" hint-placeholder-count="7">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">10</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Host, trust &amp; disclosure</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">Verification, credentials, reviews and the non-clinical notice. These carry legal weight, so the icon never replaces the sentence.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ trust }}" as="i" hint-placeholder-count="9">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">11</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Booking panel</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">The sticky panel and checkout. Reassurance icons sit at 16px under the primary button.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ booking }}" as="i" hint-placeholder-count="9">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="margin-top:40px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">12</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Actions &amp; navigation</h2>
+</div>
+<p style="margin:4px 0 16px 32px;font:400 15px/1.55 Nunito,sans-serif;color:#585858;max-width:620px">Interface controls. These are the only icons allowed to appear without a visible label, and then only with an accessible name.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px">
+<sc-for list="{{ ui }}" as="i" hint-placeholder-count="12">
+<div style="display:flex;flex-direction:column;gap:11px;padding:14px;background:#ffffff;border:1px solid #ededed;border-radius:14px" style-hover="border-color:#a7dcd4">
+<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#017a6f;background:{{ tileBg }}">{{ i.svg }}</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:700 13px/1.3 Nunito,sans-serif;color:#252626">{{ i.l }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:{{ i.dot }}"></span><span style="font:400 11px/1.3 ui-monospace,Menlo,monospace;color:#a4a5a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.n }}</span><button type="button" onClick="{{ i.dl }}" title="Download SVG" style="margin-left:auto;flex:0 0 auto;cursor:pointer;display:flex;align-items:center;gap:4px;font:700 10px/1 Nunito,sans-serif;letter-spacing:.04em;color:#585858;background:#f6f6f6;border:1px solid #ededed;border-radius:999px;padding:5px 8px;transition:background .15s ease,color .15s ease,border-color .15s ease" style-hover="background:#252626;color:#ffffff;border-color:#252626">SVG</button></span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<sc-if value="{{ showRules }}" hint-placeholder-val="{{ true }}">
+<section style="margin-top:56px;padding-top:40px;border-top:1px solid #ededed">
+<div style="display:flex;align-items:baseline;gap:12px">
+<span style="font:700 12px/1 Nunito,sans-serif;letter-spacing:.08em;color:#01ad9c">13</span>
+<h2 style="margin:0;font:700 22px/1.4 Nunito,sans-serif;color:#252626">Using the set</h2>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px">
+
+<div style="background:#ffffff;border:1px solid #ededed;border-radius:18px;padding:24px">
+<h3 style="margin:0 0 6px;font:700 17px/1.4 Nunito,sans-serif;color:#252626">Sizes</h3>
+<p style="margin:0 0 18px;font:400 14px/1.55 Nunito,sans-serif;color:#585858">Four steps only. Anything larger than 28px is a program-type mark, not an icon.</p>
+<div style="display:flex;gap:26px;align-items:flex-end">
+<sc-for list="{{ sizes }}" as="s" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+<div style="height:32px;display:flex;align-items:center;color:#017a6f">{{ s.svg }}</div>
+<span style="font:700 12px/1 Nunito,sans-serif;color:#252626">{{ s.px }}</span>
+<span style="font:400 11px/1.3 Nunito,sans-serif;color:#a4a5a5;text-align:center;max-width:74px">{{ s.use }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="background:#ffffff;border:1px solid #ededed;border-radius:18px;padding:24px">
+<h3 style="margin:0 0 6px;font:700 17px/1.4 Nunito,sans-serif;color:#252626">Colour</h3>
+<p style="margin:0 0 18px;font:400 14px/1.55 Nunito,sans-serif;color:#585858">Icons inherit text colour. Teal marks the active or branded state; leaf is reserved for residential.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<sc-for list="{{ colors }}" as="c" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:12px;border:1px solid #ededed;background:{{ c.bg }}">
+<span style="display:flex;color:{{ c.fg }}">{{ c.svg }}</span>
+<span style="display:flex;flex-direction:column;gap:2px"><span style="font:700 12px/1.2 Nunito,sans-serif;color:{{ c.fg }}">{{ c.l }}</span><span style="font:400 10px/1.2 ui-monospace,Menlo,monospace;color:{{ c.muted }}">{{ c.hex }}</span></span>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="background:#ffffff;border:1px solid #ededed;border-radius:18px;padding:24px">
+<h3 style="margin:0 0 14px;font:700 17px/1.4 Nunito,sans-serif;color:#252626">Do</h3>
+<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px">
+<li style="display:flex;gap:10px;font:400 14px/1.5 Nunito,sans-serif;color:#585858"><span style="color:#4ea038;font-weight:700">✓</span>Pair every content icon with a text label.</li>
+<li style="display:flex;gap:10px;font:400 14px/1.5 Nunito,sans-serif;color:#585858"><span style="color:#4ea038;font-weight:700">✓</span>Keep one meaning per icon across the whole catalogue.</li>
+<li style="display:flex;gap:10px;font:400 14px/1.5 Nunito,sans-serif;color:#585858"><span style="color:#4ea038;font-weight:700">✓</span>Align icons optically to the first line of text, not the block.</li>
+<li style="display:flex;gap:10px;font:400 14px/1.5 Nunito,sans-serif;color:#585858"><span style="color:#4ea038;font-weight:700">✓</span>Use the 44px tinted tile when an icon leads a list row.</li>
+</ul>
+</div>
+
+<div style="background:#ffffff;border:1px solid #ededed;border-radius:18px;padding:24px">
+<h3 style="margin:0 0 14px;font:700 17px/1.4 Nunito,sans-serif;color:#252626">Don't</h3>
+<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px">
+<li style="display:flex;gap:10px;font:400 14px/1.5 Nunito,sans-serif;color:#585858"><span style="color:#d0574f;font-weight:700">✕</span>Mix filled or duotone icons into the line set.</li>
+<li style="display:flex;gap:10px;font:400 14px/1.5 Nunito,sans-serif;color:#585858"><span style="color:#d0574f;font-weight:700">✕</span>Use a medical or clinical symbol on a non-clinical program.</li>
+<li style="display:flex;gap:10px;font:400 14px/1.5 Nunito,sans-serif;color:#585858"><span style="color:#d0574f;font-weight:700">✕</span>Show a residential-only icon on a day program page.</li>
+<li style="display:flex;gap:10px;font:400 14px/1.5 Nunito,sans-serif;color:#585858"><span style="color:#d0574f;font-weight:700">✕</span>Scale strokes with the icon — stroke stays 1.7px at every size.</li>
+</ul>
+</div>
+
+</div>
+</section>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:1000},&quot;iconSize&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:22,&quot;min&quot;:18,&quot;max&quot;:30,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Icons&quot;},&quot;tileStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tinted&quot;,&quot;plain&quot;],&quot;default&quot;:&quot;tinted&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Icons&quot;},&quot;showRules&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sections&quot;}}">
+class Component extends DCLogic {
+  state = { filter: 'all', ready: false };
+
+  G = {
+    meta: [
+      ['clock', 'Duration', 'both'],
+      ['calendar-days', 'Dates & availability', 'both'],
+      ['map-pin', 'Location', 'both'],
+      ['users', 'Group size', 'both'],
+      ['languages', 'Languages', 'both'],
+      ['gauge', 'Fitness level', 'both'],
+      ['handshake', 'In-person format', 'both'],
+      ['layout-grid', 'Program category', 'both'],
+      ['sun', 'Day sessions', 'day'],
+      ['moon-star', 'Nights on site', 'stay']
+    ],
+    type: [
+      ['sun', 'Day Program', 'day'],
+      ['bed-double', 'Residential Program', 'stay'],
+      ['calendar-clock', 'Session-based delivery', 'day'],
+      ['house', 'Stay-inclusive delivery', 'stay'],
+      ['calendar-range', 'Flexible · Flexi', 'both'],
+      ['calendar-check', 'Fixed batch', 'both'],
+      ['lock', 'Private booking', 'both'],
+      ['sparkles', 'Wellness', 'both'],
+      ['activity', 'Functional movement', 'both'],
+      ['refresh-cw', 'Recovery', 'both']
+    ],
+    day: [
+      ['list-ordered', 'Session count', 'day'],
+      ['timer', 'Session length', 'day'],
+      ['door-open', 'Arrival window', 'day'],
+      ['sunset', 'Same-day finish', 'day'],
+      ['car-front', 'Travel & parking', 'day'],
+      ['footprints', 'Walk-in · shoes off', 'day'],
+      ['coffee', 'Refreshment break', 'day'],
+      ['repeat', 'Repeatable session', 'day']
+    ],
+    stay: [
+      ['log-in', 'Check-in', 'stay'],
+      ['log-out', 'Check-out', 'stay'],
+      ['bed-single', 'Single occupancy', 'stay'],
+      ['bed-double', 'Twin sharing', 'stay'],
+      ['key-round', 'Room & access', 'stay'],
+      ['luggage', 'What to pack', 'stay'],
+      ['shower-head', 'Bathroom & amenities', 'stay'],
+      ['wifi', 'Connectivity', 'stay'],
+      ['phone-off', 'Digital detox', 'stay'],
+      ['plane-takeoff', 'Airport transfer', 'stay'],
+      ['trees', 'On-site grounds', 'stay'],
+      ['bell-off', 'Quiet hours', 'stay']
+    ],
+    inclusions: [
+      ['flower-2', 'Meditation & mindfulness', 'both'],
+      ['audio-lines', 'Sound session', 'both'],
+      ['hand-heart', 'Therapy & bodywork', 'both'],
+      ['notebook-pen', 'Journals & worksheets', 'both'],
+      ['gift', 'Take-home wellness kit', 'both'],
+      ['message-circle-heart', 'Post-program support', 'both'],
+      ['landmark', 'Cultural activity', 'both'],
+      ['mountain-snow', 'Nature activity', 'both'],
+      ['shirt', 'Kit & equipment', 'both'],
+      ['clipboard-list', 'Daily itinerary', 'stay'],
+      ['sunrise', 'Morning practice', 'stay'],
+      ['route', 'Experience flow', 'both']
+    ],
+    food: [
+      ['cup-soda', 'Fresh juices', 'both'],
+      ['salad', 'Light healthy snacks', 'both'],
+      ['coffee', 'Tea & coffee', 'both'],
+      ['utensils', 'Meals included', 'stay'],
+      ['utensils-crossed', 'Full board', 'stay'],
+      ['leaf', 'Plant-based', 'both'],
+      ['wheat-off', 'Dietary options', 'both']
+    ],
+    outcomes: [
+      ['brain', 'Mental clarity', 'both'],
+      ['shield', 'Emotional resilience', 'both'],
+      ['wind', 'Stress reduction', 'both'],
+      ['scale', 'Emotional balance', 'both'],
+      ['moon', 'Better sleep', 'both'],
+      ['zap', 'Increased energy', 'both'],
+      ['circle-dot', 'Inner stillness', 'both'],
+      ['eye', 'Self-awareness', 'both'],
+      ['heart-pulse', 'Preventive wellbeing', 'both'],
+      ['smile', 'Mood & positivity', 'both']
+    ],
+    setting: [
+      ['waves', 'Beachfront & coastal', 'both'],
+      ['building-2', 'Urban', 'both'],
+      ['mountain-snow', 'Mountain', 'both'],
+      ['trees', 'Forest & garden', 'both'],
+      ['ship', 'Riverside & backwaters', 'both'],
+      ['house', 'Studio · practice hall', 'day'],
+      ['hotel', 'Retreat property', 'stay'],
+      ['sun-dim', 'Natural light', 'both'],
+      ['thermometer-sun', 'Climate', 'both'],
+      ['images', 'The space gallery', 'both']
+    ],
+    audience: [
+      ['user', 'Individuals', 'both'],
+      ['heart', 'Couples', 'both'],
+      ['briefcase', 'Corporate groups', 'both'],
+      ['users-round', 'Small private groups', 'both'],
+      ['accessibility', 'All levels', 'both'],
+      ['user-round-plus', 'Bring a guest', 'stay'],
+      ['baby', 'Family friendly', 'stay']
+    ],
+    trust: [
+      ['badge-check', 'Verified Healthmate', 'both'],
+      ['graduation-cap', 'Qualification', 'both'],
+      ['clipboard-check', 'Health assessment', 'both'],
+      ['star', 'Rating', 'both'],
+      ['shield-check', 'Verified participant', 'both'],
+      ['info', 'Non-clinical notice', 'both'],
+      ['lock-keyhole', 'Address privacy', 'both'],
+      ['file-check', 'Cancellation policy', 'both'],
+      ['circle-alert', 'Important note', 'both']
+    ],
+    booking: [
+      ['indian-rupee', 'Price from', 'both'],
+      ['ticket', 'Packages available', 'both'],
+      ['credit-card', 'Secure payment', 'both'],
+      ['circle-check', 'Instant confirmation', 'both'],
+      ['receipt', 'All-in pricing', 'both'],
+      ['phone-call', 'Talk to us first', 'both'],
+      ['calendar-plus', 'Add to calendar', 'both'],
+      ['users', 'Add participants', 'both'],
+      ['gift', 'Gift this program', 'both']
+    ],
+    ui: [
+      ['share-2', 'Share', 'both'],
+      ['heart', 'Save', 'both'],
+      ['images', 'Gallery', 'both'],
+      ['map', 'View map', 'both'],
+      ['sliders-horizontal', 'Filters', 'both'],
+      ['search', 'Search', 'both'],
+      ['chevron-down', 'Expand', 'both'],
+      ['arrow-right', 'Continue', 'both'],
+      ['arrow-left', 'Back', 'both'],
+      ['plus', 'Show more', 'both'],
+      ['x', 'Close', 'both'],
+      ['download', 'Download itinerary', 'stay']
+    ]
+  };
+
+  componentDidMount() {
+    const CDN = 'https://unpkg.com/lucide@0.544.0/dist/umd/lucide.min.js';
+    if (window.lucide) { this.setState({ ready: true }); return; }
+    if (!document.querySelector('script[src="' + CDN + '"]')) {
+      const s = document.createElement('script');
+      s.src = CDN;
+      document.head.appendChild(s);
+    }
+    let n = 0;
+    this._t = setInterval(() => {
+      if (window.lucide || ++n > 80) { clearInterval(this._t); this.setState({ ready: true }); }
+    }, 100);
+  }
+
+  componentWillUnmount() { clearInterval(this._t); }
+
+  icon(name, size) {
+    const l = window.lucide ? (window.lucide.icons || window.lucide) : null;
+    const key = String(name).replace(/(^|-)([a-z0-9])/g, (_, __, c) => c.toUpperCase());
+    const node = l ? l[key] : null;
+    const s = size || this.props.iconSize || 22;
+    if (!node) {
+      return React.createElement('span', { style: { display: 'block', width: s, height: s, borderRadius: 6, background: '#ededed' } });
+    }
+    return React.createElement('svg', {
+      width: s, height: s, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+      strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round', style: { display: 'block' }
+    }, node.map((p, i) => React.createElement(p[0], Object.assign({ key: i }, p[1]))));
+  }
+
+  svgSource(name) {
+    const l = window.lucide ? (window.lucide.icons || window.lucide) : null;
+    const key = String(name).replace(/(^|-)([a-z0-9])/g, (_, __, c) => c.toUpperCase());
+    const node = l ? l[key] : null;
+    if (!node) return null;
+    const body = node.map((p) => {
+      const a = p[1] || {};
+      const attrs = Object.keys(a)
+        .filter((k) => k !== 'key')
+        .map((k) => k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase()) + '="' + a[k] + '"')
+        .join(' ');
+      return '  <' + p[0] + (attrs ? ' ' + attrs : '') + ' />';
+    }).join('\n');
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">\n' + body + '\n</svg>\n';
+  }
+
+  MARKS = {
+    'program-day': '  <circle cx="12" cy="11" r="4" />\n  <path d="M12 3v1.6" />\n  <path d="M5.4 5.4l1.2 1.2" />\n  <path d="M18.6 5.4l-1.2 1.2" />\n  <path d="M3 11h1.6" />\n  <path d="M19.4 11H21" />\n  <path d="M3 20h18" />',
+    'program-residential': '  <path d="M4 11.5 12 5.5l8 6" />\n  <path d="M6 10.6V20" />\n  <path d="M18 10.6V20" />\n  <path d="M3 20h18" />\n  <g transform="translate(8.7,10.4) scale(0.28)">\n    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" stroke-width="6.1" />\n  </g>'
+  };
+
+  wrap(body) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">\n' + body + '\n</svg>\n';
+  }
+
+  download(name) {
+    const src = this.MARKS[name] ? this.wrap(this.MARKS[name]) : this.svgSource(name);
+    if (!src) return;
+    const url = URL.createObjectURL(new Blob([src], { type: 'image/svg+xml;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lifed-' + name + '.svg';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  renderVals() {
+    const f = this.state.filter;
+    const dots = { day: '#01ad9c', stay: '#5fba46', both: '#dcdcdc' };
+    const out = {};
+    Object.keys(this.G).forEach((k) => {
+      out[k] = this.G[k]
+        .filter((it) => f === 'all' || it[2] === f || it[2] === 'both')
+        .map((it) => ({ n: it[0], l: it[1], dot: dots[it[2]], svg: this.icon(it[0]), dl: () => this.download(it[0]) }));
+      out['has' + k.charAt(0).toUpperCase() + k.slice(1)] = out[k].length > 0;
+    });
+
+    const on = (v) => ({ bg: f === v ? '#252626' : '#ffffff', fg: f === v ? '#ffffff' : '#585858' });
+    const a = on('all'), d = on('day'), s = on('stay');
+
+    return Object.assign(out, {
+      tileBg: (this.props.tileStyle || 'tinted') === 'tinted' ? '#eaf7f5' : '#f6f6f6',
+      showRules: this.props.showRules !== false,
+      allBg: a.bg, allFg: a.fg, dayBg: d.bg, dayFg: d.fg, stayBg: s.bg, stayFg: s.fg,
+      dlDay: () => this.download('program-day'),
+      dlStay: () => this.download('program-residential'),
+      setAll: () => this.setState({ filter: 'all' }),
+      setDay: () => this.setState({ filter: 'day' }),
+      setStay: () => this.setState({ filter: 'stay' }),
+      sizes: [
+        { px: '16px', use: 'Inline & reassurance', svg: this.icon('map-pin', 16) },
+        { px: '20px', use: 'Meta bar, chips', svg: this.icon('map-pin', 20) },
+        { px: '24px', use: 'List rows, tiles', svg: this.icon('map-pin', 24) },
+        { px: '28px', use: 'Section feature', svg: this.icon('map-pin', 28) }
+      ],
+      colors: [
+        { l: 'Ink · default', hex: '#252626', bg: '#ffffff', fg: '#252626', muted: '#a4a5a5', svg: this.icon('badge-check', 20) },
+        { l: 'Teal · active', hex: '#01ad9c', bg: '#eaf7f5', fg: '#017a6f', muted: '#6dc6ba', svg: this.icon('badge-check', 20) },
+        { l: 'Leaf · residential', hex: '#5fba46', bg: '#eef7ea', fg: '#3d7f2c', muted: '#9bd489', svg: this.icon('badge-check', 20) },
+        { l: 'White · on photo', hex: '#ffffff', bg: '#414242', fg: '#ffffff', muted: '#c5c5c5', svg: this.icon('badge-check', 20) }
+      ]
+    });
+  }
+}
+</script>
+</body>
+</html>

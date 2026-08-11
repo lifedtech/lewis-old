@@ -83,8 +83,8 @@ export default function LewisMotionLogo({
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: `${Math.max(6, Math.round(size * 0.15))}px` }}>
         {markSvg}
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-          <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: `${Math.max(18, Math.round(size * 0.38))}px`, color: txtColor, letterSpacing: '-0.025em' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(18, Math.round(size * 0.38))}px`, color: txtColor, letterSpacing: '0' }}>
             Lewis
           </span>
         </div>
@@ -95,8 +95,8 @@ export default function LewisMotionLogo({
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: `${Math.max(10, Math.round(size * 0.18))}px` }}>
       {markSvg}
-      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-        <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: `${Math.max(18, Math.round(size * 0.48))}px`, color: txtColor, letterSpacing: '-0.02em' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+        <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(18, Math.round(size * 0.48))}px`, color: txtColor, letterSpacing: '0' }}>
           Lewis
         </span>
       </div>

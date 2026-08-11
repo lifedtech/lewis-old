@@ -221,42 +221,42 @@ export default function Stage3_3DayRhythmScreen() {
                     alignItems: 'center',
                     gap: '12px',
                     width: '100%',
-                    padding: '8px 14px',
-                    borderRadius: '14px',
+                    padding: '8px 16px',
+                    borderRadius: '16px',
                     border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
-                    background: active ? '#e4f4ee' : '#f2f9f6',
+                    background: active ? '#e4f4ee' : '#f7faf8',
                     color: active ? '#414242' : '#3a3a3a',
                     fontFamily: "'Nunito', sans-serif",
-                    fontSize: '13.5px',
+                    fontSize: '14px',
                     fontWeight: active ? 700 : 500,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
+                    boxShadow: active ? '0 3px 12px rgba(0,174,157,0.15)' : '0 1px 3px rgba(0,0,0,0.02)',
                     boxSizing: 'border-box',
                     textAlign: 'left',
                   }}
                 >
-                  {/* Selection Checkmark Circle Indicator */}
+                  {/* Rounded Checkbox Indicator (Matching LIFED program UI) */}
                   <div style={{
-                    width: '18px',
-                    height: '18px',
-                    borderRadius: '4px',
-                    border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
-                    background: active ? '#00ae9d' : 'transparent',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '6px',
+                    border: active ? '2px solid #00ae9d' : '2px solid #b4c7c0',
+                    background: active ? '#00ae9d' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                     transition: 'all 0.2s ease',
                   }}>
-                    {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                    {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 900, lineHeight: 1 }}>✓</span>}
                   </div>
 
-                  {/* Icon Badge */}
-                  <RhythmTimeIcon periodId={p.id} isActive={active} size={28} />
+                  {/* Icon Badge from LIFED Program Icon Library */}
+                  <RhythmTimeIcon periodId={p.id} isActive={active} size={32} />
 
                   {/* Label */}
-                  <span style={{ flex: 1, textAlign: 'left' }}>{p.label}</span>
+                  <span style={{ flex: 1, textAlign: 'left', fontSize: '14px', color: '#414242' }}>{p.label}</span>
                 </button>
               )
             })}

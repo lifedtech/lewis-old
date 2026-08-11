@@ -51,7 +51,6 @@ import Stage8_2StressPatternScreen from './screens/Stage8_2StressPatternScreen.j
 import Stage8_3RecoveryScreen from './screens/Stage8_3RecoveryScreen.jsx'
 import Stage8_4CumulativeScreen from './screens/Stage8_4CumulativeScreen.jsx'
 import Stage9SensoryScreen from './screens/Stage9SensoryScreen.jsx'
-import Stage9QuickChoicesScreen from './screens/Stage9QuickChoicesScreen.jsx'
 import Stage10GeneratingScreen from './screens/Stage10GeneratingScreen.jsx'
 import MirrorScreen from './screens/MirrorScreen.jsx'
 import LoginScreen from './screens/LoginScreen.jsx'
@@ -112,7 +111,6 @@ const SCREENS = {
   stage8_3Recovery: Stage8_3RecoveryScreen,
   stage8_4Cumulative: Stage8_4CumulativeScreen,
   stage9Sensory: Stage9SensoryScreen,
-  stage9QuickChoices: Stage9QuickChoicesScreen,
   stage10Generating: Stage10GeneratingScreen,
   mirror: MirrorScreen,
   login: LoginScreen,
@@ -170,7 +168,6 @@ const SCREEN_ORDER = [
   'stage8_3Recovery',
   'stage8_4Cumulative',
   'stage9Sensory',
-  'stage9QuickChoices',
   'stage10Generating',
   'mirror'
 ]
@@ -185,7 +182,7 @@ export default function App() {
     }, 1400)
     return () => clearTimeout(timer)
   }, [])
-  
+
   // Guard against invalid/undefined screen names so app NEVER goes blank
   const validScreen = SCREENS[currentScreen] ? currentScreen : 'landing'
   const ActiveScreen = SCREENS[validScreen]
@@ -292,23 +289,11 @@ export default function App() {
           />
         )}
       </AnimatePresence>
-      {validScreen !== 'landing' && validScreen !== 'mirror' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-          <div style={{
-            position: 'absolute', width: '520px', height: '520px', left: '-160px', top: '-120px',
-            borderRadius: '50%', background: 'radial-gradient(circle at 40% 40%, rgba(0, 174, 157,.20), transparent 66%)',
-            filter: 'blur(32px)', animation: 'lewisDrift 38s ease-in-out infinite'
-          }} />
-          <div style={{
-            position: 'absolute', width: '460px', height: '460px', right: '-150px', bottom: '-140px',
-            borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(0, 174, 157,.16), transparent 66%)',
-            filter: 'blur(36px)', animation: 'lewisDrift2 46s ease-in-out infinite'
-          }} />
-        </div>
-      )}
+      {/* Signature LEWIS Teal Dot Grid Layer */}
+      <div className="bg-dot-grid" />
 
-      <div className="app-shell" style={validScreen === 'landing' ? { padding: 0 } : (validScreen === 'mirror' ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible' } : {})}>
-        {validScreen !== 'landing' && (
+      <div className="app-shell" style={['landing', 'mirror', 'stage10Generating'].includes(validScreen) ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible', padding: validScreen === 'landing' ? 0 : undefined } : {}}>
+        {!['landing', 'mirror', 'stage10Generating'].includes(validScreen) && (
           <header className="app-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               {currentIndex > 0 && (
@@ -364,8 +349,8 @@ export default function App() {
           </header>
         )}
 
-        {/* Premium Stage Progress Indicator (hidden on terminal screens) */}
-        {validScreen !== 'landing' && currentIndex !== -1 && (() => {
+        {/* Premium Stage Progress Indicator (hidden on terminal/mirror/generating screens) */}
+        {!['landing', 'mirror', 'stage10Generating'].includes(validScreen) && currentIndex !== -1 && (() => {
           const STAGE_NAMES = [
             'Setup',
             'Life Context',
@@ -426,7 +411,7 @@ export default function App() {
                 <div style={{
                   width: `${percent}%`,
                   height: '100%',
-                  background: 'var(--dawn)',
+                  background: '#00ae9d',
                   borderRadius: '3px',
                   transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
                 }} />
@@ -447,6 +432,14 @@ export default function App() {
           </main>
         ) : validScreen === 'mirror' ? (
           <div style={{ width: '100%', maxWidth: '960px', margin: '0 auto', padding: '10px 20px 80px 20px', boxSizing: 'border-box' }}>
+            <AnimatePresence mode="wait">
+              <PageTransition key={validScreen}>
+                <ActiveScreen />
+              </PageTransition>
+            </AnimatePresence>
+          </div>
+        ) : validScreen === 'stage10Generating' ? (
+          <div style={{ width: '100%', maxWidth: '960px', minHeight: 'calc(100vh - 60px)', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
             <AnimatePresence mode="wait">
               <PageTransition key={validScreen}>
                 <ActiveScreen />

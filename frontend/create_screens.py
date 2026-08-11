@@ -51,7 +51,6 @@ screens = [
     "Stage8_3Recovery",
     "Stage8_4Cumulative",
     "Stage9Sensory",
-    "Stage9QuickChoices",
     "Stage10Generating",
 ]
 

@@ -48,8 +48,8 @@ export default function LewisLogo({
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
         {markSvg}
         {showText && (
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '20px', color: txtColor, letterSpacing: '-0.025em' }}>Lewis</span>
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+            <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '20px', color: txtColor, letterSpacing: '0' }}>Lewis</span>
           </div>
         )}
       </div>
@@ -60,8 +60,8 @@ export default function LewisLogo({
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       {markSvg}
       {showText && (
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-          <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: `${Math.max(16, Math.round(size * 0.58))}px`, color: txtColor, letterSpacing: '-0.02em' }}>Lewis</span>
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(16, Math.round(size * 0.58))}px`, color: txtColor, letterSpacing: '0' }}>Lewis</span>
         </div>
       )}
     </div>

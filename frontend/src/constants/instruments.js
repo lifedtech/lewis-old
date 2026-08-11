@@ -142,7 +142,7 @@ export const INSTRUMENTS = {
   stage5_2Swls: {
     slice: 'swls', next: 'stage5_3DeepDives', topic: 'swls',
     eyebrow: 'OVERALL WELLBEING',
-    title: ['Global Life', 'Satisfaction'],
+    title: ['Life', 'Satisfaction'],
     subtitle: 'Reflecting on how close your life conditions match your expectations.',
     progress: 'SATISFACTION WITH LIFE',
     hint: 'Select how accurately this reflects your current life context.',

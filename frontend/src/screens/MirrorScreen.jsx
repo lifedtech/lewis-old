@@ -5,7 +5,7 @@ import LewisLogo from '../components/LewisLogo.jsx'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
-import InsightReport from '../report/InsightReport.jsx'
+import InsightReport, { generateClientFallbackReport } from '../report/InsightReport.jsx'
 import RecommendedProgramsCarousel from '../components/RecommendedProgramsCarousel.jsx'
 import Icon from '../report/icons.jsx'
 import './landing.css'
@@ -328,7 +328,7 @@ export default function MirrorScreen() {
   const dims = analysis?.dimensions
   let chartData = []
   let sortedData = []
-  
+
   if (dims) {
     const dimKeys = [
       { key: 'emotional', label: 'Wellbeing' },
@@ -342,7 +342,7 @@ export default function MirrorScreen() {
       { key: 'physical', label: 'Physical' },
       { key: 'energy', label: 'Energy' }
     ]
-    
+
     dimKeys.forEach(({ key, label }) => {
       if (dims[key] && dims[key].score !== null) {
         chartData.push({ subject: label, A: dims[key].score, fullMark: 100 })
@@ -360,264 +360,274 @@ export default function MirrorScreen() {
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.5, ease: [0.2, 0.7, 0.3, 1] }}
     >
-      {/* Full-width Edge-to-Edge Header Bar */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        padding: '16px clamp(20px, 4vw, 48px)',
-        marginBottom: '24px',
-        borderBottom: '1px solid rgba(65, 66, 66, 0.08)',
-        boxSizing: 'border-box'
-      }}>
-        <LewisLogo size={36} layout="horizontal" showText={true} animated={false} />
-
-        <span style={{
-          fontFamily: '"IBM Plex Mono", monospace',
-          fontSize: '11px',
-          fontWeight: 700,
-          letterSpacing: '0.14em',
-          color: '#414242',
-          textTransform: 'uppercase'
-        }}>
-          THE MIRROR
-        </span>
-
-        <span style={{
-          fontFamily: '"IBM Plex Mono", monospace',
-          fontSize: '11px',
-          fontWeight: 700,
-          letterSpacing: '0.14em',
-          color: '#414242',
-          textTransform: 'uppercase'
-        }}>
-          WELLBEING INTELLIGENCE
-        </span>
-      </div>
-
-      <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
-
-
-      {/* Hero Page Header */}
-      <div style={{ textAlign: 'center', marginBottom: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h1 style={{
-          fontFamily: "'Manrope', sans-serif",
-          fontSize: 'clamp(32px, 4vw, 48px)',
-          fontWeight: 800,
-          color: 'var(--text)',
-          margin: '0 0 8px 0',
-          letterSpacing: '-0.03em'
-        }}>
-          Your LEWIS Mirror
-        </h1>
-        <p style={{
-          fontFamily: "'Nunito', sans-serif",
-          fontSize: '16px',
-          color: 'var(--text-mute)',
-          margin: 0
-        }}>
-          Your complete reflection of wellbeing, stability, and growth resources.
-        </p>
-      </div>
-
-      {/* Care note first: safety renders before everything else (INV-06/08) */}
-      {analysis?.safety?.care_note && (
-        <div className="mirror-card care-note-card" style={{
+      {/* Web Dashboard UI — Excluded during PDF print export */}
+      <div className="mirror-web-ui">
+        {/* Full-width Edge-to-Edge Header Bar */}
+        <div style={{
           display: 'flex',
-          flexDirection: 'column',
-          padding: '24px 28px',
-          borderRadius: '20px',
-          border: '1.5px solid rgba(95, 187, 70, 0.35)',
-          background: 'linear-gradient(135deg, rgba(95, 187, 70, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%)',
-          boxShadow: '0 8px 24px rgba(95, 187, 70, 0.12)'
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          padding: '16px clamp(12px, 3vw, 32px)',
+          marginBottom: '24px',
+          borderBottom: '1px solid rgba(0, 174, 157, 0.12)',
+          boxSizing: 'border-box'
         }}>
-          <p className="mirror-label" style={{ color: 'var(--sage)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
-            <Icon name="heart" size={16} />
-            A note of care
-          </p>
-          <p className="mirror-text" style={{ fontSize: '15.5px', lineHeight: '1.7', color: 'var(--text)', margin: 0 }}>
-            {analysis.safety.care_note}
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              onClick={() => {
+                useLewisStore.setState({ analysisData: null, analysisError: null, analysisMissing: null })
+                if (typeof window !== 'undefined' && window.history.state?.screen) {
+                  window.history.back()
+                } else {
+                  setScreen('stage9Sensory')
+                }
+              }}
+              style={{
+                background: 'none', border: 'none', padding: 0,
+                color: '#414242', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: '6px',
+                fontFamily: "'Nunito', system-ui, sans-serif",
+                fontSize: '14px', fontWeight: 600,
+                transition: 'color 0.2s ease'
+              }}
+              title="Go back"
+              onMouseEnter={(e) => e.currentTarget.style.color = '#00ae9d'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#414242'}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <LewisLogo size={32} layout="horizontal" showText={true} animated={false} />
+          </div>
+
+          <span style={{
+            fontFamily: '"IBM Plex Mono", monospace',
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '0.14em',
+            color: '#00ae9d',
+            textTransform: 'uppercase'
+          }}>
+            THE MIRROR
+          </span>
+
+          <span style={{
+            fontFamily: '"IBM Plex Mono", monospace',
+            fontSize: '11.5px',
+            fontWeight: 700,
+            letterSpacing: '0.08em',
+            color: '#414242',
+            textTransform: 'uppercase'
+          }}>
+            WELLBEING INTELLIGENCE
+          </span>
         </div>
-      )}
 
-      {dims && (
-        <>
-          {/* Prominent Resolution Card */}
-          <div className="mirror-card resolution-card" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '28px 32px',
-            borderRadius: '24px',
-            border: '1.5px solid rgba(0, 174, 157, 0.35)',
-            background: 'linear-gradient(135deg, rgba(0, 174, 157, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%)',
-            boxShadow: '0 10px 30px rgba(0, 174, 157, 0.12)'
-          }}>
-            <p className="mirror-label" style={{ color: 'var(--dawn)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
-              <Icon name="compass" size={16} />
-              Your Resolution
-            </p>
-            <h3 style={{ color: 'var(--text)', fontSize: '24px', marginBottom: '8px', fontWeight: '800', fontFamily: "'Manrope', sans-serif" }}>
-              {analysis?.prescription?.habit_title}
-            </h3>
-            <p className="mirror-text" style={{ fontSize: '15.5px', lineHeight: '1.6', color: 'var(--text-mute)', margin: 0 }}>
-              {analysis?.prescription?.micro_action}
+        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
+          {/* Hero Page Header */}
+          <div style={{ textAlign: 'center', marginBottom: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h1 style={{
+              fontFamily: "'Manrope', sans-serif",
+              fontSize: 'clamp(32px, 4vw, 48px)',
+              fontWeight: 800,
+              color: 'var(--text)',
+              margin: '0 0 8px 0',
+              letterSpacing: '-0.03em'
+            }}>
+              Your LEWIS Mirror
+            </h1>
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '16px',
+              color: 'var(--text-mute)',
+              margin: '0 0 16px 0'
+            }}>
+              Your complete reflection of wellbeing, stability, and growth resources.
             </p>
           </div>
 
-          {/* Visual Overview Dashboard Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
-            gap: '24px',
-            width: '100%'
-          }}>
-            {/* Resilience Radar Card */}
-            <div className="mirror-card" style={{
+          {/* Care note first: safety renders before everything else (INV-06/08) */}
+          {analysis?.safety?.care_note && (
+            <div className="mirror-card care-note-card" style={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
-              padding: '28px',
-              background: '#ffffff',
-              borderRadius: '24px',
-              border: '1.5px solid rgba(0,0,0,0.06)',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
-              position: 'relative',
-              overflow: 'hidden'
+              padding: '24px 28px',
+              borderRadius: '20px',
+              border: '1.5px solid rgba(95, 187, 70, 0.35)',
+              background: 'linear-gradient(135deg, rgba(95, 187, 70, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%)',
+              boxShadow: '0 8px 24px rgba(95, 187, 70, 0.12)'
             }}>
-              <p className="mirror-label" style={{ color: 'var(--dawn)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, alignSelf: 'flex-start' }}>
-                <Icon name="target" size={16} />
-                Resilience Radar
+              <p className="mirror-label" style={{ color: 'var(--sage)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+                <Icon name="heart" size={16} />
+                A note of care
               </p>
-              
-              <div style={{ width: '100%', height: '300px', marginTop: '16px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-                    <PolarGrid stroke="rgba(0,0,0,0.12)" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                    <Radar
-                      name="You"
-                      dataKey="A"
-                      stroke="var(--dawn)"
-                      strokeWidth={2.5}
-                      fill="var(--dawn)"
-                      fillOpacity={0.25}
-                    />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </div>
+              <p className="mirror-text" style={{ fontSize: '15.5px', lineHeight: '1.7', color: 'var(--text)', margin: 0 }}>
+                {analysis.safety.care_note}
+              </p>
             </div>
+          )}
 
-            {/* Wellbeing Landscape Card */}
-            <div className="mirror-card" style={{
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '28px',
-              background: '#ffffff',
-              borderRadius: '24px',
-              border: '1.5px solid rgba(0,0,0,0.06)',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.04)'
-            }}>
-              <p className="mirror-label" style={{ color: 'var(--dawn)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
-                <Icon name="waves" size={16} />
-                The Wellbeing Landscape
-              </p>
-              <p className="mirror-text" style={{ fontSize: '13.5px', marginBottom: '16px', color: 'var(--text-mute)' }}>
-                Ranked from your strongest resources to areas asking for attention.
-              </p>
-              
-              <div style={{ width: '100%', height: '300px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="gradThriving" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#34d399" stopOpacity={0.8} />
-                        <stop offset="100%" stopColor="#00ae9d" stopOpacity={1} />
-                      </linearGradient>
-                      <linearGradient id="gradSteady" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#fde047" stopOpacity={0.8} />
-                        <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
-                      </linearGradient>
-                      <linearGradient id="gradStretched" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="var(--dawn-glow)" stopOpacity={0.8} />
-                        <stop offset="100%" stopColor="var(--dawn)" stopOpacity={1} />
-                      </linearGradient>
-                      <linearGradient id="gradDepleted" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#f472b6" stopOpacity={0.8} />
-                        <stop offset="100%" stopColor="#be123c" stopOpacity={1} />
-                      </linearGradient>
-                    </defs>
-                    
-                    <XAxis type="number" domain={[0, 100]} hide />
-                    <YAxis 
-                      dataKey="subject" 
-                      type="category" 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600 }} 
-                      width={110} 
-                    />
-                    <Tooltip 
-                      cursor={{fill: 'rgba(0,0,0,0.04)'}} 
-                      contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', borderColor: 'var(--dawn)', borderRadius: '12px', backdropFilter: 'blur(10px)', color: 'var(--text)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
-                      itemStyle={{ color: 'var(--text)', fontWeight: 700 }}
-                    />
-                    <Bar 
-                      dataKey="A" 
-                      radius={[0, 8, 8, 0]} 
-                      barSize={24}
-                      animationDuration={1500}
-                      animationEasing="ease-out"
-                    >
-                      {sortedData.map((entry, index) => {
-                        let fillId = "url(#gradDepleted)"
-                        if (entry.A >= 70) fillId = "url(#gradThriving)"
-                        else if (entry.A >= 55) fillId = "url(#gradSteady)"
-                        else if (entry.A >= 40) fillId = "url(#gradStretched)"
-                        return <Cell key={`cell-${index}`} fill={fillId} />
-                      })}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+          {dims && (
+            <>
+              {/* Prominent Resolution Card */}
+              <div className="mirror-card resolution-card" style={{
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '28px 32px',
+                borderRadius: '24px',
+                border: '1.5px solid rgba(0, 174, 157, 0.35)',
+                background: 'linear-gradient(135deg, rgba(0, 174, 157, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%)',
+                boxShadow: '0 10px 30px rgba(0, 174, 157, 0.12)'
+              }}>
+                <p className="mirror-label" style={{ color: 'var(--dawn)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+                  <Icon name="compass" size={16} />
+                  Your Resolution
+                </p>
+                <h3 style={{ color: 'var(--text)', fontSize: '24px', marginBottom: '8px', fontWeight: '800', fontFamily: "'Manrope', sans-serif" }}>
+                  {analysis?.prescription?.habit_title}
+                </h3>
+                <p className="mirror-text" style={{ fontSize: '15.5px', lineHeight: '1.6', color: 'var(--text-mute)', margin: 0 }}>
+                  {analysis?.prescription?.micro_action}
+                </p>
               </div>
-            </div>
-          </div>
-        </>
-      )}
 
-      {/* Recommended Programs for You Carousel */}
-      <RecommendedProgramsCarousel />
+              {/* Visual Overview Dashboard Grid */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
+                gap: '24px',
+                width: '100%'
+              }}>
+                {/* Resilience Radar Card */}
+                <div className="mirror-card" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  padding: '28px',
+                  background: '#ffffff',
+                  borderRadius: '24px',
+                  border: '1.5px solid rgba(0,0,0,0.06)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <p className="mirror-label" style={{ color: 'var(--dawn)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, alignSelf: 'flex-start' }}>
+                    <Icon name="target" size={16} />
+                    Resilience Radar
+                  </p>
+
+                  <div style={{ width: '100%', height: '300px', marginTop: '16px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
+                        <PolarGrid stroke="rgba(0,0,0,0.12)" />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }} />
+                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                        <Radar
+                          name="You"
+                          dataKey="A"
+                          stroke="var(--dawn)"
+                          strokeWidth={2.5}
+                          fill="var(--dawn)"
+                          fillOpacity={0.25}
+                        />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Wellbeing Landscape Card */}
+                <div className="mirror-card" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '28px',
+                  background: '#ffffff',
+                  borderRadius: '24px',
+                  border: '1.5px solid rgba(0,0,0,0.06)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.04)'
+                }}>
+                  <p className="mirror-label" style={{ color: 'var(--dawn)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+                    <Icon name="waves" size={16} />
+                    The Wellbeing Landscape
+                  </p>
+                  <p className="mirror-text" style={{ fontSize: '13.5px', marginBottom: '16px', color: 'var(--text-mute)' }}>
+                    Ranked from your strongest resources to areas asking for attention.
+                  </p>
+
+                  <div style={{ width: '100%', height: '300px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="gradThriving" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#34d399" stopOpacity={0.8} />
+                            <stop offset="100%" stopColor="#00ae9d" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradSteady" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#fde047" stopOpacity={0.8} />
+                            <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradStretched" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="var(--dawn-glow)" stopOpacity={0.8} />
+                            <stop offset="100%" stopColor="var(--dawn)" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradDepleted" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#f472b6" stopOpacity={0.8} />
+                            <stop offset="100%" stopColor="#be123c" stopOpacity={1} />
+                          </linearGradient>
+                        </defs>
+
+                        <XAxis type="number" domain={[0, 100]} hide />
+                        <YAxis
+                          dataKey="subject"
+                          type="category"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600 }}
+                          width={110}
+                        />
+                        <Tooltip
+                          cursor={{ fill: 'rgba(0,0,0,0.04)' }}
+                          contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', borderColor: 'var(--dawn)', borderRadius: '12px', backdropFilter: 'blur(10px)', color: 'var(--text)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+                          itemStyle={{ color: 'var(--text)', fontWeight: 700 }}
+                        />
+                        <Bar
+                          dataKey="A"
+                          radius={[0, 8, 8, 0]}
+                          barSize={24}
+                          animationDuration={1500}
+                          animationEasing="ease-out"
+                        >
+                          {sortedData.map((entry, index) => {
+                            let fillId = "url(#gradDepleted)"
+                            if (entry.A >= 70) fillId = "url(#gradThriving)"
+                            else if (entry.A >= 55) fillId = "url(#gradSteady)"
+                            else if (entry.A >= 40) fillId = "url(#gradStretched)"
+                            return <Cell key={`cell-${index}`} fill={fillId} />
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Recommended Programs for You Carousel */}
+          <RecommendedProgramsCarousel />
+        </div>
+      </div>
 
       {/* The full Insight Report (v4.0 25-page layout), downloadable as PDF */}
-      {analysis?.insight_report ? (
-        <div style={{ marginTop: '16px' }}>
-          <InsightReport report={analysis.insight_report} />
-        </div>
-      ) : (
-        <div className="mirror-card ai-report-content" style={{ padding: '32px', background: '#ffffff', borderRadius: '24px', border: '1.5px solid rgba(0,0,0,0.06)' }}>
-          <ReactMarkdown
-            components={{
-              h1: ({ ...props }) => <h2 className="mirror-label notice" style={{ marginTop: '32px', marginBottom: '16px', fontSize: '16px' }} {...props} />,
-              h2: ({ ...props }) => <h3 className="mirror-title" style={{ marginTop: '24px', marginBottom: '12px', fontSize: '18px' }} {...props} />,
-              p: ({ ...props }) => <p className="mirror-text" style={{ marginBottom: '16px', lineHeight: '1.6' }} {...props} />,
-              ul: ({ ...props }) => <ul style={{ listStyleType: 'disc', paddingLeft: '20px', marginBottom: '16px', color: 'var(--text-sub)' }} {...props} />,
-              li: ({ ...props }) => <li style={{ marginBottom: '8px' }} {...props} />,
-              blockquote: ({ ...props }) => <blockquote style={{ borderLeft: '4px solid var(--dawn)', paddingLeft: '16px', fontStyle: 'italic', color: 'var(--text-main)', background: 'var(--panel-border)', padding: '12px 16px', borderRadius: '4px', marginBottom: '16px' }} {...props} />,
-              strong: ({ ...props }) => <strong style={{ color: 'var(--text-main)', fontWeight: 600 }} {...props} />
-            }}
-          >
-            {analysis?.narrative}
-          </ReactMarkdown>
-        </div>
-      )}
-
-      <p className="closing-line" style={{ textAlign: 'center', color: 'var(--text-mute)', fontSize: '13.5px', marginTop: '16px' }}>
-        LEWIS reflects. It never diagnoses.
-      </p>
+      <div style={{ marginTop: '16px' }} className="mirror-report-wrap">
+        <InsightReport report={generateClientFallbackReport(analysis)} />
       </div>
 
+      <p className="closing-line mirror-web-ui" style={{ textAlign: 'center', color: 'var(--text-mute)', fontSize: '13.5px', marginTop: '16px' }}>
+        LEWIS reflects. It never diagnoses.
+      </p>
     </motion.div>
   )
 }

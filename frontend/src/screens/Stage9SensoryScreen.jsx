@@ -62,7 +62,8 @@ export default function Stage9SensoryScreen() {
   const { setScreen, setProfileField, soundPreference } = useLewisStore()
 
   const handleNext = () => {
-    setScreen('stage9QuickChoices')
+    useLewisStore.setState({ analysisData: null, analysisError: null, analysisMissing: null })
+    setScreen('stage10Generating')
   }
 
   const options = [

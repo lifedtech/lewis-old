@@ -140,7 +140,7 @@ config = {
         "items": ["I lead a purposeful and meaningful life", "My social relationships are supportive and rewarding", "I am engaged and interested in my daily activities", "I actively contribute to the happiness and well-being of others", "I am competent and capable in the activities that are important to me", "I am a good person and live a good life", "I am optimistic about my future", "People respect me"]
     },
     "Stage5_2Swls": {
-        "title": "Global Life Satisfaction",
+        "title": "Life Satisfaction",
         "subtitle": "How much do you agree?",
         "type": "likert",
         "store_key": "swls",
@@ -202,14 +202,6 @@ config = {
         "type": "single_select",
         "store_key": "soundPreference",
         "options": ["Forest ambience", "Ocean waves", "Binaural beats / White noise", "Silence"]
-    },
-    "Stage9QuickChoices": {
-        "title": "Quick Choices",
-        "subtitle": "Which would you genuinely prefer?",
-        "type": "likert",
-        "store_key": "quickChoices",
-        "scale": ["Option A", "Option B"],
-        "items": ["A: Big effort/Big reward vs B: Low effort/Moderate reward", "A: Rest now/Work later vs B: Work now/Rest later", "A: Socialise vs B: Solitude"]
     }
 }
 
@@ -265,7 +257,6 @@ app_screen_order = [
   'stage8_3Recovery',
   'stage8_4Cumulative',
   'stage9Sensory',
-  'stage9QuickChoices',
   'stage10Generating',
   'mirror'
 ]

@@ -222,12 +222,12 @@ export default function Stage4MazeScreen() {
 
             {/* On-screen D-Pad Controls for Mobile/Touch */}
             <div className="dpad" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-              <button className="dpad-btn" onClick={() => move(-1, 0)} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1.5px solid #d2e7e0', background: '#f2f9f6', color: '#414242', fontWeight: 700, cursor: 'pointer' }}>▲</button>
-              <div style={{ display: 'flex', gap: '24px' }}>
-                <button className="dpad-btn" onClick={() => move(0, -1)} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1.5px solid #d2e7e0', background: '#f2f9f6', color: '#414242', fontWeight: 700, cursor: 'pointer' }}>◀</button>
-                <button className="dpad-btn" onClick={() => move(0, 1)} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1.5px solid #d2e7e0', background: '#f2f9f6', color: '#414242', fontWeight: 700, cursor: 'pointer' }}>▶</button>
+              <button className="dpad-btn" onClick={() => move(-1, 0)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid rgba(0, 174, 157, 0.3)', background: '#eaf7f5', color: '#00ae9d', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▲</button>
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <button className="dpad-btn" onClick={() => move(0, -1)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid rgba(0, 174, 157, 0.3)', background: '#eaf7f5', color: '#00ae9d', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>◀</button>
+                <button className="dpad-btn" onClick={() => move(0, 1)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid rgba(0, 174, 157, 0.3)', background: '#eaf7f5', color: '#00ae9d', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▶</button>
               </div>
-              <button className="dpad-btn" onClick={() => move(1, 0)} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1.5px solid #d2e7e0', background: '#f2f9f6', color: '#414242', fontWeight: 700, cursor: 'pointer' }}>▼</button>
+              <button className="dpad-btn" onClick={() => move(1, 0)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid rgba(0, 174, 157, 0.3)', background: '#eaf7f5', color: '#00ae9d', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▼</button>
             </div>
           </div>
 
