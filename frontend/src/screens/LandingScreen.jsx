@@ -72,7 +72,7 @@ const flatCardStyle = {
   background: '#ffffff', borderRadius: '18px', padding: 'clamp(24px, 3vw, 32px)',
 }
 
-function IconBadge({ name, iconSize = 22, color = '#00ae9d' }) {
+function IconBadge({ name, size = 44, iconSize = 22, color = '#00ae9d' }) {
   return (
     <div style={{ color, marginBottom: '20px' }}>
       <Icon name={name} size={iconSize} />
@@ -242,7 +242,7 @@ export default function LandingScreen() {
           <div data-row="nine" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '14px' }}>
             {DOMAINS.map((d) => (
               <div key={d.name} ref={addToRefs} className="landing-reveal-element landing-domain-card" style={{
-                background: '#f4f4f4', border: '1.5px solid transparent', borderRadius: '16px', padding: '26px', display: 'flex', gap: '16px', alignItems: 'flex-start',
+                background: '#f4f4f4', borderRadius: '16px', padding: '26px', display: 'flex', gap: '16px', alignItems: 'flex-start',
               }}>
                 <span style={{ color: '#00ae9d', display: 'inline-flex', flexShrink: 0, marginTop: '2px' }}><Icon name={d.iconKey} size={22} /></span>
                 <div>
@@ -271,7 +271,7 @@ export default function LandingScreen() {
           <div data-row="three" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
             {RESEARCH_CARDS.map((c) => (
               <div key={c.title} ref={addToRefs} className="landing-reveal-element" style={flatCardStyle}>
-                <IconBadge name={c.icon} iconSize={24} />
+                <IconBadge name={c.icon} size={24} iconSize={24} />
                 <h3 style={{ margin: '0 0 9px', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.01em', color: '#414242' }}>{c.title}</h3>
                 <p style={{ margin: 0, fontSize: '16px', lineHeight: 1.68, color: 'rgba(65,66,66,.72)' }}>{c.desc}</p>
               </div>
@@ -330,3 +330,4 @@ export default function LandingScreen() {
     </motion.div>
   )
 }
+
