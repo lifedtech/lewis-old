@@ -1,3 +1,25 @@
+# LEWIS Core Engine - Updates (Version 1.4.1 - 12 August 2026)
+
+Frontend-only release: the marketing landing page is rebuilt end-to-end from a new reference spec, typography is unified app-wide, and the assessment progress indicator is simplified.
+
+## 1. Landing Page Redesign (`frontend/src/screens/LandingScreen.jsx`, `landing.css`)
+- Rebuilt from the new **"LEWIS Homepage v2"** marketing spec, added to the repo root as `LEWIS Homepage v2.dc.html` (the design reference — not part of the running app).
+- **Domain taxonomy corrected**: the old landing page advertised nine placeholder domains (Sleep & Recovery, Nutrition, Movement, Stress & Resilience, Emotional Balance, Cognitive Health, Social Connection, Purpose & Meaning, Environment) with fabricated demo scores (62, 74, 81…) that never matched what the engine actually scores. Replaced with the real nine areas (`Physical & Regeneration`, `Emotional & Mental`, `Engagement & Energy`, `Relationships & Social`, `Meaning & Spiritual`, `Accomplishment & Agency`, `Financial Wellness`, `Intellectual & Growth`, `Environmental & Cultural`) — matching `useLewisStore` priorities / the Stage 5 Landscape screen. No scores shown pre-assessment.
+- New page structure: sticky nav → hero with four pill callouts (12–15 min · nine areas · non-clinical, no diagnosis · adults 18+) → "What is LEWIS" three-card explainer → nine-area grid → "science and research" section → FAQ accordion (8 questions) → final CTA → footer.
+- Removed: the old inline contact form (name/email/message state and a fake `setTimeout` submit handler), ambient background orbs, and the marquee ticker — none were in the new spec.
+- Pricing stated inline on the page: free to start, ₹399 for the complete (~20-page) report.
+
+## 2. App-Wide Typography Unification
+- `IBM Plex Mono` retired everywhere in the frontend — eyebrows, stage labels, report micro-labels — in favour of `Nunito`, now the single typeface across the journey, the report, and the landing page. Touched `index.css`, ~45 journey screen files, and `report/InsightReport.jsx` / `report/report.css`.
+
+## 3. Assessment Progress Indicator Simplified (`App.jsx`)
+- The stage header no longer shows the raw `current / 53` screen-count fraction — just the stage name on the left and a `Z%` completion figure on the right, above the progress bar.
+
+## 4. Documentation
+- `README.md`, `lewis doc.md` updated to v1.4.1: version bumps, landing page redesign entry, typography note.
+
+---
+
 # LEWIS Core Engine - Updates (Version 1.4.0 - 1 August 2026)
 
 This release delivers the **25-page Insight Report v4.0 redesign**, a **unified InstrumentScreen**, a full **report CSS design system**, and comprehensive **UI standardisation** across all 50 journey screens.

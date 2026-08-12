@@ -1,4 +1,4 @@
-# LEWIS Core Engine — Project Documentation (v1.4.0)
+# LEWIS Core Engine — Project Documentation (v1.4.1)
 
 ## Table of Contents
 1. [Overview](#overview)
@@ -38,7 +38,7 @@ LEWIS helps users understand and care for their wellbeing by:
 3. **Deterministic-first narratives** — every user gets a complete 25-page report with the LLM switched off; the LLM only adds voice to the legacy narrative field.
 4. **Small-habit prescriptions** — one free micro-habit matched to the leverage point, time available, and environment; a grounding habit whenever safety fires.
 5. **Similarity context** — each completion is mapped against a 10k synthetic seed corpus (state-only) for coarse-position context.
-6. **Designed for download** — the report renders as print-perfect A4 PDF, styled with the LIFED visual system (Nunito + IBM Plex Mono, teal/sage palette, line icons, rounded cards).
+6. **Designed for download** — the report renders as print-perfect A4 PDF, styled with the LIFED visual system (Nunito typography app-wide, teal/sage palette, line icons, rounded cards).
 
 LEWIS is **not** a diagnostic, screening, or risk-scoring tool, and its language rules enforce that at every layer.
 
@@ -75,9 +75,10 @@ lifed-LEWIS/
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx          # SCREENS map + SCREEN_ORDER — the only routing truth
-│   │   ├── index.css        # Journey UI design system
-│   │   ├── screens/         # 50 screens: PreStage0Age … Stage10 → MirrorScreen
+│   │   ├── App.jsx          # SCREENS map + SCREEN_ORDER (53 entries) — the only routing truth
+│   │   ├── index.css        # Journey UI design system (Nunito app-wide)
+│   │   ├── screens/         # 53 screens: landing → PreStage0Age … Stage10 → MirrorScreen
+│   │   │   ├── LandingScreen.jsx     # Marketing homepage (v2 redesign, real 9-area taxonomy)
 │   │   │   └── InstrumentScreen.jsx  # Unified screen for all psychometric instruments
 │   │   ├── report/
 │   │   │   ├── InsightReport.jsx  # 25-page A4 report renderer (block dispatch)
@@ -96,10 +97,11 @@ lifed-LEWIS/
 │   ├── insight-report-redesign/ # Reference HTML design
 │   └── _sample_report.json  # Sample enriched report JSON
 │
-├── NEW_UPDATES.md           # Versioned changelog (v1.1.0 → v1.4.0)
+├── NEW_UPDATES.md           # Versioned changelog (v1.1.0 → v1.4.1)
 ├── learning_doc.md          # Developer onboarding guide
 ├── lewis doc.md             # This file
-└── README.md                # Project overview + quick start
+├── README.md                # Project overview + quick start
+└── LEWIS Homepage v2.dc.html # Landing page design reference (marketing spec, not part of the app)
 ```
 
 ---
@@ -586,5 +588,5 @@ The response will include `insight_report.pages` — 25 pages of structured bloc
 
 ---
 
-**Last Updated**: 1 August 2026 (v1.4.0)
+**Last Updated**: 12 August 2026 (v1.4.1)
 **Status**: Active development — pilot-readiness gates tracked in `NEW_UPDATES.md`

@@ -1,4 +1,4 @@
-# LEWIS — Lifed Everyday Wellbeing Intelligence System (v1.4.0)
+# LEWIS — Lifed Everyday Wellbeing Intelligence System (v1.4.1)
 
 LEWIS is a non-clinical wellbeing reflection system built with a FastAPI backend, React + Vite frontend, Supabase Cloud PostgreSQL, zero-PII anonymization, and a fully redesigned 25-page Insight Report rendered as A4 paper pages directly in the browser and downloadable as PDF.
 
@@ -64,6 +64,12 @@ LEWIS is a non-clinical wellbeing reflection system built with a FastAPI backend
 - Automatic log redaction for passwords, bearer tokens, API keys, and PostgreSQL URIs.
 - Defense-in-depth security headers.
 
+### 7. Redesigned Marketing Landing Page
+- `LandingScreen.jsx` rebuilt from the "LEWIS Homepage v2" reference spec (`LEWIS Homepage v2.dc.html`).
+- Nine-area taxonomy corrected to match what the engine actually scores — no more placeholder domains or fabricated demo numbers.
+- Hero, "What is LEWIS" explainer, nine-area grid, research section, 8-question FAQ, and a single CTA path into the journey; old contact form and decorative marquee/orbs removed.
+- Typography unified app-wide: `IBM Plex Mono` retired in favor of `Nunito` across the journey, report, and landing page.
+
 ---
 
 ## 🗂️ Repository Layout
@@ -96,8 +102,9 @@ lifed-LEWIS/
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx           ← State machine router (SCREENS map + SCREEN_ORDER)
-│   │   ├── screens/          ← 50 stage screens (Stage0 → Stage10 → MirrorScreen)
+│   │   ├── App.jsx           ← State machine router (SCREENS map + SCREEN_ORDER, 53 entries)
+│   │   ├── screens/          ← 53 screens: LandingScreen → Stage0 → Stage10 → MirrorScreen
+│   │   │   ├── LandingScreen.jsx ← Marketing homepage (v2 redesign)
 │   │   │   └── InstrumentScreen.jsx ← Unified psychometric scale screen
 │   │   ├── report/
 │   │   │   ├── InsightReport.jsx ← 25-page A4 report renderer
@@ -115,10 +122,11 @@ lifed-LEWIS/
 │   ├── insight-report-redesign/ ← Reference HTML design + support assets
 │   └── _sample_report.json   ← Sample enriched report JSON
 │
-├── NEW_UPDATES.md            ← Versioned changelog (v1.1.0 → v1.4.0)
+├── NEW_UPDATES.md            ← Versioned changelog (v1.1.0 → v1.4.1)
 ├── learning_doc.md           ← Developer onboarding guide
 ├── lewis doc.md              ← Full project documentation
-└── README.md                 ← This file
+├── README.md                 ← This file
+└── LEWIS Homepage v2.dc.html ← Landing page design reference (marketing spec)
 ```
 
 ---
@@ -190,7 +198,8 @@ VITE_API_URL=http://localhost:8000
 
 | Version | Date | Key Changes |
 |---|---|---|
-| **v1.4.0** | 1 Aug 2026 | 25-page Insight Report redesign (v4.0 rulebook), InstrumentScreen consolidation, full report CSS system, UI standardisation |
+| **v1.4.1** | 12 Aug 2026 | Landing page redesign (v2 spec, real 9-area taxonomy), app-wide Nunito typography unification, simplified progress indicator |
+| v1.4.0 | 1 Aug 2026 | 25-page Insight Report redesign (v4.0 rulebook), InstrumentScreen consolidation, full report CSS system, UI standardisation |
 | v1.3.0 | 19 Jul 2026 | 16-page Insight Report, `enrich.py`, `insight_report.py`, `report_gate.py`, `InsightReport.jsx`, Supabase integration, onboarding analytics |
 | v1.2.0 | 14 Jul 2026 | Spec-exact W-matrix, 10k corpus engine, similarity block, pattern engine, band vocabulary locked |
 | v1.1.1 | 14 Jul 2026 | Frontend connected to API, GSE fix, Road B fixed (token budget), store reset |
