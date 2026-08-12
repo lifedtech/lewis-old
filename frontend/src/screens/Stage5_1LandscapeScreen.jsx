@@ -71,7 +71,7 @@ export default function Stage5_1LandscapeScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
           <div>
             <p style={{
-              fontFamily: '"IBM Plex Mono", monospace',
+              fontFamily: '"Nunito", sans-serif',
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
@@ -139,7 +139,7 @@ export default function Stage5_1LandscapeScreen() {
               </p>
             ) : (
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ textAlign: 'left' }}>
-                <p style={{ color: getBand(selectedNode.score).cls === 'dep' ? '#00ae9d' : getBand(selectedNode.score).cls === 'mid' ? '#5fbb46' : '#00ae9d', margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"IBM Plex Mono", monospace' }}>
+                <p style={{ color: getBand(selectedNode.score).cls === 'dep' ? '#00ae9d' : getBand(selectedNode.score).cls === 'mid' ? '#5fbb46' : '#00ae9d', margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"Nunito", sans-serif' }}>
                   {selectedBand.label}{selectedTag}
                 </p>
                 <p style={{ color: '#414242', fontWeight: 700, margin: '0 0 4px 0', fontSize: '15px', fontFamily: "'Manrope', sans-serif" }}>
@@ -157,7 +157,7 @@ export default function Stage5_1LandscapeScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
           <p style={{
-            fontFamily: '"IBM Plex Mono", monospace',
+            fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
@@ -201,7 +201,7 @@ export default function Stage5_1LandscapeScreen() {
                 )}
 
                 <circle cx={cx} cy={cy} r="26" fill="#f2f9f6" stroke="#d2e7e0" strokeWidth="1.5" />
-                <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#414242" fontSize="11" fontWeight="800" fontFamily='"IBM Plex Mono", monospace'>YOU</text>
+                <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#414242" fontSize="11" fontWeight="800" fontFamily='"Nunito", sans-serif'>YOU</text>
 
                 {nodes.map(d => {
                   const r = 14 + (d.score / 100) * 12
@@ -216,7 +216,7 @@ export default function Stage5_1LandscapeScreen() {
                       {d.code === ROOT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#00ae9d" strokeWidth="1.5" strokeDasharray="3,3" />}
                       {d.code === BRIGHT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#00ae9d" strokeWidth="1.5" strokeDasharray="3,3" />}
                       <circle cx={d._x} cy={d._y} r={r} fill={colorMap[band.cls]} style={{ transition: 'all 0.3s ease', transform: selectedCode === d.code ? 'scale(1.15)' : 'scale(1)', transformOrigin: `${d._x}px ${d._y}px` }} />
-                      <text x={d._x} y={d._y + r + 16} textAnchor="middle" fill="#414242" fontSize="10" fontWeight="700" fontFamily='"IBM Plex Mono", monospace'>{d.code}</text>
+                      <text x={d._x} y={d._y + r + 16} textAnchor="middle" fill="#414242" fontSize="10" fontWeight="700" fontFamily='"Nunito", sans-serif'>{d.code}</text>
                     </g>
                   )
                 })}

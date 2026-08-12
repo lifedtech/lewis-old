@@ -149,7 +149,7 @@ export default function MirrorScreen() {
           <div style={{ marginBottom: '20px' }}>
             <LewisLogo size={52} layout="stacked" showText={false} animated={true} />
           </div>
-          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', letterSpacing: '0.14em', color: '#00ae9d', fontWeight: 700, textTransform: 'uppercase', marginBottom: '10px' }}>
+          <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', letterSpacing: '0.14em', color: '#00ae9d', fontWeight: 700, textTransform: 'uppercase', marginBottom: '10px' }}>
             LEWIS ASSESSMENT ENGINE
           </span>
           <h2 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '24px', fontWeight: 800, color: '#414242', margin: '0 0 12px 0' }}>
@@ -165,7 +165,7 @@ export default function MirrorScreen() {
               transition={{ duration: 0.3, ease: "easeInOut" }}
             />
           </div>
-          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, color: '#00ae9d' }}>
+          <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, color: '#00ae9d' }}>
             {loadProgress}%
           </span>
         </div>
@@ -199,7 +199,7 @@ export default function MirrorScreen() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'center' }}>
             <div>
               <p style={{
-                fontFamily: '"IBM Plex Mono", monospace',
+                fontFamily: '"Nunito", sans-serif',
                 fontSize: '11px',
                 fontWeight: 700,
                 letterSpacing: '0.14em',
@@ -239,7 +239,7 @@ export default function MirrorScreen() {
           <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
             <p style={{
-              fontFamily: '"IBM Plex Mono", monospace',
+              fontFamily: '"Nunito", sans-serif',
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
@@ -289,7 +289,7 @@ export default function MirrorScreen() {
                   borderRadius: '10px',
                   background: '#fee2e2',
                   color: '#7f1d1d',
-                  fontFamily: '"IBM Plex Mono", monospace',
+                  fontFamily: '"Nunito", sans-serif',
                   fontSize: '11.5px',
                   lineHeight: 1.45,
                   whiteSpace: 'pre-wrap',
@@ -404,7 +404,7 @@ export default function MirrorScreen() {
           </div>
 
           <span style={{
-            fontFamily: '"IBM Plex Mono", monospace',
+            fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
@@ -415,7 +415,7 @@ export default function MirrorScreen() {
           </span>
 
           <span style={{
-            fontFamily: '"IBM Plex Mono", monospace',
+            fontFamily: '"Nunito", sans-serif',
             fontSize: '11.5px',
             fontWeight: 700,
             letterSpacing: '0.08em',

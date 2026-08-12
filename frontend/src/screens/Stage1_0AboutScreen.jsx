@@ -38,7 +38,7 @@ export default function Stage1_0AboutScreen() {
       }}>
         {/* Eyebrow */}
         <p style={{
-          fontFamily: '"IBM Plex Mono", monospace',
+          fontFamily: '"Nunito", sans-serif',
           fontSize: '11px',
           fontWeight: 700,
           letterSpacing: '0.14em',

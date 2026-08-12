@@ -394,7 +394,7 @@ export default function App() {
                   Stage {stageInfo.num} — {stageInfo.name}
                 </span>
                 <span style={{ color: '#85918e', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Nunito', sans-serif" }}>
-                  {currentIndex + 1} / {SCREEN_ORDER.length} ({Math.round(percent)}%)
+                  {Math.round(percent)}%
                 </span>
               </div>
 

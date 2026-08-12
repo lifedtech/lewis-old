@@ -173,7 +173,7 @@ export default function Stage3_4BreathingScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
           <div>
             <p style={{
-              fontFamily: '"IBM Plex Mono", monospace',
+              fontFamily: '"Nunito", sans-serif',
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
@@ -212,7 +212,7 @@ export default function Stage3_4BreathingScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
           <p style={{
-            fontFamily: '"IBM Plex Mono", monospace',
+            fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
@@ -259,7 +259,7 @@ export default function Stage3_4BreathingScreen() {
                 fontSize: '12px',
                 fontWeight: 700,
                 color: '#414242',
-                fontFamily: '"IBM Plex Mono", monospace',
+                fontFamily: '"Nunito", sans-serif',
                 letterSpacing: '0.08em',
               }}>
                 CYCLE {cycleNum} OF 3

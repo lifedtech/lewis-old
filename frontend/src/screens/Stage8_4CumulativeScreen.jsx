@@ -125,7 +125,7 @@ export default function Stage8_4CumulativeScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
           <p style={{
-            fontFamily: '"IBM Plex Mono", monospace',
+            fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',

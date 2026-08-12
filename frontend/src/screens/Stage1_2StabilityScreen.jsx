@@ -41,7 +41,7 @@ export default function Stage1_2StabilityScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
           <div>
             <p style={{
-              fontFamily: '"IBM Plex Mono", monospace',
+              fontFamily: '"Nunito", sans-serif',
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
@@ -132,7 +132,7 @@ export default function Stage1_2StabilityScreen() {
                 color: '#ffffff',
                 fontSize: '12px',
                 fontWeight: 800,
-                fontFamily: '"IBM Plex Mono", monospace',
+                fontFamily: '"Nunito", sans-serif',
                 padding: '4px 14px',
                 borderRadius: '999px',
                 boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
@@ -185,7 +185,7 @@ export default function Stage1_2StabilityScreen() {
             </div>
 
             {/* End & Mid Labels */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', fontSize: '11.5px', fontWeight: 800, color: '#414242', fontFamily: '"IBM Plex Mono", monospace', letterSpacing: '0.08em' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', fontSize: '11.5px', fontWeight: 800, color: '#414242', fontFamily: '"Nunito", sans-serif', letterSpacing: '0.08em' }}>
               <span>TURBULENT</span>
               <span style={{ opacity: 0.45 }}>BALANCED</span>
               <span>STEADY</span>

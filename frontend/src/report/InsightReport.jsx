@@ -638,7 +638,7 @@ function BodyMap({ block }) {
           textTransform: 'uppercase',
           color: '#00ae9d',
           marginBottom: '16px',
-          fontFamily: '"IBM Plex Mono", monospace'
+          fontFamily: '"Nunito", sans-serif'
         }}>
           {block.title}
         </p>

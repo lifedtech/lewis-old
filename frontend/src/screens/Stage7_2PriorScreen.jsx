@@ -91,7 +91,7 @@ export default function Stage7_2PriorScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
             <p style={{
-              fontFamily: '"IBM Plex Mono", monospace',
+              fontFamily: '"Nunito", sans-serif',
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
@@ -150,7 +150,7 @@ export default function Stage7_2PriorScreen() {
           >
             {/* Header Row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+              <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
                 HISTORICAL ATTEMPTS
               </span>
               <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>

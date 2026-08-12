@@ -7,7 +7,7 @@ import TopicLineIllustration from '../components/TopicLineIllustration.jsx'
 // One screen renders every stepped questionnaire; the instruments themselves
 // are pure data in constants/instruments.js.
 
-const MONO = '"IBM Plex Mono", monospace'
+const MONO = '"Nunito", sans-serif'
 const NUNITO = "'Nunito', sans-serif"
 const TEAL = '#00ae9d'
 const INK = '#414242'

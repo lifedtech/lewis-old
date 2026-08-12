@@ -244,7 +244,7 @@ export default function Stage10GeneratingScreen() {
             <circle cx="41" cy="41" r="11" fill="#00AE9D" />
           </svg>
           <span style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'Nunito', sans-serif",
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
@@ -308,7 +308,7 @@ export default function Stage10GeneratingScreen() {
             marginBottom: '10px'
           }}>
             <span style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "'Nunito', sans-serif",
               fontSize: '11.5px',
               fontWeight: 700,
               letterSpacing: '0.1em',
@@ -318,7 +318,7 @@ export default function Stage10GeneratingScreen() {
               COMPILING METRICS
             </span>
             <span style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "'Nunito', sans-serif",
               fontSize: '14px',
               fontWeight: 800,
               color: '#00ae9d'

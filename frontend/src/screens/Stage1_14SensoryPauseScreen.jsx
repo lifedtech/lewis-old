@@ -67,7 +67,7 @@ const ClockFaceIllustration = ({ timeLeft, done }) => {
         <text
           x="100" y="148"
           textAnchor="middle" fill="#00ae9d"
-          fontSize="12" fontWeight="800" fontFamily="IBM Plex Mono, monospace"
+          fontSize="12" fontWeight="800" fontFamily="Nunito, sans-serif"
         >
           {timeLeft}s
         </text>
@@ -124,7 +124,7 @@ export default function Stage1_14SensoryPauseScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
           <div>
             <p style={{
-              fontFamily: '"IBM Plex Mono", monospace',
+              fontFamily: '"Nunito", sans-serif',
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
@@ -163,7 +163,7 @@ export default function Stage1_14SensoryPauseScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
           <p style={{
-            fontFamily: '"IBM Plex Mono", monospace',
+            fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',

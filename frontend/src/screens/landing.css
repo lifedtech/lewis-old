@@ -86,35 +86,6 @@ body:has(.mirror-page-wrapper),
   color: #414242;
 }
 
-/* Premium Ambient Background Elements */
-.bg-ambient-orb-1 {
-  display: block !important;
-  position: fixed;
-  top: -12vw;
-  left: -12vw;
-  width: 55vw;
-  height: 55vw;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 174, 157, 0.10) 0%, rgba(0, 174, 157, 0) 70%);
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(40px);
-}
-
-.bg-ambient-orb-2 {
-  display: block !important;
-  position: fixed;
-  bottom: -15vw;
-  right: -12vw;
-  width: 60vw;
-  height: 60vw;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 174, 157, 0.10) 0%, rgba(0, 174, 157, 0) 70%);
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(50px);
-}
-
 .bg-dot-grid {
   position: fixed;
   inset: 0;
@@ -124,69 +95,6 @@ body:has(.mirror-page-wrapper),
   opacity: 0.4;
   z-index: 1;
 }
-
-/* Infinite Marquee Ticker Scroller */
-.landing-marquee-container {
-  display: none !important;
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(14px);
-  WebkitBackdropFilter: blur(14px);
-  border-top: 1px solid rgba(0, 174, 157, 0.15);
-  border-bottom: 1px solid rgba(0, 174, 157, 0.15);
-  padding: 14px 0;
-  position: relative;
-  z-index: 3;
-}
-
-.landing-marquee-track {
-  display: inline-flex;
-  align-items: center;
-  gap: 40px;
-  animation: lw-marquee 32s linear infinite;
-  will-change: transform;
-}
-
-@keyframes lw-marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* Mouse Wheel Bobbing Animation for Scroll Indicator */
-@keyframes lw-mouse-wheel {
-  0% { transform: translateY(0); opacity: 1; }
-  80% { transform: translateY(8px); opacity: 0.2; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-.mouse-wheel-dot {
-  animation: lw-mouse-wheel 1.8s ease-in-out infinite;
-}
-
-/* Hero Section Typography */
-.hero-lewis-title {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 700;
-  font-size: clamp(64px, 7.5vw, 105px) !important;
-  line-height: 1.0 !important;
-  letter-spacing: -0.02em !important;
-  color: #000000 !important;
-  background: none !important;
-  -webkit-background-clip: unset !important;
-  -webkit-text-fill-color: #000000 !important;
-  filter: none !important;
-  display: block !important;
-  text-align: left !important;
-  margin: 0 0 12px 0 !important;
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.hero-lewis-title:hover {
-  transform: scale(1.015);
-}
-
 
 /* Buttons & Interactive Elements */
 .landing-header-btn {
@@ -309,7 +217,40 @@ body:has(.mirror-page-wrapper),
   }
 }
 
+/* ==== v2 redesign: nav, FAQ accordion, responsive grid rows ==== */
+.landing-nav-link {
+  transition: color 0.2s ease;
+}
+.landing-nav-link:hover {
+  color: #00ae9d !important;
+}
 
+.landing-screen-wrapper summary {
+  list-style: none;
+  cursor: pointer;
+}
+.landing-screen-wrapper summary::-webkit-details-marker {
+  display: none;
+}
+.landing-screen-wrapper summary [data-plus]:after {
+  content: "+";
+}
+.landing-screen-wrapper details[open] summary [data-plus]:after {
+  content: "\2212";
+}
 
-
+@media (max-width: 1000px) {
+  .landing-screen-wrapper [data-row="hero"] { grid-template-columns: 1fr !important; gap: 38px !important; }
+  .landing-screen-wrapper [data-row="lede"] { grid-template-columns: 1fr !important; gap: 18px !important; }
+  .landing-screen-wrapper [data-nav] a[data-secondary] { display: none !important; }
+}
+@media (max-width: 760px) {
+  .landing-screen-wrapper [data-row="three"],
+  .landing-screen-wrapper [data-row="nine"] { grid-template-columns: 1fr !important; }
+  .landing-screen-wrapper [data-nav] a[data-nav-link] { display: none !important; }
+}
+@media (max-width: 520px) {
+  .landing-screen-wrapper [data-cta] { width: 100% !important; }
+  .landing-screen-wrapper [data-row="ctas"] { flex-direction: column !important; align-items: stretch !important; }
+}
 

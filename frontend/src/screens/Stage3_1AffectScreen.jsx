@@ -63,7 +63,7 @@ export default function Stage3_1AffectScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
           <div>
             <p style={{
-              fontFamily: '"IBM Plex Mono", monospace',
+              fontFamily: '"Nunito", sans-serif',
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
@@ -102,7 +102,7 @@ export default function Stage3_1AffectScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
           <p style={{
-            fontFamily: '"IBM Plex Mono", monospace',
+            fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
@@ -133,10 +133,10 @@ export default function Stage3_1AffectScreen() {
               }}
             >
               {/* Axis Labels */}
-              <span style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Activated / High Energy</span>
-              <span style={{ position: 'absolute', bottom: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Calm / Low Energy</span>
-              <span style={{ position: 'absolute', top: '50%', left: '-26px', transform: 'translate(-50%, -50%) rotate(-90deg)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Unpleasant</span>
-              <span style={{ position: 'absolute', top: '50%', right: '-26px', transform: 'translate(50%, -50%) rotate(90deg)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"IBM Plex Mono", monospace' }}>Pleasant</span>
+              <span style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Activated / High Energy</span>
+              <span style={{ position: 'absolute', bottom: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Calm / Low Energy</span>
+              <span style={{ position: 'absolute', top: '50%', left: '-26px', transform: 'translate(-50%, -50%) rotate(-90deg)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Unpleasant</span>
+              <span style={{ position: 'absolute', top: '50%', right: '-26px', transform: 'translate(50%, -50%) rotate(90deg)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Pleasant</span>
 
               {/* The Grid Canvas */}
               <div
