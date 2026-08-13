@@ -8,7 +8,7 @@
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 
-export async function exportReportPdf(filename = 'LEWIS-Insight-Report.pdf') {
+export async function exportReportPdf(filename = 'Lewis-Insight-Report.pdf') {
   await document.fonts?.ready       // avoid a fallback-font flash in the capture
   await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
 

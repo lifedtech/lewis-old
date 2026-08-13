@@ -54,7 +54,7 @@ logger = logging.getLogger("lewis.api")
 # is a real deployment. Gated by the same ENVIRONMENT=production signal
 # used for the secret-config fail-fast checks in auth.py.
 app = FastAPI(
-    title="LEWIS Core Engine",
+    title="Lewis Core Engine",
     version="1.1",
     docs_url=None if IS_PRODUCTION else "/docs",
     redoc_url=None if IS_PRODUCTION else "/redoc",
@@ -200,7 +200,7 @@ class FullAssessmentInput(BaseModel):
 
 @app.get("/")
 def read_root():
-    return {"status": "success", "message": "LEWIS Core Engine is online"}
+    return {"status": "success", "message": "Lewis Core Engine is online"}
 
 
 @app.post("/auth/register")
@@ -327,7 +327,7 @@ def calculate_full_assessment(payload: FullAssessmentInput, request: Request = N
     if payload.is_over_18 is not True:
         raise HTTPException(
             status_code=403,
-            detail="LEWIS is designed for adults. The assessment is not available for people under 18.",
+            detail="Lewis is designed for adults. The assessment is not available for people under 18.",
         )
 
     try:

@@ -27,7 +27,7 @@ _BANNED_VOICE = [
 
 # LEWIS is described with process verbs only — never mental-state verbs.
 _BANNED_MENTAL_STATE = [
-    r"\bLEWIS\s+(notices|thinks|feels|believes|remembers|knows)\b",
+    r"\b(LEWIS|Lewis)\s+(notices|thinks|feels|believes|remembers|knows)\b",
     r"\b(he|she)\s+(notices|thinks|feels|believes|remembers|knows)\b",
 ]
 

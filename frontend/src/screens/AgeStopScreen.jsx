@@ -17,7 +17,7 @@ export default function AgeStopScreen() {
       <div className="content-wrapper" style={{ justifyContent: 'center', textAlign: 'center', maxWidth: '540px', margin: '0 auto' }}>
         <p className="eyebrow">Thank you for your honesty</p>
         <h1 className="headline" style={{ marginBottom: '1.5rem' }}>
-          LEWIS is designed for adults
+          Lewis is designed for adults
         </h1>
         <p className="sub" style={{ lineHeight: 1.7, marginBottom: '1rem' }}>
           The reflections here are built and tested for people 18 and older,

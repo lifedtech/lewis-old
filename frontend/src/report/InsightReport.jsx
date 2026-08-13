@@ -1285,7 +1285,7 @@ function CoverPage({ page, downloading, onDownload }) {
               {page?.eyebrow || 'Your complete wellbeing reflection'}
             </span>
             <h1 style={{ margin: '0 0 14px', font: '800 44px/1.04 Nunito, sans-serif', letterSpacing: '-.026em', color: '#ffffff' }}>
-              Your LEWIS<br />Insight Report
+              Your Lewis<br />Insight Report
             </h1>
             <div style={{ width: '56px', height: '3px', background: '#5fba46', borderRadius: '999px', marginBottom: '14px' }}></div>
             <p style={{ margin: 0, maxWidth: '380px', font: '400 13px/1.5 Nunito, sans-serif', color: 'rgba(255,255,255,.8)' }}>
@@ -1335,7 +1335,7 @@ function CoverPage({ page, downloading, onDownload }) {
         <div style={{ borderTop: '1px solid rgba(255,255,255,.2)', paddingTop: '16px', display: 'flex', gap: '11px', alignItems: 'flex-start' }}>
           <Icon name="shield" size={14} style={{ color: 'rgba(255,255,255,.6)', flex: 'none', marginTop: '1px' }} />
           <p style={{ margin: 0, font: '400 10.5px/1.5 Nunito, sans-serif', color: 'rgba(255,255,255,.68)' }}>
-            {footer?.body || 'LEWIS is a private, non-clinical reflection. It reads how life feels across nine areas and suggests what may fit. It does not diagnose, grade, or replace professional care.'}
+            {footer?.body || 'Lewis is a private, non-clinical reflection. It reads how life feels across nine areas and suggests what may fit. It does not diagnose, grade, or replace professional care.'}
           </p>
         </div>
       </div>
@@ -1363,7 +1363,7 @@ function ReportPage({ page, meta, downloading, onDownload }) {
             <circle cx="71" cy="11" r="7" fill="#5FBB46" />
             <circle cx="11" cy="71" r="7" fill="#00AE9D" />
           </svg>
-          LEWIS <span style={{ color: '#a4a5a5' }}>/ Your LEWIS reflection</span>
+          Lewis <span style={{ color: '#a4a5a5' }}>/ Your Lewis reflection</span>
         </span>
         <span className="ir-page-headright">{headRight}</span>
       </div>
@@ -1444,10 +1444,10 @@ export function generateClientFallbackReport(analysis) {
   pages.push({
     number: 1,
     kind: 'cover',
-    eyebrow: 'LEWIS INSIGHT REPORT · 25-PAGE REFLECTION',
+    eyebrow: 'Lewis INSIGHT REPORT · 25-PAGE REFLECTION',
     title: `Wellbeing Reflection for ${name}`,
     subtitle: 'A complete synthesis across emotional stability, cognitive energy, somatic rhythms, and agency resources.',
-    meta: { date, location: 'LEWIS Intelligence' },
+    meta: { date, location: 'Lewis Intelligence' },
     blocks: [
       {
         kind: 'petals',
@@ -1484,7 +1484,7 @@ export function generateClientFallbackReport(analysis) {
   })
 
   const pageTitles = [
-    "How to Read Your LEWIS Mirror",
+    "How to Read Your Lewis Mirror",
     "Your Four Core Words",
     "Where You Stand Today",
     "What Your Assessment Tells You",
@@ -1540,9 +1540,9 @@ export function generateClientFallbackReport(analysis) {
     meta: {
       name,
       date,
-      location: 'LEWIS Intelligence System',
-      footer: 'LEWIS · 25-Page Wellbeing Intelligence Report',
-      non_clinical_line: 'LEWIS reflects. It never diagnoses.'
+      location: 'Lewis Intelligence System',
+      footer: 'Lewis · 25-Page Wellbeing Intelligence Report',
+      non_clinical_line: 'Lewis reflects. It never diagnoses.'
     },
     pages
   }

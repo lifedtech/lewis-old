@@ -612,7 +612,7 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
         <circle cx="160" cy="130" r="55" stroke="var(--dawn)" strokeWidth="2" strokeDasharray="4 4" />
         <circle cx="160" cy="130" r="25" fill="rgba(255, 148, 102, 0.2)" />
         <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-          {title ? title.toUpperCase() : 'LEWIS ASSESSMENT'}
+          {title ? title.toUpperCase() : 'Lewis Assessment'}
         </text>
       </svg>
     )

@@ -14,7 +14,7 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('LEWIS Application Render Error:', error, errorInfo)
+    console.error('Lewis Application Render Error:', error, errorInfo)
   }
 
   handleReset = () => {
@@ -81,7 +81,7 @@ class ErrorBoundary extends Component {
             </div>
             
             <h2 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '22px', fontWeight: 800, color: '#414242', margin: '0 0 10px 0' }}>
-              LEWIS Application Recovered
+              Lewis Application Recovered
             </h2>
             
             <p style={{ fontSize: '14px', color: '#666666', margin: '0 0 16px 0', lineHeight: '1.5' }}>

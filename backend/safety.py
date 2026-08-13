@@ -23,7 +23,7 @@ SUPPORT_POINTER = os.getenv("LEWIS_SUPPORT_URL", "findahelpline.com")
 CARE_NOTE = (
     "A lot in your answers is asking for care right now. That is not a "
     "failure — it is information, and it deserves kindness. Almost everyone "
-    "has seasons like this. LEWIS is a reflective tool, not a substitute for "
+    "has seasons like this. Lewis is a reflective tool, not a substitute for "
     "human support: if things feel heavy, consider sharing how you are doing "
     "with someone you trust. If you would like someone to talk to, free and "
     f"confidential support lines for most countries are listed at {SUPPORT_POINTER}."

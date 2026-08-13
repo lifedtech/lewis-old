@@ -26,7 +26,7 @@ from enrich import AREA_CODE_TO_NAME, BAND_STEP
 
 FOOTER = "Private to you · a non-clinical wellbeing reflection"
 NON_CLINICAL_LINE = (
-    "LEWIS is a private, non-clinical reflection. It reads how life feels across "
+    "Lewis is a private, non-clinical reflection. It reads how life feels across "
     "nine areas and suggests what may fit. It does not diagnose, grade, or replace "
     "professional care."
 )
@@ -960,7 +960,7 @@ def _tension_matches_primary(enriched):
 
 def _p01_cover(enriched):
     meta = enriched["meta"]
-    return _page(1, None, "Your complete wellbeing reflection", "Your LEWIS Insight Report",
+    return _page(1, None, "Your complete wellbeing reflection", "Your Lewis Insight Report",
                  "Nine areas of your life, read together: what is holding you up, what is stretched, and where one small change travels furthest.", [
         {"type": "prepared", "name": meta["name"], "date": meta["date"],
          "location": meta["location"],
@@ -2040,7 +2040,7 @@ def _p25_appendix_research(enriched):
     blocks.append(_callout("HOW TO READ ANY OF THIS",
         "Every study named here describes patterns across groups of people, which is the honest currency of wellbeing research. They are good reasons to expect that a practice or a program design is worth your time. They are not predictions about you specifically, and no finding here promises you a result. That distinction is the difference between evidence and marketing, and this report stays firmly on the evidence side of it.",
         variant="synthesis", icon="scale"))
-    blocks.append({"type": "colophon", "title": "Your LEWIS Insight Report",
+    blocks.append({"type": "colophon", "title": "Your Lewis Insight Report",
                    "prepared": prepared, "line": NON_CLINICAL_LINE})
 
     return _page(25, PART_SIX, "Appendix · 2 of 2", "The research behind what was suggested",

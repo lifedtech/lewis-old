@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
+import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 import Icon from '../report/icons.jsx'
 import './landing.css'
 
@@ -10,9 +11,10 @@ import './landing.css'
 // taxonomy matches the real assessment (useLewisStore priorities / Stage5
 // Landscape), not the placeholder names the old landing page used.
 const NAV_LINKS = [
-  { id: 'what-is-lewis', label: 'What is LEWIS' },
+  { id: 'what-is-lewis', label: 'What is Lewis' },
   { id: 'areas', label: 'Nine areas', secondary: true },
   { id: 'research', label: 'The research' },
+  { id: 'programs', label: 'Explore programs', external: true, href: 'https://lifedhealth.com/programs' },
   { id: 'questions', label: 'Questions' },
 ]
 
@@ -25,7 +27,7 @@ const HERO_PILLS = [
 
 const WHAT_CARDS = [
   { icon: 'waves', title: 'Questions, tasks and activities', desc: 'A body map, a breathing minute, a sound check, a few quick choices. What you do counts as much as what you say.' },
-  { icon: 'brain', title: 'Nine areas, read together', desc: 'LEWIS sees which areas are moving together and where a small effort reaches furthest. Leverage, never a claim about cause.' },
+  { icon: 'brain', title: 'Nine areas, read together', desc: 'Lewis sees which areas are moving together and where a small effort reaches furthest. Leverage, never a claim about cause.' },
   { icon: 'leaf', title: 'It starts small', desc: 'What comes back begins with one habit small enough to actually do. Support always comes before anything else.' },
 ]
 
@@ -44,18 +46,18 @@ const DOMAINS = [
 const RESEARCH_CARDS = [
   { icon: 'brain', title: 'Validated questions carry the weight', desc: 'Every area is anchored to established, peer-reviewed self-report research. That wording is never altered, in any language, because that is what makes it mean anything.' },
   { icon: 'compass', title: 'Tasks and activities only nudge', desc: 'The behavioural moments are suggestive signals. They can shade a reading within a tight bound when they agree with it, and can never create a problem on their own.' },
-  { icon: 'refresh', title: 'Traceable, not generated', desc: 'Everything LEWIS tells you maps back to your own answers and efforts. Where the picture is thin, it says so rather than guessing.' },
+  { icon: 'refresh', title: 'Traceable, not generated', desc: 'Everything Lewis tells you maps back to your own answers and efforts. Where the picture is thin, it says so rather than guessing.' },
 ]
 
 const FAQS = [
-  { q: 'What is LEWIS?', a: "LEWIS, the Lifed Everyday Wellbeing Intelligence System, is Lifed's non-clinical wellbeing reflection tool. Through questions, tasks and guided activities, it understands how life feels for you right now and reflects it back across nine connected areas of everyday wellbeing. It takes 12 to 15 minutes, and it does not diagnose." },
-  { q: 'How long does LEWIS take?', a: '12 to 15 minutes, taken at your own pace in one sitting.' },
-  { q: 'What does LEWIS cost?', a: 'Starting LEWIS costs nothing. Your complete report, around 20 pages, is ₹399.' },
+  { q: 'What is Lewis?', a: "Lewis, the Lifed Everyday Wellbeing Intelligence System, is Lifed's non-clinical wellbeing reflection tool. Through questions, tasks and guided activities, it understands how life feels for you right now and reflects it back across nine connected areas of everyday wellbeing. It takes 12 to 15 minutes, and it does not diagnose." },
+  { q: 'How long does Lewis take?', a: '12 to 15 minutes, taken at your own pace in one sitting.' },
+  { q: 'What does Lewis cost?', a: 'Starting Lewis costs nothing. Your complete report, around 20 pages, is ₹399.' },
   { q: 'Is it only questions?', a: 'No. Alongside the questions there are short tasks and guided activities, including a body map, a breathing minute, a sound check and a few quick choices. What you do in them adds to the picture as much as what you answer.' },
-  { q: 'Is LEWIS a medical or mental health assessment?', a: 'No. LEWIS is non-clinical. It does not diagnose, treat or measure any condition, and it is not a replacement for professional care. It is a structured reflection, not a verdict.' },
+  { q: 'Is Lewis a medical or mental health assessment?', a: 'No. Lewis is non-clinical. It does not diagnose, treat or measure any condition, and it is not a replacement for professional care. It is a structured reflection, not a verdict.' },
   { q: 'What are the nine areas of wellbeing?', a: 'Physical & Regeneration, Emotional & Mental, Engagement & Energy, Relationships & Social, Meaning & Spiritual, Accomplishment & Agency, Financial Wellness, Intellectual & Growth, and Environmental & Cultural.' },
-  { q: 'What is the research behind LEWIS?', a: 'Each of the nine areas is anchored to established, peer-reviewed self-report research, and the wording of those questions is never altered. The tasks and activities alongside them can shade a reading only when they agree with it, never create one.' },
-  { q: 'Who can use LEWIS, and do I need a wearable?', a: 'LEWIS is for adults aged 18 and over, and it confirms your age before it begins. No wearable or connected device is involved. LEWIS works from your own answers and efforts, and makes no claims about hormones, brain states or heart-rate patterns.' },
+  { q: 'What is the research behind Lewis?', a: 'Each of the nine areas is anchored to established, peer-reviewed self-report research, and the wording of those questions is never altered. The tasks and activities alongside them can shade a reading only when they agree with it, never create one.' },
+  { q: 'Who can use Lewis, and do I need a wearable?', a: 'Lewis is for adults aged 18 and over, and it confirms your age before it begins. No wearable or connected device is involved. Lewis works from your own answers and efforts, and makes no claims about hormones, brain states or heart-rate patterns.' },
 ]
 
 const eyebrowStyle = (color = '#00ae9d') => ({
@@ -128,8 +130,9 @@ export default function LandingScreen() {
         backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderBottom: '1px solid #f4f4f4',
       }}>
         <div style={{
-          maxWidth: '1180px', margin: '0 auto', padding: '18px clamp(20px,4vw,40px)',
+          width: '100%', padding: '18px clamp(24px,4vw,48px)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px',
+          boxSizing: 'border-box',
         }}>
           <a href="#top" onClick={(e) => scrollTo(e, 'top')} style={{ display: 'flex', alignItems: 'center' }}>
             <LewisLogo size={30} showText={true} />
@@ -138,35 +141,32 @@ export default function LandingScreen() {
             {NAV_LINKS.map((l) => (
               <a
                 key={l.id}
-                href={`#${l.id}`}
+                href={l.external ? l.href : `#${l.id}`}
+                target={l.external ? '_blank' : undefined}
+                rel={l.external ? 'noopener noreferrer' : undefined}
                 data-nav-link="1"
                 data-secondary={l.secondary ? '1' : undefined}
-                onClick={(e) => scrollTo(e, l.id)}
+                onClick={(e) => {
+                  if (!l.external) scrollTo(e, l.id)
+                }}
                 className="landing-nav-link"
                 style={{ fontSize: '14px', fontWeight: 700, color: '#414242' }}
               >
                 {l.label}
               </a>
             ))}
-            <button
-              onClick={handleNext}
-              className="landing-primary-btn"
-              style={{ padding: '13px 22px', fontSize: '14px', whiteSpace: 'nowrap' }}
-            >
-              Start LEWIS
-            </button>
           </nav>
         </div>
-      </header>
-
-      {/* HERO */}
-      <section id="top" style={{ background: '#ffffff', padding: 'clamp(56px,8vw,100px) clamp(20px,4vw,40px) clamp(56px,7vw,88px)' }}>
+      </header>      {/* HERO */}
+      <section id="top" style={{ position: 'relative', overflow: 'hidden', background: '#ffffff', padding: 'clamp(56px,8vw,100px) clamp(20px,4vw,40px) clamp(56px,7vw,88px)' }}>
+        <AbstractLineBackground variant="contours" opacity={0.08} />
         <div data-row="hero" style={{
+          position: 'relative', zIndex: 1,
           maxWidth: '1180px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr .8fr',
           gap: 'clamp(36px,5vw,72px)', alignItems: 'start',
         }}>
           <div>
-            <p style={eyebrowStyle()}>LEWIS by Lifed</p>
+            <p style={eyebrowStyle()}>Lewis by Lifed</p>
             <h1 style={{
               margin: '0 0 22px', fontSize: 'clamp(34px,5.6vw,58px)', lineHeight: 1.05, fontWeight: 800,
               letterSpacing: '-0.03em', color: '#414242', fontFamily: "'Nunito', sans-serif",
@@ -174,15 +174,12 @@ export default function LandingScreen() {
               A clearer picture of your wellbeing, in 12 to 15 minutes.
             </h1>
             <p style={{ margin: '0 0 30px', fontSize: 'clamp(16px,1.7vw,19px)', lineHeight: 1.7, color: 'rgba(65,66,66,.72)', maxWidth: '600px' }}>
-              Most people know something is off without being able to name which part of life it is coming from. Through questions, tasks and guided activities, LEWIS understands how things honestly feel right now, and reflects it back across nine connected areas of life. Non-clinical, and never a diagnosis.
+              Most people know something is off without being able to name which part of life it is coming from. Through questions, tasks and guided activities, Lewis understands how things honestly feel right now, and reflects it back across nine connected areas of life. Non-clinical, and never a diagnosis.
             </p>
             <div data-row="ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
               <button onClick={handleNext} data-cta="1" className="landing-primary-btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '19px 32px', fontSize: '16px' }}>
-                Start LEWIS <Icon name="arrow" size={18} />
+                Start Lewis <Icon name="arrow" size={18} />
               </button>
-              <a href="#what-is-lewis" onClick={(e) => scrollTo(e, 'what-is-lewis')} data-cta="1" className="landing-secondary-btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '19px 28px', fontSize: '16px' }}>
-                What LEWIS is
-              </a>
             </div>
           </div>
 
@@ -202,16 +199,17 @@ export default function LandingScreen() {
       </section>
 
       {/* WHAT IS LEWIS */}
-      <section id="what-is-lewis" style={{ background: '#f4f4f4', padding: 'clamp(56px,8vw,92px) clamp(20px,4vw,40px)' }}>
-        <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
-          <p style={eyebrowStyle()}>What is LEWIS</p>
+      <section id="what-is-lewis" style={{ position: 'relative', overflow: 'hidden', background: '#f4f4f4', padding: 'clamp(56px,8vw,92px) clamp(20px,4vw,40px)' }}>
+        <AbstractLineBackground variant="waves" opacity={0.06} />
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
+          <p style={eyebrowStyle()}>What is Lewis</p>
           <div data-row="lede" ref={addToRefs} className="landing-reveal-element" style={{
             display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 'clamp(28px,5vw,64px)',
             alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
           }}>
             <h2 style={sectionH2Style}>A reflection, not a verdict.</h2>
             <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
-              LEWIS, the Lifed Everyday Wellbeing Intelligence System, is Lifed&rsquo;s non-clinical wellbeing reflection tool. It understands how life feels for you right now, reflects it back across nine connected areas, then names one small place to start.
+              Lewis, the Lifed Everyday Wellbeing Intelligence System, is Lifed&rsquo;s non-clinical wellbeing reflection tool. It understands how life feels for you right now, reflects it back across nine connected areas, then names one small place to start.
             </p>
           </div>
           <div data-row="three" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
@@ -227,8 +225,9 @@ export default function LandingScreen() {
       </section>
 
       {/* NINE AREAS */}
-      <section id="areas" style={{ background: '#ffffff', padding: 'clamp(56px,8vw,92px) clamp(20px,4vw,40px)' }}>
-        <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
+      <section id="areas" style={{ position: 'relative', overflow: 'hidden', background: '#ffffff', padding: 'clamp(56px,8vw,92px) clamp(20px,4vw,40px)' }}>
+        <AbstractLineBackground variant="arcs" opacity={0.07} />
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
           <p style={eyebrowStyle()}>The nine areas</p>
           <div data-row="lede" ref={addToRefs} className="landing-reveal-element" style={{
             display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 'clamp(28px,5vw,64px)',
@@ -256,14 +255,15 @@ export default function LandingScreen() {
       </section>
 
       {/* RESEARCH */}
-      <section id="research" style={{ background: '#d6edea', padding: 'clamp(56px,8vw,92px) clamp(20px,4vw,40px)' }}>
-        <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
+      <section id="research" style={{ position: 'relative', overflow: 'hidden', background: '#d6edea', padding: 'clamp(56px,8vw,92px) clamp(20px,4vw,40px)' }}>
+        <AbstractLineBackground variant="nodes" opacity={0.12} color="#00776a" />
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
           <p style={eyebrowStyle('#00776a')}>The science and research</p>
           <div data-row="lede" ref={addToRefs} className="landing-reveal-element" style={{
             display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 'clamp(28px,5vw,64px)',
             alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
           }}>
-            <h2 style={sectionH2Style}>What LEWIS is built on.</h2>
+            <h2 style={sectionH2Style}>What Lewis is built on.</h2>
             <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'rgba(65,66,66,.78)' }}>
               Established self-report research where it exists, and honesty about the parts that are reflection rather than measurement.
             </p>
@@ -278,7 +278,7 @@ export default function LandingScreen() {
             ))}
           </div>
           <p style={{ margin: '24px 0 0', fontSize: '15px', lineHeight: 1.7, color: 'rgba(65,66,66,.66)', maxWidth: '840px' }}>
-            LEWIS makes no claim about hormones, brain states or heart rhythms. It does not detect, name, treat or prevent any condition, and it is not a substitute for professional care.
+            Lewis makes no claim about hormones, brain states or heart rhythms. It does not detect, name, treat or prevent any condition, and it is not a substitute for professional care.
           </p>
         </div>
       </section>
@@ -306,8 +306,9 @@ export default function LandingScreen() {
       </section>
 
       {/* FINAL CTA */}
-      <section id="start" style={{ background: '#f4f4f4', padding: 'clamp(56px,8vw,96px) clamp(20px,4vw,40px)' }}>
-        <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
+      <section id="start" style={{ position: 'relative', overflow: 'hidden', background: '#f4f4f4', padding: 'clamp(56px,8vw,96px) clamp(20px,4vw,40px)' }}>
+        <AbstractLineBackground variant="waves" opacity={0.06} />
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
           <div ref={addToRefs} className="landing-reveal-element" style={{ background: '#ffffff', borderRadius: '24px', padding: 'clamp(32px,5vw,60px)' }}>
             <p style={eyebrowStyle()}>Ready when you are</p>
             <h2 style={{ margin: '0 0 18px', fontSize: 'clamp(28px,4.2vw,44px)', lineHeight: 1.08, fontWeight: 800, letterSpacing: '-0.028em', color: '#414242', maxWidth: '740px', fontFamily: "'Nunito', sans-serif" }}>
@@ -317,10 +318,10 @@ export default function LandingScreen() {
               No right answers, just your reflection, gently guided. Begin at no cost. Your complete report, around 20 pages, is &#8377;399.
             </p>
             <button onClick={handleNext} data-cta="1" className="landing-primary-btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '19px 32px', fontSize: '16px' }}>
-              Start LEWIS <Icon name="arrow" size={18} />
+              Start Lewis <Icon name="arrow" size={18} />
             </button>
             <p style={{ margin: '24px 0 0', fontSize: '13px', lineHeight: 1.65, color: 'rgba(65,66,66,.55)' }}>
-              For adults 18 and over. LEWIS is non-clinical, does not diagnose, and does not replace professional care.
+              For adults 18 and over. Lewis is non-clinical, does not diagnose, and does not replace professional care.
             </p>
           </div>
         </div>

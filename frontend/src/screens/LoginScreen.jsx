@@ -87,7 +87,7 @@ export default function LoginScreen() {
 
         <p className="sub" style={{ textAlign: 'center', marginBottom: '24px', fontSize: '14px', color: 'var(--text-mute)' }}>
           {mode === 'register' 
-            ? 'Sign up to securely save and download your full 16-page LEWIS Insight Report.'
+            ? 'Sign up to securely save and download your full 16-page Lewis Insight Report.'
             : 'Sign in to access your saved reflections and full PDF report.'}
         </p>
 
@@ -303,7 +303,7 @@ export default function LoginScreen() {
         </form>
 
         <p style={{ marginTop: '24px', fontSize: '12px', color: 'var(--text-mute)', textAlign: 'center', lineHeight: '1.5' }}>
-          Your data is encrypted and private. LEWIS never sells or shares your reflections.
+          Your data is encrypted and private. Lewis never sells or shares your reflections.
         </p>
       </div>
     </motion.section>

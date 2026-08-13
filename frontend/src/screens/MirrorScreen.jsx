@@ -150,13 +150,13 @@ export default function MirrorScreen() {
             <LewisLogo size={52} layout="stacked" showText={false} animated={true} />
           </div>
           <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', letterSpacing: '0.14em', color: '#00ae9d', fontWeight: 700, textTransform: 'uppercase', marginBottom: '10px' }}>
-            LEWIS ASSESSMENT ENGINE
+            Lewis ASSESSMENT ENGINE
           </span>
           <h2 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '24px', fontWeight: 800, color: '#414242', margin: '0 0 12px 0' }}>
             Synthesizing Your Mirror
           </h2>
           <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: '14px', color: '#666666', margin: '0 0 24px 0', lineHeight: 1.5 }}>
-            LEWIS is compiling your psychological metrics and cross-domain influence matrix into your complete insight report...
+            Lewis is compiling your psychological metrics and cross-domain influence matrix into your complete insight report...
           </p>
           <div style={{ width: '80%', height: '6px', background: 'rgba(0, 174, 157, 0.12)', borderRadius: '6px', overflow: 'hidden', margin: '0 auto 8px' }}>
             <motion.div
@@ -278,7 +278,7 @@ export default function MirrorScreen() {
                 fontFamily: "'Nunito', sans-serif",
                 lineHeight: 1.5,
               }}>
-                Your responses are safe. LEWIS just needs a moment before it can synthesise them. Please try again after a while.
+                Your responses are safe. Lewis just needs a moment before it can synthesise them. Please try again after a while.
               </p>
               {/* The real status and body, dev only: this card is the one place
                   a failure is visible, and "try again later" is not a diagnosis. */}
@@ -437,7 +437,7 @@ export default function MirrorScreen() {
               margin: '0 0 8px 0',
               letterSpacing: '-0.03em'
             }}>
-              Your LEWIS Mirror
+              Your Lewis Mirror
             </h1>
             <p style={{
               fontFamily: "'Nunito', sans-serif",
@@ -626,7 +626,7 @@ export default function MirrorScreen() {
       </div>
 
       <p className="closing-line mirror-web-ui" style={{ textAlign: 'center', color: 'var(--text-mute)', fontSize: '13.5px', marginTop: '16px' }}>
-        LEWIS reflects. It never diagnoses.
+        Lewis reflects. It never diagnoses.
       </p>
     </motion.div>
   )

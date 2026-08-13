@@ -790,7 +790,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
             """, (
                 user_id,
                 report_uuid,
-                f"LEWIS Insight Report ({report_uuid})",
+                f"Lewis Insight Report ({report_uuid})",
                 wellbeing_band,
                 overall_score
             ))
@@ -819,7 +819,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
             vault_payload = {
                 "user_id": user_id,
                 "report_uuid": report_uuid,
-                "report_title": f"LEWIS Insight Report ({report_uuid})",
+                "report_title": f"Lewis Insight Report ({report_uuid})",
                 "wellbeing_band": wellbeing_band,
                 "overall_score": overall_score
             }
@@ -856,7 +856,7 @@ def save_assessment_submission(user_id: int, user_email: str, assessment_data: D
         """, (
             user_id,
             report_uuid,
-            f"LEWIS Insight Report ({report_uuid})",
+            f"Lewis Insight Report ({report_uuid})",
             wellbeing_band,
             overall_score
         ))

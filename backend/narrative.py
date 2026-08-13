@@ -108,7 +108,7 @@ def _opening_section(context: dict, portrait: dict | None, dimensions: dict,
         "## Where you are right now\n\n"
         f"{body}\n\n"
         "Everything below draws only on what you shared today. It describes "
-        "patterns, not verdicts — LEWIS reflects, it never diagnoses.\n"
+        "patterns, not verdicts — Lewis reflects, it never diagnoses.\n"
     )
 
 
@@ -197,7 +197,7 @@ def _priority_tension_section(patterns: list | None, dimensions: dict) -> str:
         )
     else:
         line = (
-            f"You told LEWIS that your {label} matters most right now — and "
+            f"You told Lewis that your {label} matters most right now — and "
             "it's also where you feel most stretched. That's worth meeting "
             "gently, not pushing through."
         )

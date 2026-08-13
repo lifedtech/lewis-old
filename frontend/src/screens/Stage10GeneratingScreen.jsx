@@ -97,7 +97,7 @@ export default function Stage10GeneratingScreen() {
     "Evaluating relational, financial & systemic support structures...",
     "Running neural cascade matrix & priority tension mapping...",
     "Synthesizing personalized growth & micro-resolution pathways...",
-    "Preparing your complete 25-Page LEWIS Insight Mirror..."
+    "Preparing your complete 25-Page Lewis Insight Mirror..."
   ]
 
   useEffect(() => {
@@ -251,7 +251,7 @@ export default function Stage10GeneratingScreen() {
             color: '#017a6f',
             textTransform: 'uppercase'
           }}>
-            LEWIS ASSESSMENT ENGINE
+            Lewis ASSESSMENT ENGINE
           </span>
         </div>
 
