@@ -75,8 +75,9 @@ class ErrorBoundary extends Component {
             }}>
               <svg width="24" height="24" viewBox="0 0 82 82">
                 <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+                <circle cx="56" cy="26" r="11" fill="#00AE9D" />
+                <path d="M71 41 V71 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="26" cy="56" r="11" fill="#00AE9D" />
               </svg>
             </div>
             

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import LewisLogo from './LewisLogo.jsx'
 
 /**
  * LewisFooter
@@ -76,17 +77,7 @@ export default function LewisFooter() {
           {/* Column 1: Brand & Disclaimer */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '360px' }}>
             {/* Brand Logo Lockup */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <svg width="34" height="34" viewBox="0 0 82 82" style={{ flexShrink: 0 }}>
-                <path d="M11 41 V11 H41" fill="none" stroke="#ffffff" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M71 41 V71 H41" fill="none" stroke="#ffffff" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="26" cy="56" r="11" fill="#ffffff" />
-                <circle cx="56" cy="26" r="11" fill="#ffffff" />
-              </svg>
-              <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: '24px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
-                Lewis
-              </span>
-            </div>
+            <LewisLogo size={34} inverted={true} showText={true} />
 
             <p style={{
               margin: 0,

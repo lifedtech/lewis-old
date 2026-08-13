@@ -21,7 +21,7 @@ export default function LewisMotionLogo({
   glow = true
 }) {
   const markColorUpper = inverted ? '#ffffff' : '#00AE9D'
-  const markColorLower = inverted ? '#a7dcd4' : '#5FBB46'
+  const markColorLower = inverted ? '#ffffff' : '#5FBB46'
   const txtColor = inverted ? '#ffffff' : textColor
   const turnDuration = 3.6 / speed
 
