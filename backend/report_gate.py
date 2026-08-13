@@ -226,7 +226,7 @@ def check_report(report: dict) -> list[str]:
         issues.append("single-sitting limitation missing from page 10")
     if not page_has(16, "sized correctly", "almost too easy"):
         issues.append("why-the-plan-is-small box missing from page 16")
-    if not page_has(17, "missing a day", "nothing to catch up on"):
+    if not page_has(17, "missing a day", "missing a night", "nothing to catch up on"):
         issues.append("lapse guidance missing from page 17")
     if not page_has(22, "miss days", "missed day"):
         issues.append("lapse guidance missing from page 22")
