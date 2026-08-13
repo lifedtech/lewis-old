@@ -23,7 +23,7 @@ from typing import Annotated, Any, Dict, List, Optional, Union
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, StringConstraints
+from pydantic import BaseModel, Field, StringConstraints, EmailStr
 from dotenv import load_dotenv
 
 from scoring import (
@@ -43,7 +43,7 @@ from security import GuardrailMiddleware
 from enrich import build_enriched_object
 from insight_report import build_insight_report
 from report_gate import check_report
-from auth import register_user, login_user, verify_token, revoke_session, save_assessment_submission, get_user_assessments, get_onboarding_analytics_summary, IS_PRODUCTION
+from auth import register_user, login_user, verify_token, revoke_session, save_assessment_submission, get_user_assessments, get_onboarding_analytics_summary, IS_PRODUCTION, save_support_query
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -196,11 +196,31 @@ class FullAssessmentInput(BaseModel):
     flags: List[ShortText] = Field(default=[], max_length=10)
 
 
+class SupportQueryInput(BaseModel):
+    name: str = Field(..., min_length=1, max_length=150)
+    email: str = Field(..., min_length=3, max_length=200)
+    query: str = Field(..., min_length=1, max_length=5000)
+
+
 # --- Endpoints -----------------------------------------------------------------
 
 @app.get("/")
 def read_root():
     return {"status": "success", "message": "Lewis Core Engine is online"}
+
+
+@app.post("/support/query")
+def submit_support_query(payload: SupportQueryInput):
+    try:
+        res = save_support_query(payload.name, payload.email, payload.query)
+        return {
+            "status": "success",
+            "message": "Your query has been recorded and submitted to Lifed Operations System.",
+            "query_id": res.get("query_id")
+        }
+    except Exception as exc:
+        logger.error("Support query submission error: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to submit support query. Please try again.")
 
 
 @app.post("/auth/register")

@@ -219,6 +219,18 @@ def init_db():
             )
         """)
 
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_support_queries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                query_id TEXT UNIQUE NOT NULL,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                query TEXT NOT NULL,
+                status TEXT DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
         conn.commit()
         conn.close()
     except Exception as e:
@@ -951,3 +963,92 @@ def get_onboarding_analytics_summary() -> Dict[str, Any]:
         "total_assessments_completed": 0,
         "last_assessment_time": None
     }
+
+
+def save_support_query(name: str, email: str, query: str) -> dict:
+    """Save user support query and forward payload to Lifed Operations System DB/webhook if configured."""
+    query_id = str(uuid.uuid4())[:8]
+
+    # Forward to Lifed Operations System Webhook if configured
+    lifed_ops_webhook = os.getenv("LIFED_OPERATIONS_WEBHOOK_URL")
+    if lifed_ops_webhook:
+        try:
+            _request("POST", lifed_ops_webhook, json={
+                "source": "lewis_system",
+                "query_id": query_id,
+                "name": name,
+                "email": email,
+                "query": query,
+                "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            })
+            logger.info("Forwarded support query %s to Lifed Operations System", query_id)
+        except Exception as exc:
+            logger.warning("Failed to forward query to Lifed Operations webhook: %s", exc)
+
+    # 1. PostgreSQL Native Driver
+    if USE_PG_NATIVE:
+        try:
+            conn = psycopg2.connect(DATABASE_URL)
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS lewis_support_queries (
+                    id SERIAL PRIMARY KEY,
+                    query_id TEXT UNIQUE NOT NULL,
+                    name TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    query TEXT NOT NULL,
+                    status TEXT DEFAULT 'pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            cursor.execute("""
+                INSERT INTO lewis_support_queries (query_id, name, email, query)
+                VALUES (%s, %s, %s, %s)
+            """, (query_id, name, email, query))
+            conn.commit()
+            conn.close()
+            return {"query_id": query_id}
+        except Exception as exc:
+            logger.error("PostgreSQL support query save error (%s).", exc)
+
+    # 2. Supabase REST API
+    if USE_SUPABASE_REST:
+        try:
+            payload = {
+                "query_id": query_id,
+                "name": name,
+                "email": email,
+                "query": query,
+                "status": "pending"
+            }
+            _request("POST", f"{SUPABASE_URL}/rest/v1/lewis_support_queries", headers=get_supabase_headers(), json=payload)
+            return {"query_id": query_id}
+        except Exception as exc:
+            logger.error("Supabase REST support query save error (%s).", exc)
+
+    # 3. Local SQLite Fallback
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_support_queries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                query_id TEXT UNIQUE NOT NULL,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                query TEXT NOT NULL,
+                status TEXT DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cursor.execute("""
+            INSERT INTO lewis_support_queries (query_id, name, email, query)
+            VALUES (?, ?, ?, ?)
+        """, (query_id, name, email, query))
+        conn.commit()
+        conn.close()
+        return {"query_id": query_id}
+    except Exception as exc:
+        logger.warning("Local SQLite support query save error (%s).", exc)
+        return {"query_id": query_id}
+
