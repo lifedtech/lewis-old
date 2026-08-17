@@ -18,9 +18,9 @@ const ROOT = 'FW'
 const BRIGHT = 'RS'
 
 function getBand(score) {
-  if (score < 40) return { cls: 'dep', label: 'Quietly depleted' }
-  if (score <= 65) return { cls: 'mid', label: 'Finding its footing' }
-  return { cls: 'res', label: 'Steadily resourced' }
+  if (score < 40) return { cls: 'dep', label: 'Quietly depleted', color: '#d0574f' }
+  if (score <= 65) return { cls: 'mid', label: 'Finding its footing', color: '#5fbb46' }
+  return { cls: 'res', label: 'Steadily resourced', color: '#00ae9d' }
 }
 
 export default function Stage5_1LandscapeScreen() {
@@ -109,7 +109,7 @@ export default function Stage5_1LandscapeScreen() {
           {/* Color Legend */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12.5px', color: '#414242', fontFamily: "'Nunito', sans-serif" }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#00ae9d', display: 'inline-block' }}></span>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#d0574f', display: 'inline-block' }}></span>
               <span>Quietly depleted</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -139,7 +139,7 @@ export default function Stage5_1LandscapeScreen() {
               </p>
             ) : (
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ textAlign: 'left' }}>
-                <p style={{ color: getBand(selectedNode.score).cls === 'dep' ? '#00ae9d' : getBand(selectedNode.score).cls === 'mid' ? '#5fbb46' : '#00ae9d', margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"Nunito", sans-serif' }}>
+                <p style={{ color: selectedBand.color, margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"Nunito", sans-serif' }}>
                   {selectedBand.label}{selectedTag}
                 </p>
                 <p style={{ color: '#414242', fontWeight: 700, margin: '0 0 4px 0', fontSize: '15px', fontFamily: "'Manrope', sans-serif" }}>
@@ -206,16 +206,15 @@ export default function Stage5_1LandscapeScreen() {
                 {nodes.map(d => {
                   const r = 14 + (d.score / 100) * 12
                   const band = getBand(d.score)
-                  const colorMap = { dep: '#00ae9d', mid: '#5fbb46', res: '#00ae9d' }
                   return (
                     <g
                       key={`node-${d.code}`}
                       onClick={() => setSelectedCode(d.code)}
                       style={{ cursor: 'pointer', outline: 'none' }}
                     >
-                      {d.code === ROOT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#00ae9d" strokeWidth="1.5" strokeDasharray="3,3" />}
+                      {d.code === ROOT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#d0574f" strokeWidth="1.5" strokeDasharray="3,3" />}
                       {d.code === BRIGHT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#00ae9d" strokeWidth="1.5" strokeDasharray="3,3" />}
-                      <circle cx={d._x} cy={d._y} r={r} fill={colorMap[band.cls]} style={{ transition: 'all 0.3s ease', transform: selectedCode === d.code ? 'scale(1.15)' : 'scale(1)', transformOrigin: `${d._x}px ${d._y}px` }} />
+                      <circle cx={d._x} cy={d._y} r={r} fill={band.color} style={{ transition: 'all 0.3s ease', transform: selectedCode === d.code ? 'scale(1.15)' : 'scale(1)', transformOrigin: `${d._x}px ${d._y}px` }} />
                       <text x={d._x} y={d._y + r + 16} textAnchor="middle" fill="#414242" fontSize="10" fontWeight="700" fontFamily='"Nunito", sans-serif'>{d.code}</text>
                     </g>
                   )
