@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
+import { buildClientFallbackAnalysis } from '../lib/scoring.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import ReactMarkdown from 'react-markdown'
 import InsightReport, { generateClientFallbackReport } from '../report/InsightReport.jsx'
@@ -302,19 +303,47 @@ export default function MirrorScreen() {
               )}
             </div>
 
-            {/* Action button pinned at bottom right */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '16px', flexShrink: 0 }}>
+            {/* Action buttons pinned at bottom right */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', width: '100%', marginTop: 'auto', paddingTop: '16px', flexShrink: 0, flexWrap: 'wrap' }}>
               <button
                 className="btn-primary"
+                onClick={() => {
+                  const { payload } = buildFullAssessmentPayload(useLewisStore.getState())
+                  const fallbackData = buildClientFallbackAnalysis(payload)
+                  setLocalError(null)
+                  setErrorDetail(null)
+                  useLewisStore.setState({ analysisData: fallbackData, analysisError: null, analysisMissing: null })
+                }}
+                style={{
+                  padding: '12px 28px',
+                  background: 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  borderRadius: '14px',
+                  boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
+                }}
+              >
+                View Reflection Offline
+              </button>
+              <button
+                className="btn-secondary"
                 onClick={() => {
                   setLocalError(null)
                   setErrorDetail(null)
                   useLewisStore.setState({ analysisError: null, analysisData: null, analysisMissing: null })
                   setAttempt((n) => n + 1)
                 }}
-                style={{ padding: '12px 38px' }}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '14px',
+                  border: '1.5px solid rgba(0, 174, 157, 0.4)',
+                  color: '#00ae9d',
+                  fontWeight: 600,
+                  background: 'transparent',
+                  cursor: 'pointer',
+                }}
               >
-                Try Again
+                Retry Connection
               </button>
             </div>
 
