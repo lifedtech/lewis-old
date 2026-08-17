@@ -6,6 +6,7 @@ import secrets
 import os
 import re
 import json
+import time
 import uuid
 import logging
 from datetime import datetime, timedelta, timezone
@@ -986,7 +987,7 @@ def save_support_query(name: str, email: str, query: str) -> dict:
             logger.warning("Failed to forward query to Lifed Operations webhook: %s", exc)
 
     # 1. PostgreSQL Native Driver
-    if USE_PG_NATIVE:
+    if USE_POSTGRES:
         try:
             conn = psycopg2.connect(DATABASE_URL)
             cursor = conn.cursor()
