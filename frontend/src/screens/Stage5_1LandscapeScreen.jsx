@@ -229,7 +229,7 @@ export default function Stage5_1LandscapeScreen() {
               style={{ padding: '10px 36px' }}
               onClick={() => setScreen('stage5_2Pss10')}
             >
-              Begin Assessments
+              Continue
             </button>
           </div>
 
