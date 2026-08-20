@@ -151,7 +151,6 @@ export function buildClientFallbackAnalysis(payload = {}) {
   const cfpb5 = calculateCfpb5(payload.cfpb5)
   const diener = calculateDiener(payload.diener)
   const ins = calculateIns(payload.ins)
-  const swls = calculateSwls(payload.swls)
   const ph = calculatePh(payload.sleepQuality, payload.bodyMovement, payload.who5)
   const en = calculateEn(payload.who5)
 

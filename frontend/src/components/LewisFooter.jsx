@@ -45,7 +45,7 @@ export default function LewisFooter() {
         error: null
       })
       setContactForm({ name: '', email: '', query: '' })
-    } catch (err) {
+    } catch {
       setSubmitStatus({
         loading: false,
         success: null,

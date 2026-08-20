@@ -74,7 +74,7 @@ const flatCardStyle = {
   background: '#ffffff', borderRadius: '18px', padding: 'clamp(24px, 3vw, 32px)',
 }
 
-function IconBadge({ name, size = 44, iconSize = 22, color = '#00ae9d' }) {
+function IconBadge({ name, iconSize = 22, color = '#00ae9d' }) {
   return (
     <div style={{ color, marginBottom: '20px' }}>
       <Icon name={name} size={iconSize} />

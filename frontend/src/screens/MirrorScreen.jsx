@@ -5,8 +5,8 @@ import LewisLogo from '../components/LewisLogo.jsx'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { buildClientFallbackAnalysis } from '../lib/scoring.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
-import ReactMarkdown from 'react-markdown'
-import InsightReport, { generateClientFallbackReport } from '../report/InsightReport.jsx'
+import InsightReport from '../report/InsightReport.jsx'
+import { generateClientFallbackReport } from '../report/fallbackReport.js'
 import RecommendedProgramsCarousel from '../components/RecommendedProgramsCarousel.jsx'
 import Icon from '../report/icons.jsx'
 import './landing.css'
@@ -63,21 +63,18 @@ const BackendConnectionErrorIllustration = () => (
 export default function MirrorScreen() {
   const { setScreen } = useLewisStore()
   const storeAnalysis = useLewisStore((s) => s.analysisData)
-  const storeMissing = useLewisStore((s) => s.analysisMissing)
   const storeError = useLewisStore((s) => s.analysisError)
 
   const [localError, setLocalError] = useState(null)
   const [errorDetail, setErrorDetail] = useState(null)
   const [attempt, setAttempt] = useState(0)
-  const [loadProgress, setLoadProgress] = useState(25)
+  const [loadProgress, setLoadProgress] = useState(storeAnalysis ? 100 : 25)
 
   const analysis = storeAnalysis
-  const missing = storeMissing
   const error = localError || storeError
 
   useEffect(() => {
     if (storeAnalysis) {
-      setLoadProgress(100)
       return
     }
 

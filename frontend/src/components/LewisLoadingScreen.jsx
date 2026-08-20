@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import LewisMotionLogo from './LewisMotionLogo.jsx'
 
 /**
@@ -22,13 +22,14 @@ export default function LewisLoadingScreen({
     "Building your page"
   ]
 }) {
-  const [internalProgress, setInternalProgress] = useState(progress !== null ? progress : 0)
-  const [activeLineIdx, setActiveLineIdx] = useState(0)
+  const [autoLineIdx, setAutoLineIdx] = useState(0)
+
+  const activeLineIdx = progress !== null
+    ? Math.min(steps.length - 1, Math.floor((progress / 100) * steps.length))
+    : autoLineIdx
 
   useEffect(() => {
     if (progress !== null) {
-      const idx = Math.min(steps.length - 1, Math.floor((progress / 100) * steps.length))
-      setActiveLineIdx(idx)
       if (progress >= 100 && onComplete) {
         const timeout = setTimeout(() => {
           onComplete()
@@ -41,14 +42,11 @@ export default function LewisLoadingScreen({
     // Smooth line-by-line step progression (matching 420ms pulse interval)
     const stepInterval = 450
     const timer = setInterval(() => {
-      setActiveLineIdx((prev) => {
+      setAutoLineIdx((prev) => {
         if (prev < steps.length - 1) {
-          const next = prev + 1
-          setInternalProgress(Math.round(((next + 1) / steps.length) * 100))
-          return next
+          return prev + 1
         } else {
           clearInterval(timer)
-          setInternalProgress(100)
           setTimeout(() => {
             if (onComplete) onComplete()
           }, 350)
