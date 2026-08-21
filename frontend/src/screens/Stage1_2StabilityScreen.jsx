@@ -126,7 +126,7 @@ export default function Stage1_2StabilityScreen() {
             }}>
               <div style={{
                 position: 'absolute',
-                left: `calc(${value}% + ${(50 - value) * 0.28}px)`,
+                left: `clamp(28px, calc(${value}% + ${(50 - value) * 0.28}px), calc(100% - 28px))`,
                 transform: 'translateX(-50%)',
                 background: '#414242',
                 color: '#ffffff',

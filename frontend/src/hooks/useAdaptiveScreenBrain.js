@@ -57,15 +57,21 @@ function calculateBrowserMetrics() {
     heightClass = 'tall'
   }
 
-  // Proportional fluid scale factor (0.82 to 1.15)
-  // Combines horizontal width constraint with vertical headroom
+  // Proportional fluid scale factor
+  // For Desktop (width >= 1024px & landscape): use standard universal 1.0 sizing
+  // For Mobile/Tablet: dynamically scale based on aspect ratio & available height/width
   let scaleFactor = 1.0
-  if (orientation === 'portrait') {
-    const widthFactor = Math.min(1.15, Math.max(0.85, width / 390))
-    const heightFactor = Math.min(1.15, Math.max(0.82, height / 844))
+  const isDesktop = width >= 1024 && orientation === 'landscape'
+
+  if (isDesktop) {
+    scaleFactor = 1.0
+  } else if (orientation === 'portrait') {
+    const widthFactor = Math.min(1.15, Math.max(0.82, width / 390))
+    const heightFactor = Math.min(1.15, Math.max(0.80, height / 844))
     scaleFactor = Math.min(widthFactor, heightFactor)
   } else {
-    scaleFactor = Math.min(1.15, Math.max(0.85, height / 700))
+    // Mobile landscape
+    scaleFactor = Math.min(1.0, Math.max(0.75, height / 640))
   }
   scaleFactor = Number(scaleFactor.toFixed(3))
 
@@ -78,6 +84,7 @@ function calculateBrowserMetrics() {
     screenClass,
     heightClass,
     scaleFactor,
+    isDesktop,
   }
 }
 
@@ -95,26 +102,38 @@ export function useAdaptiveScreenBrain() {
     root.style.setProperty('--bw-ratio-inv', String(m.invRatio))
     root.style.setProperty('--scale-factor', String(m.scaleFactor))
 
-    // Fluid Typography Variables (Guaranteed zero text clipping)
-    const h1Size = Math.max(20, Math.min(38, Math.round(26 * m.scaleFactor)))
-    const subSize = Math.max(12, Math.min(15.5, Number((14 * m.scaleFactor).toFixed(1))))
-    const optPadV = Math.max(7, Math.min(15, Math.round(12 * m.scaleFactor)))
-    const optPadH = Math.max(12, Math.min(22, Math.round(18 * m.scaleFactor)))
-    const cardPadV = Math.max(12, Math.min(28, Math.round(20 * m.scaleFactor)))
-    const cardPadH = Math.max(14, Math.min(32, Math.round(22 * m.scaleFactor)))
-    const optGap = Math.max(6, Math.min(12, Math.round(9 * m.scaleFactor)))
+    // Fluid Typography & Container Sizing
+    if (m.isDesktop) {
+      // Desktop default universal standard sizes
+      root.style.setProperty('--fluid-h1', '38px')
+      root.style.setProperty('--fluid-sub', '16px')
+      root.style.setProperty('--fluid-opt-pad-v', '14px')
+      root.style.setProperty('--fluid-opt-pad-h', '22px')
+      root.style.setProperty('--fluid-card-pad-v', '36px')
+      root.style.setProperty('--fluid-card-pad-h', '48px')
+      root.style.setProperty('--fluid-gap', '12px')
+      root.style.setProperty('--header-safe-space', '64px')
+    } else {
+      // Mobile / Tablet adaptive ratio-driven sizes
+      const h1Size = Math.max(19, Math.min(32, Math.round(25 * m.scaleFactor)))
+      const subSize = Math.max(12, Math.min(15, Number((13.5 * m.scaleFactor).toFixed(1))))
+      const optPadV = Math.max(7, Math.min(14, Math.round(11 * m.scaleFactor)))
+      const optPadH = Math.max(10, Math.min(20, Math.round(16 * m.scaleFactor)))
+      const cardPadV = Math.max(12, Math.min(26, Math.round(18 * m.scaleFactor)))
+      const cardPadH = Math.max(12, Math.min(28, Math.round(20 * m.scaleFactor)))
+      const optGap = Math.max(5, Math.min(10, Math.round(8 * m.scaleFactor)))
 
-    root.style.setProperty('--fluid-h1', `${h1Size}px`)
-    root.style.setProperty('--fluid-sub', `${subSize}px`)
-    root.style.setProperty('--fluid-opt-pad-v', `${optPadV}px`)
-    root.style.setProperty('--fluid-opt-pad-h', `${optPadH}px`)
-    root.style.setProperty('--fluid-card-pad-v', `${cardPadV}px`)
-    root.style.setProperty('--fluid-card-pad-h', `${cardPadH}px`)
-    root.style.setProperty('--fluid-gap', `${optGap}px`)
+      root.style.setProperty('--fluid-h1', `${h1Size}px`)
+      root.style.setProperty('--fluid-sub', `${subSize}px`)
+      root.style.setProperty('--fluid-opt-pad-v', `${optPadV}px`)
+      root.style.setProperty('--fluid-opt-pad-h', `${optPadH}px`)
+      root.style.setProperty('--fluid-card-pad-v', `${cardPadV}px`)
+      root.style.setProperty('--fluid-card-pad-h', `${cardPadH}px`)
+      root.style.setProperty('--fluid-gap', `${optGap}px`)
 
-    // Safe Header / Nav Allocation
-    const headerHeight = m.heightClass.startsWith('compact') ? 48 : 64
-    root.style.setProperty('--header-safe-space', `${headerHeight}px`)
+      const headerHeight = m.heightClass.startsWith('compact') ? 44 : 58
+      root.style.setProperty('--header-safe-space', `${headerHeight}px`)
+    }
 
     // Data attributes for selective CSS overrides
     root.setAttribute('data-browser-ratio', m.screenClass)
