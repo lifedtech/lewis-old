@@ -124,15 +124,15 @@ export default function Stage1_11IntellectualScreen() {
         {/* RIGHT — YOUR CURIOSITY Eyebrow + Full-Height Textarea + Pinned Button */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '12px' }}>
 
-          <p style={{
+          <p className="stage-right-eyebrow" style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            textAlign: 'right',
-            margin: 0,
+            
+            margin: 0
           }}>
             YOUR CURIOSITY
           </p>

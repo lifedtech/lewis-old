@@ -162,16 +162,16 @@ export default function Stage1_14SensoryPauseScreen() {
         {/* RIGHT — Clock Illustration + Timer + Pinned Action Button */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
-          <p style={{
+          <p className="stage-right-eyebrow" style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            textAlign: 'right',
+            
             margin: '0 0 14px 0',
-            width: '100%',
+            width: '100%'
           }}>
             MINDFULNESS TIMER
           </p>
@@ -184,7 +184,7 @@ export default function Stage1_14SensoryPauseScreen() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '16px',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box'
           }}>
             <ClockFaceIllustration timeLeft={timeLeft} done={done} />
 

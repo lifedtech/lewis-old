@@ -636,6 +636,35 @@ h1.headline em {
   }
 }
 
+/* ---------- Responsive Section Eyebrow / Sub-header ---------- */
+.stage-right-eyebrow {
+  width: 100%;
+  text-align: right;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #414242;
+  text-transform: uppercase;
+  margin: 0 0 8px 0;
+  transition: text-align 0.15s ease;
+}
+
+/* Mobile & Tablet (< 1025px): Placed cleanly on the LEFT side */
+@media (max-width: 1024px) {
+  .stage-right-eyebrow,
+  .stage-split .stage-right-eyebrow {
+    text-align: left !important;
+  }
+}
+
+/* Desktop (>= 1025px): Locked to the RIGHT side */
+@media (min-width: 1025px) {
+  .stage-right-eyebrow {
+    text-align: right !important;
+  }
+}
+
 .choice-card {
   text-align: left;
   background: var(--panel);

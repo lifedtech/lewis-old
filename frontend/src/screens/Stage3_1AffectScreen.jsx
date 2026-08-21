@@ -101,16 +101,16 @@ export default function Stage3_1AffectScreen() {
         {/* RIGHT — Affect Grid Canvas + Pinned Button */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
-          <p style={{
+          <p className="stage-right-eyebrow" style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            textAlign: 'right',
+            
             margin: '0 0 14px 0',
-            width: '100%',
+            width: '100%'
           }}>
             AFFECT GRID
           </p>
@@ -121,7 +121,7 @@ export default function Stage3_1AffectScreen() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '24px 0',
+            padding: '24px 0'
           }}>
             <div
               className="affect-canvas-wrapper"

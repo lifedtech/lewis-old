@@ -195,16 +195,16 @@ export default function Stage3_3DayRhythmScreen() {
         {/* RIGHT — PEAK ENERGY PERIODS Eyebrow + 7 Option Cards + Pinned Button */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
-          <p style={{
+          <p className="stage-right-eyebrow" style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            textAlign: 'right',
+            
             margin: '0 0 14px 0',
-            width: '100%',
+            width: '100%'
           }}>
             PEAK ENERGY PERIODS
           </p>

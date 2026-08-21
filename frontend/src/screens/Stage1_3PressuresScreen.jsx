@@ -129,15 +129,15 @@ export default function Stage1_3PressuresScreen() {
         {/* RIGHT — LIFE PRESSURES Eyebrow + 9 Multi-select Cards + Pinned Button */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
-          <p style={{
+          <p className="stage-right-eyebrow" style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            textAlign: 'right',
-            margin: '0 0 8px 0',
+            
+            margin: '0 0 8px 0'
           }}>
             LIFE PRESSURES
           </p>

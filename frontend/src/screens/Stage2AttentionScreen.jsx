@@ -208,16 +208,16 @@ export default function Stage2AttentionScreen() {
         {/* RIGHT — Category Eyebrow + Interactive Butterfly Test Box + Pinned Button */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
-          <p style={{
+          <p className="stage-right-eyebrow" style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            textAlign: 'right',
+            
             margin: '0 0 14px 0',
-            width: '100%',
+            width: '100%'
           }}>
             INTERACTIVE CALIBRATION
           </p>
@@ -234,7 +234,7 @@ export default function Stage2AttentionScreen() {
             border: '1.5px solid #d2e7e0',
             borderRadius: '20px',
             padding: '24px',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box'
           }}>
             {/* Score Badge */}
             <div style={{

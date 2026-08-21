@@ -128,15 +128,15 @@ export default function Stage7_6ValuesScreen() {
         {/* RIGHT — ACTION & SUPPORT Eyebrow + 8 Multi-select Checkbox Cards + Pinned Button */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
-          <p style={{
+          <p className="stage-right-eyebrow" style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            textAlign: 'right',
-            margin: '0 0 10px 0',
+            
+            margin: '0 0 10px 0'
           }}>
             ACTION & SUPPORT
           </p>

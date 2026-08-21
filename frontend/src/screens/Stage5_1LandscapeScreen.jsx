@@ -131,7 +131,7 @@ export default function Stage5_1LandscapeScreen() {
             border: '1.5px solid #d2e7e0',
             width: '100%',
             maxWidth: '350px',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box'
           }}>
             {!selectedNode ? (
               <p style={{ margin: 0, color: '#414242', fontStyle: 'italic', fontSize: '13px', textAlign: 'left', fontFamily: "'Nunito', sans-serif" }}>
@@ -156,16 +156,16 @@ export default function Stage5_1LandscapeScreen() {
         {/* RIGHT — RESOURCED RADAR Eyebrow + Radar Chart + Pinned Button */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
-          <p style={{
+          <p className="stage-right-eyebrow" style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            textAlign: 'right',
+            
             margin: '0 0 14px 0',
-            width: '100%',
+            width: '100%'
           }}>
             RESOURCED RADAR
           </p>
@@ -176,7 +176,7 @@ export default function Stage5_1LandscapeScreen() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxSizing: 'border-box',
+            boxSizing: 'border-box'
           }}>
             <div style={{ width: '100%', maxWidth: '320px', aspectRatio: '1/1', marginLeft: '28px' }}>
               <svg viewBox="0 0 400 400" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
