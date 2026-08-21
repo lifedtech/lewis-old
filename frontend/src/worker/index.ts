@@ -18,6 +18,9 @@ export default {
 async function handleApi(url: URL, env: Env): Promise<Response> {
   // Self-check: proves the Hyperdrive binding + Prisma adapter wiring actually works.
   if (url.pathname === "/api/health") {
+    if (!env.HYPERDRIVE?.connectionString) {
+      return Response.json({ status: "ok", mode: "standalone_worker" });
+    }
     const prisma = createPrismaClient(env.HYPERDRIVE.connectionString);
     try {
       await prisma.$queryRaw`SELECT 1`;

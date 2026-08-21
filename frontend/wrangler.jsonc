@@ -7,14 +7,5 @@
   "assets": {
     "directory": "./dist",
     "run_worker_first": ["/api/*"]
-  },
-  "hyperdrive": [
-    {
-      "binding": "HYPERDRIVE",
-      // Run: npx wrangler hyperdrive create lewis-db --connection-string="$DATABASE_URL" (from .env.local), then paste the returned id here
-      "id": "<HYPERDRIVE_ID>",
-      // Local `wrangler dev` uses this instead of the remote id
-      "localConnectionString": "postgresql://postgres.PROJECT:PASSWORD@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
-    }
-  ]
+  }
 }
