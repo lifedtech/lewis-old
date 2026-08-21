@@ -116,17 +116,17 @@ export default function Stage1_2StabilityScreen() {
           </AnimatePresence>
 
           {/* Classy Luxury Slider Component */}
-          <div style={{ width: '100%', maxWidth: '520px', position: 'relative', padding: '12px 0 6px' }}>
-            {/* Dynamic Floating Value Pill */}
+          <div style={{ width: '100%', maxWidth: '520px', position: 'relative', padding: '8px 0' }}>
+            {/* Dynamic Floating Value Pill (Mathematically locked to thumb center) */}
             <div style={{
               position: 'relative',
               width: '100%',
-              marginBottom: '16px',
+              marginBottom: '14px',
               height: '32px'
             }}>
               <div style={{
                 position: 'absolute',
-                left: `${value}%`,
+                left: `calc(${value}% + ${(50 - value) * 0.28}px)`,
                 transform: 'translateX(-50%)',
                 background: '#414242',
                 color: '#ffffff',
@@ -135,9 +135,9 @@ export default function Stage1_2StabilityScreen() {
                 fontFamily: '"Nunito", sans-serif',
                 padding: '4px 14px',
                 borderRadius: '999px',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
                 whiteSpace: 'nowrap',
-                transition: 'left 0.1s ease-out',
+                transition: 'left 0.05s ease-out',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px'
@@ -147,45 +147,60 @@ export default function Stage1_2StabilityScreen() {
               </div>
             </div>
 
-            {/* Custom Styled Range Input */}
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={value}
-              onChange={e => setProfileField('lifeStability', Number(e.target.value))}
-              className="classy-range-input"
-              style={{
-                background: `linear-gradient(90deg, ${label.color} 0%, ${label.color} ${value}%, #e2ece8 ${value}%, #e2ece8 100%)`
-              }}
-            />
+            {/* Track & Input Wrapper */}
+            <div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}>
+              {/* Custom Styled Range Input */}
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={value}
+                onChange={e => setProfileField('lifeStability', Number(e.target.value))}
+                className="classy-range-input"
+                style={{
+                  background: `linear-gradient(90deg, ${label.color} 0%, ${label.color} ${value}%, #e2ece8 ${value}%, #e2ece8 100%)`
+                }}
+              />
 
-            {/* Milestone Tick Dots */}
-            <div style={{
-              position: 'absolute',
-              top: '61px',
-              left: '14px',
-              right: '14px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              pointerEvents: 'none'
-            }}>
-              {[0, 25, 50, 75, 100].map((step) => (
-                <div
-                  key={step}
-                  style={{
-                    width: '4px',
-                    height: '4px',
-                    borderRadius: '50%',
-                    background: value >= step ? '#ffffff' : 'rgba(65, 66, 66, 0.25)',
-                    boxShadow: '0 0 2px rgba(0,0,0,0.2)'
-                  }}
-                />
-              ))}
+              {/* Milestone Tick Dots (Centered on track) */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '14px',
+                right: '14px',
+                transform: 'translateY(-50%)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}>
+                {[0, 25, 50, 75, 100].map((step) => (
+                  <div
+                    key={step}
+                    style={{
+                      width: '4px',
+                      height: '4px',
+                      borderRadius: '50%',
+                      background: value >= step ? 'rgba(255, 255, 255, 0.9)' : 'rgba(65, 66, 66, 0.25)',
+                      boxShadow: '0 0 2px rgba(0,0,0,0.15)'
+                    }}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* End & Mid Labels */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', fontSize: '11.5px', fontWeight: 800, color: '#414242', fontFamily: '"Nunito", sans-serif', letterSpacing: '0.08em' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginTop: '16px',
+              padding: '0 2px',
+              fontSize: '11px',
+              fontWeight: 800,
+              color: '#414242',
+              fontFamily: '"Nunito", sans-serif',
+              letterSpacing: '0.08em'
+            }}>
               <span>TURBULENT</span>
               <span style={{ opacity: 0.45 }}>BALANCED</span>
               <span>STEADY</span>
