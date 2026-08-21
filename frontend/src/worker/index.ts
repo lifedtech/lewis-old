@@ -1,8 +1,6 @@
-import { createPrismaClient } from "./db";
-
 interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
-  HYPERDRIVE: { connectionString: string };
+  HYPERDRIVE?: { connectionString: string };
 }
 
 export default {
@@ -16,15 +14,15 @@ export default {
 };
 
 async function handleApi(url: URL, env: Env): Promise<Response> {
-  // Self-check: proves the Hyperdrive binding + Prisma adapter wiring actually works.
   if (url.pathname === "/api/health") {
     if (!env.HYPERDRIVE?.connectionString) {
-      return Response.json({ status: "ok", mode: "standalone_worker" });
+      return Response.json({ status: "ok", mode: "edge_asset_worker" });
     }
-    const prisma = createPrismaClient(env.HYPERDRIVE.connectionString);
     try {
+      const { createPrismaClient } = await import("./db");
+      const prisma = createPrismaClient(env.HYPERDRIVE.connectionString);
       await prisma.$queryRaw`SELECT 1`;
-      return Response.json({ status: "ok" });
+      return Response.json({ status: "ok", database: "connected" });
     } catch (err) {
       return Response.json({ status: "error", message: String(err) }, { status: 500 });
     }
