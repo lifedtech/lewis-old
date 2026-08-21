@@ -9,6 +9,134 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
   const t = (topic || '').toLowerCase()
 
   const getIllustrationContent = () => {
+    if (t.includes('email') || t.includes('report') || t.includes('delivery') || t.includes('newsletter') || t.includes('dispatch')) {
+      // Report Delivery & Email: Glowing dispatch envelope, report folio, radiating signals
+      return (
+        <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
+          <defs>
+            <linearGradient id="emailGradTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#80c26d" stopOpacity="0.5" />
+            </linearGradient>
+            <linearGradient id="emailGradDawn" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FF9466" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#00ae9d" stopOpacity="0.4" />
+            </linearGradient>
+          </defs>
+
+          {/* Ambient Glowing Aura */}
+          <motion.circle
+            cx="160" cy="130" r="75"
+            fill="url(#emailGradTeal)"
+            opacity="0.12"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0.18, 0.1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '160px 130px' }}
+          />
+
+          {/* Outer Orbit / Pulse Waves */}
+          <motion.circle
+            cx="160" cy="130" r="95"
+            stroke="#00ae9d"
+            strokeWidth="1.5"
+            strokeDasharray="4 6"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
+            style={{ transformOrigin: '160px 130px' }}
+          />
+
+          {/* Floating Report Folio Backing */}
+          <motion.rect
+            x="110" y="75" width="100" height="110" rx="8"
+            fill="#ffffff"
+            stroke="#c2ceca"
+            strokeWidth="1.6"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+          />
+
+          {/* Folio Text Mock Lines */}
+          <line x1="124" y1="94" x2="164" y2="94" stroke="#00ae9d" strokeWidth="2.4" strokeLinecap="round" />
+          <line x1="124" y1="104" x2="186" y2="104" stroke="#c2ceca" strokeWidth="2" strokeLinecap="round" />
+          <line x1="124" y1="114" x2="176" y2="114" stroke="#c2ceca" strokeWidth="2" strokeLinecap="round" />
+          <line x1="124" y1="124" x2="182" y2="124" stroke="#c2ceca" strokeWidth="2" strokeLinecap="round" />
+
+          {/* Front Mail Envelope */}
+          <motion.g
+            animate={{ y: [-3, 3, -3] }}
+            transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <rect
+              x="96" y="112" width="128" height="82" rx="10"
+              fill="#f2f9f6"
+              stroke="#00ae9d"
+              strokeWidth="2.2"
+            />
+            {/* Envelope Flap Lines */}
+            <path
+              d="M 98 114 L 160 156 L 222 114"
+              stroke="#00ae9d"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+            <path
+              d="M 98 192 L 138 152 M 222 192 L 182 152"
+              stroke="#c2ceca"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            {/* Centered Seal Spark */}
+            <motion.circle
+              cx="160" cy="156" r="10"
+              fill="#00ae9d"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ transformOrigin: '160px 156px' }}
+            />
+            <path
+              d="M 157 156 L 159.5 158.5 L 164 153.5"
+              stroke="#ffffff"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+          </motion.g>
+
+          {/* Floating Orbit Rings & Accents */}
+          <motion.circle
+            cx="75" cy="90" r="4.5"
+            stroke="#80c26d"
+            strokeWidth="1.8"
+            fill="none"
+            animate={{ y: [-4, 4, -4] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.circle
+            cx="245" cy="98" r="5"
+            stroke="#00ae9d"
+            strokeWidth="1.8"
+            fill="none"
+            animate={{ y: [4, -4, 4] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+          />
+          <motion.circle
+            cx="235" cy="180" r="3"
+            fill="#80c26d"
+            animate={{ scale: [1, 1.3, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
+            REPORT DELIVERY
+          </text>
+        </svg>
+      )
+    }
+
     if (t.includes('about') || t.includes('identity') || t.includes('profile')) {
       // About You / Identity: Abstract personal silhouette with an ambient aura
       return (

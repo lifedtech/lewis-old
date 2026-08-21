@@ -13,9 +13,12 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import quote
 from typing import Optional, Dict, Any, List
 import requests
+from dotenv import load_dotenv
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
+from crypto_vault import encrypt_pii, decrypt_pii, blind_index_email
 
+load_dotenv()
 logger = logging.getLogger("lewis.auth")
 
 # Dedicated database directory for SQLite fallback
@@ -103,7 +106,13 @@ def get_pg_conn():
     """Create a connection to PostgreSQL via DATABASE_URL."""
     if not has_pg or not DATABASE_URL:
         return None
-    url = DATABASE_URL.replace("postgresql://", "postgres://", 1) if DATABASE_URL.startswith("postgresql://") else DATABASE_URL
+    url = DATABASE_URL
+    if "?pgbouncer=true" in url:
+        url = url.replace("?pgbouncer=true", "")
+    elif "&pgbouncer=true" in url:
+        url = url.replace("&pgbouncer=true", "")
+    if url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgres://", 1)
     return psycopg2.connect(url, cursor_factory=RealDictCursor)
 
 def get_supabase_headers() -> Dict[str, str]:
@@ -145,9 +154,96 @@ def _public_user(user: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 def init_db():
-    """Ensure isolated lewis_ tables exist in local SQLite if active."""
-    if (has_pg and DATABASE_URL) or USE_SUPABASE_REST:
-        return  # Managed via Supabase cloud
+    """Ensure isolated lewis_ tables exist in PostgreSQL or local SQLite."""
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS lewis_users (
+                            id SERIAL PRIMARY KEY,
+                            email TEXT UNIQUE NOT NULL,
+                            name TEXT,
+                            password_hash TEXT NOT NULL,
+                            salt TEXT NOT NULL,
+                            source_portal TEXT DEFAULT 'lewis_app',
+                            role TEXT DEFAULT 'user',
+                            status TEXT DEFAULT 'active',
+                            last_login_at TIMESTAMP WITH TIME ZONE,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                        );
+                        CREATE TABLE IF NOT EXISTS lewis_sessions (
+                            token TEXT PRIMARY KEY,
+                            user_id INTEGER NOT NULL REFERENCES lewis_users (id) ON DELETE CASCADE,
+                            ip_address TEXT,
+                            user_agent TEXT,
+                            expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                            revoked_at TIMESTAMP WITH TIME ZONE,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                        );
+                        CREATE TABLE IF NOT EXISTS lewis_support_queries (
+                            id SERIAL PRIMARY KEY,
+                            query_id TEXT UNIQUE NOT NULL,
+                            name TEXT NOT NULL,
+                            email TEXT NOT NULL,
+                            query TEXT NOT NULL,
+                            status TEXT DEFAULT 'pending',
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                        );
+                        CREATE TABLE IF NOT EXISTS lewis_assessment_records (
+                            id SERIAL PRIMARY KEY,
+                            query_id TEXT UNIQUE NOT NULL,
+                            name TEXT NOT NULL,
+                            email TEXT NOT NULL,
+                            query TEXT NOT NULL,
+                            status TEXT DEFAULT 'pending',
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                        );
+                        CREATE TABLE IF NOT EXISTS lewis_assessment_records (
+                            id SERIAL PRIMARY KEY,
+                            report_uuid TEXT UNIQUE NOT NULL,
+                            user_name_encrypted TEXT,
+                            user_email_encrypted TEXT,
+                            user_email_hash TEXT,
+                            wellbeing_band TEXT,
+                            overall_score REAL,
+                            report_json TEXT NOT NULL,
+                            started_at TIMESTAMP WITH TIME ZONE,
+                            completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                            duration_seconds INTEGER
+                        );
+                        CREATE INDEX IF NOT EXISTS idx_assessment_email_hash ON lewis_assessment_records (user_email_hash);
+
+                        CREATE TABLE IF NOT EXISTS lewis_journey_sessions (
+                            session_id TEXT PRIMARY KEY,
+                            user_name_encrypted TEXT,
+                            user_email_encrypted TEXT,
+                            user_email_hash TEXT,
+                            current_stage INTEGER DEFAULT 0,
+                            current_screen TEXT DEFAULT 'landing',
+                            progress_percent REAL DEFAULT 0.0,
+                            started_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                            last_active_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                            completed_at TIMESTAMP WITH TIME ZONE,
+                            duration_seconds INTEGER DEFAULT 0,
+                            status TEXT DEFAULT 'in_progress',
+                            reached_50_pct BOOLEAN DEFAULT FALSE,
+                            reminder_status TEXT DEFAULT 'none',
+                            reminder_sent_at TIMESTAMP WITH TIME ZONE
+                        );
+                        CREATE INDEX IF NOT EXISTS idx_journey_status_active ON lewis_journey_sessions (status, last_active_at);
+                    """)
+                    conn.commit()
+                conn.close()
+                logger.info("Supabase PostgreSQL tables initialized & ready.")
+                return
+        except Exception as e:
+            logger.warning("PostgreSQL table init encountered error (%s), using fallback.", e)
+
+    if USE_SUPABASE_REST:
+        return
+
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
@@ -194,33 +290,6 @@ def init_db():
         )
 
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS lewis_user_report_vault (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                report_uuid TEXT UNIQUE NOT NULL,
-                report_title TEXT,
-                wellbeing_band TEXT,
-                overall_score REAL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES lewis_users (id) ON DELETE CASCADE
-            )
-        """)
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS lewis_anonymized_insight_reports (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                report_uuid TEXT UNIQUE NOT NULL,
-                anonymous_code TEXT NOT NULL,
-                wellbeing_band TEXT,
-                overall_score REAL,
-                deidentified_scores_json TEXT NOT NULL,
-                deidentified_answers_json TEXT NOT NULL,
-                deidentified_report_json TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
-        cursor.execute("""
             CREATE TABLE IF NOT EXISTS lewis_support_queries (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 query_id TEXT UNIQUE NOT NULL,
@@ -229,6 +298,42 @@ def init_db():
                 query TEXT NOT NULL,
                 status TEXT DEFAULT 'pending',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_assessment_records (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                report_uuid TEXT UNIQUE NOT NULL,
+                user_name_encrypted TEXT,
+                user_email_encrypted TEXT,
+                user_email_hash TEXT,
+                wellbeing_band TEXT,
+                overall_score REAL,
+                report_json TEXT NOT NULL,
+                started_at TIMESTAMP,
+                completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                duration_seconds INTEGER
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_journey_sessions (
+                session_id TEXT PRIMARY KEY,
+                user_name_encrypted TEXT,
+                user_email_encrypted TEXT,
+                user_email_hash TEXT,
+                current_stage INTEGER DEFAULT 0,
+                current_screen TEXT DEFAULT 'landing',
+                progress_percent REAL DEFAULT 0.0,
+                started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_active_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                completed_at TIMESTAMP,
+                duration_seconds INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'in_progress',
+                reached_50_pct BOOLEAN DEFAULT 0,
+                reminder_status TEXT DEFAULT 'none',
+                reminder_sent_at TIMESTAMP
             )
         """)
 
@@ -1052,4 +1157,414 @@ def save_support_query(name: str, email: str, query: str) -> dict:
     except Exception as exc:
         logger.warning("Local SQLite support query save error (%s).", exc)
         return {"query_id": query_id}
+
+
+# --- Encrypted Assessment Records & Journey Dropout Telemetry -----------------
+
+def save_encrypted_assessment_record(
+    user_name: Optional[str],
+    user_email: Optional[str],
+    report_data: Dict[str, Any],
+    started_at_iso: Optional[str] = None,
+    duration_seconds: Optional[int] = None
+) -> str:
+    """
+    Store the user's name, email, and full generated report in the database.
+    User name and email ID are encrypted at rest using AES-Fernet.
+    """
+    report_uuid = generate_report_uuid()
+    name_enc = encrypt_pii(user_name) if user_name else None
+    email_enc = encrypt_pii(user_email) if user_email else None
+    email_hash = blind_index_email(user_email) if user_email else None
+
+    scores = report_data.get("dimensions") or report_data.get("scores") or {}
+    wellbeing_band = scores.get("who5", {}).get("wellbeing_band") or "Moderate"
+    overall_score = scores.get("who5", {}).get("scaled_score", 0.0)
+    report_json_str = json.dumps(report_data, default=str)
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO lewis_assessment_records
+                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, wellbeing_band, overall_score, report_json, started_at, duration_seconds)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (report_uuid, name_enc, email_enc, email_hash, wellbeing_band, overall_score, report_json_str, started_at_iso, duration_seconds))
+                    conn.commit()
+                conn.close()
+                logger.info("Saved encrypted assessment record %s to PostgreSQL", report_uuid)
+                return report_uuid
+        except Exception as e:
+            logger.error("PostgreSQL error saving encrypted assessment record: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO lewis_assessment_records
+            (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, wellbeing_band, overall_score, report_json, started_at, duration_seconds)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (report_uuid, name_enc, email_enc, email_hash, wellbeing_band, overall_score, report_json_str, started_at_iso, duration_seconds))
+        conn.commit()
+        conn.close()
+        logger.info("Saved encrypted assessment record %s to SQLite", report_uuid)
+    except Exception as e:
+        logger.warning("SQLite error saving encrypted assessment record: %s", e)
+
+    return report_uuid
+
+
+def record_journey_ping(
+    session_id: str,
+    user_name: Optional[str] = None,
+    user_email: Optional[str] = None,
+    current_stage: int = 0,
+    current_screen: str = 'landing',
+    progress_percent: float = 0.0,
+    duration_seconds: int = 0
+) -> Dict[str, Any]:
+    """
+    Heartbeat and telemetry recording for tracking journey progression and dropouts.
+    Encrypts user name and email if present.
+    """
+    if not session_id:
+        session_id = str(uuid.uuid4())
+
+    name_enc = encrypt_pii(user_name) if user_name else None
+    email_enc = encrypt_pii(user_email) if user_email else None
+    email_hash = blind_index_email(user_email) if user_email else None
+    reached_50 = bool(progress_percent >= 50.0)
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO lewis_journey_sessions
+                        (session_id, user_name_encrypted, user_email_encrypted, user_email_hash, current_stage, current_screen, progress_percent, duration_seconds, reached_50_pct, last_active_at, status)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 'in_progress')
+                        ON CONFLICT (session_id) DO UPDATE SET
+                            user_name_encrypted = COALESCE(EXCLUDED.user_name_encrypted, lewis_journey_sessions.user_name_encrypted),
+                            user_email_encrypted = COALESCE(EXCLUDED.user_email_encrypted, lewis_journey_sessions.user_email_encrypted),
+                            user_email_hash = COALESCE(EXCLUDED.user_email_hash, lewis_journey_sessions.user_email_hash),
+                            current_stage = EXCLUDED.current_stage,
+                            current_screen = EXCLUDED.current_screen,
+                            progress_percent = GREATEST(lewis_journey_sessions.progress_percent, EXCLUDED.progress_percent),
+                            duration_seconds = EXCLUDED.duration_seconds,
+                            reached_50_pct = (lewis_journey_sessions.reached_50_pct OR EXCLUDED.reached_50_pct),
+                            last_active_at = NOW()
+                        WHERE lewis_journey_sessions.status != 'completed';
+                    """, (session_id, name_enc, email_enc, email_hash, current_stage, current_screen, progress_percent, duration_seconds, reached_50))
+                    conn.commit()
+                conn.close()
+                return {"status": "success", "session_id": session_id}
+        except Exception as e:
+            logger.error("Postgres error recording journey ping: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO lewis_journey_sessions
+            (session_id, user_name_encrypted, user_email_encrypted, user_email_hash, current_stage, current_screen, progress_percent, duration_seconds, reached_50_pct, last_active_at, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, 'in_progress')
+            ON CONFLICT (session_id) DO UPDATE SET
+                user_name_encrypted = COALESCE(excluded.user_name_encrypted, lewis_journey_sessions.user_name_encrypted),
+                user_email_encrypted = COALESCE(excluded.user_email_encrypted, lewis_journey_sessions.user_email_encrypted),
+                user_email_hash = COALESCE(excluded.user_email_hash, lewis_journey_sessions.user_email_hash),
+                current_stage = excluded.current_stage,
+                current_screen = excluded.current_screen,
+                progress_percent = MAX(lewis_journey_sessions.progress_percent, excluded.progress_percent),
+                duration_seconds = excluded.duration_seconds,
+                reached_50_pct = (lewis_journey_sessions.reached_50_pct OR excluded.reached_50_pct),
+                last_active_at = CURRENT_TIMESTAMP
+            WHERE lewis_journey_sessions.status != 'completed';
+        """, (session_id, name_enc, email_enc, email_hash, current_stage, current_screen, progress_percent, duration_seconds, reached_50))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.warning("SQLite error recording journey ping: %s", e)
+
+    return {"status": "success", "session_id": session_id}
+
+
+def mark_journey_completed(session_id: str, duration_seconds: Optional[int] = None) -> bool:
+    """Mark a journey as fully completed."""
+    if not session_id:
+        return False
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE lewis_journey_sessions
+                        SET status = 'completed',
+                            progress_percent = 100.0,
+                            completed_at = NOW(),
+                            duration_seconds = COALESCE(%s, duration_seconds)
+                        WHERE session_id = %s
+                    """, (duration_seconds, session_id))
+                    conn.commit()
+                conn.close()
+                return True
+        except Exception as e:
+            logger.error("Postgres error marking journey completed: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE lewis_journey_sessions
+            SET status = 'completed',
+                progress_percent = 100.0,
+                completed_at = CURRENT_TIMESTAMP,
+                duration_seconds = COALESCE(?, duration_seconds)
+            WHERE session_id = ?
+        """, (duration_seconds, session_id))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        logger.warning("SQLite error marking journey completed: %s", e)
+        return False
+
+
+def get_journey_analytics_overview() -> Dict[str, Any]:
+    """Return overview metrics: completion time, total completed, midway dropouts (<50% and >=50%), and 10-min reminder pending count."""
+    stats = {
+        "total_started": 0,
+        "total_completed": 0,
+        "avg_completion_time_seconds": 0,
+        "avg_completion_time_formatted": "0m 0s",
+        "total_midway_dropouts": 0,
+        "dropouts_before_50_pct": 0,
+        "dropouts_after_50_pct": 0,
+        "pending_10min_reminders_count": 0,
+    }
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT
+                            COUNT(*) AS total_started,
+                            COUNT(*) FILTER (WHERE status = 'completed') AS total_completed,
+                            COALESCE(AVG(duration_seconds) FILTER (WHERE status = 'completed' AND duration_seconds > 0), 0) AS avg_duration,
+                            COUNT(*) FILTER (WHERE status != 'completed' AND last_active_at < NOW() - INTERVAL '10 minutes') AS total_abandoned,
+                            COUNT(*) FILTER (WHERE status != 'completed' AND reached_50_pct = FALSE AND last_active_at < NOW() - INTERVAL '10 minutes') AS dropouts_before_50,
+                            COUNT(*) FILTER (WHERE status != 'completed' AND reached_50_pct = TRUE AND last_active_at < NOW() - INTERVAL '10 minutes') AS dropouts_after_50,
+                            COUNT(*) FILTER (WHERE status != 'completed' AND reached_50_pct = TRUE AND last_active_at < NOW() - INTERVAL '10 minutes' AND reminder_status != 'sent') AS pending_reminders
+                        FROM lewis_journey_sessions;
+                    """)
+                    row = cur.fetchone()
+                    if row:
+                        avg_sec = int(row['avg_duration'])
+                        stats["total_started"] = row['total_started']
+                        stats["total_completed"] = row['total_completed']
+                        stats["avg_completion_time_seconds"] = avg_sec
+                        stats["avg_completion_time_formatted"] = f"{avg_sec // 60}m {avg_sec % 60}s"
+                        stats["total_midway_dropouts"] = row['total_abandoned']
+                        stats["dropouts_before_50_pct"] = row['dropouts_before_50']
+                        stats["dropouts_after_50_pct"] = row['dropouts_after_50']
+                        stats["pending_10min_reminders_count"] = row['pending_reminders']
+                conn.close()
+                return stats
+        except Exception as e:
+            logger.error("Postgres error fetching journey analytics: %s", e)
+
+    # SQLite fallback
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT
+                COUNT(*),
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END),
+                AVG(CASE WHEN status = 'completed' AND duration_seconds > 0 THEN duration_seconds ELSE NULL END),
+                SUM(CASE WHEN status != 'completed' AND last_active_at < datetime('now', '-10 minutes') THEN 1 ELSE 0 END),
+                SUM(CASE WHEN status != 'completed' AND reached_50_pct = 0 AND last_active_at < datetime('now', '-10 minutes') THEN 1 ELSE 0 END),
+                SUM(CASE WHEN status != 'completed' AND reached_50_pct = 1 AND last_active_at < datetime('now', '-10 minutes') THEN 1 ELSE 0 END),
+                SUM(CASE WHEN status != 'completed' AND reached_50_pct = 1 AND last_active_at < datetime('now', '-10 minutes') AND reminder_status != 'sent' THEN 1 ELSE 0 END)
+            FROM lewis_journey_sessions;
+        """)
+        row = cur.fetchone()
+        if row:
+            stats["total_started"] = row[0] or 0
+            stats["total_completed"] = row[1] or 0
+            avg_sec = int(row[2] or 0)
+            stats["avg_completion_time_seconds"] = avg_sec
+            stats["avg_completion_time_formatted"] = f"{avg_sec // 60}m {avg_sec % 60}s"
+            stats["total_midway_dropouts"] = row[3] or 0
+            stats["dropouts_before_50_pct"] = row[4] or 0
+            stats["dropouts_after_50_pct"] = row[5] or 0
+            stats["pending_10min_reminders_count"] = row[6] or 0
+        conn.close()
+    except Exception as e:
+        logger.warning("SQLite error fetching journey analytics: %s", e)
+
+    return stats
+
+
+def get_abandoned_users_list(inactive_minutes: int = 10) -> List[Dict[str, Any]]:
+    """Return the list of users who left midway (inactive for > inactive_minutes), with decrypted name & email."""
+    abandoned_list = []
+    
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute(f"""
+                        SELECT
+                            session_id,
+                            user_name_encrypted,
+                            user_email_encrypted,
+                            current_stage,
+                            current_screen,
+                            progress_percent,
+                            duration_seconds,
+                            started_at,
+                            last_active_at,
+                            reached_50_pct,
+                            reminder_status,
+                            reminder_sent_at,
+                            EXTRACT(EPOCH FROM (NOW() - last_active_at)) / 60 AS inactive_mins
+                        FROM lewis_journey_sessions
+                        WHERE status != 'completed'
+                          AND last_active_at < NOW() - INTERVAL '{int(inactive_minutes)} minutes'
+                        ORDER BY last_active_at DESC;
+                    """)
+                    rows = cur.fetchall()
+                    for r in rows:
+                        name = decrypt_pii(r['user_name_encrypted']) if r['user_name_encrypted'] else None
+                        email = decrypt_pii(r['user_email_encrypted']) if r['user_email_encrypted'] else None
+                        inact = round(float(r['inactive_mins']), 1)
+                        is_50 = bool(r['reached_50_pct'])
+                        eligible = bool(is_50 and inact >= 10.0 and r['reminder_status'] != 'sent' and email)
+                        
+                        abandoned_list.append({
+                            "session_id": r['session_id'],
+                            "name": name or "Guest / Anonymous",
+                            "email": email or "Not captured (exited before 50%)",
+                            "current_stage": r['current_stage'],
+                            "last_screen": r['current_screen'],
+                            "progress_percent": float(r['progress_percent']),
+                            "time_spent_seconds": r['duration_seconds'],
+                            "started_at": str(r['started_at']),
+                            "last_active_at": str(r['last_active_at']),
+                            "inactive_minutes": inact,
+                            "reached_50_pct": is_50,
+                            "reminder_status": r['reminder_status'] or 'none',
+                            "reminder_sent_at": str(r['reminder_sent_at']) if r['reminder_sent_at'] else None,
+                            "eligible_for_10min_reminder": eligible,
+                            "restart_url": "/#landing"
+                        })
+                conn.close()
+                return abandoned_list
+        except Exception as e:
+            logger.error("Postgres error fetching abandoned users: %s", e)
+
+    # SQLite fallback
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute(f"""
+            SELECT
+                session_id,
+                user_name_encrypted,
+                user_email_encrypted,
+                current_stage,
+                current_screen,
+                progress_percent,
+                duration_seconds,
+                started_at,
+                last_active_at,
+                reached_50_pct,
+                reminder_status,
+                reminder_sent_at,
+                (strftime('%s', 'now') - strftime('%s', last_active_at)) / 60.0 AS inactive_mins
+            FROM lewis_journey_sessions
+            WHERE status != 'completed'
+              AND last_active_at < datetime('now', '-{int(inactive_minutes)} minutes')
+            ORDER BY last_active_at DESC;
+        """)
+        rows = cur.fetchall()
+        for r in rows:
+            name = decrypt_pii(r[1]) if r[1] else None
+            email = decrypt_pii(r[2]) if r[2] else None
+            inact = round(float(r[12] or 0), 1)
+            is_50 = bool(r[9])
+            eligible = bool(is_50 and inact >= 10.0 and r[10] != 'sent' and email)
+            
+            abandoned_list.append({
+                "session_id": r[0],
+                "name": name or "Guest / Anonymous",
+                "email": email or "Not captured (exited before 50%)",
+                "current_stage": r[3],
+                "last_screen": r[4],
+                "progress_percent": float(r[5] or 0),
+                "time_spent_seconds": r[6] or 0,
+                "started_at": str(r[7]),
+                "last_active_at": str(r[8]),
+                "inactive_minutes": inact,
+                "reached_50_pct": is_50,
+                "reminder_status": r[10] or 'none',
+                "reminder_sent_at": str(r[11]) if r[11] else None,
+                "eligible_for_10min_reminder": eligible,
+                "restart_url": "/#landing"
+            })
+        conn.close()
+    except Exception as e:
+        logger.warning("SQLite error fetching abandoned users: %s", e)
+
+    return abandoned_list
+
+
+def mark_reminders_sent(session_ids: List[str]) -> int:
+    """Mark reminder status as 'sent' for given session IDs."""
+    if not session_ids:
+        return 0
+    updated_count = 0
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE lewis_journey_sessions
+                        SET reminder_status = 'sent',
+                            reminder_sent_at = NOW()
+                        WHERE session_id = ANY(%s)
+                    """, (session_ids,))
+                    updated_count = cur.rowcount
+                    conn.commit()
+                conn.close()
+                return updated_count
+        except Exception as e:
+            logger.error("Postgres error marking reminders sent: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        placeholders = ",".join(["?"] * len(session_ids))
+        cur.execute(f"""
+            UPDATE lewis_journey_sessions
+            SET reminder_status = 'sent',
+                reminder_sent_at = CURRENT_TIMESTAMP
+            WHERE session_id IN ({placeholders})
+        """, session_ids)
+        updated_count = cur.rowcount
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.warning("SQLite error marking reminders sent: %s", e)
+
+    return updated_count
+
 

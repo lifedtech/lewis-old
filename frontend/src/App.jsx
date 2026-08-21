@@ -4,6 +4,7 @@ import { useLewisStore } from './store/useLewisStore.js'
 import LewisLogo from './components/LewisLogo.jsx'
 import LewisLoadingScreen from './components/LewisLoadingScreen.jsx'
 import PageTransition from './components/PageTransition.jsx'
+import { useAdaptiveScreenBrain } from './hooks/useAdaptiveScreenBrain.js'
 
 import LandingScreen from './screens/LandingScreen.jsx'
 import PreStage0AgeScreen from './screens/PreStage0AgeScreen.jsx'
@@ -31,6 +32,7 @@ import Stage3_5NsStateScreen from './screens/Stage3_5NsStateScreen.jsx'
 import Stage3_6BodyAwarenessScreen from './screens/Stage3_6BodyAwarenessScreen.jsx'
 import Stage4MazeScreen from './screens/Stage4MazeScreen.jsx'
 import Stage5_1LandscapeScreen from './screens/Stage5_1LandscapeScreen.jsx'
+import Stage5_0EmailScreen from './screens/Stage5_0EmailScreen.jsx'
 import InstrumentScreen from './screens/InstrumentScreen.jsx'
 import { INSTRUMENTS } from './constants/instruments.js'
 import Stage5_2InsScreen from './screens/Stage5_2InsScreen.jsx'
@@ -92,6 +94,7 @@ const SCREENS = {
   stage3_6BodyAwareness: Stage3_6BodyAwarenessScreen,
   stage4Maze: Stage4MazeScreen,
   stage5_1Landscape: Stage5_1LandscapeScreen,
+  stage5_0Email: Stage5_0EmailScreen,
   ...INSTRUMENT_SCREENS, // the 8 stepped questionnaires (who5 + stage5_2*)
   stage5_2Ins: Stage5_2InsScreen,
   stage5_3DeepDives: Stage5_3DeepDivesScreen,
@@ -143,6 +146,7 @@ const SCREEN_ORDER = [
   'stage3_6BodyAwareness',
   'stage4Maze',
   'stage5_1Landscape',
+  'stage5_0Email',
   'stage5_2Pss10',
   'stage5_2Ucla3',
   'stage5_2Gse',
@@ -173,6 +177,7 @@ const SCREEN_ORDER = [
 ]
 
 export default function App() {
+  useAdaptiveScreenBrain()
   const { currentScreen, setScreen, isAuthenticated, authUser, logout } = useLewisStore()
   const [bootLoading, setBootLoading] = useState(true)
 
@@ -275,6 +280,45 @@ export default function App() {
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
+
+  // Background Telemetry & Inactivity Heartbeat
+  useEffect(() => {
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+    const sendPing = () => {
+      const store = useLewisStore.getState()
+      if (!store.journeySessionId) return
+      const idx = SCREEN_ORDER.indexOf(validScreen)
+      const pct = idx >= 0 ? Number(((idx / (SCREEN_ORDER.length - 1)) * 100).toFixed(1)) : 0.0
+      const durationSec = store.getJourneyDurationSeconds ? store.getJourneyDurationSeconds() : 0
+
+      if (validScreen === 'mirror') {
+        fetch(`${API_BASE}/journey/complete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: store.journeySessionId, duration_seconds: durationSec }),
+        }).catch(() => {})
+        return
+      }
+
+      fetch(`${API_BASE}/journey/ping`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: store.journeySessionId,
+          user_name: store.name || store.authUser?.name || null,
+          user_email: store.email || store.authUser?.email || null,
+          current_stage: idx >= 0 ? Math.min(10, Math.floor(idx / 5)) : 0,
+          current_screen: validScreen,
+          progress_percent: pct,
+          duration_seconds: durationSec,
+        }),
+      }).catch(() => {})
+    }
+
+    sendPing()
+    const interval = setInterval(sendPing, 45000)
+    return () => clearInterval(interval)
+  }, [validScreen])
 
   return (
     <>

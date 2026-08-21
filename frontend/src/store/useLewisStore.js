@@ -34,6 +34,14 @@ const initialState = () => ({
   isOver18: null,
   sensoryCalibrationDone: false,
 
+  // Journey Telemetry & Tracking
+  journeySessionId: (typeof window !== 'undefined' && localStorage.getItem('lewis_journey_session_id')) || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`),
+  journeyStartTime: (typeof window !== 'undefined' && Number(localStorage.getItem('lewis_journey_start_time'))) || Date.now(),
+
+  // User Profile & Delivery (50% Milestone)
+  email: savedUser?.email || '',
+  subscribeNewsletter: true,
+
   // Stage 1 Context
   name: '',
   ageCategory: '',
@@ -200,6 +208,36 @@ export const useLewisStore = create((set, get) => ({
     [objName]: { ...s[objName], [key]: val }
   })),
 
+  getJourneyDurationSeconds: () => {
+    const start = get().journeyStartTime || Date.now()
+    return Math.max(0, Math.floor((Date.now() - start) / 1000))
+  },
+
+  initJourneySession: () => {
+    const sessId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    const now = Date.now()
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('lewis_journey_session_id', sessId)
+        localStorage.setItem('lewis_journey_start_time', String(now))
+      } catch (e) {
+        console.warn('LocalStorage error:', e)
+      }
+    }
+    set({ journeySessionId: sessId, journeyStartTime: now })
+    return { sessionId: sessId, startTime: now }
+  },
+
   // Full wipe: every answer and context field back to its default.
-  reset: () => set(initialState()),
+  reset: () => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('lewis_journey_session_id')
+        localStorage.removeItem('lewis_journey_start_time')
+      } catch (e) {
+        console.warn('LocalStorage error:', e)
+      }
+    }
+    set(initialState())
+  },
 }))

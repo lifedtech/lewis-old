@@ -100,6 +100,8 @@ export function buildFullAssessmentPayload(store) {
 
   Object.assign(payload, {
     name: store.name || store.authUser?.name || (store.authUser?.email ? store.authUser.email.split('@')[0] : '') || 'User',
+    email: store.email || store.authUser?.email || null,
+    subscribeNewsletter: store.subscribeNewsletter ?? true,
     ageCategory: store.ageCategory || '25-34',
     gender: store.gender || 'Prefer not to say',
     identityRoles: store.identityRoles || [],
@@ -151,6 +153,9 @@ export function buildFullAssessmentPayload(store) {
     soundPreference: store.soundPreference || null,
     quickChoices: store.quickChoices || {},
     flags: (store.flags || []).filter((f) => f !== 'none'),
+    session_id: store.journeySessionId || null,
+    started_at: store.journeyStartTime ? new Date(store.journeyStartTime).toISOString() : null,
+    duration_seconds: store.getJourneyDurationSeconds ? store.getJourneyDurationSeconds() : 0,
   })
 
   return { payload, missing: [] }

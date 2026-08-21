@@ -35,6 +35,17 @@
   --r-sm: 12px;
   --shadow-soft: 0 12px 30px rgba(0, 174, 157, 0.12);
   --app-bg: linear-gradient(180deg, rgba(0, 174, 157, 0.10) 0%, rgba(0, 174, 157, 0.03) 40%, #ffffff 80%);
+
+  /* ---------- Adaptive Browser-Ratio Brain Dynamic Defaults ---------- */
+  --scale-factor: 1;
+  --fluid-h1: clamp(20px, calc(1.2rem + 2.2vw), 38px);
+  --fluid-sub: clamp(12.5px, calc(0.85rem + 0.6vw), 15.5px);
+  --fluid-card-pad-v: clamp(14px, 2.8vh, 32px);
+  --fluid-card-pad-h: clamp(14px, 3.5vw, 36px);
+  --fluid-opt-pad-v: clamp(8px, 1.4vh, 16px);
+  --fluid-opt-pad-h: clamp(12px, 3vw, 22px);
+  --fluid-gap: clamp(6px, 1.2vh, 14px);
+  --header-safe-space: 64px;
 }
 
 * {
@@ -46,6 +57,9 @@
   /* Firefox */
   -ms-overflow-style: none !important;
   /* IE/Edge */
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 *::-webkit-scrollbar {
@@ -568,10 +582,12 @@ button:focus-visible,
 h1.headline {
   font-family: 'Manrope', system-ui, sans-serif;
   font-weight: 700;
-  font-size: 26px;
-  line-height: 1.25;
-  margin: 0 0 8px;
+  font-size: var(--fluid-h1, clamp(20px, calc(1.2rem + 2vw), 36px));
+  line-height: clamp(1.12, calc(1.08 + 0.1 * var(--scale-factor, 1)), 1.25);
+  margin: 0 0 clamp(6px, 1.2vh, 12px);
   text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 h1.headline em {
@@ -582,34 +598,36 @@ h1.headline em {
 .sub {
   text-align: center;
   color: var(--text-mute);
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0 auto 16px;
+  font-size: var(--fluid-sub, clamp(12px, calc(0.85rem + 0.5vw), 15.5px));
+  line-height: clamp(1.3, calc(1.25 + 0.15 * var(--scale-factor, 1)), 1.5);
+  margin: 0 auto clamp(8px, 1.5vh, 18px);
   max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 @media (min-width:480px) {
   h1.headline {
-    font-size: 30px;
+    font-size: var(--fluid-h1, clamp(24px, 3.5vw, 34px));
   }
 
   .sub {
-    font-size: 14.5px;
-    max-width: 320px;
+    font-size: var(--fluid-sub, clamp(13px, 1.8vw, 15px));
+    max-width: 440px;
   }
 }
 
 @media (min-width:760px) {
   h1.headline {
     text-align: center;
-    font-size: 42px;
+    font-size: clamp(32px, 3.8vw, 42px);
     margin-bottom: 12px;
   }
 
   .sub {
     text-align: center;
     margin: 0 auto 20px;
-    max-width: 600px;
+    max-width: 620px;
     font-size: 16px;
   }
 
@@ -623,16 +641,19 @@ h1.headline em {
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: var(--r-md);
-  padding: 16px 18px;
+  padding: var(--fluid-opt-pad-v, 14px) var(--fluid-opt-pad-h, 16px);
   color: var(--text);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--fluid-gap, 6px);
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.25s ease,
               box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
               background 0.25s ease;
   will-change: transform, box-shadow;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .choice-card:hover {
@@ -665,14 +686,14 @@ h1.headline em {
   color: #ffffff !important;
   border: none !important;
   border-radius: 999px !important;
-  padding: 12px 28px !important;
-  font-size: 15px !important;
+  padding: clamp(8px, calc(1.2vh * var(--scale-factor, 1)), 14px) clamp(16px, 4vw, 30px) !important;
+  font-size: clamp(12px, calc(0.85rem + 0.3vw * var(--scale-factor, 1)), 15px) !important;
   font-weight: 700 !important;
   font-family: 'Nunito', sans-serif !important;
   text-transform: none !important;
   letter-spacing: 0 !important;
   height: auto !important;
-  min-height: 44px;
+  min-height: clamp(38px, calc(5vh * var(--scale-factor, 1)), 48px);
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -681,7 +702,8 @@ h1.headline em {
   transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
   cursor: pointer !important;
   align-self: flex-end;
-  min-width: 140px;
+  min-width: clamp(100px, 25vw, 140px);
+  flex-shrink: 0;
 }
 
 .btn-primary:hover,
@@ -809,21 +831,25 @@ h1.headline em {
   background: rgba(255, 255, 255, 0.90);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-radius: 28px;
+  border-radius: clamp(18px, calc(28px * var(--scale-factor, 1)), 28px);
   border: 1.5px solid rgba(0, 174, 157, 0.16);
   box-shadow: 0 16px 48px rgba(0, 174, 157, 0.08), 0 2px 10px rgba(0, 0, 0, 0.02);
-  padding: clamp(20px, 3vh, 36px) clamp(28px, 4vw, 54px);
+  padding: var(--fluid-card-pad-v, clamp(16px, 2.8vh, 36px)) var(--fluid-card-pad-h, clamp(16px, 3.5vw, 54px));
   max-width: 1160px;
-  max-height: calc(100vh - 60px);
+  max-height: calc(var(--bw-h, 100dvh) - var(--header-safe-space, 64px) - 24px);
   box-sizing: border-box;
   margin: 0 auto;
   width: 100%;
   overflow-anchor: none;
-  transition: background 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    padding 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    border-radius 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    padding 0.2s ease,
+    border-radius 0.2s ease;
 }
 
 .main-card.transparent-card {
@@ -1592,168 +1618,350 @@ select.input-field {
 }
 
 /* ================================================================== */
-/* DEVICE-SPECIFIC SYSTEM & RESPONSIVE OPTIMIZATIONS                  */
-/* Targets: iPhone, Google Pixel, Samsung Galaxy, iPad, Tablets       */
+/* COMPREHENSIVE MARKET SCREEN-RATIO & DEVICE MEDIA QUERY MATRIX      */
+/* Covers: 21:9 Ultra-Tall, 19.5:9 Modern, 16:9 Classic, 4:3 Foldable,*/
+/* Tablets, Short Heights, Landscape, and Desktop Ultrawide           */
 /* ================================================================== */
 
-/* ---------- 1. Ultra-Compact Mobile (Samsung S20/S22 360px, iPhone SE 375px, Fold 344px) ---------- */
-@media screen and (max-width: 380px) {
+/* ---------- 1. Ultra-Tall Screens (20:9, 20.5:9, 21:9, 22:9) ---------- */
+/* Sony Xperia 1/5/10 (21:9), Galaxy S24/S23 Ultra (20:9), OnePlus 12 (20.1:9), Xiaomi */
+@media screen and (orientation: portrait) and (max-aspect-ratio: 9/20) {
   .app-shell {
-    padding: 8px 10px 10px !important;
+    padding: clamp(14px, 2.5vh, 24px) clamp(16px, 4vw, 24px) !important;
   }
 
+  .main-card {
+    padding: clamp(20px, 3.2vh, 36px) clamp(18px, 4.5vw, 28px) !important;
+    gap: clamp(14px, 2.4vh, 24px) !important;
+  }
+
+  .stage-split {
+    gap: clamp(18px, 3vh, 32px) !important;
+  }
+
+  .scale-opt,
+  .choice-card {
+    padding: clamp(12px, 1.8vh, 18px) clamp(14px, 4vw, 20px) !important;
+    gap: clamp(6px, 1vh, 10px) !important;
+  }
+
+  .btn-primary,
+  .btn-next {
+    min-height: 48px !important;
+    padding: 12px 30px !important;
+  }
+}
+
+/* ---------- 2. Modern Flagship Screens (19.5:9, 19:9, 18.5:9) ---------- */
+/* iPhone 16/15/14/13/12 Pro & Max (19.5:9), Pixel 8/9 Pro (20:9/19.5:9), Galaxy S23/S24 */
+@media screen and (orientation: portrait) and (min-aspect-ratio: 9/20) and (max-aspect-ratio: 9/18.5) {
+  .app-shell {
+    padding: clamp(12px, 2vh, 18px) clamp(14px, 3.5vw, 22px) !important;
+  }
+
+  .main-card {
+    padding: clamp(18px, 2.8vh, 30px) clamp(16px, 4vw, 26px) !important;
+  }
+
+  .main-card h1.headline {
+    font-size: clamp(22px, 3.2vh, 32px) !important;
+    line-height: 1.18 !important;
+  }
+
+  .scale-opt,
+  .choice-card {
+    padding: clamp(10px, 1.5vh, 15px) clamp(14px, 3.5vw, 18px) !important;
+  }
+
+  .btn-primary,
+  .btn-next {
+    min-height: 44px !important;
+    padding: 11px 26px !important;
+  }
+}
+
+/* ---------- 3. Classic Widescreen Ratio Screens (16:9, 18:9, 17:9) ---------- */
+/* iPhone SE (2nd/3rd Gen), iPhone 8/8 Plus/7, 360x640, 375x667 classic Androids */
+@media screen and (orientation: portrait) and (min-aspect-ratio: 9/18.5) and (max-aspect-ratio: 9/15.5) {
   .app-header {
-    margin-bottom: 6px !important;
+    margin-bottom: 8px !important;
   }
 
   .wordmark {
     font-size: 17px !important;
   }
 
-  .stage-track {
-    margin-bottom: 10px !important;
-    gap: 3px !important;
-  }
-
   .main-card {
-    padding: 14px 14px !important;
+    padding: 14px 16px !important;
     border-radius: 18px !important;
-    max-height: calc(100dvh - 80px) !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
+    max-height: calc(100dvh - 76px) !important;
   }
 
-  .main-card h1,
-  .main-card h2,
-  .main-card .headline,
   .main-card h1.headline {
-    font-size: 20px !important;
+    font-size: clamp(19px, 3vh, 24px) !important;
     line-height: 1.15 !important;
     margin-bottom: 6px !important;
   }
 
-  .main-card p.sub,
-  p.sub {
+  .main-card p.sub {
     font-size: 12.5px !important;
     line-height: 1.35 !important;
     margin-bottom: 10px !important;
   }
 
-  .likert-btn,
-  .scale-opt {
-    padding: 7px 10px !important;
-    font-size: 12.5px !important;
-    border-radius: 10px !important;
-  }
-
+  .scale-opt,
   .choice-card {
-    padding: 10px 12px !important;
+    padding: 8px 12px !important;
     font-size: 13px !important;
-  }
-
-  .btn-primary,
-  .btn-next {
-    height: 38px !important;
-    padding: 0 20px !important;
-    font-size: 11.5px !important;
-    min-width: 100px !important;
-  }
-
-  .chip {
-    padding: 6px 12px !important;
-    font-size: 12px !important;
-  }
-
-  .draggable-item {
-    padding: 7px 10px !important;
-    font-size: 12.5px !important;
-  }
-}
-
-/* ---------- 2. Standard Mobile Phones (iPhone 13/14/15/16, Google Pixel 6/7/8/9, Galaxy S23/S24 381px - 480px) ---------- */
-@media screen and (min-width: 381px) and (max-width: 480px) {
-  .app-shell {
-    padding: 12px 14px 14px !important;
-  }
-
-  .app-header {
-    margin-bottom: 10px !important;
-  }
-
-  .main-card {
-    padding: 20px 18px !important;
-    border-radius: 22px !important;
-    max-height: calc(100dvh - 90px) !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  .main-card h1,
-  .main-card h2,
-  .main-card .headline,
-  .main-card h1.headline {
-    font-size: 23px !important;
-    line-height: 1.18 !important;
-    margin-bottom: 8px !important;
-  }
-
-  .main-card p.sub,
-  p.sub {
-    font-size: 13.5px !important;
-    line-height: 1.4 !important;
-    margin-bottom: 14px !important;
-  }
-
-  .likert-btn,
-  .scale-opt {
-    padding: 9px 14px !important;
-    font-size: 13.5px !important;
     border-radius: 12px !important;
   }
 
   .btn-primary,
   .btn-next {
-    height: 42px !important;
-    padding: 0 24px !important;
+    min-height: 40px !important;
+    padding: 8px 22px !important;
     font-size: 12.5px !important;
-    min-width: 120px !important;
+    min-width: 110px !important;
   }
 }
 
-/* ---------- 3. Tablet Devices (iPad Mini 744px, iPad Air 820px, iPad Pro 834px/1024px, Galaxy Tab) ---------- */
-@media screen and (min-width: 481px) and (max-width: 1024px) {
+/* ---------- 4. Square-ish / Foldables / Tablets in Portrait (4:3, 3:2, 1:1, 5:4) ---------- */
+/* Galaxy Z Fold 5/6 inside, Pixel Fold unfolded, iPad Mini, iPad 10th Gen portrait */
+@media screen and (orientation: portrait) and (min-aspect-ratio: 9/15.5) {
   .app-shell {
     padding: 20px 32px !important;
+    max-width: 820px !important;
+    margin: 0 auto !important;
   }
 
   .main-card {
-    max-width: 780px !important;
-    padding: 32px 40px !important;
-    border-radius: 28px !important;
-    max-height: calc(100dvh - 100px) !important;
+    max-width: 720px !important;
+    padding: 28px 34px !important;
+    border-radius: 26px !important;
   }
 
-  .main-card h1,
-  .main-card h2,
-  .main-card .headline,
   .main-card h1.headline {
-    font-size: clamp(30px, 4vw, 40px) !important;
+    font-size: clamp(28px, 3.8vw, 36px) !important;
   }
 
-  .likert-container {
-    gap: 10px !important;
+  .scale-opt,
+  .choice-card {
+    padding: 12px 18px !important;
+    font-size: 14.5px !important;
   }
 
-  .likert-btn,
-  .scale-opt {
-    padding: 12px 20px !important;
+  .btn-primary,
+  .btn-next {
+    min-height: 46px !important;
+    padding: 12px 30px !important;
+  }
+}
+
+/* ---------- 5. Ultra-Narrow Small Mobile Devices (Width <= 360px) ---------- */
+/* Fold outer cover screen (344px), iPhone 12/13 Mini, compact budget Androids */
+@media screen and (max-width: 360px) {
+  .app-shell {
+    padding: 8px 10px !important;
+  }
+
+  .app-header {
+    margin-bottom: 6px !important;
+  }
+
+  .main-card {
+    padding: 12px 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .main-card h1.headline {
+    font-size: 18.5px !important;
+  }
+
+  .main-card p.sub {
+    font-size: 12px !important;
+  }
+
+  .scale-opt,
+  .choice-card {
+    padding: 7px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .btn-primary,
+  .btn-next {
+    min-height: 38px !important;
+    padding: 6px 18px !important;
+    font-size: 11.5px !important;
+    min-width: 95px !important;
+  }
+}
+
+/* ---------- 6. Compact Vertical Height (Height <= 640px or Keyboard Active) ---------- */
+@media screen and (max-height: 640px) {
+  .app-header {
+    margin-bottom: 4px !important;
+  }
+
+  .main-card {
+    max-height: calc(100dvh - 54px) !important;
+    padding: 10px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .main-card h1.headline {
+    font-size: 18px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .main-card p.sub {
+    font-size: 11.5px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .scale-opt,
+  .choice-card {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .btn-primary,
+  .btn-next {
+    min-height: 36px !important;
+    padding: 6px 16px !important;
+    font-size: 11.5px !important;
+  }
+}
+
+/* ---------- 7. Mobile Landscape Mode (Phones Rotated Horizontally) ---------- */
+@media screen and (orientation: landscape) and (max-height: 540px) {
+  .app-shell {
+    padding: 6px 16px !important;
+  }
+
+  .app-header {
+    margin-bottom: 4px !important;
+  }
+
+  .stage-track-v2 {
+    margin-bottom: 6px !important;
+  }
+
+  .main-card {
+    max-height: calc(100dvh - 44px) !important;
+    padding: 10px 16px !important;
+  }
+
+  .stage-split {
+    display: grid !important;
+    grid-template-columns: 1fr 1.2fr !important;
+    gap: 14px !important;
+    align-items: center !important;
+  }
+
+  .main-card h1.headline {
+    font-size: 17px !important;
+    text-align: left !important;
+    margin-bottom: 4px !important;
+  }
+
+  .main-card p.sub {
+    font-size: 11.5px !important;
+    text-align: left !important;
+    margin-bottom: 6px !important;
+  }
+
+  .scale-opt,
+  .choice-card {
+    padding: 5px 10px !important;
+    font-size: 11.5px !important;
+  }
+
+  .btn-primary,
+  .btn-next {
+    min-height: 34px !important;
+    padding: 5px 16px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* ---------- 8. Desktop & Wide Screens (>= 1025px) ---------- */
+@media screen and (min-width: 1025px) {
+  .app-shell {
+    padding: 24px 40px !important;
+    max-width: 1280px !important;
+    margin: 0 auto !important;
+  }
+
+  .main-card {
+    padding: 36px 48px !important;
+    border-radius: 30px !important;
+  }
+
+  .main-card h1.headline {
+    font-size: 38px !important;
+  }
+
+  .scale-opt,
+  .choice-card {
+    padding: 14px 22px !important;
     font-size: 15px !important;
   }
 
   .btn-primary,
   .btn-next {
-    height: 46px !important;
-    padding: 0 32px !important;
-    font-size: 13.5px !important;
+    min-height: 48px !important;
+    padding: 12px 34px !important;
+    font-size: 14px !important;
   }
+}
+
+/* ================================================================== */
+/* JAVASCRIPT BROWSER BRAIN RUNTIME ATTRIBUTE SYNC                    */
+/* ================================================================== */
+
+/* Ultra-tall phone runtime override */
+html[data-browser-ratio="ultra-tall"] .main-card {
+  gap: clamp(14px, 2.5vh, 28px) !important;
+  padding-top: clamp(20px, 3.5vh, 38px) !important;
+  padding-bottom: clamp(20px, 3.5vh, 38px) !important;
+}
+
+/* Foldable / squarish runtime override */
+html[data-browser-ratio="foldable"] .main-card {
+  max-width: 720px !important;
+  margin: 0 auto !important;
+}
+
+/* Virtual keyboard / extreme compact runtime override */
+html[data-height-class="compact-tight"] .app-header {
+  display: none !important;
+}
+
+html[data-height-class="compact-tight"] .main-card {
+  max-height: calc(var(--bw-h, 100dvh) - 14px) !important;
+  padding: 8px 12px !important;
+}
+
+html[data-height-class="compact-tight"] h1.headline {
+  font-size: 17px !important;
+  margin-bottom: 3px !important;
+}
+
+html[data-height-class="compact-tight"] p.sub {
+  font-size: 11px !important;
+  margin-bottom: 6px !important;
+}
+
+html[data-height-class="compact-tight"] .scale-opt,
+html[data-height-class="compact-tight"] .choice-card {
+  padding: 5px 8px !important;
+  font-size: 11.5px !important;
+}
+
+html[data-height-class="compact-tight"] .btn-primary,
+html[data-height-class="compact-tight"] .btn-next {
+  min-height: 34px !important;
+  padding: 5px 14px !important;
+  font-size: 11px !important;
 }

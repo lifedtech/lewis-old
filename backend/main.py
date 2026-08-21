@@ -26,6 +26,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, StringConstraints, EmailStr
 from dotenv import load_dotenv
 
+load_dotenv()
+
 from scoring import (
     calculate_who5, calculate_pss10, calculate_ucla3, calculate_gse,
     calculate_promis, calculate_cfpb5, calculate_diener, calculate_ins,
@@ -43,9 +45,13 @@ from security import GuardrailMiddleware
 from enrich import build_enriched_object
 from insight_report import build_insight_report
 from report_gate import check_report
-from auth import register_user, login_user, verify_token, revoke_session, save_assessment_submission, get_user_assessments, get_onboarding_analytics_summary, IS_PRODUCTION, save_support_query
-
-load_dotenv()
+from auth import (
+    register_user, login_user, verify_token, revoke_session,
+    save_assessment_submission, get_user_assessments, get_onboarding_analytics_summary,
+    IS_PRODUCTION, save_support_query, save_encrypted_assessment_record,
+    record_journey_ping, mark_journey_completed, get_journey_analytics_overview,
+    get_abandoned_users_list, mark_reminders_sent,
+)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("lewis.api")
 
@@ -135,6 +141,8 @@ class FullAssessmentInput(BaseModel):
 
     # Report cover only (context, never scoring). Both optional.
     name: Optional[ShortText] = None
+    email: Optional[ShortText] = None
+    subscribeNewsletter: Optional[bool] = None
     location: Optional[ShortText] = None
 
     # SPINE instruments (0-based option indices; see scoring.py)
@@ -194,6 +202,31 @@ class FullAssessmentInput(BaseModel):
     max_time_available: int = Field(default=5, ge=1, le=120)
     current_environment: ShortText = Field(default="Anywhere")
     flags: List[ShortText] = Field(default=[], max_length=10)
+
+    # Journey Telemetry & Tracking Fields
+    session_id: Optional[ShortText] = None
+    started_at: Optional[ShortText] = None
+    duration_seconds: Optional[int] = None
+
+
+class JourneyPingInput(BaseModel):
+    session_id: str = Field(..., min_length=1, max_length=128)
+    user_name: Optional[ShortText] = None
+    user_email: Optional[ShortText] = None
+    current_stage: int = Field(default=0, ge=0, le=10)
+    current_screen: str = Field(default="landing", max_length=100)
+    progress_percent: float = Field(default=0.0, ge=0.0, le=100.0)
+    duration_seconds: int = Field(default=0, ge=0)
+
+
+class JourneyCompleteInput(BaseModel):
+    session_id: str = Field(..., min_length=1, max_length=128)
+    duration_seconds: Optional[int] = None
+
+
+class SendRemindersInput(BaseModel):
+    session_ids: Optional[List[str]] = None
+    inactive_minutes: int = Field(default=10, ge=1, le=1440)
 
 
 class SupportQueryInput(BaseModel):
@@ -582,7 +615,7 @@ def calculate_full_assessment(payload: FullAssessmentInput, request: Request = N
             except Exception as e:
                 logger.error("Failed to save assessment submission to DB: %s", e)
 
-    return {
+    full_response = {
         "status": "success",
         "schema_version": "1.1",
         "insight_report": insight_report,
@@ -607,3 +640,174 @@ def calculate_full_assessment(payload: FullAssessmentInput, request: Request = N
         "patterns": patterns,
         "portrait": portrait,
     }
+
+    # 1. Always store user report in DB with user name & email encrypted at rest
+    try:
+        saved_rec_uuid = save_encrypted_assessment_record(
+            user_name=payload.name,
+            user_email=payload.email,
+            report_data=full_response,
+            started_at_iso=payload.started_at,
+            duration_seconds=payload.duration_seconds
+        )
+        full_response["report_uuid"] = saved_rec_uuid
+        logger.info("Encrypted assessment record %s saved successfully", saved_rec_uuid)
+    except Exception as exc:
+        logger.error("Failed to save encrypted assessment record: %s", exc)
+
+    # 2. Mark journey session completed if session_id provided
+    if payload.session_id:
+        try:
+            mark_journey_completed(payload.session_id, payload.duration_seconds)
+        except Exception as exc:
+            logger.warning("Failed to mark journey session completed: %s", exc)
+
+    # 3. Legacy authenticated user vault save
+    auth_header = request.headers.get("Authorization") if request else None
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+        user = verify_token(token)
+        if user:
+            try:
+                save_assessment_submission(
+                    user_id=user["id"],
+                    user_email=user["email"],
+                    assessment_data={
+                        "scores": dimensions,
+                        "narrative": {"text": narrative_text, "source": source},
+                        "answers": payload.model_dump(),
+                        "insight_report": insight_report
+                    }
+                )
+            except Exception as e:
+                logger.error("Failed to save user vault submission: %s", e)
+
+    return full_response
+
+
+# --- Journey Telemetry & Inactivity Reminder Endpoints -------------------------
+
+@app.post("/journey/ping")
+def journey_ping(payload: JourneyPingInput):
+    """Record heartbeat telemetry, user progression, and encrypted user details."""
+    try:
+        res = record_journey_ping(
+            session_id=payload.session_id,
+            user_name=payload.user_name,
+            user_email=payload.user_email,
+            current_stage=payload.current_stage,
+            current_screen=payload.current_screen,
+            progress_percent=payload.progress_percent,
+            duration_seconds=payload.duration_seconds,
+        )
+        return res
+    except Exception as exc:
+        logger.error("Journey ping recording error: %s", exc)
+        return {"status": "error", "detail": str(exc)}
+
+
+@app.post("/journey/complete")
+def journey_complete(payload: JourneyCompleteInput):
+    """Mark a user's questionnaire journey as fully completed."""
+    try:
+        ok = mark_journey_completed(payload.session_id, payload.duration_seconds)
+        return {"status": "success", "completed": ok}
+    except Exception as exc:
+        logger.error("Journey completion recording error: %s", exc)
+        return {"status": "error", "detail": str(exc)}
+
+
+@app.get("/analytics/journey-overview")
+def get_analytics_overview():
+    """
+    Get overview statistics:
+    - Average time taken by users to complete LEWIS
+    - Total completed sessions
+    - Count of users who left midway (<50% and >=50%)
+    - Count of users left after 50% with >10 mins inactivity awaiting reminder
+    """
+    try:
+        return {
+            "status": "success",
+            "data": get_journey_analytics_overview()
+        }
+    except Exception as exc:
+        logger.error("Error fetching journey analytics overview: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to fetch journey analytics")
+
+
+@app.get("/analytics/abandoned-users")
+def get_abandoned_users(inactive_minutes: int = 10):
+    """
+    List users who left LEWIS midway (inactive for > inactive_minutes).
+    Includes decrypted name and email for administrator follow-up, last screen,
+    and eligibility for the 10-minute remainder email / push notification.
+    """
+    try:
+        users = get_abandoned_users_list(inactive_minutes=inactive_minutes)
+        return {
+            "status": "success",
+            "count": len(users),
+            "inactive_threshold_minutes": inactive_minutes,
+            "users": users
+        }
+    except Exception as exc:
+        logger.error("Error fetching abandoned users: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to fetch abandoned users list")
+
+
+@app.post("/analytics/send-reminders")
+def send_abandoned_reminders(payload: SendRemindersInput):
+    """
+    Process reminder queue for users who left after reaching 50% and have been inactive for >= 10 minutes.
+    Marks reminders as sent and returns dispatched notification payloads with restart link.
+    """
+    try:
+        abandoned_users = get_abandoned_users_list(inactive_minutes=payload.inactive_minutes)
+        eligible = [u for u in abandoned_users if u.get("eligible_for_10min_reminder")]
+        
+        if payload.session_ids:
+            eligible = [u for u in eligible if u["session_id"] in payload.session_ids]
+            
+        dispatched = []
+        sessions_to_mark = []
+        
+        for user in eligible:
+            notification_payload = {
+                "session_id": user["session_id"],
+                "recipient_name": user["name"],
+                "recipient_email": user["email"],
+                "last_stage": user["current_stage"],
+                "last_screen": user["last_screen"],
+                "progress_percent": user["progress_percent"],
+                "email_subject": "Your LEWIS Wellbeing Report is waiting for you — Restart anytime",
+                "email_body": (
+                    f"Hello {user['name']},\n\n"
+                    f"We noticed you were halfway through your LEWIS assessment ({user['progress_percent']}% completed). "
+                    f"Your personalized wellbeing report and nervous system blueprint are ready to be completed.\n\n"
+                    f"Click below to retake or attend LEWIS from start:\n"
+                    f"https://lewis.cold-forest-a8ec.workers.dev/#landing\n\n"
+                    f"Best regards,\nLEWIS Wellbeing Intelligence Team"
+                ),
+                "push_notification": {
+                    "title": "Complete your LEWIS Assessment",
+                    "body": "You were over 50% through! Finish now to receive your personalized report.",
+                    "action_url": "/#landing"
+                }
+            }
+            dispatched.append(notification_payload)
+            sessions_to_mark.append(user["session_id"])
+            
+        marked_count = mark_reminders_sent(sessions_to_mark)
+        
+        return {
+            "status": "success",
+            "message": f"Processed {len(dispatched)} reminder notifications for post-50% midway dropouts.",
+            "dispatched_count": len(dispatched),
+            "marked_sent_in_db": marked_count,
+            "reminders": dispatched
+        }
+    except Exception as exc:
+        logger.error("Error processing abandoned reminders: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to process reminder notifications")
+
