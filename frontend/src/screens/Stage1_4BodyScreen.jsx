@@ -100,15 +100,15 @@ export default function Stage1_4BodyScreen() {
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Eyebrow + Title + Vector Line Art */}
+        {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{
+            <p className="stage-eyebrow" style={{
               fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: '#414242',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -126,27 +126,25 @@ export default function Stage1_4BodyScreen() {
             }}>
               Body &amp; Movement Context
             </h1>
+            <p className="stage-subtitle" style={{
+              margin: '10px 0 0 0',
+              fontSize: '15px',
+              fontWeight: 700,
+              color: '#414242',
+              fontFamily: "'Nunito', sans-serif",
+              lineHeight: 1.5,
+              maxWidth: '350px',
+            }}>
+              How are your physical energy and sleep rhythms feeling?
+            </p>
           </div>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
             <BodyIllustration />
           </div>
         </div>
 
-        {/* RIGHT — BODY MOVEMENT Eyebrow + Question Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
-
-          <p className="stage-right-eyebrow" style={{
-            fontFamily: '"Nunito", sans-serif',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#414242',
-            textTransform: 'uppercase',
-            margin: '0 0 8px 0',
-            width: '100%'
-          }}>
-            BODY MOVEMENT &amp; SLEEP
-          </p>
+        {/* RIGHT — Question Cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start', width: '100%', paddingTop: '2px' }}>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-start', width: '100%' }}>
 

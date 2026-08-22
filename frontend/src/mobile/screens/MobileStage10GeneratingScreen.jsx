@@ -89,7 +89,7 @@ const MirrorSynthesisIllustration = () => {
 export default function MobileStage10GeneratingScreen() {
   const { setScreen } = useLewisStore()
   const [stepIdx, setStepIdx] = useState(0)
-  const [progressPercent, setProgressPercent] = useState(15)
+  const [progressPercent, setProgressPercent] = useState(0)
 
   const steps = [
     "Compiling your psychological metrics & cross-domain influence matrix...",
@@ -103,30 +103,15 @@ export default function MobileStage10GeneratingScreen() {
   useEffect(() => {
     let mounted = true
     const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+    const TOTAL_DURATION_MS = 12500 // 12.5 second total loading sequence
+    const startTime = Date.now()
 
-    const interval = setInterval(() => {
-      setProgressPercent((prev) => {
-        if (prev < 94) {
-          const next = prev + Math.floor(Math.random() * 5 + 3)
-          const targetStep = Math.min(steps.length - 1, Math.floor((next / 94) * (steps.length - 1)))
-          setStepIdx(targetStep)
-          return Math.min(94, next)
-        }
-        return prev
-      })
-    }, 320)
-
-    async function fetchAnalysis() {
+    // 1. Fire parallel backend analysis synthesis
+    async function runFetch() {
       try {
         const { payload, missing } = buildFullAssessmentPayload(useLewisStore.getState())
         if (missing.length > 0) {
           useLewisStore.setState({ analysisMissing: missing, analysisData: null, analysisError: null })
-          if (mounted) {
-            clearInterval(interval)
-            setProgressPercent(100)
-            setStepIdx(steps.length - 1)
-            setTimeout(() => setScreen('mirror'), 450)
-          }
           return
         }
 
@@ -142,33 +127,49 @@ export default function MobileStage10GeneratingScreen() {
         }
 
         const data = await response.json()
-        useLewisStore.setState({ analysisData: data, analysisMissing: null, analysisError: null })
-
         if (mounted) {
-          clearInterval(interval)
-          setProgressPercent(100)
-          setStepIdx(steps.length - 1)
-          setTimeout(() => setScreen('mirror'), 450)
+          useLewisStore.setState({ analysisData: data, analysisMissing: null, analysisError: null })
         }
       } catch (err) {
         console.error(err)
-        useLewisStore.setState({
-          analysisError: 'We could not put your synthesis together just now. Please try again in a little while.',
-          analysisData: null
-        })
         if (mounted) {
-          clearInterval(interval)
-          setProgressPercent(100)
-          setTimeout(() => setScreen('mirror'), 450)
+          useLewisStore.setState({
+            analysisError: 'We could not put your synthesis together just now. Please try again in a little while.',
+            analysisData: null
+          })
         }
       }
     }
 
-    fetchAnalysis()
+    runFetch()
+
+    // 2. High-precision 12-15s progress ticker
+    const timer = setInterval(() => {
+      if (!mounted) return
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(100, Math.floor((elapsed / TOTAL_DURATION_MS) * 100))
+
+      setProgressPercent(progress)
+
+      const currentStep = Math.min(
+        steps.length - 1,
+        Math.floor((progress / 100) * steps.length)
+      )
+      setStepIdx(currentStep)
+
+      if (progress >= 100) {
+        clearInterval(timer)
+        setTimeout(() => {
+          if (mounted) {
+            setScreen('mirror')
+          }
+        }, 650)
+      }
+    }, 45)
 
     return () => {
       mounted = false
-      clearInterval(interval)
+      clearInterval(timer)
     }
   }, [setScreen, steps.length])
 
@@ -194,20 +195,6 @@ export default function MobileStage10GeneratingScreen() {
       <div style={{ marginBottom: '24px', width: '100%', display: 'flex', justifyContent: 'center' }}>
         <MirrorSynthesisIllustration />
       </div>
-
-      {/* Eyebrow Badge */}
-      <p style={{
-        fontFamily: '"Nunito", sans-serif',
-        fontSize: '11px',
-        fontWeight: 700,
-        letterSpacing: '0.14em',
-        color: '#00ae9d',
-        textTransform: 'uppercase',
-        margin: '0 0 8px 0',
-        lineHeight: 1.3,
-      }}>
-        LEWIS ASSESSMENT ENGINE
-      </p>
 
       {/* Title */}
       <h1 style={{

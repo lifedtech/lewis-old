@@ -6,6 +6,7 @@ import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { buildClientFallbackAnalysis } from '../lib/scoring.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import InsightReport from '../report/InsightReport.jsx'
+import { exportReportPdf } from '../report/exportPdf.js'
 import Icon from '../report/icons.jsx'
 import './landing.css'
 /* ── Backend Connection Error Vector Line Art ── */
@@ -67,9 +68,27 @@ export default function MirrorScreen() {
   const [errorDetail, setErrorDetail] = useState(null)
   const [attempt, setAttempt] = useState(0)
   const [loadProgress, setLoadProgress] = useState(storeAnalysis ? 100 : 25)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [downloadSuccess, setDownloadSuccess] = useState(false)
 
   const analysis = storeAnalysis
   const error = localError || storeError
+
+  const handleGetReport = async () => {
+    if (isDownloading) return
+    setIsDownloading(true)
+    setDownloadSuccess(false)
+    try {
+      await exportReportPdf('Lewis-Insight-Report.pdf')
+      setDownloadSuccess(true)
+      setTimeout(() => setDownloadSuccess(false), 4000)
+    } catch (err) {
+      console.error('PDF export fallback:', err)
+      window.print()
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   useEffect(() => {
     if (storeAnalysis) {
@@ -145,9 +164,6 @@ export default function MirrorScreen() {
           <div style={{ marginBottom: '20px' }}>
             <LewisLogo size={52} layout="stacked" showText={false} animated={true} />
           </div>
-          <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', letterSpacing: '0.14em', color: '#00ae9d', fontWeight: 700, textTransform: 'uppercase', marginBottom: '10px' }}>
-            Lewis ASSESSMENT ENGINE
-          </span>
           <h2 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '24px', fontWeight: 800, color: '#414242', margin: '0 0 12px 0' }}>
             Synthesizing Your Mirror
           </h2>
@@ -452,14 +468,16 @@ export default function MirrorScreen() {
 
         <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
           {/* Hero Page Header */}
-          <div style={{ textAlign: 'center', marginBottom: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ textAlign: 'center', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontSize: 'clamp(32px, 4vw, 48px)',
               fontWeight: 800,
               color: 'var(--text)',
               margin: '0 0 8px 0',
-              letterSpacing: '-0.03em'
+              letterSpacing: '-0.03em',
+              textAlign: 'center',
+              width: '100%',
             }}>
               Your Lewis Mirror
             </h1>
@@ -467,7 +485,9 @@ export default function MirrorScreen() {
               fontFamily: "'Nunito', sans-serif",
               fontSize: '16px',
               color: 'var(--text-mute)',
-              margin: '0 0 16px 0'
+              margin: '0 0 16px 0',
+              textAlign: 'center',
+              width: '100%',
             }}>
               Your complete reflection of wellbeing, stability, and growth resources.
             </p>
@@ -584,21 +604,49 @@ export default function MirrorScreen() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 15, left: 5, bottom: 0 }}>
                         <defs>
-                          <linearGradient id="gradThriving" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#34d399" stopOpacity={0.8} />
+                          <linearGradient id="gradNature" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#34d399" stopOpacity={0.9} />
                             <stop offset="100%" stopColor="#00ae9d" stopOpacity={1} />
                           </linearGradient>
-                          <linearGradient id="gradSteady" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#fde047" stopOpacity={0.8} />
+                          <linearGradient id="gradGrowth" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#4ade80" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#16a34a" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradWellbeing" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#0284c7" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradAgency" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#818cf8" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#4f46e5" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradMeaning" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#c084fc" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#7c3aed" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradEnergy" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#fbbf24" stopOpacity={0.9} />
                             <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
                           </linearGradient>
-                          <linearGradient id="gradStretched" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="var(--dawn-glow)" stopOpacity={0.8} />
-                            <stop offset="100%" stopColor="var(--dawn)" stopOpacity={1} />
+                          <linearGradient id="gradPhysical" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#fb923c" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#ea580c" stopOpacity={1} />
                           </linearGradient>
-                          <linearGradient id="gradDepleted" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#f472b6" stopOpacity={0.8} />
-                            <stop offset="100%" stopColor="#be123c" stopOpacity={1} />
+                          <linearGradient id="gradFinancial" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#2dd4bf" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#0f766e" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradCalm" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#0891b2" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradConnection" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#fb7185" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#e11d48" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="gradDefault" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#94a3b8" stopOpacity={0.9} />
+                            <stop offset="100%" stopColor="#475569" stopOpacity={1} />
                           </linearGradient>
                         </defs>
 
@@ -624,10 +672,19 @@ export default function MirrorScreen() {
                           animationEasing="ease-out"
                         >
                           {sortedData.map((entry, index) => {
-                            let fillId = "url(#gradDepleted)"
-                            if (entry.A >= 70) fillId = "url(#gradThriving)"
-                            else if (entry.A >= 55) fillId = "url(#gradSteady)"
-                            else if (entry.A >= 40) fillId = "url(#gradStretched)"
+                            const gradMap = {
+                              'Nature': 'url(#gradNature)',
+                              'Growth': 'url(#gradGrowth)',
+                              'Wellbeing': 'url(#gradWellbeing)',
+                              'Agency': 'url(#gradAgency)',
+                              'Meaning': 'url(#gradMeaning)',
+                              'Energy': 'url(#gradEnergy)',
+                              'Physical': 'url(#gradPhysical)',
+                              'Financial Peace': 'url(#gradFinancial)',
+                              'Calm': 'url(#gradCalm)',
+                              'Connection': 'url(#gradConnection)'
+                            }
+                            const fillId = gradMap[entry.subject] || 'url(#gradDefault)'
                             return <Cell key={`cell-${index}`} fill={fillId} />
                           })}
                         </Bar>
@@ -709,7 +766,7 @@ export default function MirrorScreen() {
               lineHeight: 1.5,
               margin: '0 0 20px 0'
             }}>
-              Access your complete 25-page report featuring cross-domain resilience maps, clinical dimension analyses, and tailored micro-habit resolutions sent straight to your email.
+              Access and download your complete 25-page report featuring cross-domain resilience maps, clinical dimension analyses, and tailored micro-habit resolutions.
             </p>
 
             {/* Feature Pills */}
@@ -721,7 +778,7 @@ export default function MirrorScreen() {
               marginBottom: '24px',
               maxWidth: '580px'
             }}>
-              {['10-Dimension Analysis', 'Autonomic Nervous Mapping', '30-Day Growth Roadmap', 'Instant PDF Email Delivery'].map((item) => (
+              {['10-Dimension Analysis', 'Autonomic Nervous Mapping', '30-Day Growth Roadmap', 'Instant PDF Download'].map((item) => (
                 <span key={item} style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -741,11 +798,12 @@ export default function MirrorScreen() {
               ))}
             </div>
 
-            {/* Lock CTA Button */}
+            {/* Download Report CTA Button */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setScreen('payment')}
+              onClick={handleGetReport}
+              disabled={isDownloading}
               className="btn-primary"
               style={{
                 padding: '14px 34px',
@@ -758,15 +816,17 @@ export default function MirrorScreen() {
                 alignItems: 'center',
                 gap: '10px',
                 boxShadow: '0 8px 24px rgba(0, 174, 157, 0.28)',
-                cursor: 'pointer',
+                cursor: isDownloading ? 'wait' : 'pointer',
                 border: 'none',
+                opacity: isDownloading ? 0.8 : 1,
               }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              Get report on your mail
+              {isDownloading ? 'Generating Report...' : (downloadSuccess ? '✓ Report Downloaded!' : 'Get your report')}
             </motion.button>
 
             <p style={{
@@ -776,10 +836,15 @@ export default function MirrorScreen() {
               margin: '10px 0 0 0',
               fontStyle: 'italic'
             }}>
-              Safe, confidential, and delivered directly to your inbox.
+              Safe, confidential, and instant PDF download.
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Hidden Render Target for Canvas-Accurate PDF Generation */}
+      <div style={{ position: 'fixed', left: '-99999px', top: 0, width: '1200px', pointerEvents: 'none', opacity: 0.01 }} aria-hidden="true">
+        <InsightReport report={analysis?.report} />
       </div>
 
       <p className="closing-line mirror-web-ui" style={{ textAlign: 'center', color: 'var(--text-mute)', fontSize: '13.5px', marginTop: '16px' }}>

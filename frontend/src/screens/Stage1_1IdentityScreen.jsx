@@ -47,11 +47,11 @@ export default function Stage1_1IdentityScreen() {
         textAlign: 'center',
       }}>
         {/* Eyebrow */}
-        <p style={{
+        <p className="stage-eyebrow" style={{
           fontFamily: '"Nunito", sans-serif',
-          fontSize: '11px',
+          fontSize: '6px',
           fontWeight: 700,
-          letterSpacing: '0.14em',
+          letterSpacing: '0.16em',
           color: '#00ae9d',
           textTransform: 'uppercase',
           margin: '0 0 10px 0',
@@ -73,9 +73,10 @@ export default function Stage1_1IdentityScreen() {
         </h1>
 
         {/* Subtitle */}
-        <p style={{
+        <p className="stage-subtitle" style={{
           margin: '0 0 32px 0',
-          fontSize: 'clamp(13px, 1.6vw, 16px)',
+          fontSize: '15px',
+          fontWeight: 700,
           color: '#414242',
           fontFamily: "'Nunito', sans-serif",
         }}>

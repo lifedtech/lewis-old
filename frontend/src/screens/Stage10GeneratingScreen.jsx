@@ -89,7 +89,7 @@ const MirrorSynthesisIllustration = () => {
 export default function Stage10GeneratingScreen() {
   const { setScreen } = useLewisStore()
   const [stepIdx, setStepIdx] = useState(0)
-  const [progressPercent, setProgressPercent] = useState(15)
+  const [progressPercent, setProgressPercent] = useState(0)
 
   const steps = [
     "Compiling your psychological metrics & cross-domain influence matrix...",
@@ -103,31 +103,15 @@ export default function Stage10GeneratingScreen() {
   useEffect(() => {
     let mounted = true
     const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+    const TOTAL_DURATION_MS = 12500 // 12.5 second total loading sequence
+    const startTime = Date.now()
 
-    // Smooth active progress ticker while fetching backend data
-    const interval = setInterval(() => {
-      setProgressPercent((prev) => {
-        if (prev < 94) {
-          const next = prev + Math.floor(Math.random() * 5 + 3)
-          const targetStep = Math.min(steps.length - 1, Math.floor((next / 94) * (steps.length - 1)))
-          setStepIdx(targetStep)
-          return Math.min(94, next)
-        }
-        return prev
-      })
-    }, 320)
-
-    async function fetchAnalysis() {
+    // 1. Fire parallel backend analysis synthesis
+    async function runFetch() {
       try {
         const { payload, missing } = buildFullAssessmentPayload(useLewisStore.getState())
         if (missing.length > 0) {
           useLewisStore.setState({ analysisMissing: missing, analysisData: null, analysisError: null })
-          if (mounted) {
-            clearInterval(interval)
-            setProgressPercent(100)
-            setStepIdx(steps.length - 1)
-            setTimeout(() => setScreen('mirror'), 450)
-          }
           return
         }
 
@@ -143,43 +127,54 @@ export default function Stage10GeneratingScreen() {
         }
 
         const data = await response.json()
-        useLewisStore.setState({ analysisData: data, analysisMissing: null, analysisError: null })
-
         if (mounted) {
-          clearInterval(interval)
-          setProgressPercent(100)
-          setStepIdx(steps.length - 1)
-          setTimeout(() => setScreen('mirror'), 450)
+          useLewisStore.setState({ analysisData: data, analysisMissing: null, analysisError: null })
         }
       } catch (err) {
         console.error(err)
-        useLewisStore.setState({
-          analysisError: 'We could not put your synthesis together just now. Please try again in a little while.',
-          analysisData: null
-        })
         if (mounted) {
-          clearInterval(interval)
-          setProgressPercent(100)
-          setTimeout(() => setScreen('mirror'), 450)
+          useLewisStore.setState({
+            analysisError: 'We could not put your synthesis together just now. Please try again in a little while.',
+            analysisData: null
+          })
         }
       }
     }
 
-    fetchAnalysis()
+    runFetch()
+
+    // 2. High-precision 12-15s progress ticker
+    const timer = setInterval(() => {
+      if (!mounted) return
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(100, Math.floor((elapsed / TOTAL_DURATION_MS) * 100))
+
+      setProgressPercent(progress)
+
+      const currentStep = Math.min(
+        steps.length - 1,
+        Math.floor((progress / 100) * steps.length)
+      )
+      setStepIdx(currentStep)
+
+      if (progress >= 100) {
+        clearInterval(timer)
+        setTimeout(() => {
+          if (mounted) {
+            setScreen('mirror')
+          }
+        }, 650)
+      }
+    }, 45)
 
     return () => {
       mounted = false
-      clearInterval(interval)
+      clearInterval(timer)
     }
   }, [setScreen, steps.length])
 
   return (
-    <motion.div
-      className="screen-container"
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+    <div
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -225,35 +220,6 @@ export default function Stage10GeneratingScreen() {
         {/* Custom 9-Petal Mirror Synthesis Vector Illustration Centerpiece */}
         <div style={{ position: 'relative', marginBottom: '16px' }}>
           <MirrorSynthesisIllustration />
-        </div>
-
-        {/* Eyebrow Badge */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '6px 16px',
-          borderRadius: '999px',
-          background: '#eaf7f5',
-          border: '1px solid rgba(0, 174, 157, 0.35)',
-          marginBottom: '14px'
-        }}>
-          <svg width="12" height="12" viewBox="0 0 82 82">
-            <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="56" cy="26" r="11" fill="#00AE9D" />
-            <path d="M71 41 V71 H41" fill="none" stroke="#00AE9D" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="26" cy="56" r="11" fill="#00AE9D" />
-          </svg>
-          <span style={{
-            fontFamily: "'Nunito', sans-serif",
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#017a6f',
-            textTransform: 'uppercase'
-          }}>
-            Lewis ASSESSMENT ENGINE
-          </span>
         </div>
 
         {/* Main Headline */}
@@ -350,6 +316,6 @@ export default function Stage10GeneratingScreen() {
         </div>
 
       </div>
-    </motion.div>
+    </div>
   )
 }

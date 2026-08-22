@@ -29,7 +29,7 @@ import Stage1_13BodyRhythmScreen from '../screens/Stage1_13BodyRhythmScreen.jsx'
 import Stage1_14SensoryPauseScreen from '../screens/Stage1_14SensoryPauseScreen.jsx'
 import Stage2AttentionScreen from '../screens/Stage2AttentionScreen.jsx'
 import Stage3_1AffectScreen from '../screens/Stage3_1AffectScreen.jsx'
-import Stage3_2BodyMapScreen from '../screens/Stage3_2BodyMapScreen.jsx'
+import MobileStage3_2BodyMapScreen from './screens/MobileStage3_2BodyMapScreen.jsx'
 import Stage3_3DayRhythmScreen from '../screens/Stage3_3DayRhythmScreen.jsx'
 import Stage3_4BreathingScreen from '../screens/Stage3_4BreathingScreen.jsx'
 import Stage3_5NsStateScreen from '../screens/Stage3_5NsStateScreen.jsx'
@@ -88,7 +88,7 @@ const MOBILE_SCREENS = {
   stage1_14SensoryPause: Stage1_14SensoryPauseScreen,
   stage2Attention: Stage2AttentionScreen,
   stage3_1Affect: Stage3_1AffectScreen,
-  stage3_2BodyMap: Stage3_2BodyMapScreen,
+  stage3_2BodyMap: MobileStage3_2BodyMapScreen,
   stage3_3DayRhythm: Stage3_3DayRhythmScreen,
   stage3_4Breathing: Stage3_4BreathingScreen,
   stage3_5NsState: Stage3_5NsStateScreen,
@@ -117,7 +117,7 @@ const MOBILE_SCREENS = {
   stage9Sensory: Stage9SensoryScreen,
   stage10Generating: MobileStage10GeneratingScreen,
   mirror: MobileMirrorScreen,
-  payment: PaymentScreen,
+  payment: MobileMirrorScreen,
   login: LoginScreen,
 }
 

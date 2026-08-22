@@ -76,8 +76,8 @@ export default function Stage5_0EmailScreen() {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -89,36 +89,44 @@ export default function Stage5_0EmailScreen() {
         {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Topic Line Art */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ ...eyebrowStyle, margin: '0 0 12px 0' }}>
+            <p className="stage-eyebrow mobile-eyebrow" style={{
+              fontFamily: '"Nunito", sans-serif',
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: '#414242',
+              textTransform: 'uppercase',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
+            }}>
               50% MILESTONE · REPORT DELIVERY
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(26px, 3.2vw, 38px)',
-              lineHeight: 1.15,
+              fontWeight: 700,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.015em',
               margin: 0,
               color: INK,
               textAlign: 'left',
-              whiteSpace: 'nowrap',
             }}>
               Receive Your Wellbeing Report
             </h1>
-            <p style={{
-              margin: '14px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: INK,
+            <p className="stage-subtitle mobile-subtitle" style={{
+              margin: '10px 0 0 0',
+              fontSize: '15px',
+              fontWeight: 700,
+              color: '#414242',
               fontFamily: NUNITO,
-              lineHeight: 1.55,
+              lineHeight: 1.5,
               maxWidth: '350px',
               textAlign: 'left',
-              opacity: 0.9,
             }}>
               You are halfway through your journey. Provide your email so we can dispatch your full personalized assessment &amp; actionable blueprint upon completion.
             </p>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
             <TopicLineIllustration topic="report_delivery" title="Report Delivery" />
           </div>
         </div>

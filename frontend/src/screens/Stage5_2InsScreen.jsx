@@ -13,113 +13,214 @@ const LEVEL_DESCRIPTIONS = [
 ]
 
 // Two overlapping circles whose distance encodes the felt Self–Nature overlap.
-// idx 0 → fully separate, idx 6 → fully merged.
+// idx 0 → fully separate, idx 6 → fully merged/unified.
 const renderOverlapCircles = (idx, selected) => {
-  const r = 18
-  const maxDistance = 42
-  const distance = maxDistance - idx * (maxDistance / 6)
-  const cxSelf = 50 - distance / 2
-  const cxNature = 50 + distance / 2
+  const r = 16.5
+  // Distances: 0: separate (38), 1: touching (33), 2: connected (24), 3: intertwined (16), 4: integrated (9), 5: merged (4), 6: unified (0)
+  const distances = [38, 33, 24, 16, 9, 4, 0]
+  const distance = distances[idx]
+  const cxSelf = 54 - distance / 2
+  const cxNature = 54 + distance / 2
   const cy = 26
 
   return (
     <svg
       width="100%"
-      viewBox="0 0 100 52"
-      style={{ overflow: 'visible', maxWidth: '78px', height: 'auto', display: 'block', margin: '0 auto' }}
+      viewBox="0 0 108 52"
+      style={{ overflow: 'visible', maxWidth: '84px', height: 'auto', display: 'block', margin: '0 auto' }}
     >
       <defs>
-        <radialGradient id={`gradSelf-${idx}`} cx="35%" cy="35%" r="65%">
-          <stop offset="0%" stopColor="#FFA494" stopOpacity={selected ? '0.85' : '0.55'} />
-          <stop offset="100%" stopColor="#FF6363" stopOpacity={selected ? '0.7' : '0.4'} />
-        </radialGradient>
-        <radialGradient id={`gradNature-${idx}`} cx="35%" cy="35%" r="65%">
-          <stop offset="0%" stopColor="#5EEAD4" stopOpacity={selected ? '0.85' : '0.55'} />
-          <stop offset="100%" stopColor="#00AE9D" stopOpacity={selected ? '0.7' : '0.4'} />
-        </radialGradient>
+        {/* Self Gradient — Warm Rose/Coral */}
+        <linearGradient id={`gradSelf-${idx}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FDA4AF" stopOpacity={selected ? '0.9' : '0.75'} />
+          <stop offset="100%" stopColor="#F43F5E" stopOpacity={selected ? '0.85' : '0.65'} />
+        </linearGradient>
+
+        {/* Nature Gradient — Fresh Teal/Emerald */}
+        <linearGradient id={`gradNature-${idx}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#5EEAD4" stopOpacity={selected ? '0.9' : '0.75'} />
+          <stop offset="100%" stopColor="#00AE9D" stopOpacity={selected ? '0.85' : '0.65'} />
+        </linearGradient>
+
+        {/* Unified Gradient for Level 7 */}
+        <linearGradient id={`gradUnified-${idx}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FDA4AF" stopOpacity="0.85" />
+          <stop offset="50%" stopColor="#A7F3D0" stopOpacity="0.85" />
+          <stop offset="100%" stopColor="#00AE9D" stopOpacity="0.85" />
+        </linearGradient>
+
+        {/* Soft Drop Shadow */}
+        <filter id={`shadow-${idx}`} x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor={selected ? 'rgba(0,174,157,0.25)' : 'rgba(0,0,0,0.06)'} />
+        </filter>
       </defs>
 
-      {/* Self Circle */}
-      <circle
-        cx={cxSelf}
-        cy={cy}
-        r={r}
-        fill={`url(#gradSelf-${idx})`}
-        stroke={selected ? '#E11D48' : '#F43F5E'}
-        strokeWidth={selected ? '1.8' : '1.2'}
-        style={{ mixBlendMode: 'multiply', transition: 'all 0.25s ease' }}
-      />
-
-      {/* Nature Circle */}
-      <circle
-        cx={cxNature}
-        cy={cy}
-        r={r}
-        fill={`url(#gradNature-${idx})`}
-        stroke={selected ? '#0D9488' : '#14B8A6'}
-        strokeWidth={selected ? '1.8' : '1.2'}
-        style={{ mixBlendMode: 'multiply', transition: 'all 0.25s ease' }}
-      />
-
-      {/* Labels positioned cleanly inside circles */}
-      {idx < 5 ? (
-        <>
+      {idx === 6 ? (
+        // Level 7: Harmonious Unified Concentric Sphere
+        <g filter={`url(#shadow-${idx})`}>
+          {/* Outer Ambient Ring */}
+          <circle
+            cx={54}
+            cy={cy}
+            r={r + 3}
+            fill="none"
+            stroke="#00AE9D"
+            strokeWidth="1.5"
+            strokeDasharray="3 2"
+            opacity={selected ? 0.9 : 0.6}
+          />
+          {/* Unified Sphere */}
+          <circle
+            cx={54}
+            cy={cy}
+            r={r}
+            fill={`url(#gradUnified-${idx})`}
+            stroke={selected ? '#00AE9D' : '#0D9488'}
+            strokeWidth={selected ? '2' : '1.5'}
+          />
+          {/* Central Harmonious Badge */}
           <text
-            x={cxSelf - (idx >= 2 ? 3 : 0)}
-            y={cy}
+            x={54}
+            y={cy - 3}
             dominantBaseline="central"
             textAnchor="middle"
-            fontSize="7.5"
-            fontWeight="700"
+            fontSize="6.5"
+            fontWeight="800"
             fontFamily="'Nunito', sans-serif"
-            fill={selected ? '#9F1239' : '#BE123C'}
+            fill="#881337"
             style={{ pointerEvents: 'none', userSelect: 'none' }}
           >
             Self
           </text>
           <text
-            x={cxNature + (idx >= 2 ? 3 : 0)}
-            y={cy}
+            x={54}
+            y={cy + 4.5}
             dominantBaseline="central"
             textAnchor="middle"
-            fontSize="7"
-            fontWeight="700"
+            fontSize="6"
+            fontWeight="800"
             fontFamily="'Nunito', sans-serif"
-            fill={selected ? '#065F46' : '#0D9488'}
+            fill="#064E3B"
             style={{ pointerEvents: 'none', userSelect: 'none' }}
           >
             Nature
           </text>
-        </>
+        </g>
       ) : (
-        <>
-          <text
-            x="50"
-            y={cy - 7}
-            dominantBaseline="central"
-            textAnchor="middle"
-            fontSize="7.5"
-            fontWeight="700"
-            fontFamily="'Nunito', sans-serif"
-            fill={selected ? '#9F1239' : '#BE123C'}
-            style={{ pointerEvents: 'none', userSelect: 'none' }}
-          >
-            Self
-          </text>
-          <text
-            x="50"
-            y={cy + 7}
-            dominantBaseline="central"
-            textAnchor="middle"
-            fontSize="7"
-            fontWeight="700"
-            fontFamily="'Nunito', sans-serif"
-            fill={selected ? '#065F46' : '#0D9488'}
-            style={{ pointerEvents: 'none', userSelect: 'none' }}
-          >
-            Nature
-          </text>
-        </>
+        <g filter={`url(#shadow-${idx})`}>
+          {/* Self Circle (Left) */}
+          <circle
+            cx={cxSelf}
+            cy={cy}
+            r={r}
+            fill={`url(#gradSelf-${idx})`}
+            stroke={selected ? '#BE123C' : '#E11D48'}
+            strokeWidth={selected ? '1.8' : '1.3'}
+            style={{ transition: 'all 0.25s ease' }}
+          />
+
+          {/* Nature Circle (Right) */}
+          <circle
+            cx={cxNature}
+            cy={cy}
+            r={r}
+            fill={`url(#gradNature-${idx})`}
+            stroke={selected ? '#008375' : '#0D9488'}
+            strokeWidth={selected ? '1.8' : '1.3'}
+            style={{ transition: 'all 0.25s ease' }}
+          />
+
+          {/* Clean Legible Text Overlays */}
+          {idx < 4 ? (
+            <>
+              <text
+                x={cxSelf - (idx >= 2 ? 3.5 : 0)}
+                y={cy + 0.5}
+                dominantBaseline="central"
+                textAnchor="middle"
+                fontSize="7"
+                fontWeight="800"
+                fontFamily="'Nunito', sans-serif"
+                fill="#881337"
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
+              >
+                Self
+              </text>
+              <text
+                x={cxNature + (idx >= 2 ? 3.5 : 0)}
+                y={cy + 0.5}
+                dominantBaseline="central"
+                textAnchor="middle"
+                fontSize="6.8"
+                fontWeight="800"
+                fontFamily="'Nunito', sans-serif"
+                fill="#064E3B"
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
+              >
+                Nature
+              </text>
+            </>
+          ) : idx === 4 ? (
+            <>
+              <text
+                x={cxSelf - 5.5}
+                y={cy + 0.5}
+                dominantBaseline="central"
+                textAnchor="middle"
+                fontSize="6.2"
+                fontWeight="800"
+                fontFamily="'Nunito', sans-serif"
+                fill="#881337"
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
+              >
+                Self
+              </text>
+              <text
+                x={cxNature + 5.5}
+                y={cy + 0.5}
+                dominantBaseline="central"
+                textAnchor="middle"
+                fontSize="6"
+                fontWeight="800"
+                fontFamily="'Nunito', sans-serif"
+                fill="#064E3B"
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
+              >
+                Nature
+              </text>
+            </>
+          ) : (
+            // idx === 5 (Merged)
+            <>
+              <text
+                x={54}
+                y={cy - 3.5}
+                dominantBaseline="central"
+                textAnchor="middle"
+                fontSize="6.2"
+                fontWeight="800"
+                fontFamily="'Nunito', sans-serif"
+                fill="#881337"
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
+              >
+                Self
+              </text>
+              <text
+                x={54}
+                y={cy + 4.5}
+                dominantBaseline="central"
+                textAnchor="middle"
+                fontSize="6"
+                fontWeight="800"
+                fontFamily="'Nunito', sans-serif"
+                fill="#064E3B"
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
+              >
+                Nature
+              </text>
+            </>
+          )}
+        </g>
       )}
     </svg>
   )
@@ -146,8 +247,8 @@ export default function Stage5_2InsScreen() {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -159,33 +260,34 @@ export default function Stage5_2InsScreen() {
         {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Topic Line Art */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{
+            <p className="stage-eyebrow mobile-eyebrow" style={{
               fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: '#414242',
               textTransform: 'uppercase',
-              margin: '0 0 12px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               INCLUSION OF NATURE (INS)
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 38px)',
-              lineHeight: 1.15,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
               textAlign: 'left',
-              whiteSpace: 'nowrap',
             }}>
               Connection to Nature
             </h1>
-            <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+            <p className="stage-subtitle mobile-subtitle" style={{
+              margin: '10px 0 0 0',
+              fontSize: '15px',
+              fontWeight: 700,
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
@@ -195,7 +297,7 @@ export default function Stage5_2InsScreen() {
               Select the diagram that best reflects how interconnected you feel with the natural world.
             </p>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
             <TopicLineIllustration topic="ins" />
           </div>
         </div>

@@ -47,51 +47,75 @@ export default function MobileInstrumentScreen({ id }) {
         boxSizing: 'border-box',
       }}
     >
-      {/* Compact Integrated Header Row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
-          <p style={{
+      {/* Header section (Eyebrow + Step Badge + Title + Subtitle) */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', textAlign: 'left', width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <p className="mobile-eyebrow" style={{
             fontFamily: "'Nunito', sans-serif",
-            fontSize: '7.5px',
+            fontSize: '10px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#7a8683',
+            color: '#414242',
             textTransform: 'uppercase',
             margin: 0,
           }}>
             CHOOSE ONE
           </p>
-          <h1 style={{
-            fontFamily: "'Manrope', sans-serif",
-            fontWeight: 700,
-            fontSize: '20px',
-            lineHeight: 1.15,
-            letterSpacing: '-0.015em',
-            margin: 0,
-            color: '#414242',
+
+          {/* Step Indicator Badge */}
+          <span style={{
+            fontSize: '10.5px',
+            fontWeight: 800,
+            letterSpacing: '0.06em',
+            color: '#00ae9d',
+            background: 'rgba(0, 174, 157, 0.08)',
+            padding: '3px 8px',
+            borderRadius: '999px',
+            fontFamily: "'Nunito', sans-serif",
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}>
-            {titleText}
-          </h1>
+            {step + 1} / {spec.items.length}
+          </span>
         </div>
 
-        {/* Step Indicator Badge */}
-        <span style={{
-          fontSize: '10.5px',
-          fontWeight: 800,
-          letterSpacing: '0.06em',
-          color: '#00ae9d',
-          background: 'rgba(0, 174, 157, 0.08)',
-          padding: '3px 8px',
-          borderRadius: '999px',
-          fontFamily: "'Nunito', sans-serif",
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
+        <h1 style={{
+          fontFamily: "'Manrope', sans-serif",
+          fontWeight: 700,
+          fontSize: '22px',
+          lineHeight: 1.15,
+          letterSpacing: '-0.015em',
+          margin: 0,
+          color: '#414242',
         }}>
-          {step + 1} / {spec.items.length}
-        </span>
+          {titleText}
+        </h1>
+
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={item.id}
+            initial={{ opacity: 0, y: 3 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -3 }}
+            transition={{ duration: 0.15 }}
+            className="mobile-subtitle"
+            style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '15px',
+              fontWeight: 700,
+              color: '#414242',
+              lineHeight: 1.45,
+              margin: '2px 0 0 0',
+              textAlign: 'left',
+              overflowWrap: 'break-word',
+            }}
+          >
+            {item.text}
+          </motion.p>
+        </AnimatePresence>
       </div>
 
-      {/* Question Text & Options with Clean Step Transitions */}
+      {/* Options List */}
       <AnimatePresence mode="wait">
         <motion.div
           key={item.id}
@@ -99,23 +123,8 @@ export default function MobileInstrumentScreen({ id }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.15 }}
-          style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}
+          style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '7px' }}
         >
-          {/* Question Prompt */}
-          <p style={{
-            margin: '2px 0 0 0',
-            fontSize: '14px',
-            fontWeight: 700,
-            lineHeight: 1.4,
-            color: '#414242',
-            fontFamily: "'Nunito', sans-serif",
-            textAlign: 'left',
-            overflowWrap: 'break-word',
-          }}>
-            {item.text}
-          </p>
-
-          {/* Standardized Option Cards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '7px', width: '100%' }}>
             {activeScale.map((opt) => {
               const optVal = typeof opt === 'object' ? (opt.value ?? opt.label) : opt

@@ -93,12 +93,12 @@ export default function Stage1_6RelationalScreen() {
         {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{
+            <p className="stage-eyebrow mobile-eyebrow" style={{
               fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: '#414242',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -116,9 +116,10 @@ export default function Stage1_6RelationalScreen() {
             }}>
               Relational Context
             </h1>
-            <p style={{
+            <p className="stage-subtitle mobile-subtitle" style={{
               margin: '10px 0 0 0',
-              fontSize: 'clamp(13px, 1.5vw, 15px)',
+              fontSize: '15px',
+              fontWeight: 700,
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
@@ -132,20 +133,8 @@ export default function Stage1_6RelationalScreen() {
           </div>
         </div>
 
-        {/* RIGHT — SOCIAL WORLD Eyebrow + 5 Option Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-
-          <p className="stage-right-eyebrow" style={{
-            fontFamily: '"Nunito", sans-serif',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#414242',
-            textTransform: 'uppercase',
-            margin: '0 0 8px 0'
-          }}>
-            SOCIAL WORLD
-          </p>
+        {/* RIGHT — 5 Option Cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {options.map(opt => {

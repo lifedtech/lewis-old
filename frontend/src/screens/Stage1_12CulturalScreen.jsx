@@ -117,8 +117,8 @@ export default function Stage1_12CulturalScreen() {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -128,34 +128,35 @@ export default function Stage1_12CulturalScreen() {
       }}>
 
         {/* LEFT — Eyebrow + Title + Subtitle + Line Illustration */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{
+            <p className="stage-eyebrow mobile-eyebrow" style={{
               fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: '#414242',
               textTransform: 'uppercase',
-              margin: '0 0 14px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               CHOOSE ONE
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 38px)',
-              lineHeight: 1.15,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              whiteSpace: 'nowrap',
             }}>
               Cultural &amp; Community
             </h1>
-            <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+            <p className="stage-subtitle mobile-subtitle" style={{
+              margin: '10px 0 0 0',
+              fontSize: '15px',
+              fontWeight: 700,
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
@@ -164,27 +165,23 @@ export default function Stage1_12CulturalScreen() {
               How connected do you feel to your community &amp; values?
             </p>
           </div>
-          <CulturalIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <CulturalIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — Nested Questionnaire Card Container matching Overall Wellbeing */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
+        {/* RIGHT — Questionnaire Section */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start', width: '100%' }}>
 
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              initial={{ opacity: 0, x: 15 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -15 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
               style={{
                 width: '100%',
-                background: '#ffffff',
-                border: '1.5px solid #f4f4f4',
-                borderRadius: '20px',
-                padding: '16px 20px',
-                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
-                boxSizing: 'border-box',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '10px',

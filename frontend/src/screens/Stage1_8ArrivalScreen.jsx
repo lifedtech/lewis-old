@@ -130,8 +130,8 @@ export default function Stage1_8ArrivalScreen() {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 56px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -141,34 +141,35 @@ export default function Stage1_8ArrivalScreen() {
       }}>
 
         {/* LEFT — Eyebrow + Title + Subtitle + Animated Arch Illustration */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{
+            <p className="stage-eyebrow mobile-eyebrow" style={{
               fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: '#414242',
               textTransform: 'uppercase',
-              margin: '0 0 14px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               OPEN REFLECTION
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 38px)',
-              lineHeight: 1.15,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              whiteSpace: 'nowrap',
             }}>
               Arrival State
             </h1>
-            <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+            <p className="stage-subtitle mobile-subtitle" style={{
+              margin: '10px 0 0 0',
+              fontSize: '15px',
+              fontWeight: 700,
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
@@ -177,24 +178,13 @@ export default function Stage1_8ArrivalScreen() {
               Before we go deeper - how would you describe arriving here today? One word, if you like.
             </p>
           </div>
-          <ArrivalStateIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <ArrivalStateIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — YOUR STATE OF MIND Eyebrow + Full-Height Textarea + Pinned Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '12px' }}>
-
-          <p className="stage-right-eyebrow" style={{
-            fontFamily: '"Nunito", sans-serif',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#414242',
-            textTransform: 'uppercase',
-            
-            margin: 0
-          }}>
-            YOUR STATE OF MIND
-          </p>
+        {/* RIGHT — Full-Height Textarea + Pinned Button */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '12px', width: '100%' }}>
 
           <textarea
             value={arrivalState || ''}

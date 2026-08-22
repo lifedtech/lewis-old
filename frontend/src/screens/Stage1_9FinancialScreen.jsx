@@ -96,12 +96,12 @@ export default function Stage1_9FinancialScreen() {
         {/* LEFT — Eyebrow + Title + Subtitle + Line Illustration */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{
+            <p className="stage-eyebrow mobile-eyebrow" style={{
               fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: '#414242',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -119,9 +119,10 @@ export default function Stage1_9FinancialScreen() {
             }}>
               Financial Wellness Pulse
             </h1>
-            <p style={{
+            <p className="stage-subtitle mobile-subtitle" style={{
               margin: '10px 0 0 0',
-              fontSize: 'clamp(13px, 1.5vw, 15px)',
+              fontSize: '15px',
+              fontWeight: 700,
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,

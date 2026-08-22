@@ -5,6 +5,8 @@ import LewisLogo from '../../components/LewisLogo.jsx'
 import { buildFullAssessmentPayload } from '../../lib/payload.js'
 import { buildClientFallbackAnalysis } from '../../lib/scoring.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
+import InsightReport from '../../report/InsightReport.jsx'
+import { exportReportPdf } from '../../report/exportPdf.js'
 import Icon from '../../report/icons.jsx'
 
 export default function MobileMirrorScreen() {
@@ -16,9 +18,27 @@ export default function MobileMirrorScreen() {
   const [errorDetail, setErrorDetail] = useState(null)
   const [attempt, setAttempt] = useState(0)
   const [loadProgress, setLoadProgress] = useState(storeAnalysis ? 100 : 25)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [downloadSuccess, setDownloadSuccess] = useState(false)
 
   const analysis = storeAnalysis
   const error = localError || storeError
+
+  const handleGetReport = async () => {
+    if (isDownloading) return
+    setIsDownloading(true)
+    setDownloadSuccess(false)
+    try {
+      await exportReportPdf('Lewis-Insight-Report.pdf')
+      setDownloadSuccess(true)
+      setTimeout(() => setDownloadSuccess(false), 4000)
+    } catch (err) {
+      console.error('PDF export fallback:', err)
+      window.print()
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   useEffect(() => {
     if (storeAnalysis) {
@@ -83,9 +103,6 @@ export default function MobileMirrorScreen() {
         <div style={{ marginBottom: '16px' }}>
           <LewisLogo size={44} layout="stacked" showText={false} animated={true} />
         </div>
-        <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', letterSpacing: '0.14em', color: '#00ae9d', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
-          LEWIS ASSESSMENT ENGINE
-        </span>
         <h2 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '22px', fontWeight: 700, color: '#414242', margin: '0 0 10px 0' }}>
           Synthesizing Your Mirror
         </h2>
@@ -261,14 +278,16 @@ export default function MobileMirrorScreen() {
       </div>
 
       {/* Hero Header */}
-      <div style={{ textAlign: 'center', marginBottom: '20px', width: '100%' }}>
+      <div style={{ textAlign: 'left', marginBottom: '20px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
         <h1 style={{
           fontFamily: "'Manrope', sans-serif",
           fontSize: '28px',
           fontWeight: 700,
           color: '#414242',
           margin: '0 0 6px 0',
-          letterSpacing: '-0.01em'
+          letterSpacing: '-0.01em',
+          textAlign: 'left',
+          width: '100%'
         }}>
           Your Lewis Mirror
         </h1>
@@ -277,7 +296,9 @@ export default function MobileMirrorScreen() {
           fontSize: '14px',
           color: '#64748b',
           margin: 0,
-          lineHeight: 1.45
+          lineHeight: 1.45,
+          textAlign: 'left',
+          width: '100%'
         }}>
           Your complete reflection of wellbeing, stability, and growth resources.
         </p>
@@ -398,21 +419,49 @@ export default function MobileMirrorScreen() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 10, left: 0, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="gradThrivingMob" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#34d399" stopOpacity={0.85} />
+                    <linearGradient id="gradNatureMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#34d399" stopOpacity={0.9} />
                       <stop offset="100%" stopColor="#00ae9d" stopOpacity={1} />
                     </linearGradient>
-                    <linearGradient id="gradSteadyMob" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#fde047" stopOpacity={0.85} />
+                    <linearGradient id="gradGrowthMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#4ade80" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#16a34a" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="gradWellbeingMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#0284c7" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="gradAgencyMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#818cf8" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#4f46e5" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="gradMeaningMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#c084fc" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#7c3aed" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="gradEnergyMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#fbbf24" stopOpacity={0.9} />
                       <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
                     </linearGradient>
-                    <linearGradient id="gradStretchedMob" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#fb923c" stopOpacity={0.85} />
+                    <linearGradient id="gradPhysicalMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#fb923c" stopOpacity={0.9} />
                       <stop offset="100%" stopColor="#ea580c" stopOpacity={1} />
                     </linearGradient>
-                    <linearGradient id="gradDepletedMob" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#f472b6" stopOpacity={0.85} />
-                      <stop offset="100%" stopColor="#be123c" stopOpacity={1} />
+                    <linearGradient id="gradFinancialMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#2dd4bf" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#0f766e" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="gradCalmMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#0891b2" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="gradConnectionMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#fb7185" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#e11d48" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="gradDefaultMob" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#94a3b8" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#475569" stopOpacity={1} />
                     </linearGradient>
                   </defs>
 
@@ -437,10 +486,19 @@ export default function MobileMirrorScreen() {
                     animationDuration={1200}
                   >
                     {sortedData.map((entry, index) => {
-                      let fillId = "url(#gradDepletedMob)"
-                      if (entry.A >= 70) fillId = "url(#gradThrivingMob)"
-                      else if (entry.A >= 55) fillId = "url(#gradSteadyMob)"
-                      else if (entry.A >= 40) fillId = "url(#gradStretchedMob)"
+                      const gradMapMob = {
+                        'Nature': 'url(#gradNatureMob)',
+                        'Growth': 'url(#gradGrowthMob)',
+                        'Wellbeing': 'url(#gradWellbeingMob)',
+                        'Agency': 'url(#gradAgencyMob)',
+                        'Meaning': 'url(#gradMeaningMob)',
+                        'Energy': 'url(#gradEnergyMob)',
+                        'Physical': 'url(#gradPhysicalMob)',
+                        'Financial Peace': 'url(#gradFinancialMob)',
+                        'Calm': 'url(#gradCalmMob)',
+                        'Connection': 'url(#gradConnectionMob)'
+                      }
+                      const fillId = gradMapMob[entry.subject] || 'url(#gradDefaultMob)'
                       return <Cell key={`cell-mob-${index}`} fill={fillId} />
                     })}
                   </Bar>
@@ -514,7 +572,7 @@ export default function MobileMirrorScreen() {
             lineHeight: 1.45,
             margin: '0 0 16px 0'
           }}>
-            Access your complete 25-page report featuring cross-domain resilience maps, clinical dimension analyses, and tailored micro-habit resolutions sent straight to your email.
+            Access and download your complete 25-page report featuring cross-domain resilience maps, clinical dimension analyses, and tailored micro-habit resolutions.
           </p>
 
           <div style={{
@@ -524,7 +582,7 @@ export default function MobileMirrorScreen() {
             width: '100%',
             marginBottom: '20px'
           }}>
-            {['10-Dimension Analysis', 'Autonomic Nervous Mapping', '30-Day Growth Roadmap', 'Instant PDF Email Delivery'].map((item) => (
+            {['10-Dimension Analysis', 'Autonomic Nervous Mapping', '30-Day Growth Roadmap', 'Instant PDF Download'].map((item) => (
               <div key={item} style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -547,7 +605,8 @@ export default function MobileMirrorScreen() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setScreen('payment')}
+            onClick={handleGetReport}
+            disabled={isDownloading}
             className="btn-primary"
             style={{
               width: '100%',
@@ -562,15 +621,17 @@ export default function MobileMirrorScreen() {
               justifyContent: 'center',
               gap: '8px',
               boxShadow: '0 6px 20px rgba(0, 174, 157, 0.28)',
-              cursor: 'pointer',
+              cursor: isDownloading ? 'wait' : 'pointer',
               border: 'none',
+              opacity: isDownloading ? 0.8 : 1,
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            Get report on your mail
+            {isDownloading ? 'Generating Report...' : (downloadSuccess ? '✓ Report Downloaded!' : 'Get your report')}
           </motion.button>
 
           <p style={{
@@ -580,10 +641,15 @@ export default function MobileMirrorScreen() {
             margin: '10px 0 0 0',
             fontStyle: 'italic'
           }}>
-            Safe, confidential, and delivered directly to your inbox.
+            Safe, confidential, and instant PDF download.
           </p>
           </div>
         </div>
+
+      {/* Hidden Render Target for Canvas-Accurate PDF Generation */}
+      <div style={{ position: 'fixed', left: '-99999px', top: 0, width: '1200px', pointerEvents: 'none', opacity: 0.01 }} aria-hidden="true">
+        <InsightReport report={analysis?.report} />
+      </div>
 
       <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '12px', marginTop: '24px', fontFamily: "'Nunito', sans-serif" }}>
         Lewis reflects. It never diagnoses.

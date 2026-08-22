@@ -130,9 +130,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           />
 
-          <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-            REPORT DELIVERY
-          </text>
         </svg>
       )
     }
@@ -189,9 +186,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-            ABOUT YOU
-          </text>
         </svg>
       )
     }
@@ -262,10 +256,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             <circle cx="180" cy="100" r="4" fill="var(--dawn)" />
           </g>
 
-          {/* Title Label */}
-          <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-            ACCOMPLISHMENT & AGENCY
-          </text>
         </svg>
       )
     }
@@ -337,9 +327,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             />
             <circle cx="160" cy="90" r="8" fill="var(--dawn)" />
 
-            <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-              EMOTIONAL & MENTAL
-            </text>
           </g>
         </svg>
       )
@@ -385,9 +372,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
               style={{ transformOrigin: '160px 130px' }}
             />
 
-            <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-              MEANING & PURPOSE
-            </text>
           </g>
         </svg>
       )
@@ -432,9 +416,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             <circle cx="160" cy="120" r="55" stroke="var(--dawn)" strokeWidth="1.5" strokeDasharray="5 5" opacity="0.6" />
             <circle cx="160" cy="120" r="75" stroke="rgba(0, 174, 157, 0.4)" strokeWidth="1.2" strokeDasharray="3 3" />
 
-            <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-              EVERYDAY SHARING
-            </text>
           </g>
         </svg>
       )
@@ -478,9 +459,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             <circle cx="160" cy="65" r="5" fill="#5fbb46" />
             <line x1="160" y1="75" x2="160" y2="92" stroke="#5fbb46" strokeWidth="1.5" strokeDasharray="3 3" />
 
-            <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-              GLOBAL LIFE SATISFACTION
-            </text>
           </g>
         </svg>
       )
@@ -512,16 +490,13 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
             {/* Central Bloom Core */}
             <circle cx="160" cy="125" r="12" fill="var(--dawn)" />
 
-            <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-              FLOURISHING & GROWTH
-            </text>
           </g>
         </svg>
       )
     }
 
     if (t.includes('cfpb') || t.includes('finance') || t.includes('financial')) {
-      // Financial Wellness: Ascending growth tree & shield
+      // Financial Wellness: Ascending growth trend with Dollar Badge
       return (
         <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
           <g transform="translate(0, -40)">
@@ -536,11 +511,24 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
               transition={{ duration: 1.5 }}
             />
             <circle cx="250" cy="90" r="8" fill="#00ae9d" />
-            <path d="M 170,170 C 170,140 190,130 200,130 C 210,130 210,150 170,170 Z" fill="rgba(16, 185, 129, 0.3)" stroke="#00ae9d" strokeWidth="1.5" />
 
-            <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-              FINANCIAL WELLNESS
-            </text>
+            {/* Dollar Sign Coin Badge */}
+            <g transform="translate(182, 152)">
+              <circle cx="0" cy="0" r="14" fill="#e4f4ee" stroke="#00ae9d" strokeWidth="2" />
+              <text
+                x="0"
+                y="1"
+                textAnchor="middle"
+                dominantBaseline="central"
+                fill="#00ae9d"
+                fontSize="15"
+                fontWeight="800"
+                fontFamily="'Manrope', sans-serif"
+              >
+                $
+              </text>
+            </g>
+
           </g>
         </svg>
       )
@@ -727,9 +715,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
           <text x="110" y="214" textAnchor="middle" fill="#F43F5E" fontSize="11" fontWeight="700" letterSpacing="0.04em">SELF</text>
           <text x="210" y="214" textAnchor="middle" fill="#00ae9d" fontSize="11" fontWeight="700" letterSpacing="0.04em">NATURE</text>
 
-          <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-            CONNECTION TO NATURE
-          </text>
         </svg>
       )
     }
@@ -739,9 +724,6 @@ export default function TopicLineIllustration({ topic = 'agency', title = '' }) 
       <svg viewBox="0 0 320 280" fill="none" style={{ width: '100%', maxHeight: '280px' }}>
         <circle cx="160" cy="130" r="55" stroke="var(--dawn)" strokeWidth="2" strokeDasharray="4 4" />
         <circle cx="160" cy="130" r="25" fill="rgba(255, 148, 102, 0.2)" />
-        <text x="160" y="260" textAnchor="middle" fill="var(--text-mute)" fontSize="13" fontWeight="500" letterSpacing="0.08em">
-          {title ? title.toUpperCase() : 'Lewis Assessment'}
-        </text>
       </svg>
     )
   }

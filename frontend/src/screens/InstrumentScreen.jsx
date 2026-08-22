@@ -13,8 +13,8 @@ const TEAL = '#00ae9d'
 const INK = '#414242'
 
 const eyebrowStyle = {
-  fontFamily: MONO, fontSize: '11px', fontWeight: 700,
-  letterSpacing: '0.14em', color: TEAL, textTransform: 'uppercase',
+  fontFamily: MONO, fontSize: '10px', fontWeight: 700,
+  letterSpacing: '0.14em', color: INK, textTransform: 'uppercase',
 }
 
 export default function InstrumentScreen({ id }) {
@@ -122,7 +122,7 @@ export default function InstrumentScreen({ id }) {
               transition={{ duration: 0.2, ease: 'easeInOut' }}
               style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}
             >
-              <p style={{ margin: '2px 0 4px 0', fontSize: '14.5px', fontWeight: 700, color: INK, fontFamily: NUNITO, lineHeight: 1.4, textAlign: 'left' }}>
+              <p className="stage-subtitle mobile-subtitle" style={{ margin: '2px 0 4px 0', fontSize: '15px', fontWeight: 700, color: INK, fontFamily: NUNITO, lineHeight: 1.45, textAlign: 'left' }}>
                 "{item.text}"
               </p>
 

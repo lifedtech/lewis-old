@@ -115,7 +115,7 @@ const SCREENS = {
   stage9Sensory: Stage9SensoryScreen,
   stage10Generating: Stage10GeneratingScreen,
   mirror: MirrorScreen,
-  payment: PaymentScreen,
+  payment: MirrorScreen,
   login: LoginScreen,
 }
 
@@ -159,22 +159,22 @@ export default function DesktopApp() {
             </PageTransition>
           </AnimatePresence>
         </main>
-      ) : validScreen === 'mirror' ? (
-        <div style={{ width: '100%', maxWidth: '960px', margin: '0 auto', padding: '10px 20px 80px 20px', boxSizing: 'border-box' }}>
+      ) : isFullPage ? (
+        <main style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
           <AnimatePresence mode="wait">
             <PageTransition key={validScreen}>
-              <ActiveScreen />
+              <div
+                style={
+                  validScreen === 'stage10Generating'
+                    ? { width: '100%', maxWidth: '960px', minHeight: 'calc(100dvh - 60px)', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }
+                    : { width: '100%', maxWidth: '960px', margin: '0 auto', padding: '10px 20px 80px 20px', boxSizing: 'border-box' }
+                }
+              >
+                <ActiveScreen />
+              </div>
             </PageTransition>
           </AnimatePresence>
-        </div>
-      ) : validScreen === 'stage10Generating' ? (
-        <div style={{ width: '100%', maxWidth: '960px', minHeight: 'calc(100vh - 60px)', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
-          <AnimatePresence mode="wait">
-            <PageTransition key={validScreen}>
-              <ActiveScreen />
-            </PageTransition>
-          </AnimatePresence>
-        </div>
+        </main>
       ) : (
         <div
           ref={stageWrapRef}

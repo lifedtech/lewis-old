@@ -31,10 +31,10 @@ export default function MobilePreStage0AgeScreen() {
       }}
     >
       {/* Left-Aligned Header */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
-        <p style={{
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', textAlign: 'left' }}>
+        <p className="mobile-eyebrow" style={{
           fontFamily: "'Nunito', sans-serif",
-          fontSize: '7.5px',
+          fontSize: '10px',
           fontWeight: 700,
           letterSpacing: '0.14em',
           color: '#7a8683',
@@ -54,9 +54,10 @@ export default function MobilePreStage0AgeScreen() {
         }}>
           Before We Begin
         </h1>
-        <p style={{
+        <p className="mobile-subtitle" style={{
           fontFamily: "'Nunito', sans-serif",
-          fontSize: '13px',
+          fontSize: '15px',
+          fontWeight: 700,
           color: '#5e6060',
           lineHeight: 1.45,
           margin: '2px 0 0 0',

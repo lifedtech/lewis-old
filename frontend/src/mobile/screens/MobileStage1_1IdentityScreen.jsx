@@ -46,11 +46,11 @@ export default function MobileStage1_1IdentityScreen() {
     >
       {/* Left-Aligned Header */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', textAlign: 'left' }}>
-        <p style={{
+        <p className="mobile-eyebrow" style={{
           fontFamily: "'Nunito', sans-serif",
-          fontSize: '7.5px',
+          fontSize: '6px',
           fontWeight: 700,
-          letterSpacing: '0.14em',
+          letterSpacing: '0.16em',
           color: '#7a8683',
           textTransform: 'uppercase',
           margin: 0,
@@ -68,9 +68,10 @@ export default function MobileStage1_1IdentityScreen() {
         }}>
           Identity &amp; Life Roles
         </h1>
-        <p style={{
+        <p className="mobile-subtitle" style={{
           fontFamily: "'Nunito', sans-serif",
-          fontSize: '13px',
+          fontSize: '15px',
+          fontWeight: 700,
           color: '#5e6060',
           lineHeight: 1.45,
           margin: '2px 0 0 0',

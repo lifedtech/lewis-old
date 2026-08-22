@@ -5,6 +5,7 @@ import { useDeviceViewport } from './shared/hooks/useDeviceViewport.js'
 import { useAdaptiveScreenBrain } from './hooks/useAdaptiveScreenBrain.js'
 import { SCREEN_ORDER } from './shared/constants/screenOrder.js'
 import LewisLoadingScreen from './components/LewisLoadingScreen.jsx'
+import SupportWidget from './components/SupportWidget.jsx'
 
 // Dedicated UI Layers
 import MobileApp from './mobile/MobileApp.jsx'
@@ -100,6 +101,9 @@ export default function App() {
 
       {/* Responsive Viewport Switcher */}
       {isMobile ? <MobileApp /> : <DesktopApp />}
+
+      {/* Global Bottom-Left Support / Help Widget */}
+      <SupportWidget />
     </>
   )
 }

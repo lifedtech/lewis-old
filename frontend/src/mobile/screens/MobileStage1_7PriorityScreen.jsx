@@ -36,44 +36,41 @@ export default function MobileStage1_7PriorityScreen() {
         boxSizing: 'border-box',
       }}
     >
-      {/* Compact Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
-            <p style={{
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: '7.5px',
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              color: '#7a8683',
-              textTransform: 'uppercase',
-              margin: 0,
-            }}>
-              RANK YOUR PRIORITIES
-            </p>
-            <h1 style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontWeight: 700,
-              fontSize: '19px',
-              lineHeight: 1.15,
-              letterSpacing: '-0.015em',
-              margin: 0,
-              color: '#414242',
-            }}>
-              Priority Ranking
-            </h1>
-          </div>
-          <span style={{
-            fontSize: '10px',
-            fontWeight: 800,
-            letterSpacing: '0.06em',
-            color: '#7a8683',
-            textTransform: 'uppercase',
-            fontFamily: "'Nunito', sans-serif",
-            paddingTop: '2px',
-          }}>
-            DRAG TO REORDER
-          </span>
-        </div>
+      {/* Left-Aligned Header */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', textAlign: 'left' }}>
+        <p className="mobile-eyebrow" style={{
+          fontFamily: "'Nunito', sans-serif",
+          fontSize: '6px',
+          fontWeight: 700,
+          letterSpacing: '0.16em',
+          color: '#7a8683',
+          textTransform: 'uppercase',
+          margin: 0,
+        }}>
+          SELECT YOUR TOP PRIORITY
+        </p>
+        <h1 style={{
+          fontFamily: "'Manrope', sans-serif",
+          fontWeight: 700,
+          fontSize: '22px',
+          lineHeight: 1.15,
+          letterSpacing: '-0.015em',
+          margin: 0,
+          color: '#414242',
+        }}>
+          Primary Focus Area
+        </h1>
+        <p className="mobile-subtitle" style={{
+          fontFamily: "'Nunito', sans-serif",
+          fontSize: '15px',
+          fontWeight: 700,
+          color: '#5e6060',
+          lineHeight: 1.45,
+          margin: '2px 0 0 0',
+        }}>
+          If you could shift one area of your wellbeing immediately, which would it be?
+        </p>
+      </div>
 
         {/* Compact Reorder List */}
         <Reorder.Group

@@ -7,7 +7,7 @@ const DiurnalCycleIllustration = () => (
   <motion.svg className="stage-illustration"
     viewBox="0 0 240 180"
     fill="none"
-    style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '10px 0 10px 90px' }}
+    style={{ width: '100%', maxWidth: '210px', display: 'block', margin: '12px auto' }}
     initial={{ opacity: 0, scale: 0.92 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -142,8 +142,8 @@ export default function Stage3_3DayRhythmScreen() {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -153,34 +153,35 @@ export default function Stage3_3DayRhythmScreen() {
       }}>
 
         {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{
+            <p className="stage-eyebrow mobile-eyebrow" style={{
               fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: '#414242',
               textTransform: 'uppercase',
-              margin: '0 0 14px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               SELECT ALL THAT APPLY
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 38px)',
-              lineHeight: 1.15,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              whiteSpace: 'nowrap',
             }}>
               Diurnal Energy Cycle
             </h1>
-            <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+            <p className="stage-subtitle mobile-subtitle" style={{
+              margin: '10px 0 0 0',
+              fontSize: '15px',
+              fontWeight: 700,
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
@@ -189,25 +190,13 @@ export default function Stage3_3DayRhythmScreen() {
               Highlight the periods of the day when you typically feel your energy peaks or feel most productive.
             </p>
           </div>
-          <DiurnalCycleIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <DiurnalCycleIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — PEAK ENERGY PERIODS Eyebrow + 7 Option Cards + Pinned Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
-
-          <p className="stage-right-eyebrow" style={{
-            fontFamily: '"Nunito", sans-serif',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#414242',
-            textTransform: 'uppercase',
-            
-            margin: '0 0 14px 0',
-            width: '100%'
-          }}>
-            PEAK ENERGY PERIODS
-          </p>
+        {/* RIGHT — 7 Option Cards + Pinned Button */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start', width: '100%' }}>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto', paddingRight: '4px', width: '100%' }}>
             {periods.map(p => {

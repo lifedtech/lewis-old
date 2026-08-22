@@ -903,13 +903,29 @@ h1.headline em {
 }
 
 .main-card .eyebrow,
-.main-card p.eyebrow {
+.main-card p.eyebrow,
+.stage-eyebrow,
+p.stage-eyebrow,
+.mobile-eyebrow,
+p.mobile-eyebrow,
+.mobile-app-root .eyebrow,
+.mobile-app-root p.eyebrow {
   font-family: 'Nunito', sans-serif !important;
   font-weight: 700 !important;
-  font-size: 11px !important;
-  line-height: 1.3 !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
   letter-spacing: 0.14em !important;
   text-transform: uppercase !important;
+}
+
+.stage-subtitle,
+p.stage-subtitle,
+.mobile-subtitle,
+p.mobile-subtitle {
+  font-family: 'Nunito', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
 }
 
 .screen-container {
@@ -2144,14 +2160,18 @@ html[data-height-class="compact-tight"] .btn-next {
   width: 100% !important;
 }
 
-/* Standardized Eyebrows (Less than 8px) */
+/* Standardized Eyebrows (10px uppercase) */
 .mobile-app-root .eyebrow,
 .mobile-app-root p.eyebrow,
 .mobile-app-root .stage-right-eyebrow,
 .mobile-app-root p.stage-right-eyebrow,
-.mobile-app-root [class*="eyebrow"] {
+.mobile-app-root .mobile-eyebrow,
+.mobile-app-root p.mobile-eyebrow,
+.mobile-app-root [class*="eyebrow"],
+.stage-eyebrow,
+p.stage-eyebrow {
   font-family: 'Nunito', sans-serif !important;
-  font-size: 7.5px !important;
+  font-size: 10px !important;
   font-weight: 700 !important;
   letter-spacing: 0.14em !important;
   color: #7a8683 !important;
@@ -2178,11 +2198,19 @@ html[data-height-class="compact-tight"] .btn-next {
   overflow-wrap: break-word !important;
 }
 
-/* Standardized Subtitles / Descriptions (Reduced 1-2px) */
+/* Standardized Subtitles / Descriptions (15px bold) */
 .mobile-app-root p.sub,
-.mobile-app-root p {
+.mobile-app-root p.subtitle,
+.mobile-app-root p.mobile-subtitle,
+.mobile-app-root .stage-subtitle,
+.mobile-app-root p.stage-subtitle,
+.stage-subtitle,
+p.stage-subtitle,
+.mobile-subtitle,
+p.mobile-subtitle {
   font-family: 'Nunito', sans-serif !important;
-  font-size: 13px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
   line-height: 1.45 !important;
   color: #5e6060 !important;
   text-align: left !important;

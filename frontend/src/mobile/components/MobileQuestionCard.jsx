@@ -19,11 +19,11 @@ export default function MobileQuestionCard({
     }}>
       {/* Header section (Left-aligned) */}
       {(eyebrow || title || subtitle) && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', textAlign: 'left' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', textAlign: 'left' }}>
           {eyebrow && (
-            <p style={{
+            <p className="mobile-eyebrow" style={{
               fontFamily: "'Nunito', sans-serif",
-              fontSize: '7.5px',
+              fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
               color: '#7a8683',
@@ -38,8 +38,8 @@ export default function MobileQuestionCard({
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(22px, 5.5vw, 28px)',
-              lineHeight: 1.12,
+              fontSize: '22px',
+              lineHeight: 1.15,
               letterSpacing: '-0.015em',
               margin: 0,
               color: '#414242',
@@ -52,14 +52,13 @@ export default function MobileQuestionCard({
           )}
 
           {subtitle && (
-            <p style={{
+            <p className="mobile-subtitle" style={{
               fontFamily: "'Nunito', sans-serif",
-              fontSize: '13px',
+              fontSize: '15px',
+              fontWeight: 700,
               color: '#5e6060',
               lineHeight: 1.45,
               margin: '2px 0 0 0',
-              textAlign: 'left',
-              overflowWrap: 'break-word',
             }}>
               {subtitle}
             </p>
