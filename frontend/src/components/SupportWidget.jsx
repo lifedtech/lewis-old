@@ -57,6 +57,10 @@ export default function SupportWidget() {
     }
   }
 
+  if (currentScreen === 'landing') {
+    return null
+  }
+
   return (
     <>
       {/* ── BOTTOM-LEFT FLOATING "i" SUPPORT BUTTON ── */}

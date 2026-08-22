@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { defineConfig } from "prisma/config";
 
 // Load environment variables without requiring external dotenv dependency

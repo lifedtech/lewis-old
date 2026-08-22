@@ -256,8 +256,18 @@ body:has(.mirror-page-wrapper),
     gap: 12px !important;
   }
 
-  .landing-screen-wrapper [data-nav] a[data-nav-link] {
-    display: none !important;
+  .landing-screen-wrapper [data-nav] {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .landing-screen-wrapper [data-nav]::-webkit-scrollbar {
+    display: none;
+  }
+  .landing-screen-wrapper [data-nav] [data-nav-link] {
+    white-space: nowrap;
+    font-size: 13px !important;
   }
 
   /* Mobile Section Spacing */
