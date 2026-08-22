@@ -8,12 +8,13 @@ const ButterflyIllustration = ({ isOrange = false, onClick }) => (
     onClick={onClick}
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
-    style={{ cursor: 'pointer', position: 'relative', width: '100%', maxWidth: '220px', margin: '0 auto' }}
+    style={{ cursor: 'pointer', position: 'relative', width: '100%', maxWidth: '220px', margin: '0 auto', display: 'flex', justifyContent: 'center' }}
   >
-    <motion.svg className="stage-illustration"
+    <motion.svg
+      className="interactive-butterfly"
       viewBox="0 0 240 190"
       fill="none"
-      style={{ width: '100%', display: 'block' }}
+      style={{ width: '100%', maxWidth: '220px', height: 'auto', display: 'block' }}
       animate={{ scale: isOrange ? 1.12 : 1 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
     >
@@ -183,8 +184,8 @@ export default function Stage2AttentionScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',

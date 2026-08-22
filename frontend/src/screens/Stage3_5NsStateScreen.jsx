@@ -62,10 +62,6 @@ const NervousSystemIllustration = () => (
 export default function Stage3_5NsStateScreen() {
   const { setScreen, setProfileField, nervousSystemState } = useLewisStore()
 
-  const handleNext = () => {
-    setScreen('stage3_6BodyAwareness')
-  }
-
   const states = [
     {
       id: 'ventral',
@@ -89,6 +85,9 @@ export default function Stage3_5NsStateScreen() {
 
   const handleSelect = (id) => {
     setProfileField('nervousSystemState', id)
+    setTimeout(() => {
+      setScreen('stage3_6BodyAwareness')
+    }, 200)
   }
 
   return (
@@ -127,8 +126,8 @@ export default function Stage3_5NsStateScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
@@ -150,7 +149,7 @@ export default function Stage3_5NsStateScreen() {
           <NervousSystemIllustration />
         </div>
 
-        {/* RIGHT — AUTONOMIC BASELINE Eyebrow + 3 Option Cards + Pinned Button */}
+        {/* RIGHT — AUTONOMIC BASELINE Eyebrow + 3 Option Cards */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
           <p className="stage-right-eyebrow" style={{
@@ -160,7 +159,6 @@ export default function Stage3_5NsStateScreen() {
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            
             margin: '0 0 14px 0',
             width: '100%'
           }}>
@@ -231,21 +229,6 @@ export default function Stage3_5NsStateScreen() {
                 </button>
               )
             })}
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!nervousSystemState}
-              style={{
-                padding: '10px 36px',
-                opacity: nervousSystemState ? 1 : 0.5,
-                cursor: nervousSystemState ? 'pointer' : 'not-allowed',
-              }}
-            >
-              Continue
-            </button>
           </div>
 
         </div>

@@ -99,14 +99,14 @@ export default function Stage1_7PriorityScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              whiteSpace: 'nowrap',
+              wordBreak: 'break-word',
             }}>
-              Priority Ranking
+              Priority<br />Ranking
             </h1>
             <p style={{
               margin: '12px 0 0 2px',

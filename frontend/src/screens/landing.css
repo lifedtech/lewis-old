@@ -240,17 +240,159 @@ body:has(.mirror-page-wrapper),
 }
 
 @media (max-width: 1000px) {
-  .landing-screen-wrapper [data-row="hero"] { grid-template-columns: 1fr !important; gap: 38px !important; }
-  .landing-screen-wrapper [data-row="lede"] { grid-template-columns: 1fr !important; gap: 18px !important; }
+  .landing-screen-wrapper [data-row="hero"] { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .landing-screen-wrapper [data-row="lede"] { grid-template-columns: 1fr !important; gap: 14px !important; }
   .landing-screen-wrapper [data-nav] a[data-secondary] { display: none !important; }
 }
-@media (max-width: 760px) {
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+
   .landing-screen-wrapper [data-row="three"],
-  .landing-screen-wrapper [data-row="nine"] { grid-template-columns: 1fr !important; }
-  .landing-screen-wrapper [data-nav] a[data-nav-link] { display: none !important; }
+  .landing-screen-wrapper [data-row="nine"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .landing-screen-wrapper [data-nav] a[data-nav-link] {
+    display: none !important;
+  }
+
+  /* Mobile Section Spacing */
+  .landing-screen-wrapper section {
+    padding: 36px 16px 40px 16px !important;
+  }
+
+  /* Mobile Hero */
+  .landing-screen-wrapper #top {
+    padding: 28px 16px 36px 16px !important;
+  }
+
+  .landing-screen-wrapper #top h1 {
+    font-size: clamp(26px, 7vw, 32px) !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.02em !important;
+    margin-bottom: 12px !important;
+    word-break: break-word !important;
+  }
+
+  .landing-screen-wrapper #top p {
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    margin-bottom: 22px !important;
+  }
+
+  .landing-screen-wrapper [data-row="ctas"] {
+    width: 100% !important;
+  }
+
+  .landing-screen-wrapper .landing-primary-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 13px 24px !important;
+    font-size: 15px !important;
+    min-height: 46px !important;
+  }
+
+  /* Hero Value Badges */
+  .landing-screen-wrapper [data-row="hero"] > div:last-child {
+    gap: 8px !important;
+  }
+
+  .landing-screen-wrapper [data-row="hero"] > div:last-child > div {
+    padding: 12px 14px !important;
+    border-radius: 12px !important;
+    gap: 10px !important;
+  }
+
+  .landing-screen-wrapper [data-row="hero"] > div:last-child > div span:last-child {
+    font-size: 13.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  /* Section Headings & Ledes */
+  .landing-screen-wrapper h2 {
+    font-size: clamp(22px, 5.5vw, 26px) !important;
+    line-height: 1.18 !important;
+    letter-spacing: -0.015em !important;
+    margin-bottom: 8px !important;
+  }
+
+  .landing-screen-wrapper [data-row="lede"] p {
+    font-size: 13.5px !important;
+    line-height: 1.55 !important;
+  }
+
+  /* Feature / What Cards */
+  .landing-screen-wrapper [data-row="three"] > div {
+    padding: 18px 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .landing-screen-wrapper [data-row="three"] h3 {
+    font-size: 17px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .landing-screen-wrapper [data-row="three"] p {
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Nine Domain Cards */
+  .landing-domain-card {
+    padding: 14px 12px !important;
+    border-radius: 14px !important;
+    gap: 12px !important;
+  }
+
+  .landing-domain-card h3 {
+    font-size: 15px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .landing-domain-card p {
+    font-size: 12.5px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* FAQ Summary */
+  .landing-screen-wrapper details summary {
+    padding: 14px 0 !important;
+    font-size: 15px !important;
+    gap: 12px !important;
+  }
+
+  .landing-screen-wrapper details p {
+    padding: 0 0 14px 0 !important;
+    font-size: 13.5px !important;
+    line-height: 1.55 !important;
+  }
+
+  /* Final CTA Card */
+  .landing-screen-wrapper #start > div > div {
+    padding: 22px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  .landing-screen-wrapper #start h2 {
+    font-size: clamp(22px, 5.5vw, 26px) !important;
+    line-height: 1.18 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .landing-screen-wrapper #start p {
+    font-size: 13.5px !important;
+    line-height: 1.55 !important;
+    margin-bottom: 20px !important;
+  }
 }
+
 @media (max-width: 520px) {
   .landing-screen-wrapper [data-cta] { width: 100% !important; }
   .landing-screen-wrapper [data-row="ctas"] { flex-direction: column !important; align-items: stretch !important; }
 }
+
 

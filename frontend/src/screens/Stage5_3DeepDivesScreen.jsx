@@ -60,15 +60,15 @@ export default function Stage5_3DeepDivesScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
               textAlign: 'left',
+              whiteSpace: 'nowrap',
             }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Adaptive Deep</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Dives</span>
+              Adaptive Deep Dives
             </h1>
             <p style={{
               margin: '12px 0 0 2px',
@@ -88,94 +88,79 @@ export default function Stage5_3DeepDivesScreen() {
         </div>
 
         {/* RIGHT — Multi-select Card List */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '12px' }}>
 
-          <div
-            style={{
-              width: '100%',
-              background: '#ffffff',
-              border: '1.5px solid #f4f4f4',
-              borderRadius: '20px',
-              padding: '18px 22px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-            }}
-          >
-            {/* Header Row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-              <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
-                SELECT CORE FOCUS AREAS
-              </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
-                {selectedCount} SELECTED
-              </span>
-            </div>
-
-            {/* Stacked Option Cards */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-              {areas.map(a => {
-                const active = !!adaptiveDeepDives?.[a.key]
-                return (
-                  <button
-                    key={a.key}
-                    onClick={() => handleToggle(a.key)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '14px',
-                      width: '100%',
-                      padding: '12px 16px',
-                      borderRadius: '14px',
-                      border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
-                      background: active ? '#e4f4ee' : '#f2f9f6',
-                      color: active ? '#414242' : '#3a3a3a',
-                      cursor: 'pointer',
-                      transition: 'all 0.18s ease',
-                      boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
-                      boxSizing: 'border-box',
-                      textAlign: 'left',
-                    }}
-                  >
-                    <div style={{
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '6px',
-                      border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
-                      background: active ? '#00ae9d' : 'transparent',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      transition: 'all 0.18s ease',
-                    }}>
-                      {active && <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
-                    </div>
-
-                    <span style={{
-                      fontFamily: "'Nunito', sans-serif",
-                      fontWeight: active ? 700 : 600,
-                      fontSize: '14.5px',
-                      color: active ? '#414242' : '#414242',
-                      textAlign: 'left',
-                      flex: 1,
-                    }}>
-                      {a.label}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-
-            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
-              Select one or more areas to prioritize for deeper adaptive exploration.
-            </p>
+          {/* Header Row */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '2px' }}>
+            <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+              SELECT CORE FOCUS AREAS
+            </span>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
+              {selectedCount} SELECTED
+            </span>
           </div>
 
-          {/* Action Button directly below card */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '14px', flexShrink: 0 }}>
+          {/* Stacked Option Cards */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+            {areas.map(a => {
+              const active = !!adaptiveDeepDives?.[a.key]
+              return (
+                <button
+                  key={a.key}
+                  onClick={() => handleToggle(a.key)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '14px',
+                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                    background: active ? '#e4f4ee' : '#ffffff',
+                    color: active ? '#414242' : '#3a3a3a',
+                    cursor: 'pointer',
+                    transition: 'all 0.18s ease',
+                    boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : '0 1px 4px rgba(0,0,0,0.03)',
+                    boxSizing: 'border-box',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '6px',
+                    border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
+                    background: active ? '#00ae9d' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    transition: 'all 0.18s ease',
+                  }}>
+                    {active && <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                  </div>
+
+                  <span style={{
+                    fontFamily: "'Nunito', sans-serif",
+                    fontWeight: active ? 700 : 600,
+                    fontSize: '14.5px',
+                    color: active ? '#414242' : '#414242',
+                    textAlign: 'left',
+                    flex: 1,
+                  }}>
+                    {a.label}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+
+          <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#64748b', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+            Select one or more areas to prioritize for deeper adaptive exploration.
+          </p>
+
+          {/* Action Button directly below */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '8px', flexShrink: 0 }}>
             <button
               className="btn-primary"
               onClick={handleNext}

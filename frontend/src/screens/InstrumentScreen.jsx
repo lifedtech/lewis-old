@@ -30,10 +30,12 @@ export default function InstrumentScreen({ id }) {
 
   const handleSelect = (val) => {
     setScaleAnswer(spec.slice, item.id, val)
-    if (step < last) setTimeout(() => setStep(step + 1), 350)
+    if (step < last) {
+      setTimeout(() => setStep(step + 1), 220)
+    } else {
+      setTimeout(() => setScreen(spec.next), 220)
+    }
   }
-
-  const handleNext = () => (step < last ? setStep(step + 1) : setScreen(spec.next))
 
   const pct = Math.round(((step + 1) / spec.items.length) * 100)
 
@@ -46,8 +48,8 @@ export default function InstrumentScreen({ id }) {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -56,28 +58,26 @@ export default function InstrumentScreen({ id }) {
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Topic Line Art */}
+        {/* LEFT — Eyebrow + Title + Subtitle + Topic Line Art */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ ...eyebrowStyle, margin: '0 0 12px 0' }}>{spec.eyebrow}</p>
+            <p style={{ ...eyebrowStyle, margin: '0 0 10px 0', lineHeight: 1.3 }}>{spec.eyebrow}</p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: INK,
               textAlign: 'left',
             }}>
-              {spec.title.map((line) => (
-                <span key={line} style={{ display: 'block', whiteSpace: 'nowrap' }}>{line}</span>
-              ))}
+              {Array.isArray(spec.title) ? spec.title.join(' ') : spec.title}
             </h1>
             {spec.subtitle && (
               <p style={{
-                margin: '12px 0 0 2px',
-                fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+                margin: '10px 0 0 0',
+                fontSize: 'clamp(13px, 1.5vw, 15px)',
                 color: INK,
                 fontFamily: NUNITO,
                 lineHeight: 1.5,
@@ -88,123 +88,95 @@ export default function InstrumentScreen({ id }) {
               </p>
             )}
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
             <TopicLineIllustration topic={spec.topic} />
           </div>
         </div>
 
-        {/* RIGHT — Questionnaire Card Container */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <div style={{
-            width: '100%',
-            background: '#ffffff',
-            border: '1.5px solid #f4f4f4',
-            borderRadius: '20px',
-            padding: '18px 22px',
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-          }}>
-            {/* Progress Header Row (Stationary) */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={eyebrowStyle}>
-                  {spec.progress} · {step + 1} OF {spec.items.length}
-                </span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: INK }}>{pct}%</span>
-              </div>
-              <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
-                <motion.div
-                  style={{ height: '100%', background: TEAL }}
-                  animate={{ width: `${pct}%` }}
-                  transition={{ duration: 0.35, ease: 'easeInOut' }}
-                />
-              </div>
+        {/* RIGHT — Questionnaire Section */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '10px' }}>
+          {/* Progress Header Row (Stationary) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={eyebrowStyle}>
+                {spec.progress} · {step + 1} OF {spec.items.length}
+              </span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: INK }}>{pct}%</span>
             </div>
-
-            {/* Question Text & Options Transition (Container stays still) */}
-            <AnimatePresence mode="wait">
+            <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
               <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.22, ease: 'easeInOut' }}
-                style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}
-              >
-                <p style={{ margin: '4px 0', fontSize: '15px', fontWeight: 700, color: INK, fontFamily: NUNITO, lineHeight: 1.4, textAlign: 'left' }}>
-                  "{item.text}"
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
-                  {scale.map((opt) => {
-                    const active = answer === opt
-                    return (
-                      <button
-                        key={opt}
-                        onClick={() => handleSelect(opt)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          width: '100%',
-                          padding: '8px 14px',
-                          borderRadius: '12px',
-                          border: `1.5px solid ${active ? TEAL : '#d2e7e0'}`,
-                          background: active ? '#e4f4ee' : '#f2f9f6',
-                          color: INK,
-                          cursor: 'pointer',
-                          transition: 'all 0.18s ease',
-                          boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
-                          boxSizing: 'border-box',
-                          textAlign: 'left',
-                        }}
-                      >
-                        <div style={{
-                          width: '18px',
-                          height: '18px',
-                          borderRadius: '50%',
-                          border: `2px solid ${active ? TEAL : '#c2ceca'}`,
-                          background: active ? TEAL : 'transparent',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                          transition: 'all 0.18s ease',
-                        }}>
-                          {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
-                        </div>
-                        <span style={{ fontFamily: NUNITO, fontWeight: active ? 700 : 500, fontSize: '13.5px', color: INK }}>
-                          {opt}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: INK, fontFamily: NUNITO, fontStyle: 'italic', textAlign: 'center' }}>
-              {item.hint || spec.hint}
-            </p>
+                style={{ height: '100%', background: TEAL }}
+                animate={{ width: `${pct}%` }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+              />
+            </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '12px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!answer}
-              style={{
-                padding: '9px 36px',
-                opacity: answer ? 1 : 0.5,
-                cursor: answer ? 'pointer' : 'not-allowed',
-              }}
+          {/* Question Text & Options Transition */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, x: 15 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -15 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}
             >
-              {step < last ? 'Next' : 'Continue'}
-            </button>
-          </div>
+              <p style={{ margin: '2px 0 4px 0', fontSize: '14.5px', fontWeight: 700, color: INK, fontFamily: NUNITO, lineHeight: 1.4, textAlign: 'left' }}>
+                "{item.text}"
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+                {scale.map((opt) => {
+                  const active = answer === opt
+                  return (
+                    <button
+                      key={opt}
+                      onClick={() => handleSelect(opt)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        width: '100%',
+                        padding: '9px 16px',
+                        borderRadius: '14px',
+                        border: `1.5px solid ${active ? TEAL : '#d2e7e0'}`,
+                        background: active ? '#e4f4ee' : '#f2f9f6',
+                        color: INK,
+                        cursor: 'pointer',
+                        transition: 'all 0.18s ease',
+                        boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
+                        boxSizing: 'border-box',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <div style={{
+                        width: '18px',
+                        height: '18px',
+                        borderRadius: '50%',
+                        border: `2px solid ${active ? TEAL : '#c2ceca'}`,
+                        background: active ? TEAL : 'transparent',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        transition: 'all 0.18s ease',
+                      }}>
+                        {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                      </div>
+                      <span style={{ fontFamily: NUNITO, fontWeight: active ? 700 : 500, fontSize: '13.5px', color: INK }}>
+                        {opt}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#64748b', fontFamily: NUNITO, fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+            {item.hint || spec.hint}
+          </p>
         </div>
 
       </div>

@@ -36,55 +36,79 @@ export default function Stage3_2BodyMapScreen() {
       }}>
 
         {/* TOP HEADER */}
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: '12px' }}>
+          <p style={{
+            fontFamily: '"Nunito", sans-serif',
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '0.14em',
+            color: '#00ae9d',
+            textTransform: 'uppercase',
+            margin: '0 0 8px 0',
+          }}>
+            STAGE 3 — ANS &amp; SOMATIC
+          </p>
           <h1 style={{
             fontFamily: "'Manrope', sans-serif",
             fontWeight: 800,
-            fontSize: 'clamp(28px, 3.8vw, 48px)',
-            lineHeight: 1.05,
-            letterSpacing: '-0.035em',
+            fontSize: 'clamp(22px, 3.5vw, 40px)',
+            lineHeight: 1.15,
+            letterSpacing: '-0.02em',
             margin: 0,
             color: '#414242',
+            whiteSpace: 'nowrap',
           }}>
             Body Tension Map
           </h1>
           <p style={{
             margin: '6px 0 0 2px',
-            fontSize: 'clamp(13px, 1.5vw, 15px)',
+            fontSize: 'clamp(12px, 1.4vw, 14.5px)',
             color: '#414242',
             fontFamily: "'Nunito', sans-serif",
+            lineHeight: 1.4,
           }}>
             Where in your body do you feel physical tension or holding right now?
           </p>
         </div>
 
-        {/* MAIN 2-COLUMN SECTION (Body figure card left, 6 stacked option rows right) */}
+        {/* MAIN 2-COLUMN SECTION (Body figure card left, options grid right) */}
         <div className="stage-split" style={{
           display: 'grid',
-          gridTemplateColumns: '220px 1fr',
-          gap: 'clamp(16px, 3vw, 36px)',
+          gridTemplateColumns: 'minmax(160px, 200px) 1fr',
+          gap: 'clamp(12px, 2.5vw, 28px)',
           alignItems: 'center',
           flex: 1,
+          width: '100%',
         }}>
 
-          {/* LEFT — Interactive Body Figure SVG Card (Single Figure) */}
+          {/* LEFT — Interactive Body Figure SVG Card */}
           <div style={{
-            height: '100%',
-            maxHeight: '300px',
-            background: '#ffffff',
-            borderRadius: '24px',
-            border: '1.5px solid rgba(0,174,157,0.18)',
-            padding: '16px',
+            width: '100%',
+            maxWidth: '200px',
+            background: '#f2f9f6',
+            borderRadius: '20px',
+            border: '1.5px solid #d2e7e0',
+            padding: '10px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            boxSizing: 'border-box'
+            margin: '0 auto',
+            boxSizing: 'border-box',
+            flexShrink: 0,
           }}>
-            <svg viewBox="0 0 200 320" style={{ width: '100%', height: '100%' }}>
+            <svg
+              viewBox="0 0 200 320"
+              style={{
+                width: '100%',
+                maxWidth: '140px',
+                height: '190px',
+                display: 'block',
+              }}
+            >
               <defs>
                 <linearGradient id="bodyDefault" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#f3f6f5" />
-                  <stop offset="100%" stopColor="#f4f4f4" />
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#f0f5f3" />
                 </linearGradient>
                 <linearGradient id="bodySelected" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#e4f4ee" />
@@ -95,94 +119,99 @@ export default function Stage3_2BodyMapScreen() {
               {/* Upper & Lower Back (Back Layer Contour behind Torso) */}
               <rect
                 x="56" y="95" width="88" height="110" rx="14"
-                fill={isSelected('back') ? 'url(#bodySelected)' : '#f7faf9'}
-                stroke={isSelected('back') ? '#00ae9d' : '#d2dad6'}
+                fill={isSelected('back') ? 'url(#bodySelected)' : '#ffffff'}
+                stroke={isSelected('back') ? '#00ae9d' : '#cbd5e1'}
                 strokeWidth={isSelected('back') ? '2.2' : '1.8'}
                 strokeDasharray={isSelected('back') ? 'none' : '4 3'}
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'back')}
               />
 
               {/* Head */}
               <circle
-                cx="100" cy="40" r="22"
+                cx="100" cy="38" r="22"
                 fill={isSelected('head') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
-                stroke={isSelected('head') ? '#00ae9d' : '#d2dad6'}
+                stroke={isSelected('head') ? '#00ae9d' : '#94a3b8'}
                 strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'head')}
               />
 
               {/* Neck & Shoulders */}
               <path
-                d="M 60,78 C 80,68 120,68 140,78 L 132,95 L 68,95 Z"
+                d="M 60,76 C 80,66 120,66 140,76 L 132,93 L 68,93 Z"
                 fill={isSelected('neck') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
-                stroke={isSelected('neck') ? '#00ae9d' : '#d2dad6'}
+                stroke={isSelected('neck') ? '#00ae9d' : '#94a3b8'}
                 strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'neck')}
               />
 
               {/* Chest (Front Layer) */}
               <rect
-                x="66" y="101" width="68" height="48" rx="8"
+                x="66" y="99" width="68" height="48" rx="8"
                 fill={isSelected('chest') ? 'url(#bodySelected)' : '#ffffff'}
-                stroke={isSelected('chest') ? '#00ae9d' : '#d2dad6'}
+                stroke={isSelected('chest') ? '#00ae9d' : '#94a3b8'}
                 strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'chest')}
               />
 
               {/* Stomach & Abdomen (Front Layer) */}
               <rect
-                x="69" y="154" width="62" height="46" rx="8"
+                x="69" y="152" width="62" height="46" rx="8"
                 fill={isSelected('gut') ? 'url(#bodySelected)' : '#ffffff'}
-                stroke={isSelected('gut') ? '#00ae9d' : '#d2dad6'}
+                stroke={isSelected('gut') ? '#00ae9d' : '#94a3b8'}
                 strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'gut')}
               />
 
               {/* Arms (Limbs) */}
               <path
-                d="M 54,102 L 26,163 L 38,168 L 59,113 Z"
+                d="M 54,100 L 26,161 L 38,166 L 59,111 Z"
                 fill={isSelected('limbs') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
-                stroke={isSelected('limbs') ? '#00ae9d' : '#d2dad6'}
+                stroke={isSelected('limbs') ? '#00ae9d' : '#94a3b8'}
                 strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'limbs')}
               />
               <path
-                d="M 146,102 L 174,163 L 162,168 L 141,113 Z"
+                d="M 146,100 L 174,161 L 162,166 L 141,111 Z"
                 fill={isSelected('limbs') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
-                stroke={isSelected('limbs') ? '#00ae9d' : '#d2dad6'}
+                stroke={isSelected('limbs') ? '#00ae9d' : '#94a3b8'}
                 strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'limbs')}
               />
 
               {/* Legs (Limbs) */}
               <path
-                d="M 70,212 L 58,300 L 73,300 L 82,212 Z"
+                d="M 70,210 L 58,296 L 73,296 L 82,210 Z"
                 fill={isSelected('limbs') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
-                stroke={isSelected('limbs') ? '#00ae9d' : '#d2dad6'}
+                stroke={isSelected('limbs') ? '#00ae9d' : '#94a3b8'}
                 strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'limbs')}
               />
               <path
-                d="M 130,212 L 142,300 L 127,300 L 118,212 Z"
+                d="M 130,210 L 142,296 L 127,296 L 118,210 Z"
                 fill={isSelected('limbs') ? 'url(#bodySelected)' : 'url(#bodyDefault)'}
-                stroke={isSelected('limbs') ? '#00ae9d' : '#d2dad6'}
+                stroke={isSelected('limbs') ? '#00ae9d' : '#94a3b8'}
                 strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.25s ease' }}
                 onClick={() => toggleArrayItem('bodyMapZones', 'limbs')}
               />
             </svg>
           </div>
 
-          {/* RIGHT — 6 Full-Width Vertical Option Rows */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {/* RIGHT — Responsive Option Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+            gap: '8px',
+            width: '100%',
+          }}>
             {zones.map(z => {
               const active = isSelected(z.id)
               return (
@@ -192,38 +221,38 @@ export default function Stage3_2BodyMapScreen() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
+                    gap: '10px',
                     width: '100%',
-                    padding: '10px 20px',
-                    borderRadius: '16px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #f4f4f4',
-                    background: active ? '#e4f4ee' : '#f7faf8',
-                    color: active ? '#414242' : '#3a3a3a',
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                    background: active ? '#e4f4ee' : '#f2f9f6',
+                    color: active ? '#1b4d43' : '#414242',
                     fontFamily: "'Nunito', sans-serif",
-                    fontSize: '14px',
+                    fontSize: '12.5px',
                     fontWeight: active ? 700 : 600,
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.18s ease',
                     boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
+                    boxSizing: 'border-box',
+                    textAlign: 'left',
                   }}
                 >
                   <div style={{
-                    position: 'absolute',
-                    left: '16px',
-                    width: '18px',
-                    height: '18px',
+                    width: '16px',
+                    height: '16px',
                     borderRadius: '50%',
                     border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
-                    background: active ? '#00ae9d' : 'transparent',
+                    background: active ? '#00ae9d' : '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    transition: 'all 0.2s ease',
+                    flexShrink: 0,
+                    transition: 'all 0.18s ease',
                   }}>
-                    {active && <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#fff' }} />}
+                    {active && <span style={{ color: '#ffffff', fontSize: '9.5px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
                   </div>
-                  <span>{z.label}</span>
+                  <span style={{ lineHeight: 1.25, overflowWrap: 'break-word' }}>{z.label}</span>
                 </button>
               )
             })}
@@ -232,8 +261,8 @@ export default function Stage3_2BodyMapScreen() {
         </div>
 
         {/* FOOTER — Pinned Continue Button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'auto', paddingTop: '12px', flexShrink: 0 }}>
-          <button className="btn-primary" onClick={handleNext} style={{ padding: '12px 36px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'auto', paddingTop: '10px', flexShrink: 0 }}>
+          <button className="btn-primary" onClick={handleNext} style={{ padding: '10px 36px' }}>
             Continue
           </button>
         </div>

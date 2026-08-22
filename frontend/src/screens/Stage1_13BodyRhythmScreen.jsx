@@ -120,18 +120,12 @@ export default function Stage1_13BodyRhythmScreen() {
   const { setScreen, updateObjectField, bodyRhythm } = useLewisStore()
   const [step, setStep] = useState(0)
 
-  const handleNext = () => {
-    if (step < 1) {
-      setStep(step + 1)
-    } else {
-      setScreen('stage1_14SensoryPause')
-    }
-  }
-
   const handleSelect = (key, val) => {
     updateObjectField('bodyRhythm', key, val)
     if (step < 1) {
-      setTimeout(() => setStep(step + 1), 350)
+      setTimeout(() => setStep(step + 1), 220)
+    } else {
+      setTimeout(() => setScreen('stage1_14SensoryPause'), 220)
     }
   }
 
@@ -187,14 +181,14 @@ export default function Stage1_13BodyRhythmScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              textWrap: 'balance',
+              whiteSpace: 'nowrap',
             }}>
-              Body &amp;<br />Circadian Rhythms
+              Body &amp; Circadian Rhythms
             </h1>
             <p style={{
               margin: '12px 0 0 2px',
@@ -299,22 +293,6 @@ export default function Stage1_13BodyRhythmScreen() {
               </div>
             </motion.div>
           </AnimatePresence>
-
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!currentAnswer}
-              style={{
-                padding: '10px 36px',
-                opacity: currentAnswer ? 1 : 0.5,
-                cursor: currentAnswer ? 'pointer' : 'not-allowed',
-              }}
-            >
-              {step < questions.length - 1 ? 'Next' : 'Continue'}
-            </button>
-          </div>
 
         </div>
 

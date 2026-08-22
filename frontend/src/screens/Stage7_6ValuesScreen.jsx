@@ -86,7 +86,7 @@ export default function Stage7_6ValuesScreen() {
       }}>
 
         {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
             <p style={{
               fontFamily: '"Nunito", sans-serif',
@@ -95,80 +95,81 @@ export default function Stage7_6ValuesScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 14px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               SELECT ALL THAT APPLY
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              textWrap: 'balance',
+              whiteSpace: 'nowrap',
             }}>
-              Core<br />Values
+              Core Values
             </h1>
             <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+              margin: '8px 0 14px 0',
+              fontSize: 'clamp(13px, 1.5vw, 15px)',
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
-              lineHeight: 1.5,
+              lineHeight: 1.45,
               maxWidth: '350px',
+              textAlign: 'left',
             }}>
               Select the values that are most essential to how you define a well-lived, healthy life.
             </p>
           </div>
-          <CoreValuesIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+            <CoreValuesIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — ACTION & SUPPORT Eyebrow + 8 Multi-select Checkbox Cards + Pinned Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* RIGHT — Questionnaire Container */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '14px' }}>
 
-          <p className="stage-right-eyebrow" style={{
-            fontFamily: '"Nunito", sans-serif',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#414242',
-            textTransform: 'uppercase',
-            
-            margin: '0 0 10px 0'
-          }}>
-            ACTION & SUPPORT
-          </p>
+          {/* Header Row */}
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+              ACTION &amp; SUPPORT
+            </span>
+          </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
             {values.map(val => {
               const active = isSelected(val)
               return (
-                <button
+                <motion.button
                   key={val}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => toggleArrayItem('valuesCheck', val)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '14px',
                     width: '100%',
-                    padding: '10px 16px',
+                    padding: '11px 16px',
                     borderRadius: '14px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #f4f4f4',
-                    background: active ? '#e4f4ee' : '#f7faf8',
+                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                    background: active ? '#e4f4ee' : '#ffffff',
                     color: active ? '#414242' : '#3a3a3a',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
+                    transition: 'background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease',
+                    boxShadow: active ? '0 3px 10px rgba(0,174,157,0.16)' : '0 1px 4px rgba(0,0,0,0.03)',
                     boxSizing: 'border-box',
                     textAlign: 'left',
+                    outline: 'none',
                   }}
                 >
                   {/* Selection Indicator Circle with Checkmark */}
                   <div style={{
-                    width: '20px',
-                    height: '20px',
+                    width: '18px',
+                    height: '18px',
                     borderRadius: '50%',
                     border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
                     background: active ? '#00ae9d' : 'transparent',
@@ -176,33 +177,37 @@ export default function Stage7_6ValuesScreen() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.18s ease',
                   }}>
-                    {active && <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                    {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
                   </div>
 
                   <span style={{
                     fontFamily: "'Nunito', sans-serif",
                     fontWeight: active ? 700 : 500,
-                    fontSize: '14px',
+                    fontSize: '13.5px',
                     color: active ? '#414242' : '#414242',
                     lineHeight: 1.4,
                   }}>
                     {val}
                   </span>
-                </button>
+                </motion.button>
               )
             })}
           </div>
 
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '12px', flexShrink: 0 }}>
+          <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+            Select all values that resonate most deeply with you.
+          </p>
+
+          {/* Action button directly below */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '8px', flexShrink: 0 }}>
             <button
               className="btn-primary"
               onClick={handleNext}
               disabled={selectedCount === 0}
               style={{
-                padding: '12px 38px',
+                padding: '10px 40px',
                 opacity: selectedCount > 0 ? 1 : 0.5,
                 cursor: selectedCount > 0 ? 'pointer' : 'not-allowed',
               }}

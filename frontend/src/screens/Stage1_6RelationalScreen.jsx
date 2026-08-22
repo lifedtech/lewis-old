@@ -64,6 +64,13 @@ export default function Stage1_6RelationalScreen() {
     { title: 'Overwhelming/Too much', desc: 'Social demands and interactions feel draining or excessive.' }
   ]
 
+  const handleSelect = (title) => {
+    setProfileField('relationalContext', title)
+    setTimeout(() => {
+      setScreen('stage1_7Priority')
+    }, 200)
+  }
+
   return (
     <motion.div
       className="screen-container"
@@ -73,8 +80,8 @@ export default function Stage1_6RelationalScreen() {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -84,7 +91,7 @@ export default function Stage1_6RelationalScreen() {
       }}>
 
         {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
             <p style={{
               fontFamily: '"Nunito", sans-serif',
@@ -93,25 +100,25 @@ export default function Stage1_6RelationalScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 14px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               CHOOSE ONE
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              textWrap: 'balance',
             }}>
-              Relational<br />Context
+              Relational Context
             </h1>
             <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+              margin: '10px 0 0 0',
+              fontSize: 'clamp(13px, 1.5vw, 15px)',
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
@@ -120,10 +127,12 @@ export default function Stage1_6RelationalScreen() {
               How does your social world feel right now?
             </p>
           </div>
-          <RelationalContextIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <RelationalContextIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — SOCIAL WORLD Eyebrow + 5 Option Cards + Pinned Button */}
+        {/* RIGHT — SOCIAL WORLD Eyebrow + 5 Option Cards */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
           <p className="stage-right-eyebrow" style={{
@@ -133,7 +142,6 @@ export default function Stage1_6RelationalScreen() {
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            
             margin: '0 0 8px 0'
           }}>
             SOCIAL WORLD
@@ -145,7 +153,7 @@ export default function Stage1_6RelationalScreen() {
               return (
                 <button
                   key={opt.title}
-                  onClick={() => setProfileField('relationalContext', opt.title)}
+                  onClick={() => handleSelect(opt.title)}
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
@@ -153,8 +161,8 @@ export default function Stage1_6RelationalScreen() {
                     width: '100%',
                     padding: '9px 15px',
                     borderRadius: '14px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #f4f4f4',
-                    background: active ? '#e4f4ee' : '#f7faf8',
+                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                    background: active ? '#e4f4ee' : '#f2f9f6',
                     color: active ? '#414242' : '#3a3a3a',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
@@ -204,22 +212,6 @@ export default function Stage1_6RelationalScreen() {
                 </button>
               )
             })}
-          </div>
-
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={() => setScreen('stage1_7Priority')}
-              disabled={!relationalContext}
-              style={{
-                padding: '10px 36px',
-                opacity: relationalContext ? 1 : 0.5,
-                cursor: relationalContext ? 'pointer' : 'not-allowed',
-              }}
-            >
-              Continue
-            </button>
           </div>
 
         </div>

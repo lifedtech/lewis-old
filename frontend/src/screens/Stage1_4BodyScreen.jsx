@@ -67,6 +67,20 @@ export default function Stage1_4BodyScreen() {
     { val: 'poor', label: 'Struggling' },
   ]
 
+  const handleSelectMovement = (val) => {
+    setProfileField('bodyMovement', val)
+    if (sleepQuality) {
+      setTimeout(() => setScreen('stage1_5Who5'), 200)
+    }
+  }
+
+  const handleSelectSleep = (val) => {
+    setProfileField('sleepQuality', val)
+    if (bodyMovement) {
+      setTimeout(() => setScreen('stage1_5Who5'), 200)
+    }
+  }
+
   return (
     <motion.div
       className="screen-container"
@@ -76,8 +90,8 @@ export default function Stage1_4BodyScreen() {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -86,8 +100,8 @@ export default function Stage1_4BodyScreen() {
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Vector Line Art */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        {/* LEFT — Eyebrow + Title + Vector Line Art */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
             <p style={{
               fontFamily: '"Nunito", sans-serif',
@@ -96,37 +110,29 @@ export default function Stage1_4BodyScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 14px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               PHYSICAL WELLBEING
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              textWrap: 'balance',
             }}>
-              Body &amp; Movement<br />Context
+              Body &amp; Movement Context
             </h1>
-            <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#414242',
-              fontFamily: "'Nunito', sans-serif",
-              lineHeight: 1.5,
-              maxWidth: '350px',
-            }}>
-              How has your body been lately?
-            </p>
           </div>
-          <BodyIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <BodyIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — BODY MOVEMENT Eyebrow + Question Cards + Pinned Button */}
+        {/* RIGHT — BODY MOVEMENT Eyebrow + Question Cards */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
           <p className="stage-right-eyebrow" style={{
@@ -136,7 +142,6 @@ export default function Stage1_4BodyScreen() {
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            
             margin: '0 0 8px 0',
             width: '100%'
           }}>
@@ -156,7 +161,7 @@ export default function Stage1_4BodyScreen() {
                   return (
                     <button
                       key={val}
-                      onClick={() => setProfileField('bodyMovement', val)}
+                      onClick={() => handleSelectMovement(val)}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -208,7 +213,7 @@ export default function Stage1_4BodyScreen() {
                   return (
                     <button
                       key={val}
-                      onClick={() => setProfileField('sleepQuality', val)}
+                      onClick={() => handleSelectSleep(val)}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -249,17 +254,6 @@ export default function Stage1_4BodyScreen() {
               </div>
             </div>
 
-          </div>
-
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={() => setScreen('stage1_5Who5')}
-              style={{ padding: '10px 36px' }}
-            >
-              Continue
-            </button>
           </div>
 
         </div>

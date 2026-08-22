@@ -18,6 +18,13 @@ export default function Stage1_1IdentityScreen() {
   const isSelected = (val) => (identityRoles || []).includes(val)
   const selectedCount = (identityRoles || []).length
 
+  const handleSelect = (val) => {
+    setProfileField('identityRoles', [val])
+    setTimeout(() => {
+      setScreen('stage1_2Stability')
+    }, 180)
+  }
+
   return (
     <motion.div
       className="screen-container"
@@ -82,14 +89,14 @@ export default function Stage1_1IdentityScreen() {
           gap: '10px',
           justifyContent: 'center',
           maxWidth: '640px',
-          marginBottom: '32px',
+          marginBottom: '16px',
         }}>
           {roles.map(val => {
             const active = isSelected(val)
             return (
               <button
                 key={val}
-                onClick={() => setProfileField('identityRoles', active ? [] : [val])}
+                onClick={() => handleSelect(val)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -127,27 +134,6 @@ export default function Stage1_1IdentityScreen() {
               </button>
             )
           })}
-        </div>
-
-        {/* Action Button */}
-        <div>
-          <button
-            className="btn-primary"
-            onClick={() => setScreen('stage1_2Stability')}
-            disabled={selectedCount === 0}
-            style={{
-              padding: '10px 48px',
-              borderRadius: '12px',
-              opacity: selectedCount > 0 ? 1 : 0.5,
-              cursor: selectedCount > 0 ? 'pointer' : 'not-allowed',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              fontSize: '13.5px',
-              fontWeight: 700,
-            }}
-          >
-            Continue
-          </button>
         </div>
 
       </div>

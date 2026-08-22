@@ -13,7 +13,7 @@ export const INSTRUMENTS = {
   stage1_5Who5: {
     slice: 'who5', next: 'stage1_6Relational', topic: 'who5',
     eyebrow: 'CHOOSE ONE',
-    title: ['Overall Wellbeing'],
+    title: ['Overall', 'Wellbeing'],
     progress: 'LAST 2 WEEKS',
     hint: 'Select how often you felt this way over the last two weeks.',
     scale: WHO5_SCALE,

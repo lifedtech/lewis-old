@@ -67,13 +67,10 @@ export default function Stage1_9FinancialScreen() {
 
   const handleSelect = (qId, val) => {
     setProfileField('financialState', { ...financialState, [qId]: val })
-  }
-
-  const handleNext = () => {
     if (step < questions.length - 1) {
-      setStep(s => s + 1)
+      setTimeout(() => setStep(s => s + 1), 220)
     } else {
-      setScreen('stage1_10Environment')
+      setTimeout(() => setScreen('stage1_10Environment'), 220)
     }
   }
 
@@ -86,8 +83,8 @@ export default function Stage1_9FinancialScreen() {
     >
       <div className="stage-split" style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
+        gridTemplateColumns: '1fr 1.45fr',
+        gap: 'clamp(24px, 3.5vw, 44px)',
         alignItems: 'stretch',
         width: '100%',
         height: '100%',
@@ -97,7 +94,7 @@ export default function Stage1_9FinancialScreen() {
       }}>
 
         {/* LEFT — Eyebrow + Title + Subtitle + Line Illustration */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
             <p style={{
               fontFamily: '"Nunito", sans-serif',
@@ -106,26 +103,25 @@ export default function Stage1_9FinancialScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 14px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               FINANCIAL WELLBEING
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
             }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Financial</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Wellness</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Pulse</span>
+              Financial Wellness Pulse
             </h1>
             <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+              margin: '10px 0 0 0',
+              fontSize: 'clamp(13px, 1.5vw, 15px)',
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
@@ -134,11 +130,13 @@ export default function Stage1_9FinancialScreen() {
               Let's tune into your financial state.
             </p>
           </div>
-          <FinancialIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <FinancialIllustration />
+          </div>
         </div>
 
         {/* RIGHT — FINANCIAL PULSE Eyebrow + Questions + Option Cards + Pinned Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start', width: '100%' }}>
 
           {/* Progress Header */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px', width: '100%' }}>
@@ -226,22 +224,6 @@ export default function Stage1_9FinancialScreen() {
               </div>
             </motion.div>
           </AnimatePresence>
-
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!currentAnswer}
-              style={{
-                padding: '10px 36px',
-                opacity: currentAnswer ? 1 : 0.5,
-                cursor: currentAnswer ? 'pointer' : 'not-allowed',
-              }}
-            >
-              {step < questions.length - 1 ? 'Next' : 'Continue'}
-            </button>
-          </div>
 
         </div>
 

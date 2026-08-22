@@ -80,8 +80,11 @@ const EnvironmentIllustration = () => (
 export default function Stage1_10EnvironmentScreen() {
   const { setScreen, updateObjectField, environmentalPulse } = useLewisStore()
 
-  const handleNext = () => {
-    setScreen('stage1_11Intellectual')
+  const handleSelect = (opt) => {
+    updateObjectField('environmentalPulse', 'natureAccess', opt)
+    setTimeout(() => {
+      setScreen('stage1_11Intellectual')
+    }, 200)
   }
 
   const selectedOpt = environmentalPulse?.natureAccess
@@ -122,8 +125,8 @@ export default function Stage1_10EnvironmentScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
@@ -173,7 +176,7 @@ export default function Stage1_10EnvironmentScreen() {
                 return (
                   <button
                     key={opt}
-                    onClick={() => updateObjectField('environmentalPulse', 'natureAccess', opt)}
+                    onClick={() => handleSelect(opt)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -218,22 +221,6 @@ export default function Stage1_10EnvironmentScreen() {
                 )
               })}
             </div>
-          </div>
-
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!selectedOpt}
-              style={{
-                padding: '10px 36px',
-                opacity: selectedOpt ? 1 : 0.5,
-                cursor: selectedOpt ? 'pointer' : 'not-allowed',
-              }}
-            >
-              Continue
-            </button>
           </div>
 
         </div>

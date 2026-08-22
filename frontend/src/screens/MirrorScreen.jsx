@@ -6,8 +6,6 @@ import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { buildClientFallbackAnalysis } from '../lib/scoring.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
 import InsightReport from '../report/InsightReport.jsx'
-import { generateClientFallbackReport } from '../report/fallbackReport.js'
-import RecommendedProgramsCarousel from '../components/RecommendedProgramsCarousel.jsx'
 import Icon from '../report/icons.jsx'
 import './landing.css'
 /* ── Backend Connection Error Vector Line Art ── */
@@ -523,7 +521,7 @@ export default function MirrorScreen() {
               {/* Visual Overview Dashboard Grid */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
                 gap: '24px',
                 width: '100%'
               }}>
@@ -532,7 +530,7 @@ export default function MirrorScreen() {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  padding: '28px',
+                  padding: '24px clamp(16px, 3vw, 28px)',
                   background: '#ffffff',
                   borderRadius: '24px',
                   border: '1.5px solid rgba(0,0,0,0.06)',
@@ -545,11 +543,11 @@ export default function MirrorScreen() {
                     Resilience Radar
                   </p>
 
-                  <div style={{ width: '100%', height: '300px', marginTop: '16px' }}>
+                  <div style={{ width: '100%', height: '290px', marginTop: '12px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
                         <PolarGrid stroke="rgba(0,0,0,0.12)" />
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }} />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text)', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.02em' }} />
                         <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                         <Radar
                           name="You"
@@ -568,7 +566,7 @@ export default function MirrorScreen() {
                 <div className="mirror-card" style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  padding: '28px',
+                  padding: '24px clamp(16px, 3vw, 28px)',
                   background: '#ffffff',
                   borderRadius: '24px',
                   border: '1.5px solid rgba(0,0,0,0.06)',
@@ -578,13 +576,13 @@ export default function MirrorScreen() {
                     <Icon name="waves" size={16} />
                     The Wellbeing Landscape
                   </p>
-                  <p className="mirror-text" style={{ fontSize: '13.5px', marginBottom: '16px', color: 'var(--text-mute)' }}>
+                  <p className="mirror-text" style={{ fontSize: '13px', marginBottom: '14px', color: 'var(--text-mute)' }}>
                     Ranked from your strongest resources to areas asking for attention.
                   </p>
 
-                  <div style={{ width: '100%', height: '300px' }}>
+                  <div style={{ width: '100%', height: '290px' }}>
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
+                      <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 15, left: 5, bottom: 0 }}>
                         <defs>
                           <linearGradient id="gradThriving" x1="0" y1="0" x2="1" y2="0">
                             <stop offset="0%" stopColor="#34d399" stopOpacity={0.8} />
@@ -610,8 +608,8 @@ export default function MirrorScreen() {
                           type="category"
                           axisLine={false}
                           tickLine={false}
-                          tick={{ fill: 'var(--text)', fontSize: 12, fontWeight: 600 }}
-                          width={110}
+                          tick={{ fill: 'var(--text)', fontSize: 11.5, fontWeight: 600 }}
+                          width={105}
                         />
                         <Tooltip
                           cursor={{ fill: 'rgba(0,0,0,0.04)' }}
@@ -621,7 +619,7 @@ export default function MirrorScreen() {
                         <Bar
                           dataKey="A"
                           radius={[0, 8, 8, 0]}
-                          barSize={24}
+                          barSize={22}
                           animationDuration={1500}
                           animationEasing="ease-out"
                         >
@@ -641,14 +639,147 @@ export default function MirrorScreen() {
             </>
           )}
 
-          {/* Recommended Programs for You Carousel */}
-          <RecommendedProgramsCarousel />
-        </div>
-      </div>
+          {/* Locked Full 25-Page Insight Report Gate */}
+          <div style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: 'clamp(28px, 4vw, 40px) clamp(18px, 4vw, 32px)',
+            borderRadius: '28px',
+            background: 'linear-gradient(135deg, #ffffff 0%, #f0f9f6 100%)',
+            border: '1.5px solid rgba(0, 174, 157, 0.35)',
+            boxShadow: '0 16px 40px rgba(0, 174, 157, 0.12), 0 2px 8px rgba(0, 0, 0, 0.03)',
+            textAlign: 'center',
+            boxSizing: 'border-box',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* Lock Icon */}
+            <div style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '50%',
+              background: '#e4f4ee',
+              border: '1.5px solid rgba(0, 174, 157, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#00ae9d',
+              marginBottom: '14px',
+              boxShadow: '0 4px 12px rgba(0, 174, 157, 0.15)'
+            }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
 
-      {/* The full Insight Report (v4.0 25-page layout), downloadable as PDF */}
-      <div style={{ marginTop: '16px' }} className="mirror-report-wrap">
-        <InsightReport report={generateClientFallbackReport(analysis)} />
+            {/* Eyebrow */}
+            <span style={{
+              fontFamily: '"Nunito", sans-serif',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: '#00ae9d',
+              textTransform: 'uppercase',
+              marginBottom: '8px'
+            }}>
+              COMPREHENSIVE 25-PAGE BLUEPRINT
+            </span>
+
+            {/* Headline */}
+            <h2 style={{
+              fontFamily: "'Manrope', sans-serif",
+              fontSize: 'clamp(22px, 3.2vw, 28px)',
+              fontWeight: 800,
+              color: '#414242',
+              margin: '0 0 10px 0',
+              letterSpacing: '-0.02em'
+            }}>
+              Your Full Lewis Insight Mirror
+            </h2>
+
+            {/* Description */}
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: 'clamp(14px, 1.5vw, 15px)',
+              color: '#414242',
+              maxWidth: '540px',
+              lineHeight: 1.5,
+              margin: '0 0 20px 0'
+            }}>
+              Access your complete 25-page report featuring cross-domain resilience maps, clinical dimension analyses, and tailored micro-habit resolutions sent straight to your email.
+            </p>
+
+            {/* Feature Pills */}
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '8px',
+              marginBottom: '24px',
+              maxWidth: '580px'
+            }}>
+              {['10-Dimension Analysis', 'Autonomic Nervous Mapping', '30-Day Growth Roadmap', 'Instant PDF Email Delivery'].map((item) => (
+                <span key={item} style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  borderRadius: '999px',
+                  background: '#ffffff',
+                  border: '1px solid #d2e7e0',
+                  fontFamily: "'Nunito', sans-serif",
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  color: '#414242',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
+                }}>
+                  <span style={{ color: '#00ae9d', fontWeight: 800 }}>✓</span> {item}
+                </span>
+              ))}
+            </div>
+
+            {/* Lock CTA Button */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setScreen('payment')}
+              className="btn-primary"
+              style={{
+                padding: '14px 34px',
+                fontSize: '15px',
+                fontWeight: 700,
+                borderRadius: '14px',
+                background: 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)',
+                color: '#ffffff',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                boxShadow: '0 8px 24px rgba(0, 174, 157, 0.28)',
+                cursor: 'pointer',
+                border: 'none',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              Get report on your mail
+            </motion.button>
+
+            <p style={{
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '12px',
+              color: '#64748b',
+              margin: '10px 0 0 0',
+              fontStyle: 'italic'
+            }}>
+              Safe, confidential, and delivered directly to your inbox.
+            </p>
+          </div>
+        </div>
       </div>
 
       <p className="closing-line mirror-web-ui" style={{ textAlign: 'center', color: 'var(--text-mute)', fontSize: '13.5px', marginTop: '16px' }}>

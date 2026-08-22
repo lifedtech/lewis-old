@@ -15,71 +15,112 @@ const LEVEL_DESCRIPTIONS = [
 // Two overlapping circles whose distance encodes the felt Self–Nature overlap.
 // idx 0 → fully separate, idx 6 → fully merged.
 const renderOverlapCircles = (idx, selected) => {
-  const distance = 54 - (idx * (54 / 6))
-  const cxSelf = 60 - distance / 2
-  const cxNature = 60 + distance / 2
-
-  const selfY = distance < 15 ? 13 : 15
-  const natureY = distance < 15 ? 65 : 63
+  const r = 18
+  const maxDistance = 42
+  const distance = maxDistance - idx * (maxDistance / 6)
+  const cxSelf = 50 - distance / 2
+  const cxNature = 50 + distance / 2
+  const cy = 26
 
   return (
-    <svg width="100%" viewBox="0 0 120 74" style={{ overflow: 'visible', maxWidth: '84px', height: 'auto' }}>
+    <svg
+      width="100%"
+      viewBox="0 0 100 52"
+      style={{ overflow: 'visible', maxWidth: '78px', height: 'auto', display: 'block', margin: '0 auto' }}
+    >
       <defs>
-        <radialGradient id={`gradSelf-${idx}`} cx="40%" cy="40%" r="60%">
-          <stop offset="0%" stopColor="#FF7E67" stopOpacity={selected ? '0.6' : '0.35'} />
-          <stop offset="100%" stopColor="#FF4B4B" stopOpacity={selected ? '0.45' : '0.2'} />
+        <radialGradient id={`gradSelf-${idx}`} cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stopColor="#FFA494" stopOpacity={selected ? '0.85' : '0.55'} />
+          <stop offset="100%" stopColor="#FF6363" stopOpacity={selected ? '0.7' : '0.4'} />
         </radialGradient>
-        <radialGradient id={`gradNature-${idx}`} cx="40%" cy="40%" r="60%">
-          <stop offset="0%" stopColor="#2DD4BF" stopOpacity={selected ? '0.6' : '0.35'} />
-          <stop offset="100%" stopColor="#00ae9d" stopOpacity={selected ? '0.45' : '0.2'} />
+        <radialGradient id={`gradNature-${idx}`} cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stopColor="#5EEAD4" stopOpacity={selected ? '0.85' : '0.55'} />
+          <stop offset="100%" stopColor="#00AE9D" stopOpacity={selected ? '0.7' : '0.4'} />
         </radialGradient>
       </defs>
 
       {/* Self Circle */}
       <circle
         cx={cxSelf}
-        cy="37"
-        r="21"
+        cy={cy}
+        r={r}
         fill={`url(#gradSelf-${idx})`}
-        stroke={selected ? '#FF4B4B' : 'rgba(255, 75, 75, 0.45)'}
-        strokeWidth={selected ? '2' : '1.2'}
-        style={{ transition: 'all 0.3s ease' }}
+        stroke={selected ? '#E11D48' : '#F43F5E'}
+        strokeWidth={selected ? '1.8' : '1.2'}
+        style={{ mixBlendMode: 'multiply', transition: 'all 0.25s ease' }}
       />
 
       {/* Nature Circle */}
       <circle
         cx={cxNature}
-        cy="37"
-        r="21"
+        cy={cy}
+        r={r}
         fill={`url(#gradNature-${idx})`}
-        stroke={selected ? '#00ae9d' : 'rgba(16, 185, 129, 0.45)'}
-        strokeWidth={selected ? '2' : '1.2'}
-        style={{ transition: 'all 0.3s ease' }}
+        stroke={selected ? '#0D9488' : '#14B8A6'}
+        strokeWidth={selected ? '1.8' : '1.2'}
+        style={{ mixBlendMode: 'multiply', transition: 'all 0.25s ease' }}
       />
 
-      {/* Labels at top & bottom to avoid overlap at any distance */}
-      <text
-        x={cxSelf}
-        y={selfY}
-        textAnchor="middle"
-        fontSize="10"
-        fontWeight="700"
-        fill={selected ? '#E11D48' : '#F43F5E'}
-        style={{ pointerEvents: 'none', letterSpacing: '0.04em' }}
-      >
-        Self
-      </text>
-      <text
-        x={cxNature}
-        y={natureY}
-        textAnchor="middle"
-        fontSize="10"
-        fontWeight="700"
-        fill={selected ? '#047857' : '#00ae9d'}
-        style={{ pointerEvents: 'none', letterSpacing: '0.04em' }}
-      >
-        Nature
-      </text>
+      {/* Labels positioned cleanly inside circles */}
+      {idx < 5 ? (
+        <>
+          <text
+            x={cxSelf - (idx >= 2 ? 3 : 0)}
+            y={cy}
+            dominantBaseline="central"
+            textAnchor="middle"
+            fontSize="7.5"
+            fontWeight="700"
+            fontFamily="'Nunito', sans-serif"
+            fill={selected ? '#9F1239' : '#BE123C'}
+            style={{ pointerEvents: 'none', userSelect: 'none' }}
+          >
+            Self
+          </text>
+          <text
+            x={cxNature + (idx >= 2 ? 3 : 0)}
+            y={cy}
+            dominantBaseline="central"
+            textAnchor="middle"
+            fontSize="7"
+            fontWeight="700"
+            fontFamily="'Nunito', sans-serif"
+            fill={selected ? '#065F46' : '#0D9488'}
+            style={{ pointerEvents: 'none', userSelect: 'none' }}
+          >
+            Nature
+          </text>
+        </>
+      ) : (
+        <>
+          <text
+            x="50"
+            y={cy - 7}
+            dominantBaseline="central"
+            textAnchor="middle"
+            fontSize="7.5"
+            fontWeight="700"
+            fontFamily="'Nunito', sans-serif"
+            fill={selected ? '#9F1239' : '#BE123C'}
+            style={{ pointerEvents: 'none', userSelect: 'none' }}
+          >
+            Self
+          </text>
+          <text
+            x="50"
+            y={cy + 7}
+            dominantBaseline="central"
+            textAnchor="middle"
+            fontSize="7"
+            fontWeight="700"
+            fontFamily="'Nunito', sans-serif"
+            fill={selected ? '#065F46' : '#0D9488'}
+            style={{ pointerEvents: 'none', userSelect: 'none' }}
+          >
+            Nature
+          </text>
+        </>
+      )}
     </svg>
   )
 }
@@ -87,8 +128,11 @@ const renderOverlapCircles = (idx, selected) => {
 export default function Stage5_2InsScreen() {
   const { setScreen, setProfileField, ins } = useLewisStore()
 
-  const handleNext = () => {
-    setScreen('stage5_2Swls')
+  const handleSelect = (val) => {
+    setProfileField('ins', val)
+    setTimeout(() => {
+      setScreen('stage5_2Swls')
+    }, 220)
   }
 
   const answered = ins !== null && ins !== undefined
@@ -129,15 +173,15 @@ export default function Stage5_2InsScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
               textAlign: 'left',
+              whiteSpace: 'nowrap',
             }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Connection to</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Nature</span>
+              Connection to Nature
             </h1>
             <p style={{
               margin: '12px 0 0 2px',
@@ -156,124 +200,109 @@ export default function Stage5_2InsScreen() {
           </div>
         </div>
 
-        {/* RIGHT — Questionnaire Card Container */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-
-          <div
-            style={{
-              width: '100%',
-              background: '#ffffff',
-              border: '1.5px solid #f4f4f4',
-              borderRadius: '20px',
-              padding: '16px 20px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
-            {/* Progress Header Row */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
-                  SELECT YOUR LEVEL · 1 OF 1
-                </span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
-                  {answered ? '100%' : '0%'}
-                </span>
-              </div>
-              <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
-                <motion.div
-                  style={{ height: '100%', background: '#00ae9d' }}
-                  animate={{ width: answered ? '100%' : '0%' }}
-                  transition={{ duration: 0.35, ease: 'easeInOut' }}
-                />
-              </div>
+        {/* RIGHT — Questionnaire Container */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          width: '100%',
+          gap: '14px',
+          padding: 0,
+        }}>
+          {/* Progress Header Row */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+                SELECT YOUR LEVEL · 1 OF 1
+              </span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
+                {answered ? '100%' : '0%'}
+              </span>
             </div>
+            <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+              <motion.div
+                style={{ height: '100%', background: '#00ae9d' }}
+                animate={{ width: answered ? '100%' : '0%' }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+              />
+            </div>
+          </div>
 
-            {/* Question Statement */}
-            <p style={{ margin: '2px 0 0 0', fontSize: '14.5px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
-              "How connected do you feel with the natural world?"
-            </p>
+          {/* Question Statement */}
+          <p style={{ margin: '2px 0 0 0', fontSize: 'clamp(14px, 1.6vw, 16px)', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
+            "How connected do you feel with the natural world?"
+          </p>
 
-            {/* 7 Overlap-Diagram Options */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', width: '100%', justifyContent: 'center' }}>
-              {Array.from({ length: 7 }).map((_, idx) => {
-                const val = idx + 1
-                const selected = ins === val
-                return (
-                  <motion.button
-                    key={idx}
-                    whileHover={{ y: -3 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => setProfileField('ins', val)}
-                    style={{
-                      flex: '0 0 calc(25% - 6px)',
-                      minWidth: 0,
-                      padding: '10px 6px 8px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '6px',
-                      background: selected ? '#e4f4ee' : '#f2f9f6',
-                      borderRadius: '14px',
-                      border: `1.5px solid ${selected ? '#00ae9d' : '#d2e7e0'}`,
-                      boxShadow: selected ? '0 2px 8px rgba(0,174,157,0.14)' : 'none',
-                      cursor: 'pointer',
-                      transition: 'background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                    }}
-                  >
+          {/* 7 Overlap-Diagram Options in 2-Column Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '10px',
+            width: '100%',
+            boxSizing: 'border-box',
+          }}>
+            {Array.from({ length: 7 }).map((_, idx) => {
+              const val = idx + 1
+              const selected = ins === val
+              const isLast = idx === 6
+              return (
+                <motion.button
+                  key={idx}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => handleSelect(val)}
+                  style={{
+                    gridColumn: isLast ? '1 / -1' : 'auto',
+                    minWidth: 0,
+                    padding: '10px 14px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: isLast ? 'center' : 'flex-start',
+                    gap: '12px',
+                    background: selected ? '#e4f4ee' : '#ffffff',
+                    borderRadius: '14px',
+                    border: `1.5px solid ${selected ? '#00ae9d' : '#d2e7e0'}`,
+                    boxShadow: selected ? '0 3px 12px rgba(0,174,157,0.18)' : '0 1px 4px rgba(0,0,0,0.03)',
+                    cursor: 'pointer',
+                    transition: 'background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <div style={{ width: '56px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {renderOverlapCircles(idx, selected)}
+                  </div>
 
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}>
                     <span style={{
-                      fontSize: '12px',
+                      fontSize: '12.5px',
                       fontWeight: selected ? 700 : 600,
-                      color: selected ? '#414242' : '#414242',
+                      color: selected ? '#00ae9d' : '#414242',
                       fontFamily: "'Nunito', sans-serif",
-                      lineHeight: 1,
+                      lineHeight: 1.2,
                     }}>
                       Level {val}
                     </span>
 
                     <span style={{
-                      fontSize: '10px',
+                      fontSize: '11px',
                       fontWeight: 500,
-                      color: selected ? '#00ae9d' : '#414242',
+                      color: selected ? '#00ae9d' : '#64748b',
                       fontFamily: "'Nunito', sans-serif",
-                      lineHeight: 1.1,
-                      textAlign: 'center',
+                      lineHeight: 1.2,
                     }}>
                       {LEVEL_DESCRIPTIONS[idx]}
                     </span>
-                  </motion.button>
-                )
-              })}
-            </div>
-
-            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
-              Pick the pair of circles that matches how intertwined you feel with nature.
-            </p>
+                  </div>
+                </motion.button>
+              )
+            })}
           </div>
 
-          {/* Action Button directly below card */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '12px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!answered}
-              style={{
-                padding: '9px 36px',
-                opacity: answered ? 1 : 0.5,
-                cursor: answered ? 'pointer' : 'not-allowed',
-              }}
-            >
-              Continue
-            </button>
-          </div>
-
+          <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#64748b', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+            Pick the pair of circles that matches how intertwined you feel with nature.
+          </p>
         </div>
 
       </div>

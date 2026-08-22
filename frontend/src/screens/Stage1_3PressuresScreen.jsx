@@ -103,12 +103,12 @@ export default function Stage1_3PressuresScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 800,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
               lineHeight: 1.05,
               letterSpacing: '-0.035em',
               margin: 0,
               color: '#414242',
-              whiteSpace: 'nowrap',
+              wordBreak: 'break-word',
             }}>
               Active Life<br />Pressures
             </h1>

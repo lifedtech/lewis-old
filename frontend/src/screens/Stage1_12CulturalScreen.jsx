@@ -96,18 +96,12 @@ export default function Stage1_12CulturalScreen() {
 
   const options = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"]
 
-  const handleNext = () => {
-    if (step < questions.length - 1) {
-      setStep(step + 1)
-    } else {
-      setScreen('stage1_13BodyRhythm')
-    }
-  }
-
   const handleSelect = (key, val) => {
     updateObjectField('culturalBelonging', key, val)
     if (step < questions.length - 1) {
-      setTimeout(() => setStep(step + 1), 350)
+      setTimeout(() => setStep(step + 1), 220)
+    } else {
+      setTimeout(() => setScreen('stage1_13BodyRhythm'), 220)
     }
   }
 
@@ -150,8 +144,8 @@ export default function Stage1_12CulturalScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
@@ -279,22 +273,6 @@ export default function Stage1_12CulturalScreen() {
               </p>
             </motion.div>
           </AnimatePresence>
-
-          {/* Action button pinned at bottom right */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!currentAnswer}
-              style={{
-                padding: '10px 36px',
-                opacity: currentAnswer ? 1 : 0.5,
-                cursor: currentAnswer ? 'pointer' : 'not-allowed',
-              }}
-            >
-              {step < questions.length - 1 ? 'Next' : 'Continue'}
-            </button>
-          </div>
 
         </div>
 

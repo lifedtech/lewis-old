@@ -84,7 +84,7 @@ export default function Stage5_5PriorityTensionScreen() {
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Vector Graphic */}
+        {/* LEFT — Eyebrow + Title (2 Lines) + Subtitle + Vector Illustration */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
             <p style={{
@@ -94,25 +94,26 @@ export default function Stage5_5PriorityTensionScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 12px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               QUALITATIVE REFLECTION
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
               textAlign: 'left',
+              whiteSpace: 'nowrap',
             }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Priority</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Tension</span>
+              Priority Tension
             </h1>
             <p style={{
-              margin: '12px 0 0 2px',
+              margin: '12px 0 0 0',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
@@ -123,74 +124,57 @@ export default function Stage5_5PriorityTensionScreen() {
               Where do you experience the biggest friction or "gap" between your listed priorities and where your daily energy actually goes?
             </p>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '-15px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '-10px' }}>
             <SeesawTensionIllustration />
           </div>
         </div>
 
-        {/* RIGHT — Textarea Card Container + Action Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        {/* RIGHT — Textarea Container + Action Button */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '14px', marginTop: '4px' }}>
 
-          <div
-            style={{
-              width: '100%',
-              background: '#ffffff',
-              border: '1.5px solid #f4f4f4',
-              borderRadius: '20px',
-              padding: '18px 22px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
-                SHARE YOUR REFLECTION
-              </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
-                OPTIONAL
-              </span>
-            </div>
-
-            <textarea
-              value={priorityTensionCheck || ''}
-              onChange={handleChange}
-              placeholder="Describe the tension or imbalance you feel..."
-              style={{
-                width: '100%',
-                height: '180px',
-                padding: '14px 16px',
-                borderRadius: '14px',
-                border: '1.5px solid #d2e7e0',
-                background: '#f2f9f6',
-                color: '#414242',
-                fontFamily: "'Nunito', sans-serif",
-                fontSize: '14.5px',
-                lineHeight: '1.6',
-                resize: 'none',
-                outline: 'none',
-                boxSizing: 'border-box',
-                transition: 'all 0.2s ease',
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#00ae9d'
-                e.target.style.background = '#ffffff'
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#d2e7e0'
-                e.target.style.background = '#f2f9f6'
-              }}
-            />
-
-            <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
-              Your reflection is saved to guide your personalized insights.
-            </p>
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+              SHARE YOUR REFLECTION
+            </span>
           </div>
 
-          {/* Action button directly below card */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '14px', flexShrink: 0 }}>
+          <textarea
+            value={priorityTensionCheck || ''}
+            onChange={handleChange}
+            placeholder="Describe the tension or imbalance you feel..."
+            style={{
+              width: '100%',
+              height: '180px',
+              padding: '14px 16px',
+              borderRadius: '14px',
+              border: '1.5px solid #d2e7e0',
+              background: '#ffffff',
+              color: '#414242',
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '14.5px',
+              lineHeight: '1.6',
+              resize: 'none',
+              outline: 'none',
+              boxSizing: 'border-box',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+              transition: 'all 0.2s ease',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#00ae9d'
+              e.target.style.boxShadow = '0 0 0 3px rgba(0,174,157,0.12)'
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#d2e7e0'
+              e.target.style.boxShadow = '0 1px 4px rgba(0,0,0,0.03)'
+            }}
+          />
+
+          <p style={{ margin: '2px 0 0 0', fontSize: '11.5px', color: '#64748b', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+            Your reflection is saved to guide your personalized insights.
+          </p>
+
+          {/* Action button directly below */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '8px', flexShrink: 0 }}>
             <button
               className="btn-primary"
               onClick={handleNext}

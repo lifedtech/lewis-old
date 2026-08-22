@@ -25,9 +25,13 @@ export default function Stage6SharingScreen() {
 
   const handleSelect = (qId, val) => {
     setScaleAnswer('everydaySharing', qId, val)
-    if (step < questions.length - 1) {
-      setTimeout(() => setStep(step + 1), 350)
-    }
+    setTimeout(() => {
+      if (step < questions.length - 1) {
+        setStep(step + 1)
+      } else {
+        setScreen('stage7_1External')
+      }
+    }, 240)
   }
 
   const currentItem = questions[step]
@@ -62,25 +66,26 @@ export default function Stage6SharingScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 12px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               RELATIONAL GENEROSITY
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
               textAlign: 'left',
+              whiteSpace: 'nowrap',
             }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Everyday</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Sharing</span>
+              Everyday Sharing
             </h1>
             <p style={{
-              margin: '12px 0 0 2px',
+              margin: '10px 0 0 0',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
@@ -91,142 +96,113 @@ export default function Stage6SharingScreen() {
               Reflecting on how you distribute your key personal resources and energy.
             </p>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
             <TopicLineIllustration topic="sharing" />
           </div>
         </div>
 
-        {/* RIGHT — Questionnaire Card Container */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        {/* RIGHT — Questionnaire Container */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '16px' }}>
 
-          <div
-            style={{
-              width: '100%',
-              background: '#ffffff',
-              border: '1.5px solid #f4f4f4',
-              borderRadius: '20px',
-              padding: '18px 22px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
-            {/* Progress Header Row (Stationary) */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
-                  EVERYDAY SHARING · {step + 1} OF {questions.length}
-                </span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
-                  {Math.round(((step + 1) / questions.length) * 100)}%
-                </span>
-              </div>
-              <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
-                <motion.div
-                  style={{ height: '100%', background: '#00ae9d' }}
-                  animate={{ width: `${((step + 1) / questions.length) * 100}%` }}
-                  transition={{ duration: 0.35, ease: 'easeInOut' }}
-                />
-              </div>
+          {/* Progress Header Row (Stationary) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+                EVERYDAY SHARING · {step + 1} OF {questions.length}
+              </span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
+                {Math.round(((step + 1) / questions.length) * 100)}%
+              </span>
             </div>
-
-            {/* Question Text & Options Transition (Container stays still) */}
-            <AnimatePresence mode="wait">
+            <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
               <motion.div
-                key={currentItem.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.22, ease: 'easeInOut' }}
-                style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#00ae9d', fontFamily: "'Nunito', sans-serif" }}>
-                    Resource: {currentItem.label}
-                  </span>
-                  <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.4, textAlign: 'left' }}>
-                    {currentItem.prompt}
-                  </p>
-                </div>
-
-                {/* 3 Stacked Option Cards */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-                  {["Keep it to myself", "Share a little", "Share fully"].map(opt => {
-                    const active = currentAnswer === opt
-                    return (
-                      <button
-                        key={opt}
-                        onClick={() => handleSelect(currentItem.id, opt)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          width: '100%',
-                          padding: '10px 16px',
-                          borderRadius: '14px',
-                          border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
-                          background: active ? '#e4f4ee' : '#f2f9f6',
-                          color: active ? '#414242' : '#3a3a3a',
-                          cursor: 'pointer',
-                          transition: 'all 0.18s ease',
-                          boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
-                          boxSizing: 'border-box',
-                          textAlign: 'left',
-                        }}
-                      >
-                        <div style={{
-                          width: '18px',
-                          height: '18px',
-                          borderRadius: '50%',
-                          border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
-                          background: active ? '#00ae9d' : 'transparent',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                          transition: 'all 0.18s ease',
-                        }}>
-                          {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
-                        </div>
-
-                        <span style={{
-                          fontFamily: "'Nunito', sans-serif",
-                          fontWeight: active ? 700 : 500,
-                          fontSize: '14px',
-                          color: active ? '#414242' : '#414242',
-                        }}>
-                          {opt}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
-              Select the option that best reflects your pattern.
-            </p>
+                style={{ height: '100%', background: '#00ae9d' }}
+                animate={{ width: `${((step + 1) / questions.length) * 100}%` }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+              />
+            </div>
           </div>
 
-          {/* Action Button directly below card */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '14px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!currentAnswer}
-              style={{
-                padding: '9px 36px',
-                opacity: currentAnswer ? 1 : 0.5,
-                cursor: currentAnswer ? 'pointer' : 'not-allowed',
-              }}
+          {/* Question Text & Options Transition (Container stays still) */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentItem.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.22, ease: 'easeInOut' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%' }}
             >
-              {step < questions.length - 1 ? 'Next' : 'Continue'}
-            </button>
-          </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.04em', color: '#00ae9d', fontFamily: "'Nunito', sans-serif" }}>
+                  Resource: {currentItem.label}
+                </span>
+                <p style={{ margin: '2px 0 0 0', fontSize: '15.5px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif", lineHeight: 1.45, textAlign: 'left' }}>
+                  {currentItem.prompt}
+                </p>
+              </div>
 
+              {/* 3 Stacked Option Cards */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', marginTop: '2px' }}>
+                {["Keep it to myself", "Share a little", "Share fully"].map(opt => {
+                  const active = currentAnswer === opt
+                  return (
+                    <motion.button
+                      key={opt}
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleSelect(currentItem.id, opt)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '14px',
+                        width: '100%',
+                        padding: '13px 18px',
+                        borderRadius: '14px',
+                        border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                        background: active ? '#e4f4ee' : '#ffffff',
+                        color: active ? '#414242' : '#3a3a3a',
+                        cursor: 'pointer',
+                        transition: 'background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease',
+                        boxShadow: active ? '0 3px 10px rgba(0,174,157,0.16)' : '0 1px 4px rgba(0,0,0,0.03)',
+                        boxSizing: 'border-box',
+                        textAlign: 'left',
+                        outline: 'none',
+                      }}
+                    >
+                      <div style={{
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '50%',
+                        border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
+                        background: active ? '#00ae9d' : 'transparent',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        transition: 'all 0.18s ease',
+                      }}>
+                        {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                      </div>
+
+                      <span style={{
+                        fontFamily: "'Nunito', sans-serif",
+                        fontWeight: active ? 700 : 500,
+                        fontSize: '14.5px',
+                        color: active ? '#414242' : '#414242',
+                      }}>
+                        {opt}
+                      </span>
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+            Select the option that best reflects your pattern.
+          </p>
         </div>
 
       </div>

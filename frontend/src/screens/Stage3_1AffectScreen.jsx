@@ -76,12 +76,12 @@ export default function Stage3_1AffectScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(18px, 4vw, 32px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              textWrap: 'balance',
+              whiteSpace: 'nowrap',
             }}>
               Where is your mind sitting right now?
             </h1>

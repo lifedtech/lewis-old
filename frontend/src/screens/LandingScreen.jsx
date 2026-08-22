@@ -88,7 +88,7 @@ export default function LandingScreen() {
 
   const handleNext = (e) => {
     if (e) e.preventDefault()
-    setScreen('preStage0Age')
+    setScreen('stage1_0About')
   }
 
   const scrollTo = (e, id) => {

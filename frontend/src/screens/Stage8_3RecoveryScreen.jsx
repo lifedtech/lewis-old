@@ -88,76 +88,93 @@ export default function Stage8_3RecoveryScreen() {
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Title + Subtitle + Vector Line Art */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '14px', alignSelf: 'center' }}>
+        {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div>
+            <p style={{
+              fontFamily: '"Nunito", sans-serif',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: '#00ae9d',
+              textTransform: 'uppercase',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
+            }}>
+              DAILY RHYTHMS
+            </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
-              textWrap: 'balance',
+              whiteSpace: 'nowrap',
             }}>
-              Recovery<br />Responsiveness
+              Recovery Responsiveness
             </h1>
             <p style={{
-              margin: '10px 0 0 2px',
-              fontSize: 'clamp(13px, 1.4vw, 15px)',
+              margin: '8px 0 14px 0',
+              fontSize: 'clamp(13px, 1.5vw, 15px)',
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.45,
-              maxWidth: '340px',
+              maxWidth: '350px',
+              textAlign: 'left',
             }}>
               When you rest or take time out, how do you feel?
             </p>
           </div>
-          <RecoveryResponsivenessIllustration />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+            <RecoveryResponsivenessIllustration />
+          </div>
         </div>
 
-        {/* RIGHT — RECOVERY & REST Eyebrow + 4 Sleek Compact Cards + Pinned Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* RIGHT — Questionnaire Container */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '14px' }}>
 
-          <p className="stage-right-eyebrow" style={{
-            fontFamily: '"Nunito", sans-serif',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#414242',
-            textTransform: 'uppercase',
-            
-            margin: '0 0 8px 0'
-          }}>
-            RECOVERY & REST
-          </p>
+          {/* Header Row */}
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+              RECOVERY &amp; REST
+            </span>
+          </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
             {options.map(opt => {
               const active = recoveryResponsiveness === opt.title
               return (
-                <button
+                <motion.button
                   key={opt.title}
-                  onClick={() => setProfileField('recoveryResponsiveness', opt.title)}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setProfileField('recoveryResponsiveness', opt.title)
+                    setTimeout(() => {
+                      setScreen('stage8_4Cumulative')
+                    }, 240)
+                  }}
                   style={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     gap: '14px',
                     width: '100%',
-                    padding: '9px 14px',
+                    padding: '12px 16px',
                     borderRadius: '14px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #f4f4f4',
-                    background: active ? '#e4f4ee' : '#f7faf8',
+                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                    background: active ? '#e4f4ee' : '#ffffff',
                     color: active ? '#414242' : '#3a3a3a',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
+                    transition: 'background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease',
+                    boxShadow: active ? '0 3px 10px rgba(0,174,157,0.16)' : '0 1px 4px rgba(0,0,0,0.03)',
                     boxSizing: 'border-box',
                     textAlign: 'left',
+                    outline: 'none',
                   }}
                 >
-                  {/* Selection Indicator Circle with Checkmark */}
+                  {/* Selection Indicator Circle with Radio */}
                   <div style={{
                     width: '18px',
                     height: '18px',
@@ -168,52 +185,37 @@ export default function Stage8_3RecoveryScreen() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    transition: 'all 0.2s ease',
+                    marginTop: '2px',
+                    transition: 'all 0.18s ease',
                   }}>
-                    {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                    {active && <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#fff' }} />}
                   </div>
 
                   {/* Content Details */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                     <span style={{
                       fontFamily: "'Nunito', sans-serif",
-                      fontWeight: 700,
+                      fontWeight: active ? 700 : 600,
                       fontSize: '14.5px',
-                      color: active ? '#414242' : '#414242',
-                      lineHeight: 1.25,
-                      whiteSpace: 'nowrap',
+                      color: active ? '#00ae9d' : '#414242',
+                      marginBottom: '3px',
+                      lineHeight: 1.3,
                     }}>
                       {opt.title}
                     </span>
                     <p style={{
-                      margin: '2px 0 0 0',
-                      fontSize: '12px',
-                      color: active ? '#1b4d43' : '#414242',
+                      margin: 0,
+                      fontSize: '12.5px',
+                      color: active ? '#1b4d43' : '#64748b',
                       fontFamily: "'Nunito', sans-serif",
-                      lineHeight: 1.35,
+                      lineHeight: 1.45,
                     }}>
                       {opt.desc}
                     </p>
                   </div>
-                </button>
+                </motion.button>
               )
             })}
-          </div>
-
-          {/* Action button pinned at bottom right with plenty of breathing room */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!recoveryResponsiveness}
-              style={{
-                padding: '10px 36px',
-                opacity: recoveryResponsiveness ? 1 : 0.5,
-                cursor: recoveryResponsiveness ? 'pointer' : 'not-allowed',
-              }}
-            >
-              Continue
-            </button>
           </div>
 
         </div>

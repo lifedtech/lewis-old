@@ -55,184 +55,170 @@ export default function Stage5_1LandscapeScreen() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
-      <div className="stage-split" style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1.65fr',
-        gap: 'clamp(24px, 4vw, 52px)',
-        alignItems: 'stretch',
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         width: '100%',
-        height: '100%',
-        maxHeight: '100%',
-        padding: 0,
+        maxWidth: '480px',
+        margin: '0 auto',
+        gap: '12px',
         boxSizing: 'border-box',
       }}>
 
-        {/* LEFT — Eyebrow + Title + Subtitle + Legend + Detail Card */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'flex-start' }}>
-          <div>
-            <p style={{
-              fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              color: '#00ae9d',
-              textTransform: 'uppercase',
-              margin: '0 0 14px 0',
-            }}>
-              THE LANDSCAPE
-            </p>
-            <h1 style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontWeight: 700,
-              fontSize: 'clamp(20px, 2.4vw, 30px)',
-              lineHeight: 1.15,
-              letterSpacing: '-0.01em',
-              margin: 0,
-              color: '#414242',
-            }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Where you're</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>resourced, and</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>where depleted.</span>
-            </h1>
-            <p style={{
-              margin: '8px 0 0 2px',
-              fontSize: 'clamp(12.5px, 1.4vw, 14.5px)',
-              color: '#414242',
-              fontFamily: "'Nunito', sans-serif",
-              lineHeight: 1.4,
-              maxWidth: '350px',
-            }}>
-              Tap a point on the radar to inspect details.
-            </p>
-          </div>
-
-          {/* Color Legend */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12.5px', color: '#414242', fontFamily: "'Nunito', sans-serif" }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#d0574f', display: 'inline-block' }}></span>
-              <span>Quietly depleted</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#5fbb46', display: 'inline-block' }}></span>
-              <span>Finding its footing</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#00ae9d', display: 'inline-block' }}></span>
-              <span>Steadily resourced</span>
-            </div>
-          </div>
-
-          {/* Detail Card Panel */}
-          <div style={{
-            minHeight: '100px',
-            padding: '14px 18px',
-            background: '#f2f9f6',
-            borderRadius: '16px',
-            border: '1.5px solid #d2e7e0',
-            width: '100%',
-            maxWidth: '350px',
-            boxSizing: 'border-box'
-          }}>
-            {!selectedNode ? (
-              <p style={{ margin: 0, color: '#414242', fontStyle: 'italic', fontSize: '13px', textAlign: 'left', fontFamily: "'Nunito', sans-serif" }}>
-                Tap a point on the radar to read more.
-              </p>
-            ) : (
-              <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ textAlign: 'left' }}>
-                <p style={{ color: selectedBand.color, margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"Nunito", sans-serif' }}>
-                  {selectedBand.label}{selectedTag}
-                </p>
-                <p style={{ color: '#414242', fontWeight: 700, margin: '0 0 4px 0', fontSize: '15px', fontFamily: "'Manrope', sans-serif" }}>
-                  {selectedNode.name}
-                </p>
-                <p style={{ color: '#414242', margin: 0, fontSize: '12.5px', lineHeight: 1.4, fontFamily: "'Nunito', sans-serif" }}>
-                  {selectedNode.insight}
-                </p>
-              </motion.div>
-            )}
-          </div>
-        </div>
-
-        {/* RIGHT — RESOURCED RADAR Eyebrow + Radar Chart + Pinned Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
-
-          <p className="stage-right-eyebrow" style={{
+        {/* TOP HEADER */}
+        <div style={{ width: '100%', textAlign: 'left' }}>
+          <p style={{
             fontFamily: '"Nunito", sans-serif',
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#414242',
+            color: '#00ae9d',
             textTransform: 'uppercase',
-            
-            margin: '0 0 14px 0',
-            width: '100%'
+            margin: '0 0 6px 0',
           }}>
-            RESOURCED RADAR
+            THE LANDSCAPE
           </p>
-
-          <div style={{
-            flex: 1,
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxSizing: 'border-box'
+          <h1 style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontWeight: 700,
+            fontSize: 'clamp(22px, 3.2vw, 34px)',
+            lineHeight: 1.18,
+            letterSpacing: '-0.015em',
+            margin: 0,
+            color: '#414242',
           }}>
-            <div style={{ width: '100%', maxWidth: '320px', aspectRatio: '1/1', marginLeft: '28px' }}>
-              <svg viewBox="0 0 400 400" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-                {nodes.map(d => (
-                  <line
-                    key={`spoke-${d.code}`}
-                    x1={cx} y1={cy}
-                    x2={d._x} y2={d._y}
-                    stroke="rgba(65, 66, 66, 0.12)"
-                    strokeWidth="1.5"
-                  />
-                ))}
+            Where you're resourced, and where depleted.
+          </h1>
+          <p style={{
+            margin: '6px 0 0 2px',
+            fontSize: 'clamp(12.5px, 1.4vw, 14.5px)',
+            color: '#414242',
+            fontFamily: "'Nunito', sans-serif",
+            lineHeight: 1.4,
+          }}>
+            Tap a point on the radar to inspect details.
+          </p>
+        </div>
 
-                {fw && em && (
-                  <path
-                    d={`M ${fw._x} ${fw._y} Q ${cx} ${cy} ${em._x} ${em._y}`}
-                    fill="none"
-                    stroke="#00ae9d"
-                    strokeWidth="1.5"
-                    strokeDasharray="4,4"
-                  />
-                )}
-
-                <circle cx={cx} cy={cy} r="26" fill="#f2f9f6" stroke="#d2e7e0" strokeWidth="1.5" />
-                <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#414242" fontSize="11" fontWeight="800" fontFamily='"Nunito", sans-serif'>YOU</text>
-
-                {nodes.map(d => {
-                  const r = 14 + (d.score / 100) * 12
-                  const band = getBand(d.score)
-                  return (
-                    <g
-                      key={`node-${d.code}`}
-                      onClick={() => setSelectedCode(d.code)}
-                      style={{ cursor: 'pointer', outline: 'none' }}
-                    >
-                      {d.code === ROOT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#d0574f" strokeWidth="1.5" strokeDasharray="3,3" />}
-                      {d.code === BRIGHT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#00ae9d" strokeWidth="1.5" strokeDasharray="3,3" />}
-                      <circle cx={d._x} cy={d._y} r={r} fill={band.color} style={{ transition: 'all 0.3s ease', transform: selectedCode === d.code ? 'scale(1.15)' : 'scale(1)', transformOrigin: `${d._x}px ${d._y}px` }} />
-                      <text x={d._x} y={d._y + r + 16} textAnchor="middle" fill="#414242" fontSize="10" fontWeight="700" fontFamily='"Nunito", sans-serif'>{d.code}</text>
-                    </g>
-                  )
-                })}
-              </svg>
-            </div>
+        {/* COLOR LEGEND */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          gap: '12px',
+          fontSize: '11.5px',
+          color: '#414242',
+          fontFamily: "'Nunito', sans-serif",
+          width: '100%',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#d0574f', display: 'inline-block' }}></span>
+            <span>Quietly depleted</span>
           </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              style={{ padding: '10px 36px' }}
-              onClick={() => setScreen('stage5_0Email')}
-            >
-              Continue
-            </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#5fbb46', display: 'inline-block' }}></span>
+            <span>Finding footing</span>
           </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00ae9d', display: 'inline-block' }}></span>
+            <span>Steadily resourced</span>
+          </div>
+        </div>
 
+        {/* RADAR MAP (ABOVE) */}
+        <div style={{
+          width: '100%',
+          maxWidth: '280px',
+          aspectRatio: '1/1',
+          margin: '4px auto',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <svg viewBox="0 0 400 400" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+            {nodes.map(d => (
+              <line
+                key={`spoke-${d.code}`}
+                x1={cx} y1={cy}
+                x2={d._x} y2={d._y}
+                stroke="rgba(65, 66, 66, 0.12)"
+                strokeWidth="1.5"
+              />
+            ))}
+
+            {fw && em && (
+              <path
+                d={`M ${fw._x} ${fw._y} Q ${cx} ${cy} ${em._x} ${em._y}`}
+                fill="none"
+                stroke="#00ae9d"
+                strokeWidth="1.5"
+                strokeDasharray="4,4"
+              />
+            )}
+
+            <circle cx={cx} cy={cy} r="26" fill="#f2f9f6" stroke="#d2e7e0" strokeWidth="1.5" />
+            <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#414242" fontSize="11" fontWeight="800" fontFamily='"Nunito", sans-serif'>YOU</text>
+
+            {nodes.map(d => {
+              const r = 14 + (d.score / 100) * 12
+              const band = getBand(d.score)
+              return (
+                <g
+                  key={`node-${d.code}`}
+                  onClick={() => setSelectedCode(d.code)}
+                  style={{ cursor: 'pointer', outline: 'none' }}
+                >
+                  {d.code === ROOT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#d0574f" strokeWidth="1.5" strokeDasharray="3,3" />}
+                  {d.code === BRIGHT && <circle cx={d._x} cy={d._y} r={r + 8} fill="none" stroke="#00ae9d" strokeWidth="1.5" strokeDasharray="3,3" />}
+                  <circle cx={d._x} cy={d._y} r={r} fill={band.color} style={{ transition: 'all 0.3s ease', transform: selectedCode === d.code ? 'scale(1.15)' : 'scale(1)', transformOrigin: `${d._x}px ${d._y}px` }} />
+                  <text x={d._x} y={d._y + r + 16} textAnchor="middle" fill="#414242" fontSize="10" fontWeight="700" fontFamily='"Nunito", sans-serif'>{d.code}</text>
+                </g>
+              )
+            })}
+          </svg>
+        </div>
+
+        {/* DESCRIPTION / DETAIL CARD PANEL (BELOW) */}
+        <div style={{
+          minHeight: '80px',
+          padding: '12px 18px',
+          background: '#f2f9f6',
+          borderRadius: '16px',
+          border: '1.5px solid #d2e7e0',
+          width: '100%',
+          boxSizing: 'border-box',
+          textAlign: 'left',
+        }}>
+          {!selectedNode ? (
+            <p style={{ margin: '4px 0', color: '#414242', fontStyle: 'italic', fontSize: '13px', textAlign: 'center', fontFamily: "'Nunito', sans-serif" }}>
+              Tap a point on the radar to read more.
+            </p>
+          ) : (
+            <motion.div key={selectedNode.code} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+              <p style={{ color: selectedBand.color, margin: '0 0 2px 0', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"Nunito", sans-serif' }}>
+                {selectedBand.label}{selectedTag}
+              </p>
+              <p style={{ color: '#414242', fontWeight: 700, margin: '0 0 2px 0', fontSize: '14.5px', fontFamily: "'Manrope', sans-serif" }}>
+                {selectedNode.name}
+              </p>
+              <p style={{ color: '#414242', margin: 0, fontSize: '12.5px', lineHeight: 1.4, fontFamily: "'Nunito', sans-serif" }}>
+                {selectedNode.insight}
+              </p>
+            </motion.div>
+          )}
+        </div>
+
+        {/* FOOTER ACTION BUTTON */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px' }}>
+          <button
+            className="btn-primary"
+            style={{ padding: '10px 36px' }}
+            onClick={() => setScreen('stage5_0Email')}
+          >
+            Continue
+          </button>
         </div>
 
       </div>

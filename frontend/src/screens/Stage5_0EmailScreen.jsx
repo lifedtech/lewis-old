@@ -94,16 +94,16 @@ export default function Stage5_0EmailScreen() {
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
-              fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.08,
+              fontWeight: 800,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.015em',
               margin: 0,
               color: INK,
               textAlign: 'left',
+              whiteSpace: 'nowrap',
             }}>
-              <span style={{ display: 'block' }}>Receive Your</span>
-              <span style={{ display: 'block' }}>Wellbeing Report</span>
+              Receive Your Wellbeing Report
             </h1>
             <p style={{
               margin: '14px 0 0 2px',

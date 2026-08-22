@@ -73,11 +73,9 @@ body,
 #root {
   margin: 0;
   padding: 0;
+  width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  height: 100dvh !important;
-  max-height: 100dvh !important;
-  overflow: hidden !important;
   touch-action: manipulation;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
@@ -893,15 +891,25 @@ h1.headline em {
 .main-card h2,
 .main-card h3,
 .main-card .headline,
-.main-card h1.headline,
+.main-card h1.headline {
+  font-family: 'Manrope', 'Nunito', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: var(--fluid-h1, clamp(24px, 3vw, 36px)) !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.01em !important;
+  text-align: left !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
 .main-card .eyebrow,
 .main-card p.eyebrow {
   font-family: 'Nunito', sans-serif !important;
   font-weight: 700 !important;
-  font-size: clamp(26px, 3.2vw, 40px) !important;
-  line-height: 1.2 !important;
-  letter-spacing: 0 !important;
-  text-align: left !important;
+  font-size: 11px !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
 }
 
 .screen-container {
@@ -918,8 +926,8 @@ h1.headline em {
 /* ---------- Stage question/options split layout (title+illustration | question+options) ---------- */
 .stage-split {
   display: grid;
-  grid-template-columns: 1fr 1.65fr;
-  gap: clamp(24px, 4vw, 52px);
+  grid-template-columns: 1.15fr 1.55fr;
+  gap: clamp(20px, 3.5vw, 44px);
   align-items: stretch;
   width: 100%;
   height: 100%;
@@ -933,7 +941,7 @@ h1.headline em {
     flex-direction: column !important;
     height: auto !important;
     max-height: none !important;
-    gap: clamp(18px, 4vh, 28px) !important;
+    gap: clamp(14px, 3vh, 24px) !important;
   }
 }
 
@@ -2061,4 +2069,221 @@ html[data-height-class="compact-tight"] .btn-next {
   min-height: 34px !important;
   padding: 5px 14px !important;
   font-size: 11px !important;
+}
+
+/* ================================================================== */
+/* DEDICATED MOBILE UI LAYER (< 768px)                                */
+/* ================================================================== */
+
+.mobile-app-root {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--app-bg) !important;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  position: relative;
+}
+
+.mobile-main-content {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.mobile-screen-container {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Standardized Mobile Card */
+.mobile-app-root .main-card,
+.mobile-app-root .mobile-question-card {
+  width: 100% !important;
+  max-width: 540px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1.5px solid rgba(0, 174, 157, 0.16) !important;
+  border-radius: 20px !important;
+  padding: 18px 16px 20px 16px !important;
+  box-shadow: 0 4px 18px rgba(0, 174, 157, 0.06), 0 2px 6px rgba(0, 0, 0, 0.02) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  margin: 0 auto !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+.mobile-app-root .main-card.transparent-card {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  padding: 8px 6px !important;
+}
+
+/* Standardized Mobile 2-Column Split Flattening */
+.mobile-app-root .stage-split {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  height: auto !important;
+  max-height: none !important;
+  width: 100% !important;
+}
+
+/* Standardized Eyebrows (Less than 8px) */
+.mobile-app-root .eyebrow,
+.mobile-app-root p.eyebrow,
+.mobile-app-root .stage-right-eyebrow,
+.mobile-app-root p.stage-right-eyebrow,
+.mobile-app-root [class*="eyebrow"] {
+  font-family: 'Nunito', sans-serif !important;
+  font-size: 7.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  color: #7a8683 !important;
+  text-transform: uppercase !important;
+  text-align: left !important;
+  margin: 0 0 2px 0 !important;
+}
+
+/* Standardized Headlines (Reduced 1-2px) */
+.mobile-app-root h1,
+.mobile-app-root h2,
+.mobile-app-root h3,
+.mobile-app-root .headline,
+.mobile-app-root h1.headline {
+  font-family: 'Manrope', 'Nunito', sans-serif !important;
+  font-size: 22px !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.015em !important;
+  font-weight: 700 !important;
+  color: #414242 !important;
+  text-align: left !important;
+  margin: 0 0 4px 0 !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Standardized Subtitles / Descriptions (Reduced 1-2px) */
+.mobile-app-root p.sub,
+.mobile-app-root p {
+  font-family: 'Nunito', sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+  color: #5e6060 !important;
+  text-align: left !important;
+  margin: 2px 0 0 0 !important;
+}
+
+/* Standardized Choice & Option Cards */
+.mobile-question-option,
+.mobile-app-root .choice-card,
+.mobile-app-root .scale-opt {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-height: 46px !important;
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+  border: 1.5px solid rgba(0, 174, 157, 0.18) !important;
+  background: #ffffff !important;
+  color: #414242 !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s ease !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.mobile-question-option:active,
+.mobile-app-root .choice-card:active,
+.mobile-app-root .scale-opt:active {
+  transform: scale(0.985) !important;
+  background: #f0faf7 !important;
+}
+
+.mobile-question-option.selected,
+.mobile-app-root .choice-card.selected,
+.mobile-app-root .scale-opt.selected {
+  background: #e6f7f2 !important;
+  border-color: #00ae9d !important;
+  color: #1b4d43 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(0, 174, 157, 0.12) !important;
+}
+
+/* Standardized Primary Continue CTA Button */
+.mobile-continue-wrap {
+  width: 100%;
+  padding-top: 8px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+.mobile-app-root .btn-primary,
+.mobile-app-root .btn-next {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 46px !important;
+  padding: 12px 24px !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  font-family: 'Nunito', sans-serif !important;
+  border-radius: 14px !important;
+  background: #00ae9d !important;
+  color: #ffffff !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-shadow: 0 4px 14px rgba(0, 174, 157, 0.28) !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-app-root .btn-primary:active,
+.mobile-app-root .btn-next:active {
+  transform: scale(0.985) !important;
+  background: #008a7c !important;
+}
+
+/* Hide decorative background illustrations on mobile view */
+.mobile-app-root .stage-illustration,
+.mobile-app-root .illustration-col,
+.mobile-app-root [data-illustration] {
+  display: none !important;
+}
+
+/* Remove background containers in mobile view */
+.mobile-app-root .main-card,
+.mobile-app-root .mobile-question-card,
+.mobile-app-root .card,
+.mobile-app-root [class*="card-container"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }

@@ -94,6 +94,7 @@ export default function Stage8_1EnergyArcScreen() {
   ]
 
   const levels = ['High', 'Medium', 'Low']
+  const allFilled = timesOfDay.every(tod => !!energyArc?.[tod.key])
 
   return (
     <motion.div
@@ -124,133 +125,123 @@ export default function Stage8_1EnergyArcScreen() {
               letterSpacing: '0.14em',
               color: '#00ae9d',
               textTransform: 'uppercase',
-              margin: '0 0 12px 0',
+              margin: '0 0 10px 0',
+              lineHeight: 1.3,
             }}>
               DAILY RHYTHMS
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
               textAlign: 'left',
+              whiteSpace: 'nowrap',
             }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Energy Arc</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Mapping</span>
+              Energy Arc Mapping
             </h1>
             <p style={{
-              margin: '12px 0 0 2px',
-              fontSize: 'clamp(13px, 1.5vw, 15.5px)',
+              margin: '8px 0 14px 0',
+              fontSize: 'clamp(13px, 1.5vw, 15px)',
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
-              lineHeight: 1.5,
+              lineHeight: 1.45,
               maxWidth: '350px',
               textAlign: 'left',
             }}>
               Map out how your energy rises and falls throughout a typical day.
             </p>
           </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
             <EnergyArcIllustration />
           </div>
         </div>
 
-        {/* RIGHT — Questionnaire Card Container */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        {/* RIGHT — Questionnaire Container */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '14px' }}>
 
-          <div
-            style={{
-              width: '100%',
-              background: '#ffffff',
-              border: '1.5px solid #f4f4f4',
-              borderRadius: '20px',
-              padding: '18px 22px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-            }}
-          >
-            {/* Header Row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-              <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
-                CIRCADIAN ENERGY
-              </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#414242' }}>
-                DAILY MAPPING
-              </span>
-            </div>
-
-            {/* 4 Time of Day Rows */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-              {timesOfDay.map(tod => {
-                const currentVal = energyArc?.[tod.key]
-                return (
-                  <div
-                    key={tod.key}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '10px 16px',
-                      borderRadius: '14px',
-                      border: '1.5px solid #d2e7e0',
-                      background: '#f2f9f6',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '14.5px', color: '#414242' }}>
-                        {tod.label}
-                      </span>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      {levels.map(level => {
-                        const selected = currentVal === level
-                        return (
-                          <button
-                            key={level}
-                            onClick={() => updateObjectField('energyArc', tod.key, level)}
-                            style={{
-                              padding: '5px 13px',
-                              borderRadius: '10px',
-                              border: selected ? '1.5px solid #00ae9d' : '1.5px solid #c2ceca',
-                              background: selected ? '#00ae9d' : '#ffffff',
-                              color: selected ? '#ffffff' : '#414242',
-                              fontFamily: "'Nunito', sans-serif",
-                              fontWeight: selected ? 700 : 600,
-                              fontSize: '12.5px',
-                              cursor: 'pointer',
-                              transition: 'all 0.18s ease',
-                              boxShadow: selected ? '0 2px 6px rgba(0,174,157,0.2)' : 'none',
-                            }}
-                          >
-                            {level}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#414242', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center' }}>
-              Select your typical energy level for each phase of the day.
-            </p>
+          {/* Header Row */}
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', color: '#00ae9d', textTransform: 'uppercase' }}>
+              CIRCADIAN ENERGY
+            </span>
           </div>
 
-          {/* Action Button directly below card */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '14px', flexShrink: 0 }}>
+          {/* 4 Time of Day Rows */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+            {timesOfDay.map(tod => {
+              const currentVal = energyArc?.[tod.key]
+              return (
+                <div
+                  key={tod.key}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 16px',
+                    borderRadius: '14px',
+                    border: '1.5px solid #d2e7e0',
+                    background: '#ffffff',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '14.5px', color: '#414242' }}>
+                    {tod.label}
+                  </span>
+
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    {levels.map(level => {
+                      const selected = currentVal === level
+                      return (
+                        <motion.button
+                          key={level}
+                          whileHover={{ y: -1 }}
+                          whileTap={{ scale: 0.96 }}
+                          onClick={() => updateObjectField('energyArc', tod.key, level)}
+                          style={{
+                            padding: '6px 14px',
+                            borderRadius: '10px',
+                            border: selected ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
+                            background: selected ? '#00ae9d' : '#f2f9f6',
+                            color: selected ? '#ffffff' : '#414242',
+                            fontFamily: "'Nunito', sans-serif",
+                            fontWeight: selected ? 700 : 600,
+                            fontSize: '12.5px',
+                            cursor: 'pointer',
+                            transition: 'all 0.18s ease',
+                            boxShadow: selected ? '0 2px 8px rgba(0,174,157,0.22)' : 'none',
+                            outline: 'none',
+                          }}
+                        >
+                          {level}
+                        </motion.button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+            Select your typical energy level for each phase of the day.
+          </p>
+
+          {/* Action Button directly below */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '8px', flexShrink: 0 }}>
             <button
               className="btn-primary"
               onClick={handleNext}
-              style={{ padding: '9px 36px' }}
+              disabled={!allFilled}
+              style={{
+                padding: '10px 40px',
+                opacity: allFilled ? 1 : 0.5,
+                cursor: allFilled ? 'pointer' : 'not-allowed',
+              }}
             >
               Continue
             </button>

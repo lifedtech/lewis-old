@@ -73,8 +73,11 @@ const SomaticConnectionIllustration = () => (
 export default function Stage3_6BodyAwarenessScreen() {
   const { setScreen, setProfileField, bodyAwareness } = useLewisStore()
 
-  const handleNext = () => {
-    setScreen('stage4Maze')
+  const handleSelect = (label) => {
+    setProfileField('bodyAwareness', label)
+    setTimeout(() => {
+      setScreen('stage4Maze')
+    }, 200)
   }
 
   const options = [
@@ -119,8 +122,8 @@ export default function Stage3_6BodyAwarenessScreen() {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(26px, 3.2vw, 40px)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(26px, 3.2vw, 38px)',
+              lineHeight: 1.15,
               letterSpacing: '-0.01em',
               margin: 0,
               color: '#414242',
@@ -142,7 +145,7 @@ export default function Stage3_6BodyAwarenessScreen() {
           <SomaticConnectionIllustration />
         </div>
 
-        {/* RIGHT — SOMATIC AWARENESS Eyebrow + Option Cards + Pinned Button */}
+        {/* RIGHT — SOMATIC AWARENESS Eyebrow + Option Cards */}
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start' }}>
 
           <p className="stage-right-eyebrow" style={{
@@ -152,7 +155,6 @@ export default function Stage3_6BodyAwarenessScreen() {
             letterSpacing: '0.14em',
             color: '#414242',
             textTransform: 'uppercase',
-            
             margin: '0 0 14px 0',
             width: '100%'
           }}>
@@ -165,7 +167,7 @@ export default function Stage3_6BodyAwarenessScreen() {
               return (
                 <button
                   key={opt.label}
-                  onClick={() => setProfileField('bodyAwareness', opt.label)}
+                  onClick={() => handleSelect(opt.label)}
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
@@ -221,21 +223,6 @@ export default function Stage3_6BodyAwarenessScreen() {
                 </button>
               )
             })}
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-primary"
-              onClick={handleNext}
-              disabled={!bodyAwareness}
-              style={{
-                padding: '10px 36px',
-                opacity: bodyAwareness ? 1 : 0.5,
-                cursor: bodyAwareness ? 'pointer' : 'not-allowed',
-              }}
-            >
-              Continue
-            </button>
           </div>
 
         </div>
