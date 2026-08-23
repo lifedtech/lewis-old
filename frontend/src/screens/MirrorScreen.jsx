@@ -844,7 +844,7 @@ export default function MirrorScreen() {
 
       {/* Hidden Render Target for Canvas-Accurate PDF Generation */}
       <div style={{ position: 'fixed', left: '-99999px', top: 0, width: '1200px', pointerEvents: 'none', opacity: 0.01 }} aria-hidden="true">
-        <InsightReport report={analysis?.report} />
+        <InsightReport report={analysis?.insight_report || analysis?.report} />
       </div>
 
       <p className="closing-line mirror-web-ui" style={{ textAlign: 'center', color: 'var(--text-mute)', fontSize: '13.5px', marginTop: '16px' }}>
