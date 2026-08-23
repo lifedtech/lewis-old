@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
@@ -98,11 +98,6 @@ export default function LandingScreen() {
     const wrapper = document.querySelector('.landing-screen-wrapper')
     if (wrapper) wrapper.scrollTo({ top: 0, behavior: 'smooth' })
   }
-
-  useEffect(() => {
-    const wrapper = document.querySelector('.landing-screen-wrapper')
-    if (wrapper) wrapper.scrollTop = 0
-  }, [activePage])
 
   return (
     <motion.div
@@ -246,7 +241,7 @@ export default function LandingScreen() {
                   &larr; Back to Home
                 </button>
                 <p style={eyebrowStyle()}>What is Lewis</p>
-                <div style={{
+                <div data-row="lede" style={{
                   display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 'clamp(28px,5vw,64px)',
                   alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
                 }}>
@@ -298,7 +293,7 @@ export default function LandingScreen() {
                   &larr; Back to Home
                 </button>
                 <p style={eyebrowStyle()}>The nine areas</p>
-                <div style={{
+                <div data-row="lede" style={{
                   display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 'clamp(28px,5vw,64px)',
                   alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
                 }}>
@@ -355,7 +350,7 @@ export default function LandingScreen() {
                   &larr; Back to Home
                 </button>
                 <p style={eyebrowStyle('#00776a')}>The science and research</p>
-                <div style={{
+                <div data-row="lede" style={{
                   display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 'clamp(28px,5vw,64px)',
                   alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
                 }}>

@@ -51,12 +51,6 @@ export default function LewisHeroIllustration() {
         }}
       >
         <defs>
-          {/* Subtle glow filters */}
-          <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-
           <linearGradient id="streamGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.85" />
             <stop offset="100%" stopColor="#414242" stopOpacity="0.45" />
