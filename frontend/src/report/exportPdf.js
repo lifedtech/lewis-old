@@ -43,13 +43,20 @@ export async function exportReportPdf(filename = 'LEWIS-Insight-Report.pdf') {
           y: 0,
           scrollX: 0,
           scrollY: 0,
+          // Lock the capture viewport to the report's own fixed layout size
+          // instead of the triggering device's real viewport, so every page
+          // renders identically on mobile, tablet, and desktop.
+          windowWidth: 1200,
+          windowHeight: Math.max(height + 200, 1600),
           backgroundColor: null,
           useCORS: true,
           allowTaint: false,
           imageTimeout: 0,
           logging: false,
-          onclone: (clonedDocument) => {
-            const clonedPage = clonedDocument.querySelector('.ir-page')
+          onclone: (_clonedDocument, clonedPage) => {
+            // Second arg is this page's own cloned node (not the doc's first
+            // .ir-page) — querying the document here silently mis-targeted
+            // page 1's clone for every page.
             clonedPage?.style.setProperty('background-color', pageBackground, 'important')
           },
         })
