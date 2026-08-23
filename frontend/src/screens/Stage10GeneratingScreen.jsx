@@ -103,10 +103,11 @@ export default function Stage10GeneratingScreen() {
   useEffect(() => {
     let mounted = true
     const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-    const TOTAL_DURATION_MS = 12500 // 12.5 second total loading sequence
+    const TOTAL_DURATION_MS = 26000 // 26 second sequence for smooth cold-start & LLM generation tolerance
     const startTime = Date.now()
+    let isFinished = false
 
-    // 1. Fire parallel backend analysis synthesis
+    // 1. Fire backend analysis synthesis
     async function runFetch() {
       try {
         const { payload, missing } = buildFullAssessmentPayload(useLewisStore.getState())
@@ -129,6 +130,7 @@ export default function Stage10GeneratingScreen() {
         const data = await response.json()
         if (mounted) {
           useLewisStore.setState({ analysisData: data, analysisMissing: null, analysisError: null })
+          isFinished = true
         }
       } catch (err) {
         console.error(err)
@@ -143,29 +145,45 @@ export default function Stage10GeneratingScreen() {
 
     runFetch()
 
-    // 2. High-precision 12-15s progress ticker
+    // 2. High-precision 26s progress ticker with smart completion
     const timer = setInterval(() => {
       if (!mounted) return
       const elapsed = Date.now() - startTime
-      const progress = Math.min(100, Math.floor((elapsed / TOTAL_DURATION_MS) * 100))
+      
+      // Calculate target progress
+      let currentProgress = Math.floor((elapsed / TOTAL_DURATION_MS) * 100)
+      
+      // If backend hasn't responded yet, hold comfortably at 94%
+      if (!isFinished && currentProgress > 94) {
+        currentProgress = 94
+      }
 
-      setProgressPercent(progress)
+      // If backend has completed, allow reaching 100%
+      if (isFinished) {
+        currentProgress = Math.max(currentProgress, 95)
+        if (elapsed >= 10000 || currentProgress >= 98) {
+          currentProgress = 100
+        }
+      }
+
+      const clamped = Math.min(100, Math.max(0, currentProgress))
+      setProgressPercent(clamped)
 
       const currentStep = Math.min(
         steps.length - 1,
-        Math.floor((progress / 100) * steps.length)
+        Math.floor((clamped / 100) * steps.length)
       )
       setStepIdx(currentStep)
 
-      if (progress >= 100) {
+      if (clamped >= 100) {
         clearInterval(timer)
         setTimeout(() => {
           if (mounted) {
             setScreen('mirror')
           }
-        }, 650)
+        }, 700)
       }
-    }, 45)
+    }, 60)
 
     return () => {
       mounted = false

@@ -68,13 +68,26 @@ app = FastAPI(
 )
 
 # --- CORS: explicit origins only; a wildcard is never honored -----------------
-_raw_origins = os.getenv("FRONTEND_URL", "http://localhost:5173,http://127.0.0.1:5173,https://lewis.cold-forest-a8ec.workers.dev")
+_DEFAULT_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://lewis.cold-forest-a8ec.workers.dev",
+    "https://lewiswellbeing.com",
+    "https://www.lewiswellbeing.com",
+    "http://lewiswellbeing.com",
+    "http://www.lewiswellbeing.com",
+]
+_raw_origins = os.getenv("FRONTEND_URL", "")
 _origins = [u.strip().rstrip("/") for u in _raw_origins.split(",") if u.strip()]
-if "https://lewis.cold-forest-a8ec.workers.dev" not in _origins:
-    _origins.append("https://lewis.cold-forest-a8ec.workers.dev")
+
+# Always guarantee production and staging domains are included
+for default_origin in _DEFAULT_ALLOWED_ORIGINS:
+    if default_origin not in _origins:
+        _origins.append(default_origin)
+
 if "*" in _origins:
-    logger.critical("Wildcard CORS origin rejected; using localhost & Cloudflare dev origins instead.")
-    _origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://lewis.cold-forest-a8ec.workers.dev"]
+    logger.critical("Wildcard CORS origin rejected; using production and local origins instead.")
+    _origins = _DEFAULT_ALLOWED_ORIGINS
 
 # Order matters: the last middleware added is the outermost. CORS must wrap
 # the guardrail, or its 429/413 short-circuits (and 500s) come back without

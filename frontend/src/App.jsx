@@ -19,6 +19,10 @@ export default function App() {
   const [bootLoading, setBootLoading] = useState(true)
 
   useEffect(() => {
+    // Early warmup ping to wake up backend container from cold start
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+    fetch(`${API_BASE}/`, { method: 'GET' }).catch(() => {})
+
     const timer = setTimeout(() => {
       setBootLoading(false)
     }, 1400)
