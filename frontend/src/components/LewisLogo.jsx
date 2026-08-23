@@ -45,11 +45,11 @@ export default function LewisLogo({
 
   if (layout === 'stacked') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
+      <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px', flexShrink: 0 }}>
         {markSvg}
         {showText && (
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-            <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '20px', color: txtColor, letterSpacing: '0' }}>Lewis</span>
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+            <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '20px', color: txtColor, letterSpacing: '0', whiteSpace: 'nowrap' }}>Lewis</span>
           </div>
         )}
       </div>
@@ -57,11 +57,11 @@ export default function LewisLogo({
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', flexShrink: 0, whiteSpace: 'nowrap' }}>
       {markSvg}
       {showText && (
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-          <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(16, Math.round(size * 0.58))}px`, color: txtColor, letterSpacing: '0' }}>Lewis</span>
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(16, Math.round(size * 0.58))}px`, color: txtColor, letterSpacing: '0', whiteSpace: 'nowrap' }}>Lewis</span>
         </div>
       )}
     </div>

@@ -81,10 +81,10 @@ export default function LewisMotionLogo({
 
   if (layout === 'stacked') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: `${Math.max(6, Math.round(size * 0.15))}px` }}>
+      <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: `${Math.max(6, Math.round(size * 0.15))}px`, flexShrink: 0, whiteSpace: 'nowrap' }}>
         {markSvg}
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-          <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(18, Math.round(size * 0.38))}px`, color: txtColor, letterSpacing: '0' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(18, Math.round(size * 0.38))}px`, color: txtColor, letterSpacing: '0', whiteSpace: 'nowrap' }}>
             Lewis
           </span>
         </div>
@@ -93,10 +93,10 @@ export default function LewisMotionLogo({
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: `${Math.max(10, Math.round(size * 0.18))}px` }}>
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: `${Math.max(10, Math.round(size * 0.18))}px`, flexShrink: 0, whiteSpace: 'nowrap' }}>
       {markSvg}
-      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-        <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(18, Math.round(size * 0.48))}px`, color: txtColor, letterSpacing: '0' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+        <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(18, Math.round(size * 0.48))}px`, color: txtColor, letterSpacing: '0', whiteSpace: 'nowrap' }}>
           Lewis
         </span>
       </div>

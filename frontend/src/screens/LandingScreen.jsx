@@ -86,15 +86,18 @@ export default function LandingScreen() {
   const { setScreen } = useLewisStore()
   // Active page tab: 'home' | 'what-is-lewis' | 'areas' | 'research' | 'questions'
   const [activePage, setActivePage] = useState('home')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleNext = (e) => {
     if (e) e.preventDefault()
+    setMobileMenuOpen(false)
     setScreen('stage1_0About')
   }
 
   const navigateTo = (e, pageId) => {
     if (e) e.preventDefault()
     setActivePage(pageId)
+    setMobileMenuOpen(false)
     const wrapper = document.querySelector('.landing-screen-wrapper')
     if (wrapper) wrapper.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -108,23 +111,18 @@ export default function LandingScreen() {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
       {/* STICKY NAV */}
-      <header style={{
-        position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,.95)',
-        backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderBottom: '1px solid #f4f4f4',
-      }}>
-        <div style={{
-          width: '100%', padding: '16px clamp(20px,4vw,48px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px',
-          boxSizing: 'border-box',
-        }}>
+      <header className="landing-sticky-header">
+        <div className="landing-header-inner">
           <button
             onClick={(e) => navigateTo(e, 'home')}
-            style={{ display: 'flex', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            className="landing-logo-btn"
+            aria-label="Lewis Home"
           >
             <LewisLogo size={30} showText={true} />
           </button>
           
-          <nav data-nav="1" style={{ display: 'flex', alignItems: 'center', gap: 'clamp(12px,2vw,24px)' }}>
+          {/* Desktop Navigation */}
+          <nav className="landing-desktop-nav" data-nav="1">
             {NAV_LINKS.map((l) => (
               l.external ? (
                 <a
@@ -134,7 +132,6 @@ export default function LandingScreen() {
                   rel="noopener noreferrer"
                   data-nav-link="1"
                   className="landing-nav-link"
-                  style={{ fontSize: '14px', fontWeight: 700, color: '#414242' }}
                 >
                   {l.label}
                 </a>
@@ -143,25 +140,74 @@ export default function LandingScreen() {
                   key={l.id}
                   onClick={(e) => navigateTo(e, l.id)}
                   data-nav-link="1"
-                  className="landing-nav-link"
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    color: activePage === l.id ? '#00ae9d' : '#414242',
-                    borderBottom: activePage === l.id ? '2px solid #00ae9d' : '2px solid transparent',
-                    padding: '6px 2px',
-                    transition: 'all 0.2s ease',
-                  }}
+                  className={`landing-nav-link ${activePage === l.id ? 'active' : ''}`}
                 >
                   {l.label}
                 </button>
               )
             ))}
           </nav>
+
+          {/* Mobile Hamburger Menu Button */}
+          <button
+            className="landing-mobile-menu-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            <Icon name={mobileMenuOpen ? "close" : "menu"} size={20} />
+          </button>
         </div>
+
+        {/* Mobile Dropdown Drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              className="landing-mobile-drawer"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.22, ease: 'easeInOut' }}
+            >
+              <div className="landing-mobile-drawer-content">
+                {NAV_LINKS.map((l) => (
+                  l.external ? (
+                    <a
+                      key={l.id}
+                      href={l.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="landing-mobile-drawer-link"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <span>{l.label}</span>
+                      <span style={{ fontSize: '13px', opacity: 0.6 }}>↗</span>
+                    </a>
+                  ) : (
+                    <button
+                      key={l.id}
+                      onClick={(e) => navigateTo(e, l.id)}
+                      className={`landing-mobile-drawer-link ${activePage === l.id ? 'active' : ''}`}
+                    >
+                      <span>{l.label}</span>
+                      {activePage === l.id && (
+                        <span style={{ color: '#00ae9d', fontWeight: 800 }}>•</span>
+                      )}
+                    </button>
+                  )
+                ))}
+                <div className="landing-mobile-drawer-cta">
+                  <button
+                    onClick={handleNext}
+                    className="landing-primary-btn"
+                    style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px 20px', fontSize: '15px' }}
+                  >
+                    Start Lewis <Icon name="arrow" size={16} />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* DEDICATED PAGE VIEWS */}
