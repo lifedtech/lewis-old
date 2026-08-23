@@ -193,15 +193,6 @@ def init_db():
                         );
                         CREATE TABLE IF NOT EXISTS lewis_assessment_records (
                             id SERIAL PRIMARY KEY,
-                            query_id TEXT UNIQUE NOT NULL,
-                            name TEXT NOT NULL,
-                            email TEXT NOT NULL,
-                            query TEXT NOT NULL,
-                            status TEXT DEFAULT 'pending',
-                            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-                        );
-                        CREATE TABLE IF NOT EXISTS lewis_assessment_records (
-                            id SERIAL PRIMARY KEY,
                             report_uuid TEXT UNIQUE NOT NULL,
                             user_name_encrypted TEXT,
                             user_email_encrypted TEXT,
@@ -233,6 +224,17 @@ def init_db():
                             reminder_sent_at TIMESTAMP WITH TIME ZONE
                         );
                         CREATE INDEX IF NOT EXISTS idx_journey_status_active ON lewis_journey_sessions (status, last_active_at);
+
+                        -- All access to these tables goes through this backend's own
+                        -- privileged connection (DATABASE_URL) or the Supabase service
+                        -- key, both of which bypass RLS. Enabling it with no anon/
+                        -- authenticated policies closes public PostgREST access without
+                        -- touching how this app talks to Postgres.
+                        ALTER TABLE lewis_users ENABLE ROW LEVEL SECURITY;
+                        ALTER TABLE lewis_sessions ENABLE ROW LEVEL SECURITY;
+                        ALTER TABLE lewis_support_queries ENABLE ROW LEVEL SECURITY;
+                        ALTER TABLE lewis_assessment_records ENABLE ROW LEVEL SECURITY;
+                        ALTER TABLE lewis_journey_sessions ENABLE ROW LEVEL SECURITY;
                     """)
                     conn.commit()
                 conn.close()
