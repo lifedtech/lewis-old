@@ -1,0 +1,41 @@
+# IDE & Skill Cache
+.claude
+.windsurf
+.agents
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+frontend/.claude/
+frontend/.windsurf/
+frontend/.agents/
+frontend/src/generated/prisma/
+
+# Secrets & Environment
+.env
+.env.*
+!.env.example
+
+# Databases
+backend/db/*.db
+backend/db/*.sqlite
+backend/db/*.sqlite3
