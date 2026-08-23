@@ -1224,7 +1224,7 @@ function CoverPage({ page, downloading, onDownload }) {
         </g>
       </svg>
 
-      <div style={{ position: 'relative', height: '1123px', padding: '64px 62px 46px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+      <div style={{ position: 'relative', minHeight: '1123px', height: '100%', padding: 'clamp(32px, 5vw, 64px) clamp(24px, 5vw, 62px) 46px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
         {/* Top Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
