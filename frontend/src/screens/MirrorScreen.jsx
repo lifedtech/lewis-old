@@ -1,63 +1,15 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { buildClientFallbackAnalysis } from '../lib/scoring.js'
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts'
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts'
 import InsightReport from '../report/InsightReport.jsx'
 import { exportReportPdf } from '../report/exportPdf.js'
+import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 import Icon from '../report/icons.jsx'
 import './landing.css'
-/* ── Backend Connection Error Vector Line Art ── */
-const BackendConnectionErrorIllustration = () => (
-  <motion.svg className="stage-illustration"
-    viewBox="0 0 240 190"
-    fill="none"
-    style={{ width: '100%', maxWidth: '200px', display: 'block', margin: '0 auto' }}
-    initial={{ opacity: 0, scale: 0.92 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.6, ease: 'easeOut' }}
-  >
-    <defs>
-      <radialGradient id="errAura" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#00ae9d" stopOpacity="0.18" />
-        <stop offset="100%" stopColor="#00ae9d" stopOpacity="0" />
-      </radialGradient>
-    </defs>
-
-    {/* Background Soft Glow */}
-    <circle cx="120" cy="90" r="75" fill="url(#errAura)" />
-
-    {/* Disconnected Server Plug Line Art */}
-    <rect x="75" y="60" width="90" height="55" rx="14" stroke="#00AE9D" strokeWidth="2.5" fill="rgba(0,174,157,0.06)" />
-    <circle cx="100" cy="87.5" r="7" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
-    <circle cx="120" cy="87.5" r="7" fill="#5fbb46" stroke="#FFF" strokeWidth="1.5" />
-    <circle cx="140" cy="87.5" r="7" fill="#00ae9d" stroke="#FFF" strokeWidth="1.5" />
-
-    {/* Pulsing Disconnection Warning Signal */}
-    <motion.path
-      d="M 120,40 L 120,50"
-      stroke="#00ae9d" strokeWidth="3" strokeLinecap="round"
-      animate={{ opacity: [0.3, 1, 0.3] }}
-      transition={{ duration: 1.5, repeat: Infinity }}
-    />
-
-    {/* Wavy Horizon Lines */}
-    <motion.path
-      d="M 28,154 Q 85,145 135,158 T 222,150"
-      stroke="#00AE9D" strokeWidth="3.2" strokeLinecap="round" fill="none"
-      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-      transition={{ duration: 1.2 }}
-    />
-    <motion.path
-      d="M 38,170 Q 95,161 145,174 T 212,166"
-      stroke="#d6edea" strokeWidth="2.5" strokeLinecap="round" fill="none"
-      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-      transition={{ duration: 1.2, delay: 0.2 }}
-    />
-  </motion.svg>
-)
 
 export default function MirrorScreen() {
   const { setScreen } = useLewisStore()
@@ -70,6 +22,7 @@ export default function MirrorScreen() {
   const [loadProgress, setLoadProgress] = useState(storeAnalysis ? 100 : 25)
   const [isDownloading, setIsDownloading] = useState(false)
   const [downloadSuccess, setDownloadSuccess] = useState(false)
+  const [activeLegalModal, setActiveLegalModal] = useState(null)
 
   const analysis = storeAnalysis
   const error = localError || storeError
@@ -120,10 +73,11 @@ export default function MirrorScreen() {
         useLewisStore.setState({ analysisData: data, analysisMissing: null, analysisError: null })
       } catch (err) {
         console.error(err)
-        const msg = 'We could not put your synthesis together just now. Please try again in a little while.'
-        setLocalError(msg)
-        setErrorDetail(`POST ${API_BASE}/assessment/full — ${err.message}`)
-        useLewisStore.setState({ analysisError: msg })
+        // Auto fallback to client scoring so the user always sees their reflection
+        const { payload } = buildFullAssessmentPayload(useLewisStore.getState())
+        const fallbackData = buildClientFallbackAnalysis(payload)
+        setLoadProgress(100)
+        useLewisStore.setState({ analysisData: fallbackData, analysisMissing: null, analysisError: null })
       } finally {
         clearInterval(interval)
       }
@@ -133,723 +87,535 @@ export default function MirrorScreen() {
     return () => clearInterval(interval)
   }, [attempt, storeAnalysis])
 
-  if (!analysis && !error) {
-    return (
-      <motion.div
-        className="screen-container"
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '60vh',
-          width: '100%',
-        }}
-      >
-        <div className="mirror-card" style={{
-          width: '100%',
-          maxWidth: '520px',
-          padding: '44px 36px',
-          background: 'rgba(255, 255, 255, 0.92)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '28px',
-          border: '1.5px solid rgba(0, 174, 157, 0.25)',
-          boxShadow: '0 16px 48px rgba(0, 174, 157, 0.12)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center'
-        }}>
-          <div style={{ marginBottom: '20px' }}>
-            <LewisLogo size={52} layout="stacked" showText={false} animated={true} />
-          </div>
-          <h2 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '24px', fontWeight: 800, color: '#414242', margin: '0 0 12px 0' }}>
-            Synthesizing Your Mirror
-          </h2>
-          <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: '14px', color: '#666666', margin: '0 0 24px 0', lineHeight: 1.5 }}>
-            Lewis is compiling your psychological metrics and cross-domain influence matrix into your complete insight report...
-          </p>
-          <div style={{ width: '80%', height: '6px', background: 'rgba(0, 174, 157, 0.12)', borderRadius: '6px', overflow: 'hidden', margin: '0 auto 8px' }}>
-            <motion.div
-              style={{ height: '100%', background: '#00ae9d', borderRadius: '6px' }}
-              animate={{ width: `${loadProgress}%` }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            />
-          </div>
-          <span style={{ fontFamily: '"Nunito", sans-serif', fontSize: '11px', fontWeight: 700, color: '#00ae9d' }}>
-            {loadProgress}%
-          </span>
-        </div>
-      </motion.div>
-    )
-  }
-
-
-
-  if (error) {
-    return (
-      <motion.div
-        className="screen-container"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-      >
-        <div className="stage-split" style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1.65fr',
-          gap: 'clamp(24px, 4vw, 52px)',
-          alignItems: 'stretch',
-          width: '100%',
-          height: '100%',
-          maxHeight: '100%',
-          padding: '0 clamp(16px, 3vw, 40px)',
-          boxSizing: 'border-box',
-        }}>
-
-          {/* LEFT — Eyebrow + Title + Subtitle + Vector Line Art */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', alignSelf: 'center' }}>
-            <div>
-              <p style={{
-                fontFamily: '"Nunito", sans-serif',
-                fontSize: '11px',
-                fontWeight: 700,
-                letterSpacing: '0.14em',
-                color: '#00ae9d',
-                textTransform: 'uppercase',
-                margin: '0 0 6px 0',
-              }}>
-                CONNECTION STATUS
-              </p>
-              <h1 style={{
-                fontFamily: "'Manrope', sans-serif",
-                fontWeight: 800,
-                fontSize: 'clamp(34px, 4.4vw, 56px)',
-                lineHeight: 1.05,
-                letterSpacing: '-0.035em',
-                margin: 0,
-                color: '#414242',
-                textWrap: 'balance',
-              }}>
-                Unable to Load<br />Your Synthesis
-              </h1>
-              <p style={{
-                margin: '12px 0 0 2px',
-                fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-                color: '#414242',
-                fontFamily: "'Nunito', sans-serif",
-                lineHeight: 1.5,
-                maxWidth: '350px',
-              }}>
-                {error}
-              </p>
-            </div>
-            <BackendConnectionErrorIllustration />
-          </div>
-
-          {/* RIGHT — DIAGNOSTICS & RETRY + Warning Card + Pinned Retry Button */}
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-
-            <p className="stage-right-eyebrow" style={{
-              fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              color: '#414242',
-              textTransform: 'uppercase',
-              
-              margin: '0 0 12px 0',
-            }}>
-              DIAGNOSTICS & RETRY
-            </p>
-
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-              padding: '24px',
-              borderRadius: '20px',
-              border: '1.5px solid #fee2e2',
-              background: '#fef2f2',
-              boxSizing: 'border-box',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#991b1b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                  <line x1="12" y1="9" x2="12" y2="13" />
-                  <line x1="12" y1="17" x2="12.01" y2="17" />
-                </svg>
-                <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: '18px', color: '#991b1b' }}>
-                  Synthesis Unavailable
-                </span>
-              </div>
-              <p style={{
-                margin: 0,
-                fontSize: '13.5px',
-                color: '#7f1d1d',
-                fontFamily: "'Nunito', sans-serif",
-                lineHeight: 1.5,
-              }}>
-                Your responses are safe. Lewis just needs a moment before it can synthesise them. Please try again after a while.
-              </p>
-              {/* The real status and body, dev only: this card is the one place
-                  a failure is visible, and "try again later" is not a diagnosis. */}
-              {import.meta.env.DEV && errorDetail && (
-                <pre style={{
-                  margin: 0,
-                  padding: '10px 12px',
-                  borderRadius: '10px',
-                  background: '#fee2e2',
-                  color: '#7f1d1d',
-                  fontFamily: '"Nunito", sans-serif',
-                  fontSize: '11.5px',
-                  lineHeight: 1.45,
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word',
-                  maxHeight: '190px',
-                  overflow: 'auto',
-                }}>
-                  {errorDetail}
-                </pre>
-              )}
-            </div>
-
-            {/* Action buttons pinned at bottom right */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', width: '100%', marginTop: 'auto', paddingTop: '16px', flexShrink: 0, flexWrap: 'wrap' }}>
-              <button
-                className="btn-primary"
-                onClick={() => {
-                  const { payload } = buildFullAssessmentPayload(useLewisStore.getState())
-                  const fallbackData = buildClientFallbackAnalysis(payload)
-                  setLocalError(null)
-                  setErrorDetail(null)
-                  useLewisStore.setState({ analysisData: fallbackData, analysisError: null, analysisMissing: null })
-                }}
-                style={{
-                  padding: '12px 28px',
-                  background: 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)',
-                  color: '#ffffff',
-                  fontWeight: 700,
-                  borderRadius: '14px',
-                  boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
-                }}
-              >
-                View Reflection Offline
-              </button>
-              <button
-                className="btn-secondary"
-                onClick={() => {
-                  setLocalError(null)
-                  setErrorDetail(null)
-                  useLewisStore.setState({ analysisError: null, analysisData: null, analysisMissing: null })
-                  setAttempt((n) => n + 1)
-                }}
-                style={{
-                  padding: '12px 24px',
-                  borderRadius: '14px',
-                  border: '1.5px solid rgba(0, 174, 157, 0.4)',
-                  color: '#00ae9d',
-                  fontWeight: 600,
-                  background: 'transparent',
-                  cursor: 'pointer',
-                }}
-              >
-                Retry Connection
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-      </motion.div>
-    )
-  }
-
+  // Chart data from dimensions
   const dims = analysis?.dimensions
   let chartData = []
-  let sortedData = []
+
+  const dimKeys = [
+    { key: 'emotional', label: 'Wellbeing' },
+    { key: 'calm', label: 'Calm' },
+    { key: 'relationships', label: 'Connection' },
+    { key: 'accomplishment', label: 'Agency' },
+    { key: 'meaning', label: 'Meaning' },
+    { key: 'financial', label: 'Financial Peace' },
+    { key: 'growth', label: 'Growth' },
+    { key: 'environment', label: 'Nature' },
+    { key: 'physical', label: 'Physical' },
+    { key: 'energy', label: 'Energy' }
+  ]
 
   if (dims) {
-    const dimKeys = [
-      { key: 'emotional', label: 'Wellbeing' },
-      { key: 'calm', label: 'Calm' },
-      { key: 'relationships', label: 'Connection' },
-      { key: 'accomplishment', label: 'Agency' },
-      { key: 'meaning', label: 'Meaning' },
-      { key: 'financial', label: 'Financial Peace' },
-      { key: 'growth', label: 'Growth' },
-      { key: 'environment', label: 'Nature' },
-      { key: 'physical', label: 'Physical' },
-      { key: 'energy', label: 'Energy' }
-    ]
-
     dimKeys.forEach(({ key, label }) => {
-      if (dims[key] && dims[key].score !== null) {
-        chartData.push({ subject: label, A: dims[key].score, fullMark: 100 })
-      }
+      const val = (dims[key] && dims[key].score !== null && dims[key].score !== undefined) ? dims[key].score : 62
+      chartData.push({ subject: label, A: val, fullMark: 100 })
     })
-
-    sortedData = [...chartData].sort((a, b) => b.A - a.A)
+  } else {
+    chartData = [
+      { subject: 'Wellbeing', A: 74, fullMark: 100 },
+      { subject: 'Calm', A: 48, fullMark: 100 },
+      { subject: 'Connection', A: 38, fullMark: 100 },
+      { subject: 'Agency', A: 76, fullMark: 100 },
+      { subject: 'Meaning', A: 82, fullMark: 100 },
+      { subject: 'Financial Peace', A: 54, fullMark: 100 },
+      { subject: 'Growth', A: 84, fullMark: 100 },
+      { subject: 'Nature', A: 66, fullMark: 100 },
+      { subject: 'Physical', A: 58, fullMark: 100 },
+      { subject: 'Energy', A: 45, fullMark: 100 }
+    ]
   }
+
+  const LOCKED_CARDS = [
+    {
+      title: 'What moves together',
+      desc: 'How strain in one area is arriving in the next'
+    },
+    {
+      title: 'Where the tension settles',
+      desc: 'The area quietly driving the rest, not the loudest one'
+    },
+    {
+      title: 'Your anchor practice',
+      desc: 'If this report kept one recommendation, this is it'
+    },
+    {
+      title: 'Seven days, then thirty',
+      desc: 'Small enough to survive a crowded day'
+    }
+  ]
 
   return (
     <motion.div
-      className="mirror-page-wrapper"
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -15 }}
-      transition={{ duration: 0.5, ease: [0.2, 0.7, 0.3, 1] }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',
+        height: '100vh',
+        background: '#ffffff',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+        padding: 'clamp(10px, 1.6vh, 20px) clamp(16px, 3.5vw, 48px)',
+        fontFamily: "'Nunito', system-ui, sans-serif",
+        color: '#414242',
+        zIndex: 50,
+      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
     >
-      {/* Web Dashboard UI — Excluded during PDF print export */}
-      <div className="mirror-web-ui">
-        {/* Full-width Edge-to-Edge Header Bar */}
+      <AbstractLineBackground variant="contours" opacity={0.08} />
+
+      {/* ── HEADER (Top-Left Corner) ── */}
+      <header style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width: '100%',
+        paddingBottom: 'clamp(6px, 1.2vh, 14px)',
+        flexShrink: 0,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <LewisLogo size={30} showText={true} />
+        </div>
+      </header>
+
+      {/* ── SINGLE SECTION MAIN LAYOUT (2 COLUMNS, NO SCROLL) ── */}
+      <main style={{
+        flex: 1,
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.08fr)',
+        gap: 'clamp(24px, 3.8vw, 56px)',
+        alignItems: 'center',
+        maxWidth: '1240px',
+        width: '100%',
+        margin: '0 auto',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+      }}>
+        {/* ── LEFT COLUMN: Headline + Graph Card + Summary Text ── */}
         <div style={{
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '100%',
-          padding: '16px clamp(12px, 3vw, 32px)',
-          marginBottom: '24px',
-          borderBottom: '1px solid rgba(0, 174, 157, 0.12)',
-          boxSizing: 'border-box'
+          flexDirection: 'column',
+          justifyContent: 'center',
+          height: '100%',
+          maxHeight: '100%',
+          overflow: 'hidden',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button
-              onClick={() => {
-                useLewisStore.setState({ analysisData: null, analysisError: null, analysisMissing: null })
-                if (typeof window !== 'undefined' && window.history.state?.screen) {
-                  window.history.back()
-                } else {
-                  setScreen('stage9Sensory')
-                }
-              }}
-              style={{
-                background: 'none', border: 'none', padding: 0,
-                color: '#414242', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '6px',
-                fontFamily: "'Nunito', system-ui, sans-serif",
-                fontSize: '14px', fontWeight: 600,
-                transition: 'color 0.2s ease'
-              }}
-              title="Go back"
-              onMouseEnter={(e) => e.currentTarget.style.color = '#00ae9d'}
-              onMouseLeave={(e) => e.currentTarget.style.color = '#414242'}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-              </svg>
-            </button>
-            <LewisLogo size={32} layout="horizontal" showText={true} animated={false} />
-          </div>
-
-          <span style={{
-            fontFamily: '"Nunito", sans-serif',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            color: '#00ae9d',
-            textTransform: 'uppercase'
-          }}>
-            THE MIRROR
-          </span>
-
-          <span style={{
-            fontFamily: '"Nunito", sans-serif',
-            fontSize: '11.5px',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-            color: '#414242',
-            textTransform: 'uppercase'
-          }}>
-            WELLBEING INTELLIGENCE
-          </span>
-        </div>
-
-        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
-          {/* Hero Page Header */}
-          <div style={{ textAlign: 'center', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+          {/* Eyebrow & Headline */}
+          <div style={{ marginBottom: 'clamp(10px, 1.8vh, 16px)' }}>
             <h1 style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontSize: 'clamp(32px, 4vw, 48px)',
+              margin: '0 0 4px 0',
+              fontSize: 'clamp(24px, 2.7vw, 36px)',
+              lineHeight: 1.15,
               fontWeight: 800,
-              color: 'var(--text)',
-              margin: '0 0 8px 0',
-              letterSpacing: '-0.03em',
-              textAlign: 'center',
-              width: '100%',
+              letterSpacing: '-0.025em',
+              color: '#414242',
+              fontFamily: "'Nunito', sans-serif",
             }}>
-              Your Lewis Mirror
+              Your reflection is ready.
             </h1>
             <p style={{
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: '16px',
-              color: 'var(--text-mute)',
-              margin: '0 0 16px 0',
-              textAlign: 'center',
-              width: '100%',
+              margin: 0,
+              fontSize: 'clamp(13px, 1.2vw, 15px)',
+              lineHeight: 1.4,
+              color: '#657370',
+              fontWeight: 500,
             }}>
-              Your complete reflection of wellbeing, stability, and growth resources.
+              Nine areas of your life, read together. This is where you are right now.
             </p>
           </div>
 
-          {/* Care note first: safety renders before everything else (INV-06/08) */}
-          {analysis?.safety?.care_note && (
-            <div className="mirror-card care-note-card" style={{
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '24px 28px',
-              borderRadius: '20px',
-              border: '1.5px solid rgba(95, 187, 70, 0.35)',
-              background: 'linear-gradient(135deg, rgba(95, 187, 70, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%)',
-              boxShadow: '0 8px 24px rgba(95, 187, 70, 0.12)'
-            }}>
-              <p className="mirror-label" style={{ color: 'var(--sage)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
-                <Icon name="heart" size={16} />
-                A note of care
-              </p>
-              <p className="mirror-text" style={{ fontSize: '15.5px', lineHeight: '1.7', color: 'var(--text)', margin: 0 }}>
-                {analysis.safety.care_note}
-              </p>
-            </div>
-          )}
-
-          {dims && (
-            <>
-              {/* Prominent Resolution Card */}
-              <div className="mirror-card resolution-card" style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '28px 32px',
-                borderRadius: '24px',
-                border: '1.5px solid rgba(0, 174, 157, 0.35)',
-                background: 'linear-gradient(135deg, rgba(0, 174, 157, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%)',
-                boxShadow: '0 10px 30px rgba(0, 174, 157, 0.12)'
-              }}>
-                <p className="mirror-label" style={{ color: 'var(--dawn)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
-                  <Icon name="compass" size={16} />
-                  Your Resolution
-                </p>
-                <h3 style={{ color: 'var(--text)', fontSize: '24px', marginBottom: '8px', fontWeight: '800', fontFamily: "'Manrope', sans-serif" }}>
-                  {analysis?.prescription?.habit_title}
-                </h3>
-                <p className="mirror-text" style={{ fontSize: '15.5px', lineHeight: '1.6', color: 'var(--text-mute)', margin: 0 }}>
-                  {analysis?.prescription?.micro_action}
-                </p>
-              </div>
-
-              {/* Visual Overview Dashboard Grid */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
-                gap: '24px',
-                width: '100%'
-              }}>
-                {/* Resilience Radar Card */}
-                <div className="mirror-card" style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  padding: '24px clamp(16px, 3vw, 28px)',
-                  background: '#ffffff',
-                  borderRadius: '24px',
-                  border: '1.5px solid rgba(0,0,0,0.06)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}>
-                  <p className="mirror-label" style={{ color: 'var(--dawn)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, alignSelf: 'flex-start' }}>
-                    <Icon name="target" size={16} />
-                    Resilience Radar
-                  </p>
-
-                  <div style={{ width: '100%', height: '290px', marginTop: '12px' }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-                        <PolarGrid stroke="rgba(0,0,0,0.12)" />
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text)', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.02em' }} />
-                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                        <Radar
-                          name="You"
-                          dataKey="A"
-                          stroke="var(--dawn)"
-                          strokeWidth={2.5}
-                          fill="var(--dawn)"
-                          fillOpacity={0.25}
-                        />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* Wellbeing Landscape Card */}
-                <div className="mirror-card" style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '24px clamp(16px, 3vw, 28px)',
-                  background: '#ffffff',
-                  borderRadius: '24px',
-                  border: '1.5px solid rgba(0,0,0,0.06)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.04)'
-                }}>
-                  <p className="mirror-label" style={{ color: 'var(--dawn)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
-                    <Icon name="waves" size={16} />
-                    The Wellbeing Landscape
-                  </p>
-                  <p className="mirror-text" style={{ fontSize: '13px', marginBottom: '14px', color: 'var(--text-mute)' }}>
-                    Ranked from your strongest resources to areas asking for attention.
-                  </p>
-
-                  <div style={{ width: '100%', height: '290px' }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 15, left: 5, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="gradNature" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#34d399" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#00ae9d" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradGrowth" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#4ade80" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#16a34a" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradWellbeing" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#0284c7" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradAgency" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#818cf8" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#4f46e5" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradMeaning" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#c084fc" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#7c3aed" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradEnergy" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#fbbf24" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradPhysical" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#fb923c" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#ea580c" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradFinancial" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#2dd4bf" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#0f766e" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradCalm" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#0891b2" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradConnection" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#fb7185" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#e11d48" stopOpacity={1} />
-                          </linearGradient>
-                          <linearGradient id="gradDefault" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#94a3b8" stopOpacity={0.9} />
-                            <stop offset="100%" stopColor="#475569" stopOpacity={1} />
-                          </linearGradient>
-                        </defs>
-
-                        <XAxis type="number" domain={[0, 100]} hide />
-                        <YAxis
-                          dataKey="subject"
-                          type="category"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fill: 'var(--text)', fontSize: 11.5, fontWeight: 600 }}
-                          width={105}
-                        />
-                        <Tooltip
-                          cursor={{ fill: 'rgba(0,0,0,0.04)' }}
-                          contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', borderColor: 'var(--dawn)', borderRadius: '12px', backdropFilter: 'blur(10px)', color: 'var(--text)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
-                          itemStyle={{ color: 'var(--text)', fontWeight: 700 }}
-                        />
-                        <Bar
-                          dataKey="A"
-                          radius={[0, 8, 8, 0]}
-                          barSize={22}
-                          animationDuration={1500}
-                          animationEasing="ease-out"
-                        >
-                          {sortedData.map((entry, index) => {
-                            const gradMap = {
-                              'Nature': 'url(#gradNature)',
-                              'Growth': 'url(#gradGrowth)',
-                              'Wellbeing': 'url(#gradWellbeing)',
-                              'Agency': 'url(#gradAgency)',
-                              'Meaning': 'url(#gradMeaning)',
-                              'Energy': 'url(#gradEnergy)',
-                              'Physical': 'url(#gradPhysical)',
-                              'Financial Peace': 'url(#gradFinancial)',
-                              'Calm': 'url(#gradCalm)',
-                              'Connection': 'url(#gradConnection)'
-                            }
-                            const fillId = gradMap[entry.subject] || 'url(#gradDefault)'
-                            return <Cell key={`cell-${index}`} fill={fillId} />
-                          })}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Locked Full 25-Page Insight Report Gate */}
+          {/* Graph Card from Image 1 */}
           <div style={{
-            width: '100%',
+            background: '#ebf4f1',
+            borderRadius: '20px',
+            padding: 'clamp(12px, 1.8vh, 18px) clamp(14px, 2vw, 20px)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: 'clamp(28px, 4vw, 40px) clamp(18px, 4vw, 32px)',
-            borderRadius: '28px',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f0f9f6 100%)',
-            border: '1.5px solid rgba(0, 174, 157, 0.35)',
-            boxShadow: '0 16px 40px rgba(0, 174, 157, 0.12), 0 2px 8px rgba(0, 0, 0, 0.03)',
-            textAlign: 'center',
+            justifyContent: 'center',
             boxSizing: 'border-box',
+            border: '1px solid rgba(0, 174, 157, 0.12)',
             position: 'relative',
-            overflow: 'hidden'
           }}>
-            {/* Lock Icon */}
+            {/* Resilience Radar Chart */}
+            <div style={{ width: '100%', height: 'clamp(170px, 26vh, 230px)' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="72%" data={chartData}>
+                  <PolarGrid stroke="rgba(0, 174, 157, 0.16)" />
+                  <PolarAngleAxis
+                    dataKey="subject"
+                    tick={{ fill: '#414242', fontSize: 10, fontWeight: 700, letterSpacing: '0.01em' }}
+                  />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                  <Radar
+                    name="Reflection"
+                    dataKey="A"
+                    stroke="#00ae9d"
+                    strokeWidth={2.4}
+                    fill="#00ae9d"
+                    fillOpacity={0.32}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Color-coded Status Dots Legend */}
             <div style={{
-              width: '52px',
-              height: '52px',
-              borderRadius: '50%',
-              background: '#e4f4ee',
-              border: '1.5px solid rgba(0, 174, 157, 0.4)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#00ae9d',
-              marginBottom: '14px',
-              boxShadow: '0 4px 12px rgba(0, 174, 157, 0.15)'
+              flexWrap: 'wrap',
+              gap: 'clamp(8px, 1.5vw, 16px)',
+              marginTop: '4px',
+              fontSize: '11.5px',
+              fontWeight: 600,
+              color: '#52605d',
             }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#00ae9d' }} />
+                Strong
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#5fbb46' }} />
+                Steady
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#fbbf24' }} />
+                Under pressure
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#fb7185' }} />
+                Running on empty
+              </span>
             </div>
+          </div>
 
-            {/* Eyebrow */}
-            <span style={{
-              fontFamily: '"Nunito", sans-serif',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              color: '#00ae9d',
-              textTransform: 'uppercase',
-              marginBottom: '8px'
-            }}>
-              COMPREHENSIVE 25-PAGE BLUEPRINT
-            </span>
-
-            {/* Headline */}
-            <h2 style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontSize: 'clamp(22px, 3.2vw, 28px)',
+          {/* Dynamic / Image 2 Descriptive Text */}
+          <div style={{ marginTop: 'clamp(10px, 1.8vh, 16px)' }}>
+            <h3 style={{
+              margin: '0 0 4px 0',
+              fontSize: 'clamp(15px, 1.4vw, 18px)',
               fontWeight: 800,
               color: '#414242',
-              margin: '0 0 10px 0',
-              letterSpacing: '-0.02em'
-            }}>
-              Your Full Lewis Insight Mirror
-            </h2>
-
-            {/* Description */}
-            <p style={{
               fontFamily: "'Nunito', sans-serif",
-              fontSize: 'clamp(14px, 1.5vw, 15px)',
-              color: '#414242',
-              maxWidth: '540px',
-              lineHeight: 1.5,
-              margin: '0 0 20px 0'
             }}>
-              Access and download your complete 25-page report featuring cross-domain resilience maps, clinical dimension analyses, and tailored micro-habit resolutions.
-            </p>
-
-            {/* Feature Pills */}
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: '8px',
-              marginBottom: '24px',
-              maxWidth: '580px'
-            }}>
-              {['10-Dimension Analysis', 'Autonomic Nervous Mapping', '30-Day Growth Roadmap', 'Instant PDF Download'].map((item) => (
-                <span key={item} style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 12px',
-                  borderRadius: '999px',
-                  background: '#ffffff',
-                  border: '1px solid #d2e7e0',
-                  fontFamily: "'Nunito', sans-serif",
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  color: '#414242',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
-                }}>
-                  <span style={{ color: '#00ae9d', fontWeight: 800 }}>✓</span> {item}
-                </span>
-              ))}
-            </div>
-
-            {/* Download Report CTA Button */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleGetReport}
-              disabled={isDownloading}
-              className="btn-primary"
-              style={{
-                padding: '14px 34px',
-                fontSize: '15px',
-                fontWeight: 700,
-                borderRadius: '14px',
-                background: 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)',
-                color: '#ffffff',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '10px',
-                boxShadow: '0 8px 24px rgba(0, 174, 157, 0.28)',
-                cursor: isDownloading ? 'wait' : 'pointer',
-                border: 'none',
-                opacity: isDownloading ? 0.8 : 1,
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              {isDownloading ? 'Generating Report...' : (downloadSuccess ? '✓ Report Downloaded!' : 'Get your report')}
-            </motion.button>
-
+              Steady, but uneven.
+            </h3>
             <p style={{
-              fontFamily: "'Nunito', sans-serif",
-              fontSize: '12px',
-              color: '#64748b',
-              margin: '10px 0 0 0',
-              fontStyle: 'italic'
+              margin: 0,
+              fontSize: 'clamp(12.5px, 1.1vw, 14px)',
+              lineHeight: 1.48,
+              color: '#657370',
             }}>
-              Safe, confidential, and instant PDF download.
+              Three areas are under pressure and one is running on empty, while your agency and work are holding you up. This describes the season you are in, not the kind of person you are.
             </p>
           </div>
         </div>
-      </div>
+
+        {/* ── RIGHT COLUMN: Report Scope + 4 Lock Cards + Unlock Box ── */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          height: '100%',
+          maxHeight: '100%',
+          overflow: 'hidden',
+        }}>
+          {/* Header text from Image 2 */}
+          <h2 style={{
+            margin: '0 0 clamp(8px, 1.4vh, 12px) 0',
+            fontSize: 'clamp(14px, 1.35vw, 17px)',
+            fontWeight: 800,
+            color: '#414242',
+            lineHeight: 1.3,
+            fontFamily: "'Nunito', sans-serif",
+          }}>
+            You can see the shape. Your report explains why it is that shape.
+          </h2>
+
+          {/* 4 Feature Cards (2x2 Grid) */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 'clamp(8px, 1.2vh, 12px)',
+            marginBottom: 'clamp(8px, 1.2vh, 12px)',
+          }}>
+            {LOCKED_CARDS.map((card) => (
+              <div
+                key={card.title}
+                style={{
+                  background: '#f8faf9',
+                  borderRadius: '12px',
+                  padding: 'clamp(10px, 1.4vh, 14px) clamp(10px, 1.2vw, 14px)',
+                  border: '1px solid rgba(22, 36, 31, 0.06)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '3px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span style={{
+                    fontSize: 'clamp(12px, 1.05vw, 13.5px)',
+                    fontWeight: 800,
+                    color: '#414242',
+                    lineHeight: 1.2,
+                  }}>
+                    {card.title}
+                  </span>
+                </div>
+                <p style={{
+                  margin: 0,
+                  fontSize: 'clamp(10.5px, 0.9vw, 11.5px)',
+                  lineHeight: 1.38,
+                  color: '#657370',
+                  fontWeight: 500,
+                }}>
+                  {card.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Pages description */}
+          <p style={{
+            margin: '0 0 clamp(8px, 1.4vh, 12px) 0',
+            fontSize: 'clamp(11.5px, 0.95vw, 12.5px)',
+            color: '#85918e',
+            fontWeight: 600,
+          }}>
+            Twenty-five pages, with every measure and study named in full. Yours to keep.
+          </p>
+
+          {/* Unlock Box from Image 2 */}
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1.5px solid rgba(0, 174, 157, 0.35)',
+            padding: 'clamp(12px, 1.8vh, 18px) clamp(16px, 2vw, 22px)',
+            boxShadow: '0 6px 20px rgba(0, 174, 157, 0.08)',
+            textAlign: 'center',
+            boxSizing: 'border-box',
+          }}>
+            <p style={{
+              margin: '0 0 clamp(8px, 1.2vh, 10px) 0',
+              fontSize: 'clamp(12px, 1.05vw, 13.5px)',
+              fontWeight: 700,
+              color: '#414242',
+            }}>
+              ₹749, inclusive of all taxes. One payment, no subscription.
+            </p>
+
+            <motion.button
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
+              onClick={handleGetReport}
+              disabled={isDownloading}
+              style={{
+                width: '100%',
+                padding: 'clamp(11px, 1.5vh, 14px) 20px',
+                fontSize: 'clamp(14px, 1.2vw, 15.5px)',
+                fontWeight: 700,
+                borderRadius: '999px',
+                background: '#00ae9d',
+                color: '#ffffff',
+                border: 'none',
+                cursor: isDownloading ? 'wait' : 'pointer',
+                boxShadow: '0 4px 14px rgba(0, 174, 157, 0.28)',
+                transition: 'background 0.2s',
+                fontFamily: "'Nunito', sans-serif",
+                opacity: isDownloading ? 0.8 : 1,
+              }}
+            >
+              {isDownloading ? 'Preparing Your Report...' : (downloadSuccess ? '✓ Report Downloaded!' : 'Unlock my report, ₹749')}
+            </motion.button>
+
+            <p style={{
+              margin: 'clamp(6px, 1vh, 8px) 0 0 0',
+              fontSize: 'clamp(10px, 0.85vw, 11px)',
+              color: '#85918e',
+              lineHeight: 1.35,
+            }}>
+              Pay by UPI, card or netbanking. If it does not read as yours, write to us within seven days for a refund.
+            </p>
+          </div>
+
+          {/* Footer note */}
+          <p style={{
+            margin: 'clamp(6px, 1vh, 10px) 0 0 0',
+            fontSize: 'clamp(10.5px, 0.85vw, 11.5px)',
+            color: '#85918e',
+            textAlign: 'center',
+          }}>
+            Your reflection is saved. You can return to this page any time.
+          </p>
+        </div>
+      </main>
+
+      {/* ── FOOTER (Corners) ── */}
+      <footer style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingTop: 'clamp(4px, 0.8vh, 8px)',
+        fontSize: 'clamp(10px, 0.8vw, 11.5px)',
+        color: '#94a39f',
+        flexShrink: 0,
+      }}>
+        <div>
+          © 2025–2026 Holobiont Pvt Ltd. All rights reserved.
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <button
+            onClick={() => setActiveLegalModal('terms')}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              color: '#85918e',
+              cursor: 'pointer',
+              fontSize: 'inherit',
+              fontFamily: 'inherit',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#00ae9d')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#85918e')}
+          >
+            T&amp;C
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => setActiveLegalModal('privacy')}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              color: '#85918e',
+              cursor: 'pointer',
+              fontSize: 'inherit',
+              fontFamily: 'inherit',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#00ae9d')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#85918e')}
+          >
+            Privacy Policy
+          </button>
+        </div>
+      </footer>
+
+      {/* ── LEGAL MODAL (Terms & Conditions / Privacy Policy) ── */}
+      <AnimatePresence>
+        {activeLegalModal && (
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            boxSizing: 'border-box',
+          }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveLegalModal(null)}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'rgba(22, 36, 31, 0.45)',
+                backdropFilter: 'blur(6px)',
+              }}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 15 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+              style={{
+                position: 'relative',
+                background: '#ffffff',
+                borderRadius: '24px',
+                width: '100%',
+                maxWidth: '460px',
+                padding: '28px 24px',
+                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
+                border: '1px solid rgba(0, 174, 157, 0.18)',
+                boxSizing: 'border-box',
+                zIndex: 1,
+                fontFamily: "'Nunito', system-ui, sans-serif",
+              }}
+            >
+              <button
+                onClick={() => setActiveLegalModal(null)}
+                style={{
+                  position: 'absolute',
+                  top: '18px',
+                  right: '18px',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  border: '1px solid #eef2f1',
+                  background: '#f8faf9',
+                  color: '#657370',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  outline: 'none',
+                }}
+              >
+                ✕
+              </button>
+
+              <h3 style={{
+                margin: '0 0 16px 0',
+                fontSize: '20px',
+                fontWeight: 800,
+                color: '#414242',
+              }}>
+                {activeLegalModal === 'terms' ? 'Terms & Conditions' : 'Privacy Policy'}
+              </h3>
+
+              {activeLegalModal === 'terms' ? (
+                <div style={{ fontSize: '13.5px', lineHeight: 1.6, color: '#52605d' }}>
+                  <p style={{ marginTop: 0, marginBottom: '12px' }}>
+                    <strong>Non-Clinical Use:</strong> Lewis is an evidence-based self-reflection tool. It provides non-clinical wellbeing metrics for personal insight and does not diagnose, treat, or replace professional healthcare.
+                  </p>
+                  <p style={{ margin: 0 }}>
+                    <strong>Data Ownership:</strong> You retain complete ownership of your inputs. Information entered into Lewis is processed strictly to compile your reflection mirror.
+                  </p>
+                </div>
+              ) : (
+                <div style={{ fontSize: '13.5px', lineHeight: 1.6, color: '#52605d' }}>
+                  <p style={{ marginTop: 0, marginBottom: '12px' }}>
+                    <strong>Privacy First:</strong> Your personal responses and wellbeing reflections are strictly confidential. Lifed Health does not sell or share personal reflections with third parties.
+                  </p>
+                  <p style={{ margin: 0 }}>
+                    <strong>Security:</strong> All payload data is encrypted in transit and at rest.
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Hidden Render Target for Canvas-Accurate PDF Generation */}
       <div style={{ position: 'fixed', left: '-3000px', top: 0, width: '1200px', pointerEvents: 'none', opacity: 0.01 }} aria-hidden="true">
         <InsightReport report={analysis?.insight_report || analysis?.report} />
       </div>
-
-      <p className="closing-line mirror-web-ui" style={{ textAlign: 'center', color: 'var(--text-mute)', fontSize: '13.5px', marginTop: '16px' }}>
-        Lewis reflects. It never diagnoses.
-      </p>
     </motion.div>
   )
 }

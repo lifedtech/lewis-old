@@ -12,16 +12,10 @@ const NAV_LINKS = [
   { id: 'what-is-lewis', label: 'What is Lewis' },
   { id: 'areas', label: 'Nine areas' },
   { id: 'research', label: 'The research' },
-  { id: 'programs', label: 'Explore programs', external: true, href: 'https://lifedhealth.com/programs' },
+  { id: 'blogs', label: 'Blogs' },
   { id: 'questions', label: 'Questions' },
 ]
 
-const HERO_PILLS = [
-  { icon: 'clock', text: '12 to 15 minutes, one sitting' },
-  { icon: 'grid', text: 'Nine connected areas of life' },
-  { icon: 'badgeCheck', text: 'Non-clinical. No diagnosis.' },
-  { icon: 'users', text: 'Adults 18 and over' },
-]
 
 const WHAT_CARDS = [
   { icon: 'waves', title: 'Questions, tasks and activities', desc: 'A body map, a breathing minute, a sound check, a few quick choices. What you do counts as much as what you say.' },
@@ -201,7 +195,7 @@ export default function LandingScreen() {
                     className="landing-primary-btn"
                     style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px 20px', fontSize: '15px' }}
                   >
-                    Start Lewis <Icon name="arrow" size={16} />
+                    Begin your reflection <Icon name="arrow" size={16} />
                   </button>
                 </div>
               </div>
@@ -226,33 +220,67 @@ export default function LandingScreen() {
               <AbstractLineBackground variant="contours" opacity={0.08} />
               <div data-row="hero" style={{
                 position: 'relative', zIndex: 1,
-                maxWidth: '1180px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1.08fr 0.92fr',
+                maxWidth: '1180px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr 0.8fr',
                 gap: 'clamp(32px,5vw,64px)', alignItems: 'center',
               }}>
                 <div>
-                  <p style={eyebrowStyle()}>Lewis by Lifed</p>
+                  <p style={eyebrowStyle()}>SCIENCE-BASED VIEW OF HOW YOU ARE LIVING</p>
                   <h1 style={{
-                    margin: '0 0 22px', fontSize: 'clamp(34px,5.6vw,56px)', lineHeight: 1.06, fontWeight: 800,
-                    letterSpacing: '-0.03em', color: '#414242', fontFamily: "'Nunito', sans-serif",
+                    margin: '0 0 22px', fontSize: 'clamp(28px, 3.8vw, 46px)', lineHeight: 1.12, fontWeight: 800,
+                    letterSpacing: '-0.025em', color: '#414242', fontFamily: "'Nunito', sans-serif",
                   }}>
-                    A clearer picture of your wellbeing, in 12 to 15 minutes.
+                    <span style={{ display: 'block' }}>Understand your wellbeing,</span>
+                    <span style={{ display: 'block' }}>and exactly where to start.</span>
                   </h1>
                   <p style={{ margin: '0 0 28px', fontSize: 'clamp(16px,1.7vw,19px)', lineHeight: 1.7, color: 'rgba(65,66,66,.72)', maxWidth: '580px' }}>
-                    Most people know something is off without being able to name which part of life it is coming from. Through questions, tasks and guided activities, Lewis understands how things honestly feel right now, and reflects it back across nine connected areas of life. Non-clinical, and never a diagnosis.
+                    LEWIS reads nine areas of your life together and turns what it finds into a plan you can actually follow. Twelve minutes, free to start.
                   </p>
-                  <div data-row="ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '30px' }}>
-                    <button onClick={handleNext} data-cta="1" className="landing-primary-btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '18px 34px', fontSize: '16px' }}>
-                      Start Lewis <Icon name="arrow" size={18} />
+                  <div data-row="ctas" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '18px', marginBottom: '30px' }}>
+                    <button onClick={handleNext} data-cta="1" className="landing-primary-btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 32px', fontSize: '16px', fontWeight: 700 }}>
+                      Begin your reflection
                     </button>
-                  </div>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                    {HERO_PILLS.map((p) => (
-                      <div key={p.text} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#f4f4f4', borderRadius: '12px', padding: '9px 14px' }}>
-                        <span style={{ color: '#00ae9d', display: 'inline-flex', flexShrink: 0 }}><Icon name={p.icon} size={17} /></span>
-                        <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#414242' }}>{p.text}</span>
-                      </div>
-                    ))}
+                    <button
+                      onClick={(e) => navigateTo(e, 'what-is-lewis')}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        fontWeight: 600,
+                        color: '#414242',
+                        padding: '8px 12px',
+                        transition: 'all 0.2s ease',
+                        fontFamily: "'Nunito', sans-serif",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#00ae9d'
+                        const circle = e.currentTarget.querySelector('.arrow-circle')
+                        if (circle) circle.style.borderColor = '#00ae9d'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = '#414242'
+                        const circle = e.currentTarget.querySelector('.arrow-circle')
+                        if (circle) circle.style.borderColor = '#dcdcdc'
+                      }}
+                    >
+                      <span>How Lewis works</span>
+                      <span className="arrow-circle" style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        border: '1px solid #dcdcdc',
+                        fontSize: '14px',
+                        transition: 'border-color 0.2s ease',
+                      }}>
+                        &rarr;
+                      </span>
+                    </button>
                   </div>
                 </div>
 
@@ -420,6 +448,73 @@ export default function LandingScreen() {
 
                 <div style={{ textAlign: 'center' }}>
                   <button onClick={handleNext} className="landing-primary-btn" style={{ padding: '16px 36px', fontSize: '15px' }}>
+                    Start Lewis &rarr;
+                  </button>
+                </div>
+              </div>
+            </section>
+          </motion.div>
+        )}
+
+        {/* ── 4.5 BLOGS PAGE ── */}
+        {activePage === 'blogs' && (
+          <motion.div
+            key="blogs"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3 }}
+          >
+            <section style={{ position: 'relative', overflow: 'hidden', background: '#f8faf9', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)' }}>
+              <AbstractLineBackground variant="waves" opacity={0.06} />
+              <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
+                <button
+                  onClick={(e) => navigateTo(e, 'home')}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'none',
+                    border: 'none', color: '#00ae9d', fontWeight: 700, fontSize: '14px',
+                    cursor: 'pointer', marginBottom: '20px', padding: 0
+                  }}
+                >
+                  &larr; Back to Home
+                </button>
+                <p style={eyebrowStyle()}>Articles & Insights</p>
+                <div data-row="lede" style={{
+                  display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 'clamp(28px,5vw,64px)',
+                  alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
+                }}>
+                  <h2 style={sectionH2Style}>Lifed Wellbeing Blog.</h2>
+                  <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
+                    Perspectives, evidence-based practices, and guided insights on holistic health and human wellbeing.
+                  </p>
+                </div>
+
+                <div style={{
+                  background: '#ffffff',
+                  borderRadius: '24px',
+                  border: '1px solid #eef2f0',
+                  padding: 'clamp(48px, 6vw, 72px) 24px',
+                  textAlign: 'center',
+                  boxShadow: '0 4px 20px rgba(0, 174, 157, 0.05)',
+                  marginBottom: '40px'
+                }}>
+                  <div style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '20px',
+                    background: '#eaf7f5',
+                    color: '#00ae9d',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '20px'
+                  }}>
+                    <Icon name="sparkles" size={28} />
+                  </div>
+                  <h3 style={{ margin: '0 0 28px', fontSize: '24px', fontWeight: 800, color: '#414242' }}>
+                    Blogs Section Will Be Updated Soon
+                  </h3>
+                  <button onClick={handleNext} className="landing-primary-btn" style={{ padding: '15px 34px', fontSize: '15px' }}>
                     Start Lewis &rarr;
                   </button>
                 </div>

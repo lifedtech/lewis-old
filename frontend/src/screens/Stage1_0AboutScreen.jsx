@@ -98,20 +98,29 @@ export default function Stage1_0AboutScreen() {
               placeholder="Your name"
               style={{
                 width: '100%',
-                maxWidth: '440px',
+                maxWidth: '420px',
                 textAlign: 'center',
-                padding: '10px 16px',
-                background: 'transparent',
-                border: 'none',
-                borderBottom: '1.5px solid #c2ceca',
+                padding: '13px 20px',
+                background: '#ffffff',
+                border: '1.5px solid #dcdcdc',
+                borderRadius: '14px',
                 outline: 'none',
                 fontFamily: "'Nunito', sans-serif",
-                fontSize: 'clamp(15px, 1.8vw, 18px)',
+                fontSize: 'clamp(15px, 1.8vw, 17px)',
+                fontWeight: 600,
                 color: '#414242',
-                transition: 'border-color 0.2s ease',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.03)',
+                boxSizing: 'border-box',
+                transition: 'all 0.2s ease',
               }}
-              onFocus={(e) => e.target.style.borderColor = '#00ae9d'}
-              onBlur={(e) => e.target.style.borderColor = '#c2ceca'}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#00ae9d'
+                e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.15)'
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#dcdcdc'
+                e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.03)'
+              }}
             />
           </div>
 

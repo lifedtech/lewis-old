@@ -22,7 +22,7 @@ export default function Stage5_0EmailScreen() {
   
   const initialEmail = storeEmail || authUser?.email || ''
   const [email, setEmail] = useState(initialEmail)
-  const [subscribe, setSubscribe] = useState(storeSub !== undefined ? storeSub : true)
+  const [subscribe, setSubscribe] = useState(storeSub !== undefined ? storeSub : false)
   const [error, setError] = useState('')
   const [touched, setTouched] = useState(false)
 
@@ -91,39 +91,39 @@ export default function Stage5_0EmailScreen() {
           <div>
             <p className="stage-eyebrow mobile-eyebrow" style={{
               fontFamily: '"Nunito", sans-serif',
-              fontSize: '10px',
+              fontSize: '12px',
               fontWeight: 700,
-              letterSpacing: '0.14em',
-              color: '#414242',
+              letterSpacing: '0.12em',
+              color: '#85918e',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
             }}>
-              50% MILESTONE · REPORT DELIVERY
+              Five of nine areas so far
             </p>
             <h1 style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontWeight: 700,
+              fontFamily: "'Nunito', sans-serif",
+              fontWeight: 800,
               fontSize: 'clamp(24px, 2.8vw, 36px)',
               lineHeight: 1.18,
-              letterSpacing: '-0.015em',
+              letterSpacing: '-0.02em',
               margin: 0,
               color: INK,
               textAlign: 'left',
             }}>
-              Receive Your Wellbeing Report
+              Save what you have built so far.
             </h1>
             <p className="stage-subtitle mobile-subtitle" style={{
-              margin: '10px 0 0 0',
+              margin: '12px 0 0 0',
               fontSize: '15px',
-              fontWeight: 700,
-              color: '#414242',
+              fontWeight: 600,
+              color: 'rgba(65, 66, 66, 0.8)',
               fontFamily: NUNITO,
-              lineHeight: 1.5,
-              maxWidth: '350px',
+              lineHeight: 1.6,
+              maxWidth: '380px',
               textAlign: 'left',
             }}>
-              You are halfway through your journey. Provide your email so we can dispatch your full personalized assessment &amp; actionable blueprint upon completion.
+              Add your email and this is held safely, so you can step away and come back to exactly this point. Your reading will be sent here when you finish.
             </p>
           </div>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
@@ -258,7 +258,7 @@ export default function Stage5_0EmailScreen() {
                 />
               </div>
 
-              {error ? (
+              {error && (
                 <motion.p
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -273,20 +273,33 @@ export default function Stage5_0EmailScreen() {
                 >
                   {error}
                 </motion.p>
-              ) : (
-                <p style={{
-                  margin: '2px 0 0 4px',
-                  fontSize: '12px',
-                  color: '#85918e',
-                  fontFamily: NUNITO,
-                  textAlign: 'left',
-                }}>
-                  We will send your PDF report and permanent access link once the assessment concludes.
-                </p>
               )}
+
+              {/* Progress & Privacy Callout */}
+              <div style={{
+                background: '#f5f7f6',
+                borderRadius: '14px',
+                padding: '14px 18px',
+                marginTop: '6px',
+                textAlign: 'left',
+              }}>
+                <p style={{
+                  margin: 0,
+                  fontSize: '13.5px',
+                  lineHeight: 1.55,
+                  color: 'rgba(65, 66, 66, 0.8)',
+                  fontFamily: NUNITO,
+                  fontWeight: 500,
+                }}>
+                  Used to save your progress and send your reading. Your reflection answers are never used for advertising.
+                </p>
+              </div>
             </div>
 
-            {/* Newsletter Subscription Option Card */}
+            {/* Subtle Divider */}
+            <div style={{ width: '100%', height: '1px', background: 'rgba(22, 36, 31, 0.07)', margin: '0' }} />
+
+            {/* Research Newsletter Subscription Checkbox */}
             <div
               onClick={handleToggleNewsletter}
               role="checkbox"
@@ -301,24 +314,20 @@ export default function Stage5_0EmailScreen() {
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
-                gap: '14px',
-                padding: '16px',
-                borderRadius: '14px',
-                border: subscribe ? '1.5px solid #00ae9d' : '1px solid rgba(22, 36, 31, 0.12)',
-                background: subscribe ? '#e4f4ee' : 'rgba(255, 255, 255, 0.7)',
+                gap: '12px',
+                padding: '2px 0',
                 cursor: 'pointer',
-                transition: 'all 0.22s ease',
                 userSelect: 'none',
                 outline: 'none',
               }}
             >
-              {/* Custom Animated Checkbox */}
+              {/* Custom Checkbox Box */}
               <div style={{
-                width: '22px',
-                height: '22px',
-                minWidth: '22px',
-                borderRadius: '6px',
-                border: subscribe ? '2px solid #00ae9d' : '2px solid #a4b3ae',
+                width: '18px',
+                height: '18px',
+                minWidth: '18px',
+                borderRadius: '4px',
+                border: subscribe ? '1.5px solid #00ae9d' : '1.5px solid #a4b3ae',
                 background: subscribe ? '#00ae9d' : '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
@@ -330,8 +339,8 @@ export default function Stage5_0EmailScreen() {
                   <motion.svg
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    width="14"
-                    height="14"
+                    width="12"
+                    height="12"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="#ffffff"
@@ -344,25 +353,16 @@ export default function Stage5_0EmailScreen() {
                 )}
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', textAlign: 'left' }}>
-                <span style={{
-                  fontFamily: NUNITO,
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  color: INK,
-                  lineHeight: 1.3,
-                }}>
-                  Subscribe to LEWIS Wellbeing Newsletter &amp; Insights
-                </span>
-                <span style={{
-                  fontFamily: NUNITO,
-                  fontSize: '12.5px',
-                  color: '#657370',
-                  lineHeight: 1.45,
-                }}>
-                  Receive evidence-based nervous system protocols, research breakthroughs, and personalized wellbeing updates.
-                </span>
-              </div>
+              <span style={{
+                fontFamily: NUNITO,
+                fontSize: '13.5px',
+                lineHeight: 1.5,
+                color: 'rgba(65, 66, 66, 0.85)',
+                fontWeight: 500,
+                textAlign: 'left',
+              }}>
+                Send me occasional wellbeing research from LEWIS. About once a month, unsubscribe any time.
+              </span>
             </div>
 
           </div>

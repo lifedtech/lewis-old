@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
 export default function SupportWidget() {
-  const { name: storeName, email: storeEmail, currentScreen } = useLewisStore()
+  const { currentScreen } = useLewisStore()
   const [isOpen, setIsOpen] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -11,11 +11,14 @@ export default function SupportWidget() {
   const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'success' | 'error'
   const [errorMsg, setErrorMsg] = useState('')
 
-  // Pre-fill from store if available
-  useEffect(() => {
-    if (storeName && !name) setName(storeName)
-    if (storeEmail && !email) setEmail(storeEmail)
-  }, [storeName, storeEmail])
+  const handleOpen = () => {
+    setName('')
+    setEmail('')
+    setQuery('')
+    setErrorMsg('')
+    setStatus('idle')
+    setIsOpen(true)
+  }
 
   const handleSubmit = async (e) => {
     e?.preventDefault()
@@ -63,42 +66,51 @@ export default function SupportWidget() {
 
   return (
     <>
-      {/* ── BOTTOM-LEFT FLOATING "i" SUPPORT BUTTON ── */}
+      {/* ── TOP-RIGHT CORNER "SUPPORT" BUTTON ── */}
       <div style={{
         position: 'fixed',
-        bottom: '22px',
-        left: '22px',
+        top: 'clamp(14px, 2vh, 24px)',
+        right: 'clamp(20px, 3vw, 36px)',
         zIndex: 9990,
       }}>
         <motion.button
-          onClick={() => setIsOpen(true)}
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.94 }}
-          aria-label="Assessment Support & Help"
+          onClick={handleOpen}
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          aria-label="Contact Support"
           title="Need help? Contact Support"
           style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: '#ffffff',
-            border: '1.5px solid #00ae9d',
-            color: '#00ae9d',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            boxShadow: '0 4px 16px rgba(0, 174, 157, 0.18)',
-            fontFamily: '"Nunito", "Inter", sans-serif',
-            fontSize: '15px',
+            gap: '6px',
+            padding: '7px 16px',
+            borderRadius: '999px',
+            background: '#ffffff',
+            border: '1.5px solid rgba(0, 174, 157, 0.4)',
+            color: '#00ae9d',
+            fontFamily: "'Nunito', sans-serif",
+            fontSize: '13px',
             fontWeight: 700,
-            fontStyle: 'normal',
-            lineHeight: 1,
+            cursor: 'pointer',
+            boxShadow: '0 2px 10px rgba(0, 174, 157, 0.12)',
             outline: 'none',
-            padding: 0,
             transition: 'all 0.2s ease',
           }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#00ae9d'
+            e.currentTarget.style.background = 'rgba(0, 174, 157, 0.06)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.4)'
+            e.currentTarget.style.background = '#ffffff'
+          }}
         >
-          i
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span>Support</span>
         </motion.button>
       </div>
 
@@ -131,21 +143,22 @@ export default function SupportWidget() {
 
             {/* Modal Window Card */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              initial={{ opacity: 0, scale: 0.92, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 15 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+              exit={{ opacity: 0, scale: 0.92, y: 15 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 320 }}
               style={{
                 position: 'relative',
                 background: '#ffffff',
                 borderRadius: '24px',
                 width: '100%',
-                maxWidth: '440px',
+                maxWidth: '430px',
                 padding: '28px 24px',
-                boxShadow: '0 24px 60px rgba(0, 0, 0, 0.18)',
-                border: '1px solid rgba(0, 174, 157, 0.15)',
+                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
+                border: '1px solid rgba(0, 174, 157, 0.18)',
                 boxSizing: 'border-box',
                 zIndex: 1,
+                fontFamily: "'Nunito', system-ui, sans-serif",
               }}
             >
               {/* Close Icon Button */}
@@ -158,60 +171,65 @@ export default function SupportWidget() {
                   width: '32px',
                   height: '32px',
                   borderRadius: '50%',
-                  border: 'none',
-                  background: '#f1f5f4',
-                  color: '#64748b',
-                  fontSize: '16px',
+                  border: '1px solid #eef2f1',
+                  background: '#f8faf9',
+                  color: '#657370',
+                  fontSize: '14px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
                   outline: 'none',
-                  transition: 'background 0.2s ease',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#eef2f1'
+                  e.currentTarget.style.color = '#414242'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#f8faf9'
+                  e.currentTarget.style.color = '#657370'
                 }}
               >
                 ✕
               </button>
 
               {/* Modal Header */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
                 <div style={{
                   width: '32px',
                   height: '32px',
                   borderRadius: '10px',
-                  background: '#e4f4ee',
+                  background: 'rgba(0, 174, 157, 0.12)',
                   color: '#00ae9d',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '15px',
-                  fontWeight: 700,
-                  fontFamily: '"Nunito", "Inter", sans-serif',
-                  fontStyle: 'normal',
                 }}>
-                  i
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
                 </div>
-                <div>
-                  <h3 style={{
-                    margin: 0,
-                    fontSize: '18px',
-                    fontWeight: 800,
-                    fontFamily: "'Manrope', sans-serif",
-                    color: '#1e293b'
-                  }}>
-                    Assessment Support
-                  </h3>
-                </div>
+                <h3 style={{
+                  margin: 0,
+                  fontSize: '20px',
+                  fontWeight: 800,
+                  color: '#414242',
+                  letterSpacing: '-0.02em',
+                }}>
+                  Support
+                </h3>
               </div>
 
               <p style={{
-                margin: '0 0 20px 0',
+                margin: '0 0 18px 0',
                 fontSize: '13px',
-                color: '#64748b',
-                fontFamily: "'Nunito', sans-serif",
-                lineHeight: 1.4,
+                color: '#657370',
+                lineHeight: 1.45,
               }}>
-                Facing an issue during your assessment? Submit your query below and our team will assist you.
+                Facing an issue or have a question? Leave a message and our team will assist you.
               </p>
 
               {/* Form or Success Screen */}
@@ -229,32 +247,32 @@ export default function SupportWidget() {
                   }}
                 >
                   <div style={{
-                    width: '40px',
-                    height: '40px',
+                    width: '38px',
+                    height: '38px',
                     borderRadius: '50%',
                     background: '#22c55e',
                     color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '20px',
+                    fontSize: '18px',
                     fontWeight: 800,
-                    margin: '0 auto 12px',
+                    margin: '0 auto 10px',
                   }}>
                     ✓
                   </div>
-                  <h4 style={{ margin: '0 0 6px 0', color: '#166534', fontFamily: "'Manrope', sans-serif", fontSize: '16px' }}>
+                  <h4 style={{ margin: '0 0 4px 0', color: '#166534', fontWeight: 800, fontSize: '15.5px' }}>
                     Query Sent Successfully!
                   </h4>
-                  <p style={{ margin: 0, color: '#15803d', fontSize: '13px', fontFamily: "'Nunito', sans-serif" }}>
+                  <p style={{ margin: 0, color: '#15803d', fontSize: '12.5px' }}>
                     Our support team will reach out to you shortly.
                   </p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {/* Name Input */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px', fontFamily: "'Nunito', sans-serif" }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
                       Your Name
                     </label>
                     <input
@@ -264,23 +282,32 @@ export default function SupportWidget() {
                       onChange={(e) => setName(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '10px 14px',
+                        padding: '11px 14px',
                         borderRadius: '12px',
-                        border: '1.5px solid #d2e7e0',
+                        border: '1.5px solid #dcdcdc',
+                        background: '#ffffff',
                         fontSize: '13.5px',
                         fontFamily: "'Nunito', sans-serif",
-                        color: '#1e293b',
+                        color: '#414242',
                         boxSizing: 'border-box',
                         outline: 'none',
-                        transition: 'border 0.2s ease',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#00ae9d'
+                        e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#dcdcdc'
+                        e.target.style.boxShadow = 'none'
                       }}
                     />
                   </div>
 
                   {/* Email Input */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px', fontFamily: "'Nunito', sans-serif" }}>
-                      Enter Email <span style={{ color: '#e11d48' }}>*</span>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
+                      Your Email <span style={{ color: '#00ae9d' }}>*</span>
                     </label>
                     <input
                       type="email"
@@ -290,23 +317,32 @@ export default function SupportWidget() {
                       onChange={(e) => setEmail(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '10px 14px',
+                        padding: '11px 14px',
                         borderRadius: '12px',
-                        border: '1.5px solid #d2e7e0',
+                        border: '1.5px solid #dcdcdc',
+                        background: '#ffffff',
                         fontSize: '13.5px',
                         fontFamily: "'Nunito', sans-serif",
-                        color: '#1e293b',
+                        color: '#414242',
                         boxSizing: 'border-box',
                         outline: 'none',
-                        transition: 'border 0.2s ease',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#00ae9d'
+                        e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#dcdcdc'
+                        e.target.style.boxShadow = 'none'
                       }}
                     />
                   </div>
 
                   {/* Query Textarea */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px', fontFamily: "'Nunito', sans-serif" }}>
-                      Send Your Query <span style={{ color: '#e11d48' }}>*</span>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
+                      How can we help? <span style={{ color: '#00ae9d' }}>*</span>
                     </label>
                     <textarea
                       required
@@ -316,56 +352,72 @@ export default function SupportWidget() {
                       onChange={(e) => setQuery(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '10px 14px',
+                        padding: '11px 14px',
                         borderRadius: '12px',
-                        border: '1.5px solid #d2e7e0',
+                        border: '1.5px solid #dcdcdc',
+                        background: '#ffffff',
                         fontSize: '13px',
                         fontFamily: "'Nunito', sans-serif",
-                        color: '#1e293b',
+                        color: '#414242',
                         boxSizing: 'border-box',
                         outline: 'none',
-                        resize: 'vertical',
-                        transition: 'border 0.2s ease',
+                        resize: 'none',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#00ae9d'
+                        e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#dcdcdc'
+                        e.target.style.boxShadow = 'none'
                       }}
                     />
                   </div>
 
                   {/* Error Notification */}
                   {errorMsg && (
-                    <p style={{ margin: 0, color: '#e11d48', fontSize: '12px', fontWeight: 700, fontFamily: "'Nunito', sans-serif" }}>
+                    <p style={{ margin: 0, color: '#d0574f', fontSize: '12px', fontWeight: 700 }}>
                       {errorMsg}
                     </p>
                   )}
 
                   {/* Send Button */}
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.015 }}
+                    whileTap={{ scale: 0.985 }}
                     type="submit"
                     disabled={status === 'sending'}
-                    className="btn-primary"
                     style={{
                       width: '100%',
-                      padding: '12px',
-                      fontSize: '14px',
+                      padding: '12px 20px',
+                      fontSize: '14.5px',
                       fontWeight: 700,
+                      borderRadius: '999px',
+                      background: '#00ae9d',
+                      color: '#ffffff',
+                      border: 'none',
                       marginTop: '4px',
-                      opacity: status === 'sending' ? 0.7 : 1,
+                      opacity: status === 'sending' ? 0.75 : 1,
                       cursor: status === 'sending' ? 'not-allowed' : 'pointer',
+                      boxShadow: '0 4px 14px rgba(0, 174, 157, 0.28)',
+                      fontFamily: "'Nunito', sans-serif",
+                      transition: 'background 0.2s ease',
                     }}
                   >
                     {status === 'sending' ? 'Sending...' : 'Send Query'}
-                  </button>
+                  </motion.button>
                 </form>
               )}
 
               {/* Direct Mail Notice */}
               <div style={{
-                marginTop: '18px',
-                paddingTop: '14px',
-                borderTop: '1px solid #eef2f1',
+                marginTop: '16px',
+                paddingTop: '12px',
+                borderTop: '1px solid #f0f4f3',
                 textAlign: 'center',
-                fontSize: '12.5px',
-                color: '#64748b',
-                fontFamily: "'Nunito', sans-serif",
+                fontSize: '12px',
+                color: '#85918e',
               }}>
                 Or mail us directly to{' '}
                 <a
@@ -375,8 +427,8 @@ export default function SupportWidget() {
                     fontWeight: 700,
                     textDecoration: 'none',
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                  onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                  onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                  onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
                 >
                   lewissupport@lifedhealth.com
                 </a>

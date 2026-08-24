@@ -76,7 +76,6 @@ export function generateClientFallbackReport(analysis) {
     "Your 7-Day Micro-Action Plan",
     "Support Structures & Environment",
     "Choosing Your Pace & Boundaries",
-    "Recommended Lifed Programs & Retreats",
     "Your 30-Day Horizon & Goal Milestones",
     "What Stands Behind Your Data",
     "Appendix A: Psychological Measures & Reliability",
