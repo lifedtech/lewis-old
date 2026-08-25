@@ -40,35 +40,35 @@ export default function MobileStage1_7PriorityScreen() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', textAlign: 'left' }}>
         <p className="mobile-eyebrow" style={{
           fontFamily: "'Nunito', sans-serif",
-          fontSize: '6px',
+          fontSize: '12px',
           fontWeight: 700,
-          letterSpacing: '0.16em',
-          color: '#7a8683',
+          letterSpacing: '0.14em',
+          color: '#00ae9d',
           textTransform: 'uppercase',
           margin: 0,
         }}>
-          SELECT YOUR TOP PRIORITY
+          RANK YOUR PRIORITIES
         </p>
         <h1 style={{
           fontFamily: "'Manrope', sans-serif",
           fontWeight: 700,
-          fontSize: '22px',
+          fontSize: '24px',
           lineHeight: 1.15,
           letterSpacing: '-0.015em',
           margin: 0,
           color: '#414242',
         }}>
-          Primary Focus Area
+          Priority Ranking
         </h1>
         <p className="mobile-subtitle" style={{
           fontFamily: "'Nunito', sans-serif",
-          fontSize: '15px',
+          fontSize: '17px',
           fontWeight: 700,
           color: '#5e6060',
           lineHeight: 1.45,
           margin: '2px 0 0 0',
         }}>
-          If you could shift one area of your wellbeing immediately, which would it be?
+          Drag these into the order that matters most to you right now.
         </p>
       </div>
 
