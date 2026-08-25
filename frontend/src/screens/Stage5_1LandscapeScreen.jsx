@@ -4,12 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const DIMENSIONS = [
   { code: 'PH', label: 'Physical', name: 'Physical & Regeneration', score: 58, insight: "Sleep and movement have been adequate, not abundant. There's room to rebuild reserve." },
-  { code: 'EM', label: 'Emotional', name: 'Emotional & Mental', score: 41, insight: "Day-to-day strain is sitting close to the surface right now — closer than it usually does." },
+  { code: 'EM', label: 'Emotional', name: 'Emotional & Mental', score: 41, insight: "Day-to-day strain is sitting close to the surface right now - closer than it usually does." },
   { code: 'EN', label: 'Energy', name: 'Engagement & Energy', score: 52, insight: "Some days pull real interest. Others move past without much pulling at all." },
-  { code: 'RS', label: 'Social', name: 'Relationships & Social', score: 81, insight: "The people nearby are a real source of steadiness right now — lean on that." },
+  { code: 'RS', label: 'Social', name: 'Relationships & Social', score: 81, insight: "The people nearby are a real source of steadiness right now - lean on that." },
   { code: 'MS', label: 'Meaning', name: 'Meaning & Spiritual', score: 63, insight: "A sense of what matters is mostly holding, even when the days get full." },
   { code: 'AC', label: 'Agency', name: 'Accomplishment & Agency', score: 55, insight: "Capability feels intact, even where follow-through hasn't always matched it." },
-  { code: 'FW', label: 'Finance', name: 'Financial Wellness', score: 29, insight: "Money has been taking up more room than it should lately — this may be where the rest starts." },
+  { code: 'FW', label: 'Finance', name: 'Financial Wellness', score: 29, insight: "Money has been taking up more room than it should lately - this may be where the rest starts." },
   { code: 'IG', label: 'Growth', name: 'Intellectual & Growth', score: 67, insight: "Curiosity is still finding its way in, even on the fuller weeks." },
   { code: 'EC', label: 'Culture', name: 'Environmental & Cultural', score: 60, insight: "Surroundings and sense of belonging are mostly steady, quietly in the background." }
 ]
