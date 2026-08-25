@@ -912,7 +912,7 @@ p.mobile-eyebrow,
 .mobile-app-root p.eyebrow {
   font-family: 'Nunito', sans-serif !important;
   font-weight: 700 !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   line-height: 1.2 !important;
   letter-spacing: 0.14em !important;
   text-transform: uppercase !important;
@@ -924,7 +924,7 @@ p.stage-subtitle,
 p.mobile-subtitle {
   font-family: 'Nunito', sans-serif !important;
   font-weight: 700 !important;
-  font-size: 15px !important;
+  font-size: 17px !important;
   line-height: 1.45 !important;
 }
 
@@ -2160,7 +2160,7 @@ html[data-height-class="compact-tight"] .btn-next {
   width: 100% !important;
 }
 
-/* Standardized Eyebrows (10px uppercase) */
+/* Standardized Eyebrows (+2px: 12px uppercase) */
 .mobile-app-root .eyebrow,
 .mobile-app-root p.eyebrow,
 .mobile-app-root .stage-right-eyebrow,
@@ -2171,7 +2171,7 @@ html[data-height-class="compact-tight"] .btn-next {
 .stage-eyebrow,
 p.stage-eyebrow {
   font-family: 'Nunito', sans-serif !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   letter-spacing: 0.14em !important;
   color: #7a8683 !important;
@@ -2180,15 +2180,15 @@ p.stage-eyebrow {
   margin: 0 0 2px 0 !important;
 }
 
-/* Standardized Headlines (Reduced 1-2px) */
+/* Standardized Headlines (+2px: 24px) */
 .mobile-app-root h1,
 .mobile-app-root h2,
 .mobile-app-root h3,
 .mobile-app-root .headline,
 .mobile-app-root h1.headline {
   font-family: 'Manrope', 'Nunito', sans-serif !important;
-  font-size: 22px !important;
-  line-height: 1.15 !important;
+  font-size: 24px !important;
+  line-height: 1.18 !important;
   letter-spacing: -0.015em !important;
   font-weight: 700 !important;
   color: #414242 !important;
@@ -2198,7 +2198,7 @@ p.stage-eyebrow {
   overflow-wrap: break-word !important;
 }
 
-/* Standardized Subtitles / Descriptions (15px bold) */
+/* Standardized Subtitles / Descriptions (+2px: 17px bold) */
 .mobile-app-root p.sub,
 .mobile-app-root p.subtitle,
 .mobile-app-root p.mobile-subtitle,
@@ -2209,7 +2209,7 @@ p.stage-subtitle,
 .mobile-subtitle,
 p.mobile-subtitle {
   font-family: 'Nunito', sans-serif !important;
-  font-size: 15px !important;
+  font-size: 17px !important;
   font-weight: 700 !important;
   line-height: 1.45 !important;
   color: #5e6060 !important;
@@ -2217,7 +2217,14 @@ p.mobile-subtitle {
   margin: 2px 0 0 0 !important;
 }
 
-/* Standardized Choice & Option Cards */
+/* Standardized Inputs & Textareas (+2px: 17px) */
+.mobile-app-root input,
+.mobile-app-root textarea,
+.mobile-app-root select {
+  font-size: 17px !important;
+}
+
+/* Standardized Choice & Option Cards (+2px: 15.5px) */
 .mobile-question-option,
 .mobile-app-root .choice-card,
 .mobile-app-root .scale-opt {
@@ -2225,7 +2232,7 @@ p.mobile-subtitle {
   align-items: center !important;
   gap: 12px !important;
   width: 100% !important;
-  min-height: 46px !important;
+  min-height: 48px !important;
   padding: 10px 14px !important;
   border-radius: 14px !important;
   border: 1.5px solid rgba(0, 174, 157, 0.18) !important;
@@ -2233,7 +2240,7 @@ p.mobile-subtitle {
   color: #414242 !important;
   cursor: pointer !important;
   text-align: left !important;
-  font-size: 13.5px !important;
+  font-size: 15.5px !important;
   font-weight: 600 !important;
   line-height: 1.35 !important;
   box-sizing: border-box !important;
@@ -2259,7 +2266,7 @@ p.mobile-subtitle {
   box-shadow: 0 4px 14px rgba(0, 174, 157, 0.12) !important;
 }
 
-/* Standardized Primary Continue CTA Button */
+/* Standardized Primary Continue CTA Button (+2px: 16.5px) */
 .mobile-continue-wrap {
   width: 100%;
   padding-top: 8px;
@@ -2273,9 +2280,9 @@ p.mobile-subtitle {
 .mobile-app-root .btn-next {
   width: 100% !important;
   max-width: 100% !important;
-  min-height: 46px !important;
+  min-height: 48px !important;
   padding: 12px 24px !important;
-  font-size: 14.5px !important;
+  font-size: 16.5px !important;
   font-weight: 700 !important;
   font-family: 'Nunito', sans-serif !important;
   border-radius: 14px !important;

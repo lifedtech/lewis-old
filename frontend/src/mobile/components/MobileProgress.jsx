@@ -30,7 +30,7 @@ export default function MobileProgress({ currentScreen }) {
           textTransform: 'uppercase',
           fontFamily: "'Nunito', sans-serif",
         }}>
-          Stage {stageInfo.num} — {stageInfo.name}
+          Stage {stageInfo.num} · {stageInfo.name}
         </span>
       </div>
 

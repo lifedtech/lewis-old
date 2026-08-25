@@ -64,55 +64,130 @@ export default function SupportWidget() {
     return null
   }
 
+  const isMirror = currentScreen === 'mirror' || currentScreen === 'report'
+
   return (
     <>
-      {/* ── TOP-RIGHT CORNER "SUPPORT" BUTTON ── */}
-      <div style={{
-        position: 'fixed',
-        top: 'clamp(14px, 2vh, 24px)',
-        right: 'clamp(20px, 3vw, 36px)',
-        zIndex: 9990,
-      }}>
-        <motion.button
-          onClick={handleOpen}
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          aria-label="Contact Support"
-          title="Need help? Contact Support"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '7px 16px',
-            borderRadius: '999px',
-            background: '#ffffff',
-            border: '1.5px solid rgba(0, 174, 157, 0.4)',
-            color: '#00ae9d',
-            fontFamily: "'Nunito', sans-serif",
-            fontSize: '13px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: '0 2px 10px rgba(0, 174, 157, 0.12)',
-            outline: 'none',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#00ae9d'
-            e.currentTarget.style.background = 'rgba(0, 174, 157, 0.06)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.4)'
-            e.currentTarget.style.background = '#ffffff'
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-            <line x1="12" y1="17" x2="12.01" y2="17" />
-          </svg>
-          <span>Support</span>
-        </motion.button>
-      </div>
+      {isMirror ? (
+        /* ── TOP-RIGHT CORNER "SUPPORT" BUTTON (Mirror & Report Screen) ── */
+        <div style={{
+          position: 'fixed',
+          top: 'clamp(14px, 2vh, 22px)',
+          right: 'clamp(16px, 2.5vw, 32px)',
+          zIndex: 9990,
+        }}>
+          <motion.button
+            onClick={handleOpen}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            aria-label="Contact Support"
+            title="Need help? Contact Support"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              height: '32px',
+              padding: '0 14px',
+              borderRadius: '999px',
+              background: '#ffffff',
+              border: '1.5px solid rgba(0, 174, 157, 0.45)',
+              color: '#00ae9d',
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '13px',
+              fontWeight: 700,
+              lineHeight: 1,
+              cursor: 'pointer',
+              boxShadow: '0 2px 10px rgba(0, 174, 157, 0.12)',
+              outline: 'none',
+              boxSizing: 'border-box',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#00ae9d'
+              e.currentTarget.style.background = 'rgba(0, 174, 157, 0.06)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.45)'
+              e.currentTarget.style.background = '#ffffff'
+            }}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ flexShrink: 0, display: 'block' }}
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span style={{ display: 'inline-block', lineHeight: 1, paddingTop: '1px' }}>Support</span>
+          </motion.button>
+        </div>
+      ) : (
+        /* ── TOP-LEFT CORNER "i" INFO/SUPPORT BUTTON (Questionnaire Stages) ── */
+        <div style={{
+          position: 'fixed',
+          top: 'clamp(14px, 2vh, 20px)',
+          left: 'clamp(16px, 2.5vw, 32px)',
+          zIndex: 9990,
+        }}>
+          <motion.button
+            onClick={handleOpen}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.94 }}
+            aria-label="Support & Help"
+            title="Need help or have a question? Click for support"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              background: '#ffffff',
+              border: '1.5px solid rgba(0, 174, 157, 0.45)',
+              color: '#00ae9d',
+              fontFamily: "'Nunito', sans-serif",
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0, 174, 157, 0.12)',
+              outline: 'none',
+              boxSizing: 'border-box',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#00ae9d'
+              e.currentTarget.style.background = 'rgba(0, 174, 157, 0.08)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.45)'
+              e.currentTarget.style.background = '#ffffff'
+            }}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ display: 'block' }}
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </motion.button>
+        </div>
+      )}
 
       {/* ── SUPPORT POPUP MODAL ── */}
       <AnimatePresence>

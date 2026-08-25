@@ -88,16 +88,6 @@ export default function DesktopHeader({ currentScreen, onBack }) {
             </button>
           </div>
         ) : null}
-        <span style={{
-          fontSize: '11.5px',
-          fontWeight: 700,
-          color: '#414242',
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          fontFamily: "'Nunito', sans-serif",
-        }}>
-          Wellbeing Intelligence
-        </span>
       </div>
     </header>
   )

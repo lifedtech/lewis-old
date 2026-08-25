@@ -12,7 +12,7 @@ export default function DesktopProgress({ currentScreen }) {
     <nav className="stage-track-v2" style={{ width: '100%', marginBottom: '16px', userSelect: 'none' }} aria-label="Journey progress">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', fontSize: '13px', fontFamily: "'Nunito', sans-serif" }}>
         <span style={{ color: 'var(--dawn)', fontWeight: 700, letterSpacing: '0.04em', fontSize: '13px' }}>
-          Stage {stageInfo.num} — {stageInfo.name}
+          Stage {stageInfo.num} · {stageInfo.name}
         </span>
         <span style={{ color: '#85918e', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Nunito', sans-serif" }}>
           {Math.round(percent)}%
