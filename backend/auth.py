@@ -101,6 +101,7 @@ else:
 
 IN_MEMORY_USERS: Dict[str, Dict[str, Any]] = {}
 IN_MEMORY_SESSIONS: Dict[str, Dict[str, Any]] = {}
+IN_MEMORY_ORDERS: Dict[str, Dict[str, Any]] = {}
 
 def get_pg_conn():
     """Create a connection to PostgreSQL via DATABASE_URL."""
@@ -225,6 +226,37 @@ def init_db():
                         );
                         CREATE INDEX IF NOT EXISTS idx_journey_status_active ON lewis_journey_sessions (status, last_active_at);
 
+                        CREATE TABLE IF NOT EXISTS lewis_payment_orders (
+                            id SERIAL PRIMARY KEY,
+                            order_id TEXT UNIQUE NOT NULL,
+                            report_uuid TEXT NOT NULL,
+                            payment_id TEXT,
+                            plan_id TEXT NOT NULL,
+                            amount INTEGER NOT NULL,
+                            currency TEXT DEFAULT 'INR',
+                            status TEXT DEFAULT 'created',
+                            signature TEXT,
+                            user_email TEXT,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                            paid_at TIMESTAMP WITH TIME ZONE
+                        );
+                        CREATE INDEX IF NOT EXISTS idx_payment_order_report ON lewis_payment_orders (report_uuid);
+                        CREATE INDEX IF NOT EXISTS idx_payment_order_id ON lewis_payment_orders (order_id);
+
+                        -- Ensure is_unlocked exists on assessment records
+                        DO $$
+                        BEGIN
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns 
+                                WHERE table_name='lewis_assessment_records' AND column_name='is_unlocked'
+                            ) THEN
+                                ALTER TABLE lewis_assessment_records ADD COLUMN is_unlocked BOOLEAN DEFAULT FALSE;
+                                ALTER TABLE lewis_assessment_records ADD COLUMN unlocked_at TIMESTAMP WITH TIME ZONE;
+                                ALTER TABLE lewis_assessment_records ADD COLUMN paid_plan TEXT;
+                            END IF;
+                        END $$;
+
                         -- All access to these tables goes through this backend's own
                         -- privileged connection (DATABASE_URL) or the Supabase service
                         -- key, both of which bypass RLS. Enabling it with no anon/
@@ -235,6 +267,7 @@ def init_db():
                         ALTER TABLE lewis_support_queries ENABLE ROW LEVEL SECURITY;
                         ALTER TABLE lewis_assessment_records ENABLE ROW LEVEL SECURITY;
                         ALTER TABLE lewis_journey_sessions ENABLE ROW LEVEL SECURITY;
+                        ALTER TABLE lewis_payment_orders ENABLE ROW LEVEL SECURITY;
                     """)
                     conn.commit()
                 conn.close()
@@ -315,9 +348,22 @@ def init_db():
                 report_json TEXT NOT NULL,
                 started_at TIMESTAMP,
                 completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                duration_seconds INTEGER
+                duration_seconds INTEGER,
+                is_unlocked BOOLEAN DEFAULT 0,
+                unlocked_at TIMESTAMP,
+                paid_plan TEXT
             )
         """)
+
+        for col_stmt in (
+            "ALTER TABLE lewis_assessment_records ADD COLUMN is_unlocked BOOLEAN DEFAULT 0",
+            "ALTER TABLE lewis_assessment_records ADD COLUMN unlocked_at TIMESTAMP",
+            "ALTER TABLE lewis_assessment_records ADD COLUMN paid_plan TEXT",
+        ):
+            try:
+                cursor.execute(col_stmt)
+            except sqlite3.OperationalError:
+                pass
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS lewis_journey_sessions (
@@ -336,6 +382,24 @@ def init_db():
                 reached_50_pct BOOLEAN DEFAULT 0,
                 reminder_status TEXT DEFAULT 'none',
                 reminder_sent_at TIMESTAMP
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_payment_orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                order_id TEXT UNIQUE NOT NULL,
+                report_uuid TEXT NOT NULL,
+                payment_id TEXT,
+                plan_id TEXT NOT NULL,
+                amount INTEGER NOT NULL,
+                currency TEXT DEFAULT 'INR',
+                status TEXT DEFAULT 'created',
+                signature TEXT,
+                user_email TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                paid_at TIMESTAMP
             )
         """)
 
@@ -1568,5 +1632,292 @@ def mark_reminders_sent(session_ids: List[str]) -> int:
         logger.warning("SQLite error marking reminders sent: %s", e)
 
     return updated_count
+
+
+# --- Payment Orders & Report Entitlement Management ---------------------------
+
+def save_payment_order(
+    order_id: str,
+    report_uuid: str,
+    plan_id: str,
+    amount: int,
+    currency: str = "INR",
+    user_email: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Save or initialize a pending payment order record.
+    """
+    IN_MEMORY_ORDERS[order_id] = {
+        "order_id": order_id,
+        "report_uuid": report_uuid,
+        "plan_id": plan_id,
+        "amount": amount,
+        "currency": currency,
+        "status": "created",
+        "user_email": user_email,
+        "payment_id": None,
+        "signature": None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "paid_at": None,
+    }
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO lewis_payment_orders
+                        (order_id, report_uuid, plan_id, amount, currency, status, user_email, created_at, updated_at)
+                        VALUES (%s, %s, %s, %s, %s, 'created', %s, NOW(), NOW())
+                        ON CONFLICT (order_id) DO UPDATE SET
+                            report_uuid = EXCLUDED.report_uuid,
+                            plan_id = EXCLUDED.plan_id,
+                            amount = EXCLUDED.amount,
+                            user_email = COALESCE(EXCLUDED.user_email, lewis_payment_orders.user_email),
+                            updated_at = NOW();
+                    """, (order_id, report_uuid, plan_id, amount, currency, user_email))
+                    conn.commit()
+                conn.close()
+                return IN_MEMORY_ORDERS[order_id]
+        except Exception as e:
+            logger.error("PostgreSQL error saving payment order: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO lewis_payment_orders
+            (order_id, report_uuid, plan_id, amount, currency, status, user_email, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, 'created', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ON CONFLICT (order_id) DO UPDATE SET
+                report_uuid = excluded.report_uuid,
+                plan_id = excluded.plan_id,
+                amount = excluded.amount,
+                user_email = COALESCE(excluded.user_email, lewis_payment_orders.user_email),
+                updated_at = CURRENT_TIMESTAMP
+        """, (order_id, report_uuid, plan_id, amount, currency, user_email))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.warning("SQLite error saving payment order: %s", e)
+
+    return IN_MEMORY_ORDERS[order_id]
+
+
+def get_payment_order(order_id: str) -> Optional[Dict[str, Any]]:
+    """Retrieve payment order by Razorpay order ID."""
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT * FROM lewis_payment_orders WHERE order_id = %s LIMIT 1", (order_id,))
+                    row = cur.fetchone()
+                conn.close()
+                if row:
+                    return dict(row)
+        except Exception as e:
+            logger.error("PostgreSQL error fetching payment order: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM lewis_payment_orders WHERE order_id = ? LIMIT 1", (order_id,))
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            return dict(row)
+    except Exception as e:
+        logger.warning("SQLite error fetching payment order: %s", e)
+
+    return IN_MEMORY_ORDERS.get(order_id)
+
+
+def record_successful_payment(
+    order_id: str,
+    payment_id: str,
+    signature: Optional[str] = None,
+    report_uuid: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Idempotently record a successful payment, update order status to 'paid',
+    and unlock the corresponding assessment report.
+    """
+    existing = get_payment_order(order_id)
+    target_report_uuid = report_uuid or (existing.get("report_uuid") if existing else None)
+    plan_id = existing.get("plan_id") if existing else "personal_report"
+
+    # Update in-memory cache
+    if order_id in IN_MEMORY_ORDERS:
+        IN_MEMORY_ORDERS[order_id].update({
+            "payment_id": payment_id,
+            "signature": signature,
+            "status": "paid",
+            "paid_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+        })
+
+    # If already paid in DB, return existing record idempotently
+    if existing and existing.get("status") == "paid":
+        logger.info("Order %s was already marked paid (idempotent return)", order_id)
+        return existing
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE lewis_payment_orders
+                        SET payment_id = %s,
+                            signature = %s,
+                            status = 'paid',
+                            paid_at = NOW(),
+                            updated_at = NOW()
+                        WHERE order_id = %s;
+                    """, (payment_id, signature, order_id))
+
+                    if target_report_uuid:
+                        cur.execute("""
+                            UPDATE lewis_assessment_records
+                            SET is_unlocked = TRUE,
+                                unlocked_at = NOW(),
+                                paid_plan = %s
+                            WHERE report_uuid = %s;
+                        """, (plan_id, target_report_uuid))
+                    conn.commit()
+                conn.close()
+                logger.info("Recorded payment success in PostgreSQL for order %s (report %s)", order_id, target_report_uuid)
+                return get_payment_order(order_id) or {"order_id": order_id, "status": "paid"}
+        except Exception as e:
+            logger.error("PostgreSQL error recording payment success: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE lewis_payment_orders
+            SET payment_id = ?,
+                signature = ?,
+                status = 'paid',
+                paid_at = CURRENT_TIMESTAMP,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE order_id = ?
+        """, (payment_id, signature, order_id))
+
+        if target_report_uuid:
+            cur.execute("""
+                UPDATE lewis_assessment_records
+                SET is_unlocked = 1,
+                    unlocked_at = CURRENT_TIMESTAMP,
+                    paid_plan = ?
+                WHERE report_uuid = ?
+            """, (plan_id, target_report_uuid))
+        conn.commit()
+        conn.close()
+        logger.info("Recorded payment success in SQLite for order %s (report %s)", order_id, target_report_uuid)
+    except Exception as e:
+        logger.warning("SQLite error recording payment success: %s", e)
+
+    return get_payment_order(order_id) or {"order_id": order_id, "status": "paid", "report_uuid": target_report_uuid}
+
+
+def is_report_unlocked(report_uuid: str) -> bool:
+    """Check if a report is unlocked via paid entitlement."""
+    if not report_uuid:
+        return False
+
+    # Check in-memory orders
+    for order in IN_MEMORY_ORDERS.values():
+        if order.get("report_uuid") == report_uuid and order.get("status") == "paid":
+            return True
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT is_unlocked FROM lewis_assessment_records 
+                        WHERE report_uuid = %s LIMIT 1;
+                    """, (report_uuid,))
+                    row = cur.fetchone()
+                    if row and row.get("is_unlocked"):
+                        conn.close()
+                        return True
+
+                    # Fallback check against payment orders table
+                    cur.execute("""
+                        SELECT id FROM lewis_payment_orders
+                        WHERE report_uuid = %s AND status = 'paid' LIMIT 1;
+                    """, (report_uuid,))
+                    order_row = cur.fetchone()
+                    if order_row:
+                        conn.close()
+                        return True
+                conn.close()
+        except Exception as e:
+            logger.error("PostgreSQL error checking report unlock status: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("SELECT is_unlocked FROM lewis_assessment_records WHERE report_uuid = ? LIMIT 1", (report_uuid,))
+        row = cur.fetchone()
+        if row and (row[0] == 1 or row[0] is True):
+            conn.close()
+            return True
+
+        cur.execute("SELECT id FROM lewis_payment_orders WHERE report_uuid = ? AND status = 'paid' LIMIT 1", (report_uuid,))
+        order_row = cur.fetchone()
+        conn.close()
+        if order_row:
+            return True
+    except Exception as e:
+        logger.warning("SQLite error checking report unlock status: %s", e)
+
+    return False
+
+
+def get_report_by_uuid(report_uuid: str) -> Optional[Dict[str, Any]]:
+    """Retrieve full assessment record by report UUID."""
+    if not report_uuid:
+        return None
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT * FROM lewis_assessment_records WHERE report_uuid = %s LIMIT 1", (report_uuid,))
+                    row = cur.fetchone()
+                conn.close()
+                if row:
+                    res = dict(row)
+                    if isinstance(res.get("report_json"), str):
+                        res["report_json"] = json.loads(res["report_json"])
+                    return res
+        except Exception as e:
+            logger.error("PostgreSQL error fetching report by UUID: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM lewis_assessment_records WHERE report_uuid = ? LIMIT 1", (report_uuid,))
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            res = dict(row)
+            if isinstance(res.get("report_json"), str):
+                res["report_json"] = json.loads(res["report_json"])
+            return res
+    except Exception as e:
+        logger.warning("SQLite error fetching report by UUID: %s", e)
+
+    return None
 
 

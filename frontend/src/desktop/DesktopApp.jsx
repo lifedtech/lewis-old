@@ -56,7 +56,6 @@ import Stage8_4CumulativeScreen from '../screens/Stage8_4CumulativeScreen.jsx'
 import Stage9SensoryScreen from '../screens/Stage9SensoryScreen.jsx'
 import Stage10GeneratingScreen from '../screens/Stage10GeneratingScreen.jsx'
 import MirrorScreen from '../screens/MirrorScreen.jsx'
-import PaymentScreen from '../screens/PaymentScreen.jsx'
 import LoginScreen from '../screens/LoginScreen.jsx'
 
 const INSTRUMENT_SCREENS = Object.fromEntries(

@@ -1,0 +1,154 @@
+// payment.js — Razorpay standard checkout client & server verification
+import { useLewisStore } from '../store/useLewisStore.js'
+
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') return resolve(false)
+    if (window.Razorpay) return resolve(true)
+
+    const existingScript = document.getElementById('razorpay-checkout-js')
+    if (existingScript) {
+      existingScript.onload = () => resolve(true)
+      return
+    }
+
+    const script = document.createElement('script')
+    script.id = 'razorpay-checkout-js'
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.async = true
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
+}
+
+export async function initiateCheckout({
+  plan = 'personal_report',
+  reportId = null,
+  userEmail = '',
+  userName = '',
+  onSuccess = () => {},
+  onError = () => {},
+}) {
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+  const store = useLewisStore.getState()
+  const targetReportId = reportId || store.analysisData?.report_uuid || `REP-${Date.now().toString(36).toUpperCase()}`
+  const targetEmail = userEmail || store.email || store.authUser?.email || ''
+  const targetName = userName || store.name || store.authUser?.name || ''
+
+  try {
+    // 1. Create order on backend (backend authoritatively determines price)
+    const orderRes = await fetch(`${API_BASE}/payment/create-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan: plan || 'personal_report',
+        report_id: targetReportId,
+        email: targetEmail,
+        name: targetName,
+      }),
+    })
+
+    if (!orderRes.ok) {
+      const errDetail = await orderRes.text()
+      throw new Error(`Order creation failed (${orderRes.status}): ${errDetail}`)
+    }
+
+    const { order } = await orderRes.json()
+
+    // 2. Handle Mock Development Simulator
+    if (order.payment_mode === 'mock') {
+      console.log('[Payment Simulator] Running in PAYMENT_MODE=mock')
+      // Immediate simulated verification
+      const verifyRes = await fetch(`${API_BASE}/payment/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: order.order_id,
+          payment_id: `pay_mock_${Date.now()}`,
+          signature: 'mock_sig_approved',
+          report_id: targetReportId,
+        }),
+      })
+
+      if (!verifyRes.ok) {
+        throw new Error('Mock payment verification failed')
+      }
+
+      const verifyData = await verifyRes.json()
+      useLewisStore.getState().setPaymentSuccess({ reportUuid: targetReportId })
+      onSuccess(verifyData)
+      return verifyData
+    }
+
+    // 3. Handle Live / Test Razorpay Checkout Modal
+    const scriptLoaded = await loadRazorpayScript()
+    if (!scriptLoaded || !window.Razorpay) {
+      throw new Error('Razorpay SDK failed to load. Please check your network.')
+    }
+
+    return new Promise((resolve, reject) => {
+      const options = {
+        key: order.key_id,
+        amount: order.amount,
+        currency: order.currency || 'INR',
+        name: 'LEWIS Wellbeing Intelligence',
+        description: order.plan_name || 'Personal Insight Report',
+        order_id: order.order_id,
+        image: '/logo.png',
+        prefill: {
+          name: targetName,
+          email: targetEmail,
+        },
+        theme: {
+          color: '#00ae9d',
+        },
+        handler: async function (response) {
+          try {
+            const verifyRes = await fetch(`${API_BASE}/payment/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                order_id: response.razorpay_order_id || order.order_id,
+                payment_id: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+                report_id: targetReportId,
+              }),
+            })
+
+            if (!verifyRes.ok) {
+              const errText = await verifyRes.text()
+              throw new Error(`Payment verification failed: ${errText}`)
+            }
+
+            const verifyData = await verifyRes.json()
+            useLewisStore.getState().setPaymentSuccess({ reportUuid: targetReportId })
+            onSuccess(verifyData)
+            resolve(verifyData)
+          } catch (err) {
+            console.error('Verification error:', err)
+            onError(err)
+            reject(err)
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            console.log('Razorpay modal closed by user')
+          },
+        },
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.on('payment.failed', function (resp) {
+        console.error('Payment failed:', resp.error)
+        onError(resp.error)
+        reject(resp.error)
+      })
+      rzp.open()
+    })
+  } catch (err) {
+    console.error('Checkout initiation error:', err)
+    onError(err)
+    throw err
+  }
+}

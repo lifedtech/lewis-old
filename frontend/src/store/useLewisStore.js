@@ -128,6 +128,13 @@ const initialState = () => ({
   analysisData: null,
   analysisMissing: null,
   analysisError: null,
+
+  // Payment & Report Entitlement State
+  isReportUnlocked: false,
+  unlockedReportId: null,
+  paymentConfig: null,
+  isPaymentProcessing: false,
+  paymentError: null,
 })
 
 export const useLewisStore = create((set, get) => ({
@@ -226,6 +233,48 @@ export const useLewisStore = create((set, get) => ({
     }
     set({ journeySessionId: sessId, journeyStartTime: now })
     return { sessionId: sessId, startTime: now }
+  },
+
+  fetchPaymentConfig: async () => {
+    try {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+      const res = await fetch(`${API_BASE}/payment/config`)
+      if (res.ok) {
+        const data = await res.json()
+        set({ paymentConfig: data.config })
+        return data.config
+      }
+    } catch (e) {
+      console.warn('Could not fetch payment config:', e)
+    }
+    return null
+  },
+
+  checkReportEntitlement: async (reportUuid) => {
+    if (!reportUuid) return false
+    try {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+      const res = await fetch(`${API_BASE}/reports/${reportUuid}/status`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.is_unlocked) {
+          set({ isReportUnlocked: true, unlockedReportId: reportUuid })
+          return true
+        }
+      }
+    } catch (e) {
+      console.warn('Entitlement check error:', e)
+    }
+    return false
+  },
+
+  setPaymentSuccess: ({ reportUuid }) => {
+    set({
+      isReportUnlocked: true,
+      unlockedReportId: reportUuid,
+      isPaymentProcessing: false,
+      paymentError: null
+    })
   },
 
   // Full wipe: every answer and context field back to its default.

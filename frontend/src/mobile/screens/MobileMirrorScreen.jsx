@@ -8,9 +8,10 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import InsightReport from '../../report/InsightReport.jsx'
 import { exportReportPdf } from '../../report/exportPdf.js'
 import AbstractLineBackground from '../../components/AbstractLineBackground.jsx'
+import { initiateCheckout } from '../../lib/payment.js'
 
 export default function MobileMirrorScreen() {
-  const { setScreen } = useLewisStore()
+  const { setScreen, email, name, isReportUnlocked, checkReportEntitlement, fetchPaymentConfig, paymentConfig } = useLewisStore()
   const storeAnalysis = useLewisStore((s) => s.analysisData)
   const storeError = useLewisStore((s) => s.analysisError)
 
@@ -19,16 +20,71 @@ export default function MobileMirrorScreen() {
   const [attempt, setAttempt] = useState(0)
   const [loadProgress, setLoadProgress] = useState(storeAnalysis ? 100 : 25)
   const [isDownloading, setIsDownloading] = useState(false)
+  const [isUnlocking, setIsUnlocking] = useState(false)
   const [downloadSuccess, setDownloadSuccess] = useState(false)
 
   const analysis = storeAnalysis
   const error = localError || storeError
 
+  useEffect(() => {
+    fetchPaymentConfig()
+  }, [])
+
+  useEffect(() => {
+    if (analysis?.report_uuid) {
+      checkReportEntitlement(analysis.report_uuid)
+    }
+  }, [analysis?.report_uuid])
+
+  const reportPrice = paymentConfig?.plans?.personal_report?.amount_inr 
+    ? `₹${paymentConfig.plans.personal_report.amount_inr}` 
+    : '₹749'
+
   const handleGetReport = async () => {
-    if (isDownloading) return
+    if (isDownloading || isUnlocking) return
+
+    if (!isReportUnlocked) {
+      setIsUnlocking(true)
+      try {
+        await initiateCheckout({
+          plan: 'personal_report',
+          reportId: analysis?.report_uuid,
+          userEmail: email,
+          userName: name,
+          onSuccess: async () => {
+            setIsUnlocking(false)
+            setIsDownloading(true)
+            try {
+              await exportReportPdf('Lewis-Insight-Report.pdf')
+              setDownloadSuccess(true)
+              setTimeout(() => setDownloadSuccess(false), 5000)
+            } finally {
+              setIsDownloading(false)
+            }
+          },
+          onError: (err) => {
+            setIsUnlocking(false)
+            alert(err?.message || 'Payment initiation was cancelled or encountered an error.')
+          }
+        })
+      } catch (err) {
+        setIsUnlocking(false)
+        console.error('Checkout error:', err)
+      }
+      return
+    }
+
     setIsDownloading(true)
     setDownloadSuccess(false)
     try {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+      const repId = analysis?.report_uuid
+      if (repId) {
+        const verifyPdf = await fetch(`${API_BASE}/reports/${repId}/pdf`)
+        if (!verifyPdf.ok && verifyPdf.status === 403) {
+          throw new Error('Report entitlement is not active. Please complete payment.')
+        }
+      }
       await exportReportPdf('Lewis-Insight-Report.pdf')
       setDownloadSuccess(true)
       setTimeout(() => setDownloadSuccess(false), 4000)
@@ -301,39 +357,57 @@ export default function MobileMirrorScreen() {
 
         {/* Unlock Box */}
         <div style={{
-          background: '#ffffff',
+          background: isReportUnlocked ? 'linear-gradient(180deg, #ffffff 0%, #f2faf8 100%)' : '#ffffff',
           borderRadius: '16px',
-          border: '1.5px solid rgba(0, 174, 157, 0.35)',
+          border: isReportUnlocked ? '1.5px solid #00ae9d' : '1.5px solid rgba(0, 174, 157, 0.35)',
           padding: '14px 16px',
-          boxShadow: '0 4px 16px rgba(0, 174, 157, 0.08)',
+          boxShadow: isReportUnlocked ? '0 6px 20px rgba(0, 174, 157, 0.12)' : '0 4px 16px rgba(0, 174, 157, 0.08)',
           textAlign: 'center',
         }}>
-          <p style={{ margin: '0 0 8px 0', fontSize: '12.5px', fontWeight: 700, color: '#414242' }}>
-            ₹749, inclusive of all taxes. One payment, no subscription.
+          <p style={{ 
+            margin: '0 0 8px 0', 
+            fontSize: '12.5px', 
+            fontWeight: 700, 
+            color: isReportUnlocked ? '#007064' : '#414242' 
+          }}>
+            {isReportUnlocked 
+              ? '✓ Verified Entitlement · 25-Page Insight Report Unlocked' 
+              : `₹749, inclusive of all taxes. One-time payment, no subscription.`}
           </p>
 
           <button
             onClick={handleGetReport}
-            disabled={isDownloading}
+            disabled={isDownloading || isUnlocking}
             style={{
               width: '100%',
-              padding: '12px 18px',
+              padding: '13px 18px',
               fontSize: '14.5px',
               fontWeight: 700,
               borderRadius: '999px',
-              background: '#00ae9d',
+              background: isReportUnlocked ? 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)' : '#00ae9d',
               color: '#ffffff',
               border: 'none',
-              cursor: isDownloading ? 'wait' : 'pointer',
-              boxShadow: '0 4px 14px rgba(0, 174, 157, 0.28)',
+              cursor: (isDownloading || isUnlocking) ? 'wait' : 'pointer',
+              boxShadow: '0 4px 16px rgba(0, 174, 157, 0.32)',
               fontFamily: "'Nunito', sans-serif",
+              opacity: (isDownloading || isUnlocking) ? 0.85 : 1,
             }}
           >
-            {isDownloading ? 'Preparing Report...' : (downloadSuccess ? '✓ Report Downloaded!' : 'Unlock my report, ₹749')}
+            {isUnlocking 
+              ? 'Preparing report & opening checkout...' 
+              : (isDownloading 
+                  ? '✓ Payment Verified! Downloading 25-page report...' 
+                  : (downloadSuccess 
+                      ? '✓ Report Downloaded! (Click to re-download)' 
+                      : (isReportUnlocked 
+                          ? 'Download Full 25-Page Report (PDF)' 
+                          : 'Unlock your insight report at ₹749')))}
           </button>
 
           <p style={{ margin: '6px 0 0 0', fontSize: '10.5px', color: '#85918e', lineHeight: 1.35 }}>
-            Pay by UPI, card or netbanking. If it does not read as yours, write to us within seven days for a refund.
+            {isReportUnlocked 
+              ? 'High-resolution vector PDF generated from your validated biometric & psychological data.'
+              : 'Instant automatic PDF download upon payment. Pay via UPI, Card, Netbanking or Wallet.'}
           </p>
         </div>
 

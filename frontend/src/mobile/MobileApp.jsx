@@ -57,7 +57,6 @@ import Stage8_4CumulativeScreen from '../screens/Stage8_4CumulativeScreen.jsx'
 import Stage9SensoryScreen from '../screens/Stage9SensoryScreen.jsx'
 import MobileStage10GeneratingScreen from './screens/MobileStage10GeneratingScreen.jsx'
 import MobileMirrorScreen from './screens/MobileMirrorScreen.jsx'
-import PaymentScreen from '../screens/PaymentScreen.jsx'
 import LoginScreen from '../screens/LoginScreen.jsx'
 
 // Stepped questionnaire instruments rendered via MobileInstrumentScreen

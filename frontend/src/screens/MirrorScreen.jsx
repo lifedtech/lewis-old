@@ -9,10 +9,11 @@ import InsightReport from '../report/InsightReport.jsx'
 import { exportReportPdf } from '../report/exportPdf.js'
 import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 import Icon from '../report/icons.jsx'
+import { initiateCheckout } from '../lib/payment.js'
 import './landing.css'
 
 export default function MirrorScreen() {
-  const { setScreen } = useLewisStore()
+  const { setScreen, email, name, isReportUnlocked, checkReportEntitlement, fetchPaymentConfig, paymentConfig } = useLewisStore()
   const storeAnalysis = useLewisStore((s) => s.analysisData)
   const storeError = useLewisStore((s) => s.analysisError)
 
@@ -21,17 +22,75 @@ export default function MirrorScreen() {
   const [attempt, setAttempt] = useState(0)
   const [loadProgress, setLoadProgress] = useState(storeAnalysis ? 100 : 25)
   const [isDownloading, setIsDownloading] = useState(false)
+  const [isUnlocking, setIsUnlocking] = useState(false)
   const [downloadSuccess, setDownloadSuccess] = useState(false)
   const [activeLegalModal, setActiveLegalModal] = useState(null)
 
   const analysis = storeAnalysis
   const error = localError || storeError
 
+  useEffect(() => {
+    fetchPaymentConfig()
+  }, [])
+
+  useEffect(() => {
+    if (analysis?.report_uuid) {
+      checkReportEntitlement(analysis.report_uuid)
+    }
+  }, [analysis?.report_uuid])
+
+  const reportPrice = paymentConfig?.plans?.personal_report?.amount_inr 
+    ? `₹${paymentConfig.plans.personal_report.amount_inr}` 
+    : '₹749'
+
   const handleGetReport = async () => {
-    if (isDownloading) return
+    if (isDownloading || isUnlocking) return
+
+    // If not unlocked, trigger checkout flow
+    if (!isReportUnlocked) {
+      setIsUnlocking(true)
+      try {
+        await initiateCheckout({
+          plan: 'personal_report',
+          reportId: analysis?.report_uuid,
+          userEmail: email,
+          userName: name,
+          onSuccess: async () => {
+            setIsUnlocking(false)
+            // Immediately trigger PDF download after successful unlock
+            setIsDownloading(true)
+            try {
+              await exportReportPdf('Lewis-Insight-Report.pdf')
+              setDownloadSuccess(true)
+              setTimeout(() => setDownloadSuccess(false), 5000)
+            } finally {
+              setIsDownloading(false)
+            }
+          },
+          onError: (err) => {
+            setIsUnlocking(false)
+            alert(err?.message || 'Payment initiation was cancelled or encountered an error.')
+          }
+        })
+      } catch (err) {
+        setIsUnlocking(false)
+        console.error('Checkout error:', err)
+      }
+      return
+    }
+
+    // If already unlocked, verify with backend PDF endpoint and export
     setIsDownloading(true)
     setDownloadSuccess(false)
     try {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+      const repId = analysis?.report_uuid
+      if (repId) {
+        const verifyPdf = await fetch(`${API_BASE}/reports/${repId}/pdf`)
+        if (!verifyPdf.ok && verifyPdf.status === 403) {
+          throw new Error('Report entitlement is not active. Please complete payment.')
+        }
+      }
       await exportReportPdf('Lewis-Insight-Report.pdf')
       setDownloadSuccess(true)
       setTimeout(() => setDownloadSuccess(false), 4000)
@@ -395,11 +454,11 @@ export default function MirrorScreen() {
 
           {/* Unlock Box from Image 2 */}
           <div style={{
-            background: '#ffffff',
+            background: isReportUnlocked ? 'linear-gradient(180deg, #ffffff 0%, #f2faf8 100%)' : '#ffffff',
             borderRadius: '16px',
-            border: '1.5px solid rgba(0, 174, 157, 0.35)',
+            border: isReportUnlocked ? '1.5px solid #00ae9d' : '1.5px solid rgba(0, 174, 157, 0.35)',
             padding: 'clamp(12px, 1.8vh, 18px) clamp(16px, 2vw, 22px)',
-            boxShadow: '0 6px 20px rgba(0, 174, 157, 0.08)',
+            boxShadow: isReportUnlocked ? '0 6px 22px rgba(0, 174, 157, 0.14)' : '0 6px 20px rgba(0, 174, 157, 0.08)',
             textAlign: 'center',
             boxSizing: 'border-box',
           }}>
@@ -407,33 +466,43 @@ export default function MirrorScreen() {
               margin: '0 0 clamp(8px, 1.2vh, 10px) 0',
               fontSize: 'clamp(12px, 1.05vw, 13.5px)',
               fontWeight: 700,
-              color: '#414242',
+              color: isReportUnlocked ? '#007064' : '#414242',
             }}>
-              ₹749, inclusive of all taxes. One payment, no subscription.
+              {isReportUnlocked 
+                ? '✓ Verified Entitlement · 25-Page Insight Report Unlocked' 
+                : `₹749, inclusive of all taxes. One-time payment, no subscription.`}
             </p>
 
             <motion.button
               whileHover={{ scale: 1.015 }}
               whileTap={{ scale: 0.985 }}
               onClick={handleGetReport}
-              disabled={isDownloading}
+              disabled={isDownloading || isUnlocking}
               style={{
                 width: '100%',
-                padding: 'clamp(11px, 1.5vh, 14px) 20px',
-                fontSize: 'clamp(14px, 1.2vw, 15.5px)',
+                padding: 'clamp(12px, 1.6vh, 15px) 20px',
+                fontSize: 'clamp(14.5px, 1.2vw, 16px)',
                 fontWeight: 700,
                 borderRadius: '999px',
-                background: '#00ae9d',
+                background: isReportUnlocked ? 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)' : '#00ae9d',
                 color: '#ffffff',
                 border: 'none',
-                cursor: isDownloading ? 'wait' : 'pointer',
-                boxShadow: '0 4px 14px rgba(0, 174, 157, 0.28)',
+                cursor: (isDownloading || isUnlocking) ? 'wait' : 'pointer',
+                boxShadow: '0 4px 16px rgba(0, 174, 157, 0.32)',
                 transition: 'background 0.2s',
                 fontFamily: "'Nunito', sans-serif",
-                opacity: isDownloading ? 0.8 : 1,
+                opacity: (isDownloading || isUnlocking) ? 0.85 : 1,
               }}
             >
-              {isDownloading ? 'Preparing Your Report...' : (downloadSuccess ? '✓ Report Downloaded!' : 'Unlock my report, ₹749')}
+              {isUnlocking 
+                ? 'Preparing report & opening checkout...' 
+                : (isDownloading 
+                    ? '✓ Payment Verified! Downloading 25-page report...' 
+                    : (downloadSuccess 
+                        ? '✓ Report Downloaded! (Click to re-download)' 
+                        : (isReportUnlocked 
+                            ? 'Download Full 25-Page Report (PDF)' 
+                            : 'Unlock your insight report at ₹749')))}
             </motion.button>
 
             <p style={{
@@ -442,7 +511,9 @@ export default function MirrorScreen() {
               color: '#85918e',
               lineHeight: 1.35,
             }}>
-              Pay by UPI, card or netbanking. If it does not read as yours, write to us within seven days for a refund.
+              {isReportUnlocked 
+                ? 'High-resolution vector PDF generated from your validated biometric & psychological data.'
+                : 'Instant automatic PDF download upon payment. Pay via UPI, Card, Netbanking or Wallet.'}
             </p>
           </div>
 

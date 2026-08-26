@@ -51,6 +51,11 @@ from auth import (
     IS_PRODUCTION, save_support_query, save_encrypted_assessment_record,
     record_journey_ping, mark_journey_completed, get_journey_analytics_overview,
     get_abandoned_users_list, mark_reminders_sent,
+    is_report_unlocked, get_report_by_uuid,
+)
+from payment import (
+    get_public_payment_config, create_order, verify_payment,
+    verify_webhook_signature, process_webhook_event,
 )
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("lewis.api")
@@ -246,6 +251,20 @@ class SupportQueryInput(BaseModel):
     name: str = Field(..., min_length=1, max_length=150)
     email: str = Field(..., min_length=3, max_length=200)
     query: str = Field(..., min_length=1, max_length=5000)
+
+
+class CreatePaymentOrderInput(BaseModel):
+    plan: str = Field(default="personal_report", max_length=50)
+    report_id: str = Field(..., min_length=1, max_length=100)
+    email: Optional[ShortText] = None
+    name: Optional[ShortText] = None
+
+
+class VerifyPaymentInput(BaseModel):
+    order_id: str = Field(..., min_length=1, max_length=100)
+    payment_id: str = Field(..., min_length=1, max_length=100)
+    signature: Optional[str] = Field(default=None, max_length=256)
+    report_id: Optional[str] = Field(default=None, max_length=100)
 
 
 # --- Endpoints -----------------------------------------------------------------
@@ -823,4 +842,128 @@ def send_abandoned_reminders(payload: SendRemindersInput):
     except Exception as exc:
         logger.error("Error processing abandoned reminders: %s", exc)
         raise HTTPException(status_code=500, detail="Failed to process reminder notifications")
+
+
+# --- Razorpay Payment & Report Entitlement Endpoints -------------------------
+
+@app.get("/payment/config")
+def get_payment_config():
+    """
+    Return safe public payment parameters (Key ID, active mode, plan pricing).
+    Zero secrets exposed.
+    """
+    try:
+        return {
+            "status": "success",
+            "config": get_public_payment_config()
+        }
+    except Exception as exc:
+        logger.error("Error retrieving payment config: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to load payment configuration")
+
+
+@app.post("/payment/create-order")
+def create_payment_order_endpoint(payload: CreatePaymentOrderInput):
+    """
+    Server-authoritative order creation. Price is decided by backend,
+    never trusted from frontend input.
+    """
+    try:
+        order = create_order(
+            plan_key=payload.plan,
+            report_uuid=payload.report_id,
+            user_email=payload.email,
+            user_name=payload.name
+        )
+        return {
+            "status": "success",
+            "order": order
+        }
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as exc:
+        logger.error("Error creating payment order: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to create payment order")
+
+
+@app.post("/payment/verify")
+def verify_payment_endpoint(payload: VerifyPaymentInput):
+    """
+    Idempotent signature verification. Unlocks report entitlement server-side
+    and records paid transaction.
+    """
+    try:
+        res = verify_payment(
+            order_id=payload.order_id,
+            payment_id=payload.payment_id,
+            signature=payload.signature,
+            report_uuid=payload.report_id
+        )
+        return res
+    except ValueError as ve:
+        logger.warning("Verification failed: %s", ve)
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as exc:
+        logger.error("Payment verification error: %s", exc)
+        raise HTTPException(status_code=500, detail="Payment verification processing failed")
+
+
+@app.post("/payment/webhook")
+async def razorpay_webhook_endpoint(request: Request):
+    """
+    Razorpay server-to-server webhook endpoint for async payment reconciliation.
+    Guarantees entitlement unlocks even if user browser disconnects midway.
+    """
+    body_bytes = await request.body()
+    signature = request.headers.get("X-Razorpay-Signature", "")
+    
+    if not verify_webhook_signature(body_bytes, signature):
+        logger.warning("Webhook signature verification failed")
+        raise HTTPException(status_code=400, detail="Invalid webhook signature")
+
+    try:
+        import json
+        payload = json.loads(body_bytes.decode("utf-8"))
+        result = process_webhook_event(payload)
+        return result
+    except Exception as exc:
+        logger.error("Webhook event processing failed: %s", exc)
+        raise HTTPException(status_code=500, detail="Webhook processing error")
+
+
+@app.get("/reports/{report_id}/status")
+def get_report_unlock_status(report_id: str):
+    """
+    Check if a report is paid/unlocked server-side.
+    """
+    unlocked = is_report_unlocked(report_id)
+    return {
+        "report_uuid": report_id,
+        "is_unlocked": unlocked
+    }
+
+
+@app.get("/reports/{report_id}/pdf")
+def get_report_pdf_endpoint(report_id: str):
+    """
+    Protected PDF / Full report entitlement gate.
+    Returns 403 Forbidden if not paid/unlocked.
+    """
+    unlocked = is_report_unlocked(report_id)
+    if not unlocked:
+        raise HTTPException(
+            status_code=403,
+            detail="Payment required. Please purchase your Personal Insight Report to unlock and download."
+        )
+
+    report_rec = get_report_by_uuid(report_id)
+    if not report_rec:
+        raise HTTPException(status_code=404, detail="Assessment report not found")
+
+    return {
+        "status": "authorized",
+        "report_uuid": report_id,
+        "is_unlocked": True,
+        "report_data": report_rec.get("report_json")
+    }
 

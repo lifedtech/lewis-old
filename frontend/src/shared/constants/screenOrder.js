@@ -65,8 +65,7 @@ export const SCREEN_ORDER = [
   'stage8_4Cumulative',
   'stage9Sensory',
   'stage10Generating',
-  'mirror',
-  'payment'
+  'mirror'
 ]
 
 export function getStageInfo(screen) {
