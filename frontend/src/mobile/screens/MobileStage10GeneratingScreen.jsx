@@ -218,13 +218,13 @@ export default function MobileStage10GeneratingScreen() {
       <h1 style={{
         fontFamily: "'Manrope', sans-serif",
         fontWeight: 700,
-        fontSize: 'clamp(24px, 6.5vw, 32px)',
-        lineHeight: 1.15,
+        fontSize: 'clamp(22px, 6vw, 28px)',
+        lineHeight: 1.2,
         letterSpacing: '-0.01em',
         margin: 0,
         color: '#414242',
       }}>
-        Synthesizing Your Mirror
+        Preparing your personalised Well-being report
       </h1>
 
       {/* Dynamic Animated Status Step */}
@@ -299,14 +299,16 @@ export default function MobileStage10GeneratingScreen() {
           overflow: 'hidden',
         }}>
           <motion.div
+            initial={{ width: '0%' }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.3, ease: 'linear' }}
             style={{
+              width: '0%',
               height: '100%',
               background: 'linear-gradient(90deg, #00ae9d 0%, #008f81 100%)',
               borderRadius: '999px',
               boxShadow: '0 0 8px rgba(0, 174, 157, 0.35)',
             }}
-            animate={{ width: `${progressPercent}%` }}
-            transition={{ duration: 0.35, ease: 'easeInOut' }}
           />
         </div>
       </div>

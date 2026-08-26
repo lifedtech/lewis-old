@@ -51,6 +51,95 @@ body:has(.mirror-page-wrapper),
   box-sizing: border-box;
 }
 
+/* ==========================================================================
+   Desktop-Only (+2px) Typography Scaling for Landing & Mirror Pages
+   ========================================================================== */
+@media (min-width: 769px) {
+  .landing-screen-wrapper {
+    font-size: 18px !important;
+  }
+  .landing-screen-wrapper p {
+    font-size: 18px;
+    line-height: 1.65;
+  }
+  .landing-screen-wrapper .landing-nav-link {
+    font-size: 16px !important;
+  }
+  .landing-screen-wrapper .landing-header-btn {
+    font-size: 16px !important;
+  }
+  .landing-screen-wrapper .landing-primary-btn,
+  .landing-screen-wrapper .landing-secondary-btn {
+    font-size: 18px !important;
+  }
+  .landing-screen-wrapper .landing-domain-btn,
+  .landing-screen-wrapper .lifed-green-capsule {
+    font-size: 15px !important;
+  }
+  .landing-screen-wrapper [data-row="three"] h3 {
+    font-size: 20px !important;
+  }
+  .landing-screen-wrapper [data-row="three"] p {
+    font-size: 16.5px !important;
+  }
+  .landing-screen-wrapper .landing-domain-card h3 {
+    font-size: 18px !important;
+  }
+  .landing-screen-wrapper .landing-domain-card p {
+    font-size: 15.5px !important;
+  }
+  .landing-screen-wrapper details summary {
+    font-size: 20px !important;
+  }
+  .landing-screen-wrapper details p {
+    font-size: 17.5px !important;
+  }
+
+  /* Mirror Page Desktop +2px Scaling */
+  .mirror-page-wrapper {
+    font-size: 16px !important;
+  }
+  .mirror-page-wrapper h1 {
+    font-size: clamp(26px, 2.9vw, 38px) !important;
+  }
+  .mirror-page-wrapper .mirror-headline-sub {
+    font-size: clamp(15px, 1.35vw, 17px) !important;
+  }
+  .mirror-page-wrapper .mirror-legend {
+    font-size: 13.5px !important;
+  }
+  .mirror-page-wrapper .mirror-desc-title {
+    font-size: clamp(17px, 1.55vw, 20px) !important;
+  }
+  .mirror-page-wrapper .mirror-desc-p {
+    font-size: clamp(14.5px, 1.25vw, 16px) !important;
+  }
+  .mirror-page-wrapper .mirror-section-h2 {
+    font-size: clamp(16px, 1.5vw, 19px) !important;
+  }
+  .mirror-page-wrapper .mirror-card-title {
+    font-size: clamp(14px, 1.2vw, 15.5px) !important;
+  }
+  .mirror-page-wrapper .mirror-card-desc {
+    font-size: clamp(12.5px, 1.05vw, 13.5px) !important;
+  }
+  .mirror-page-wrapper .mirror-pages-desc {
+    font-size: clamp(13.5px, 1.1vw, 14.5px) !important;
+  }
+  .mirror-page-wrapper .mirror-unlock-title {
+    font-size: clamp(14px, 1.2vw, 15.5px) !important;
+  }
+  .mirror-page-wrapper .mirror-unlock-btn {
+    font-size: clamp(16px, 1.35vw, 18px) !important;
+  }
+  .mirror-page-wrapper .mirror-unlock-note {
+    font-size: clamp(12px, 1vw, 13px) !important;
+  }
+  .mirror-page-wrapper .mirror-footer-note {
+    font-size: clamp(12.5px, 1vw, 13.5px) !important;
+  }
+}
+
 
 .landing-screen-wrapper * {
   box-sizing: border-box;

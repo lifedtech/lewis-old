@@ -264,9 +264,9 @@ export default function MirrorScreen() {
         }}>
           {/* Eyebrow & Headline */}
           <div style={{ marginBottom: 'clamp(10px, 1.8vh, 16px)' }}>
-            <h1 style={{
+            <h1 className="mirror-headline-h1" style={{
               margin: '0 0 4px 0',
-              fontSize: 'clamp(24px, 2.7vw, 36px)',
+              fontSize: 'clamp(26px, 2.9vw, 38px)',
               lineHeight: 1.15,
               fontWeight: 800,
               letterSpacing: '-0.025em',
@@ -275,9 +275,9 @@ export default function MirrorScreen() {
             }}>
               Your reflection is ready.
             </h1>
-            <p style={{
+            <p className="mirror-headline-sub" style={{
               margin: 0,
-              fontSize: 'clamp(13px, 1.2vw, 15px)',
+              fontSize: 'clamp(15px, 1.35vw, 17px)',
               lineHeight: 1.4,
               color: '#657370',
               fontWeight: 500,
@@ -306,7 +306,7 @@ export default function MirrorScreen() {
                   <PolarGrid stroke="rgba(0, 174, 157, 0.16)" />
                   <PolarAngleAxis
                     dataKey="subject"
-                    tick={{ fill: '#414242', fontSize: 10, fontWeight: 700, letterSpacing: '0.01em' }}
+                    tick={{ fill: '#414242', fontSize: 11.5, fontWeight: 700, letterSpacing: '0.01em' }}
                   />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                   <Radar
@@ -322,14 +322,14 @@ export default function MirrorScreen() {
             </div>
 
             {/* Color-coded Status Dots Legend */}
-            <div style={{
+            <div className="mirror-legend" style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexWrap: 'wrap',
               gap: 'clamp(8px, 1.5vw, 16px)',
               marginTop: '4px',
-              fontSize: '11.5px',
+              fontSize: '13.5px',
               fontWeight: 600,
               color: '#52605d',
             }}>
@@ -354,18 +354,18 @@ export default function MirrorScreen() {
 
           {/* Dynamic / Image 2 Descriptive Text */}
           <div style={{ marginTop: 'clamp(10px, 1.8vh, 16px)' }}>
-            <h3 style={{
+            <h3 className="mirror-desc-title" style={{
               margin: '0 0 4px 0',
-              fontSize: 'clamp(15px, 1.4vw, 18px)',
+              fontSize: 'clamp(17px, 1.55vw, 20px)',
               fontWeight: 800,
               color: '#414242',
               fontFamily: "'Nunito', sans-serif",
             }}>
               Steady, but uneven.
             </h3>
-            <p style={{
+            <p className="mirror-desc-p" style={{
               margin: 0,
-              fontSize: 'clamp(12.5px, 1.1vw, 14px)',
+              fontSize: 'clamp(14.5px, 1.25vw, 16px)',
               lineHeight: 1.48,
               color: '#657370',
             }}>
@@ -384,9 +384,9 @@ export default function MirrorScreen() {
           overflow: 'hidden',
         }}>
           {/* Header text from Image 2 */}
-          <h2 style={{
+          <h2 className="mirror-section-h2" style={{
             margin: '0 0 clamp(8px, 1.4vh, 12px) 0',
-            fontSize: 'clamp(14px, 1.35vw, 17px)',
+            fontSize: 'clamp(16px, 1.5vw, 19px)',
             fontWeight: 800,
             color: '#414242',
             lineHeight: 1.3,
@@ -420,8 +420,8 @@ export default function MirrorScreen() {
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                   </svg>
-                  <span style={{
-                    fontSize: 'clamp(12px, 1.05vw, 13.5px)',
+                  <span className="mirror-card-title" style={{
+                    fontSize: 'clamp(14px, 1.2vw, 15.5px)',
                     fontWeight: 800,
                     color: '#414242',
                     lineHeight: 1.2,
@@ -429,9 +429,9 @@ export default function MirrorScreen() {
                     {card.title}
                   </span>
                 </div>
-                <p style={{
+                <p className="mirror-card-desc" style={{
                   margin: 0,
-                  fontSize: 'clamp(10.5px, 0.9vw, 11.5px)',
+                  fontSize: 'clamp(12.5px, 1.05vw, 13.5px)',
                   lineHeight: 1.38,
                   color: '#657370',
                   fontWeight: 500,
@@ -443,9 +443,9 @@ export default function MirrorScreen() {
           </div>
 
           {/* Pages description */}
-          <p style={{
+          <p className="mirror-pages-desc" style={{
             margin: '0 0 clamp(8px, 1.4vh, 12px) 0',
-            fontSize: 'clamp(11.5px, 0.95vw, 12.5px)',
+            fontSize: 'clamp(13.5px, 1.1vw, 14.5px)',
             color: '#85918e',
             fontWeight: 600,
           }}>
@@ -462,9 +462,9 @@ export default function MirrorScreen() {
             textAlign: 'center',
             boxSizing: 'border-box',
           }}>
-            <p style={{
+            <p className="mirror-unlock-title" style={{
               margin: '0 0 clamp(8px, 1.2vh, 10px) 0',
-              fontSize: 'clamp(12px, 1.05vw, 13.5px)',
+              fontSize: 'clamp(14px, 1.2vw, 15.5px)',
               fontWeight: 700,
               color: isReportUnlocked ? '#007064' : '#414242',
             }}>
@@ -478,10 +478,11 @@ export default function MirrorScreen() {
               whileTap={{ scale: 0.985 }}
               onClick={handleGetReport}
               disabled={isDownloading || isUnlocking}
+              className="mirror-unlock-btn"
               style={{
                 width: '100%',
                 padding: 'clamp(12px, 1.6vh, 15px) 20px',
-                fontSize: 'clamp(14.5px, 1.2vw, 16px)',
+                fontSize: 'clamp(16px, 1.35vw, 18px)',
                 fontWeight: 700,
                 borderRadius: '999px',
                 background: isReportUnlocked ? 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)' : '#00ae9d',
@@ -505,9 +506,9 @@ export default function MirrorScreen() {
                             : 'Unlock your insight report at ₹749')))}
             </motion.button>
 
-            <p style={{
+            <p className="mirror-unlock-note" style={{
               margin: 'clamp(6px, 1vh, 8px) 0 0 0',
-              fontSize: 'clamp(10px, 0.85vw, 11px)',
+              fontSize: 'clamp(12px, 1vw, 13px)',
               color: '#85918e',
               lineHeight: 1.35,
             }}>
@@ -518,9 +519,9 @@ export default function MirrorScreen() {
           </div>
 
           {/* Footer note */}
-          <p style={{
+          <p className="mirror-footer-note" style={{
             margin: 'clamp(6px, 1vh, 10px) 0 0 0',
-            fontSize: 'clamp(10.5px, 0.85vw, 11.5px)',
+            fontSize: 'clamp(12.5px, 1vw, 13.5px)',
             color: '#85918e',
             textAlign: 'center',
           }}>

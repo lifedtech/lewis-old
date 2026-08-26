@@ -92,12 +92,12 @@ const BLOG_ARTICLES = [
 ]
 
 const eyebrowStyle = (color = '#00ae9d') => ({
-  margin: '0 0 18px', fontSize: '12px', fontWeight: 800, letterSpacing: '0.16em',
+  margin: '0 0 18px', fontSize: '14px', fontWeight: 800, letterSpacing: '0.16em',
   textTransform: 'uppercase', color, fontFamily: "'Nunito', sans-serif",
 })
 
 const sectionH2Style = {
-  margin: 0, fontSize: 'clamp(28px, 4vw, 42px)', lineHeight: 1.1, fontWeight: 800,
+  margin: 0, fontSize: 'clamp(30px, 4vw, 44px)', lineHeight: 1.1, fontWeight: 800,
   letterSpacing: '-0.025em', color: '#414242', fontFamily: "'Nunito', sans-serif",
 }
 
@@ -241,17 +241,17 @@ export default function LandingScreen() {
                 <div>
                   <p style={eyebrowStyle()}>SCIENCE-BASED VIEW OF HOW YOU ARE LIVING</p>
                   <h1 style={{
-                    margin: '0 0 22px', fontSize: 'clamp(28px, 3.8vw, 46px)', lineHeight: 1.12, fontWeight: 800,
+                    margin: '0 0 22px', fontSize: 'clamp(30px, 4vw, 48px)', lineHeight: 1.12, fontWeight: 800,
                     letterSpacing: '-0.025em', color: '#414242', fontFamily: "'Nunito', sans-serif",
                   }}>
                     <span style={{ display: 'block' }}>Understand your wellbeing,</span>
                     <span style={{ display: 'block' }}>and exactly where to start.</span>
                   </h1>
-                  <p style={{ margin: '0 0 28px', fontSize: 'clamp(16px,1.7vw,19px)', lineHeight: 1.7, color: 'rgba(65,66,66,.72)', maxWidth: '580px' }}>
+                  <p style={{ margin: '0 0 28px', fontSize: 'clamp(18px,1.8vw,21px)', lineHeight: 1.7, color: 'rgba(65,66,66,.72)', maxWidth: '580px' }}>
                     LEWIS reads nine areas of your life together and turns what it finds into a plan you can actually follow. Twelve minutes, free to start.
                   </p>
                   <div data-row="ctas" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '18px', marginBottom: '30px' }}>
-                    <button onClick={handleNext} data-cta="1" className="landing-primary-btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 32px', fontSize: '16px', fontWeight: 700 }}>
+                    <button onClick={handleNext} data-cta="1" className="landing-primary-btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 34px', fontSize: '18px', fontWeight: 700 }}>
                       Begin your reflection
                     </button>
                     <button
@@ -263,7 +263,7 @@ export default function LandingScreen() {
                         background: 'transparent',
                         border: 'none',
                         cursor: 'pointer',
-                        fontSize: '16px',
+                        fontSize: '18px',
                         fontWeight: 600,
                         color: '#414242',
                         padding: '8px 12px',
@@ -336,7 +336,7 @@ export default function LandingScreen() {
                   alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
                 }}>
                   <h2 style={sectionH2Style}>A reflection, not a verdict.</h2>
-                  <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
+                  <p style={{ margin: 0, fontSize: 'clamp(18px,1.7vw,20px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
                     Lewis, the Lifed Everyday Wellbeing Intelligence System, is Lifed&rsquo;s non-clinical wellbeing reflection tool. It understands how life feels for you right now, reflects it back across nine connected areas, then names one small place to start.
                   </p>
                 </div>
@@ -345,7 +345,7 @@ export default function LandingScreen() {
                     <div key={c.title} style={flatCardStyle}>
                       <IconBadge name={c.icon} />
                       <h3 style={{ margin: '0 0 9px', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.01em', color: '#414242' }}>{c.title}</h3>
-                      <p style={{ margin: 0, fontSize: '16px', lineHeight: 1.68, color: 'rgba(65,66,66,.72)' }}>{c.desc}</p>
+                      <p style={{ margin: 0, fontSize: '16.5px', lineHeight: 1.68, color: 'rgba(65,66,66,.72)' }}>{c.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -362,7 +362,7 @@ export default function LandingScreen() {
                   alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
                 }}>
                   <h2 style={sectionH2Style}>Nine areas of everyday wellbeing.</h2>
-                  <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
+                  <p style={{ margin: 0, fontSize: 'clamp(18px,1.7vw,20px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
                     One area on its own says very little. Read together, they usually explain the feeling you arrived with.
                   </p>
                 </div>
@@ -374,8 +374,8 @@ export default function LandingScreen() {
                     }}>
                       <span style={{ color: '#00ae9d', display: 'inline-flex', flexShrink: 0, marginTop: '2px' }}><Icon name={d.iconKey} size={22} /></span>
                       <div>
-                        <h3 style={{ margin: '0 0 5px', fontSize: '17px', fontWeight: 800, color: '#414242' }}>{d.name}</h3>
-                        <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.6, color: 'rgba(65,66,66,.68)' }}>{d.desc}</p>
+                        <h3 style={{ margin: '0 0 5px', fontSize: '18px', fontWeight: 800, color: '#414242' }}>{d.name}</h3>
+                        <p style={{ margin: 0, fontSize: '15.5px', lineHeight: 1.6, color: 'rgba(65,66,66,.68)' }}>{d.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -402,11 +402,11 @@ export default function LandingScreen() {
                     <div key={c.title} style={flatCardStyle}>
                       <IconBadge name={c.icon} size={24} iconSize={24} />
                       <h3 style={{ margin: '0 0 9px', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.01em', color: '#414242' }}>{c.title}</h3>
-                      <p style={{ margin: 0, fontSize: '16px', lineHeight: 1.68, color: 'rgba(65,66,66,.72)' }}>{c.desc}</p>
+                      <p style={{ margin: 0, fontSize: '16.5px', lineHeight: 1.68, color: 'rgba(65,66,66,.72)' }}>{c.desc}</p>
                     </div>
                   ))}
                 </div>
-                <p style={{ margin: '0', fontSize: '15px', lineHeight: 1.7, color: 'rgba(65,66,66,.66)', maxWidth: '840px' }}>
+                <p style={{ margin: '0', fontSize: '16px', lineHeight: 1.7, color: 'rgba(65,66,66,.66)', maxWidth: '840px' }}>
                   Lewis makes no claim about hormones, brain states or heart rhythms. It does not detect, name, treat or prevent any condition, and it is not a substitute for professional care.
                 </p>
               </div>
@@ -422,12 +422,12 @@ export default function LandingScreen() {
                     <details key={f.q} open={i === 0} style={{ borderBottom: '1px solid #f4f4f4' }}>
                       <summary style={{
                         display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '24px',
-                        padding: '22px 0', fontSize: 'clamp(16px,1.7vw,18px)', fontWeight: 800, color: '#414242',
+                        padding: '22px 0', fontSize: 'clamp(18px,1.7vw,20px)', fontWeight: 800, color: '#414242',
                       }}>
                         {f.q}
                         <span data-plus="1" style={{ color: '#00ae9d', fontSize: '24px', fontWeight: 700, lineHeight: 1, flexShrink: 0 }} />
                       </summary>
-                      <p style={{ margin: 0, padding: '0 40px 24px 0', fontSize: '16px', lineHeight: 1.72, color: 'rgba(65,66,66,.72)' }}>{f.a}</p>
+                      <p style={{ margin: 0, padding: '0 40px 24px 0', fontSize: '17.5px', lineHeight: 1.72, color: 'rgba(65,66,66,.72)' }}>{f.a}</p>
                     </details>
                   ))}
                 </div>

@@ -244,13 +244,13 @@ export default function Stage10GeneratingScreen() {
         <h1 style={{
           fontFamily: "'Manrope', sans-serif",
           fontWeight: 800,
-          fontSize: 'clamp(26px, 3.5vw, 32px)',
-          lineHeight: 1.15,
+          fontSize: 'clamp(24px, 3.2vw, 30px)',
+          lineHeight: 1.2,
           letterSpacing: '-0.025em',
           color: '#1e293b',
           margin: '0 0 16px 0'
         }}>
-          Synthesizing Your Mirror
+          Preparing your personalised Well-being report
         </h1>
 
         {/* Dynamic High-Contrast Step Message */}
@@ -321,14 +321,16 @@ export default function Stage10GeneratingScreen() {
             boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.06)'
           }}>
             <motion.div
+              initial={{ width: '0%' }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.3, ease: 'linear' }}
               style={{
+                width: '0%',
                 height: '100%',
                 background: 'linear-gradient(90deg, #00ae9d 0%, #017a6f 100%)',
                 borderRadius: '999px',
                 boxShadow: '0 0 12px rgba(0, 174, 157, 0.4)'
               }}
-              animate={{ width: `${progressPercent}%` }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
             />
           </div>
         </div>

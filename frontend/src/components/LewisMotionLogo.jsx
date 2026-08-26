@@ -20,9 +20,12 @@ export default function LewisMotionLogo({
   speed = 1.0,
   glow = true
 }) {
-  const markColorUpper = inverted ? '#ffffff' : '#00AE9D'
-  const markColorLower = inverted ? '#ffffff' : '#5FBB46'
-  const txtColor = inverted ? '#ffffff' : textColor
+  const markColorUpper = inverted ? '#a7dcd4' : '#00AE9D'
+  const markColorLower = '#5FBB46'
+  const centerDiscColor = inverted ? '#ffffff' : '#00AE9D'
+  const lowerCounterpointColor = inverted ? '#ffffff' : '#00AE9D'
+  const upperCounterpointColor = '#5FBB46'
+  const txtColor = inverted ? '#ffffff' : (textColor === '#16302B' ? '#16302B' : textColor)
   const turnDuration = 3.6 / speed
 
   const markSvg = (
@@ -55,13 +58,13 @@ export default function LewisMotionLogo({
         `}</style>
 
         {/* Centre Disc (Person) - Never moves per Section 8 */}
-        <circle cx="41" cy="41" r="11" fill={markColorUpper} />
+        <circle cx="41" cy="41" r="11" fill={centerDiscColor} />
 
         {/* Top-Right Counterpoint (Green) - Never moves per Section 8 */}
-        <circle cx="71" cy="11" r="7" fill={markColorLower} />
+        <circle cx="71" cy="11" r="7" fill={upperCounterpointColor} />
 
-        {/* Bottom-Left Counterpoint (Teal) - Never moves per Section 8 */}
-        <circle cx="11" cy="71" r="7" fill={markColorUpper} />
+        {/* Bottom-Left Counterpoint (Teal / White) - Never moves per Section 8 */}
+        <circle cx="11" cy="71" r="7" fill={lowerCounterpointColor} />
 
         {/* Upper Arm (Given) - Stationary per Section 8 */}
         <path d="M11 41 V11 H41" fill="none" stroke={markColorUpper} strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
@@ -83,8 +86,8 @@ export default function LewisMotionLogo({
     return (
       <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: `${Math.max(6, Math.round(size * 0.15))}px`, flexShrink: 0, whiteSpace: 'nowrap' }}>
         {markSvg}
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
-          <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(18, Math.round(size * 0.38))}px`, color: txtColor, letterSpacing: '0', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15, whiteSpace: 'nowrap' }}>
+          <span style={{ fontFamily: "'Manrope', 'Nunito', sans-serif", fontWeight: 800, fontSize: `${Math.max(18, Math.round(size * 0.38))}px`, color: txtColor, letterSpacing: '-0.025em', whiteSpace: 'nowrap' }}>
             Lewis
           </span>
         </div>
@@ -95,8 +98,8 @@ export default function LewisMotionLogo({
   return (
     <div style={{ display: 'inline-flex', alignItems: 'center', gap: `${Math.max(10, Math.round(size * 0.18))}px`, flexShrink: 0, whiteSpace: 'nowrap' }}>
       {markSvg}
-      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
-        <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: `${Math.max(18, Math.round(size * 0.48))}px`, color: txtColor, letterSpacing: '0', whiteSpace: 'nowrap' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15, whiteSpace: 'nowrap' }}>
+        <span style={{ fontFamily: "'Manrope', 'Nunito', sans-serif", fontWeight: 800, fontSize: `${Math.max(18, Math.round(size * 0.48))}px`, color: txtColor, letterSpacing: '-0.025em', whiteSpace: 'nowrap' }}>
           Lewis
         </span>
       </div>
