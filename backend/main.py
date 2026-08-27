@@ -283,6 +283,24 @@ def read_root():
 def submit_support_query(payload: SupportQueryInput):
     try:
         res = save_support_query(payload.name, payload.email, payload.query)
+        
+        # Asynchronously send email notification & user confirmation
+        try:
+            import threading
+            from mailer import send_support_notification_email
+            threading.Thread(
+                target=send_support_notification_email,
+                kwargs={
+                    "user_name": payload.name,
+                    "user_email": payload.email,
+                    "query_text": payload.query,
+                    "screen_name": "Support Modal"
+                },
+                daemon=True
+            ).start()
+        except Exception as mail_err:
+            logger.warning("Could not dispatch support email thread: %s", mail_err)
+
         return {
             "status": "success",
             "message": "Your query has been recorded and submitted to Lifed Operations System.",
@@ -291,6 +309,33 @@ def submit_support_query(payload: SupportQueryInput):
     except Exception as exc:
         logger.error("Support query submission error: %s", exc)
         raise HTTPException(status_code=500, detail="Failed to submit support query. Please try again.")
+
+
+@app.post("/support/test-email")
+def test_email_endpoint(payload: dict):
+    """
+    Test endpoint to verify Brevo SMTP delivery.
+    Provide {"to_email": "your_email@example.com"} in JSON body.
+    """
+    to_email = payload.get("to_email")
+    if not to_email:
+        raise HTTPException(status_code=400, detail="Missing 'to_email' field in request body")
+
+    try:
+        from mailer import send_email
+        success = send_email(
+            to_email=to_email,
+            subject="LEWIS Email Verification Test · Brevo SMTP Online",
+            html_content="<h2 style='color: #00ae9d;'>LEWIS Email Test Successful!</h2><p>Your Brevo SMTP configuration is working perfectly.</p>",
+            text_content="LEWIS Email Test Successful! Your Brevo SMTP configuration is working perfectly."
+        )
+        if success:
+            return {"status": "success", "message": f"Test email successfully sent to {to_email}"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to send test email. Check server logs for details.")
+    except Exception as exc:
+        logger.error("Test email failed: %s", exc)
+        raise HTTPException(status_code=500, detail=f"Email delivery error: {str(exc)}")
 
 
 @app.post("/auth/register")
@@ -879,7 +924,8 @@ def create_payment_order_endpoint(payload: CreatePaymentOrderInput):
             report_uuid=payload.report_id,
             currency=payload.currency,
             user_email=payload.email,
-            user_name=payload.name
+            user_name=payload.name,
+            user_phone=payload.phone
         )
         return {
             "status": "success",

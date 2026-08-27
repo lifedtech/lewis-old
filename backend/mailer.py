@@ -1,0 +1,646 @@
+# mailer.py — Automated Email Delivery Engine via Brevo SMTP
+import os
+import smtplib
+import logging
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from typing import Optional, Dict, Any, List
+from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+load_dotenv()
+logger = logging.getLogger("lewis.mailer")
+
+MAIL_HOST = os.getenv("MAIL_HOST", "smtp-relay.brevo.com")
+MAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
+MAIL_USERNAME = os.getenv("MAIL_USERNAME", "a3b03f001@smtp-brevo.com")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "")
+MAIL_FROM_ADDRESS = os.getenv("MAIL_FROM_ADDRESS", "lewissupport@lifedhealth.com")
+MAIL_FROM_NAME = os.getenv("MAIL_FROM_NAME", "LEWIS Well-Being").replace('"', '')
+MAIL_EHLO_DOMAIN = os.getenv("MAIL_EHLO_DOMAIN", "lifedhealth.com")
+
+
+def send_email(
+    to_email: str,
+    subject: str,
+    html_content: str,
+    text_content: Optional[str] = None,
+    bcc: Optional[List[str]] = None
+) -> bool:
+    """
+    Send an email via Brevo SMTP using TLS.
+    """
+    if not to_email or "@" not in to_email:
+        logger.warning("Invalid destination email: %s", to_email)
+        return False
+
+    if not MAIL_USERNAME or not MAIL_PASSWORD:
+        logger.warning("SMTP credentials not configured. Email to %s skipped.", to_email)
+        return False
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = f"{MAIL_FROM_NAME} <{MAIL_FROM_ADDRESS}>"
+        msg["To"] = to_email
+
+        if text_content:
+            part1 = MIMEText(text_content, "plain", "utf-8")
+            msg.attach(part1)
+
+        part2 = MIMEText(html_content, "html", "utf-8")
+        msg.attach(part2)
+
+        recipients = [to_email]
+        if bcc:
+            recipients.extend(bcc)
+
+        with smtplib.SMTP(MAIL_HOST, MAIL_PORT, timeout=15) as server:
+            server.ehlo(MAIL_EHLO_DOMAIN)
+            server.starttls()
+            server.ehlo(MAIL_EHLO_DOMAIN)
+            server.login(MAIL_USERNAME, MAIL_PASSWORD)
+            server.sendmail(MAIL_FROM_ADDRESS, recipients, msg.as_string())
+
+        logger.info("Successfully sent email to %s (Subject: %s)", to_email, subject)
+        return True
+    except Exception as exc:
+        logger.error("Failed to send email to %s: %s", to_email, exc)
+        return False
+
+
+def send_payment_confirmation_email(
+    user_email: str,
+    user_name: Optional[str] = None,
+    order_id: Optional[str] = None,
+    payment_id: Optional[str] = None,
+    amount_formatted: Optional[str] = "₹749",
+    currency: Optional[str] = "INR",
+    report_uuid: Optional[str] = None
+) -> bool:
+    """
+    Send a customer confirmation email after payment.
+    Informs user that report is preparing with manual verification and will arrive in 5–10 mins.
+    """
+    name = (user_name or "there").strip()
+    order_ref = order_id or "ORD-REF"
+    txn_ref = payment_id or "TXN-VERIFIED"
+    price_str = amount_formatted or "₹749"
+    date_str = datetime.now(timezone.utc).strftime("%d %B %Y, %H:%M UTC")
+
+    subject = f"Your LEWIS Personal Wellbeing Report is Preparing · Order {order_ref}"
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Payment Confirmation & Report Delivery</title>
+      <style>
+        body {{
+          font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+          background-color: #f4faf8;
+          margin: 0;
+          padding: 24px 12px;
+          color: #334155;
+        }}
+        .email-card {{
+          max-width: 600px;
+          margin: 0 auto;
+          background: #ffffff;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 174, 157, 0.08);
+          border: 1px solid rgba(0, 174, 157, 0.16);
+        }}
+        .header {{
+          background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
+          padding: 32px 32px 26px;
+          text-align: center;
+          color: #ffffff;
+        }}
+        .header h1 {{
+          margin: 10px 0 4px;
+          font-size: 22px;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+        }}
+        .header p {{
+          margin: 0;
+          font-size: 13.5px;
+          opacity: 0.92;
+        }}
+        .content {{
+          padding: 32px 30px;
+        }}
+        .greeting {{
+          font-size: 16px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 14px;
+        }}
+        .alert-box {{
+          background: #f0fdf9;
+          border-left: 4px solid #00ae9d;
+          border-radius: 12px;
+          padding: 18px 20px;
+          margin: 22px 0;
+        }}
+        .alert-box h3 {{
+          margin: 0 0 6px 0;
+          color: #007064;
+          font-size: 15px;
+          font-weight: 800;
+        }}
+        .alert-box p {{
+          margin: 0;
+          font-size: 13.5px;
+          line-height: 1.55;
+          color: #134e48;
+        }}
+        .details-table {{
+          width: 100%;
+          border-collapse: collapse;
+          margin: 24px 0 12px;
+          font-size: 13.5px;
+        }}
+        .details-table tr {{
+          border-bottom: 1px solid #f1f5f9;
+        }}
+        .details-table td {{
+          padding: 12px 4px;
+        }}
+        .details-table td.label {{
+          color: #64748b;
+          font-weight: 600;
+        }}
+        .details-table td.val {{
+          text-align: right;
+          color: #1e293b;
+          font-weight: 700;
+        }}
+        .footer {{
+          background: #f8fafc;
+          padding: 24px 30px;
+          text-align: center;
+          font-size: 12px;
+          color: #64748b;
+          border-top: 1px solid #f1f5f9;
+        }}
+        .footer a {{
+          color: #00ae9d;
+          text-decoration: none;
+          font-weight: 700;
+        }}
+      </style>
+    </head>
+    <body>
+      <div class="email-card">
+        <div class="header">
+          <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 8px;">
+            <tr>
+              <td style="vertical-align: middle; padding-right: 10px;">
+                <svg width="30" height="30" viewBox="0 0 82 82" style="display: block;">
+                  <path d="M11 41 V11 H41" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#86efac" />
+                  <circle cx="41" cy="41" r="11" fill="#ffffff" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#86efac" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11" cy="71" r="7" fill="#ffffff" />
+                </svg>
+              </td>
+              <td style="vertical-align: middle;">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;">Lewis</span>
+              </td>
+            </tr>
+          </table>
+          <h1>Payment Confirmed</h1>
+          <p>Thank you for choosing Lewis Wellbeing Intelligence</p>
+        </div>
+
+        <div class="content">
+          <div class="greeting">Hello {name},</div>
+          <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 16px;">
+            We have successfully received your payment for the <strong>Personal Insight Report</strong>.
+          </p>
+
+          <!-- Delivery Status Alert Box (Clean, No Emoticons) -->
+          <div class="alert-box">
+            <h3>Report Synthesis and Quality Verification in Progress</h3>
+            <p>
+              Your personalized report is being prepared and is currently undergoing our manual quality verification process. 
+              <strong>You will receive your complete report directly at this email address within 5 to 10 minutes.</strong>
+            </p>
+            <p style="margin-top: 10px; font-size: 12.5px; color: #0f766e;">
+              Please check your Spam or Promotions folder if you do not see it in your primary inbox within 10 minutes.
+            </p>
+          </div>
+
+          <!-- Order Summary Details -->
+          <table class="details-table">
+            <tr>
+              <td class="label">Item</td>
+              <td class="val">Personal Insight Report</td>
+            </tr>
+            <tr>
+              <td class="label">Amount Paid</td>
+              <td class="val" style="color: #00ae9d; font-size: 15px;">{price_str}</td>
+            </tr>
+            <tr>
+              <td class="label">Order ID</td>
+              <td class="val" style="font-family: monospace; font-size: 12.5px;">{order_ref}</td>
+            </tr>
+            <tr>
+              <td class="label">Transaction ID</td>
+              <td class="val" style="font-family: monospace; font-size: 12.5px;">{txn_ref}</td>
+            </tr>
+            <tr>
+              <td class="label">Date</td>
+              <td class="val">{date_str}</td>
+            </tr>
+          </table>
+
+          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #cbd5e1; font-size: 13px; color: #64748b; line-height: 1.5;">
+            If you have any questions about your report or need assistance, simply reply to this email or contact us at 
+            <a href="mailto:lewissupport@lifedhealth.com" style="color: #00ae9d; font-weight: 700; text-decoration: none;">lewissupport@lifedhealth.com</a>.
+          </div>
+
+          <!-- Lewis Brand Logo Signature -->
+          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #e2e8f0; width: 100%;">
+            <tr>
+              <td style="vertical-align: middle; width: 34px; padding-right: 12px;">
+                <svg width="30" height="30" viewBox="0 0 82 82" style="display: block;">
+                  <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+                  <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11" cy="71" r="7" fill="#00AE9D" />
+                </svg>
+              </td>
+              <td style="vertical-align: middle;">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; font-weight: 800; color: #16302B; letter-spacing: -0.02em;">Lewis</span>
+                <div style="font-size: 11.5px; color: #64748b; margin-top: 1px;">Wellbeing Intelligence</div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0 0 6px;">© 2026 LEWIS Well-Being · A Lifed Health Intelligence System</p>
+          <p style="margin: 0; font-size: 11px; color: #94a3b8;">
+            Lewis is a non-clinical wellbeing reflection and does not provide medical diagnosis or psychiatric treatment.
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+    """
+
+    text_content = f"""
+Hello {name},
+
+Thank you for purchasing the LEWIS Personal Insight Report.
+
+We have successfully verified your payment of {price_str}.
+Order ID: {order_ref}
+Transaction ID: {txn_ref}
+
+STATUS: Your report is preparing and undergoing manual quality verification.
+You will receive your full report directly at this email address within 5 to 10 minutes.
+
+Note: Please check your Spam or Promotions folder if you do not see it in your primary inbox within 10 minutes.
+
+Support: lewissupport@lifedhealth.com
+
+Lewis Wellbeing Intelligence
+A Lifed Health Intelligence System
+    """
+
+    return send_email(to_email=user_email, subject=subject, html_content=html_content, text_content=text_content)
+
+
+def send_support_notification_email(
+    user_name: str,
+    user_email: str,
+    query_text: str,
+    screen_name: Optional[str] = "Unknown"
+) -> bool:
+    """
+    Forward incoming support query to support team and send auto-reply to user.
+    """
+    # 1. Forward to support team
+    team_subject = f"[Support Query] From {user_name} ({user_email}) · Screen: {screen_name}"
+    team_html = f"""
+    <div style="font-family: sans-serif; padding: 20px; color: #333;">
+      <h2 style="color: #00ae9d; margin-top: 0;">New LEWIS Support Request</h2>
+      <p><strong>Name:</strong> {user_name}</p>
+      <p><strong>Email:</strong> {user_email}</p>
+      <p><strong>Screen:</strong> {screen_name}</p>
+      <p><strong>Query:</strong></p>
+      <blockquote style="background: #f4faf8; border-left: 4px solid #00ae9d; padding: 12px; margin: 10px 0;">
+        {query_text}
+      </blockquote>
+      <p style="font-size: 12px; color: #888;">Received at {datetime.now(timezone.utc).isoformat()}</p>
+    </div>
+    """
+    send_email(to_email=MAIL_FROM_ADDRESS, subject=team_subject, html_content=team_html)
+
+    # 2. Send acknowledgment to user
+    user_subject = "We received your message · LEWIS Support"
+    user_html = f"""
+    <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #334155; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0;">
+      <h3 style="color: #00ae9d; margin-top: 0;">Hello {user_name},</h3>
+      <p>Thank you for reaching out to LEWIS Support. We have received your message:</p>
+      <blockquote style="background: #f8fafc; border-left: 3px solid #00ae9d; padding: 10px 14px; color: #475569; font-style: italic;">
+        "{query_text}"
+      </blockquote>
+      <p>Our team is reviewing your message and will get back to you shortly at this email address.</p>
+
+      <!-- Lewis Brand Signature -->
+      <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0; width: 100%;">
+        <tr>
+          <td style="vertical-align: middle; width: 30px; padding-right: 10px;">
+            <svg width="26" height="26" viewBox="0 0 82 82" style="display: block;">
+              <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+              <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+              <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="11" cy="71" r="7" fill="#00AE9D" />
+            </svg>
+          </td>
+          <td style="vertical-align: middle;">
+            <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: 800; color: #16302B;">Lewis</span>
+            <div style="font-size: 11px; color: #64748b; margin-top: 1px;">Support Team · <a href="mailto:lewissupport@lifedhealth.com" style="color: #00ae9d; text-decoration: none;">lewissupport@lifedhealth.com</a></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    """
+    return send_email(to_email=user_email, subject=user_subject, html_content=user_html)
+
+
+def send_report_delivery_email(
+    user_email: str,
+    user_name: Optional[str] = None,
+    report_uuid: Optional[str] = None,
+    order_id: Optional[str] = None,
+    report_data: Optional[Dict[str, Any]] = None
+) -> bool:
+    """
+    Send the completed and verified Personal Wellbeing Insight Report to user email.
+    """
+    name = (user_name or "there").strip()
+    rep_id = report_uuid or "REP-INSIGHT"
+    order_ref = order_id or "ORD-REF"
+    date_str = datetime.now(timezone.utc).strftime("%d %B %Y")
+    
+    frontend_base = os.getenv("FRONTEND_URL", "https://lewiswellbeing.com").split(",")[0].strip()
+    report_link = f"{frontend_base}/#mirror"
+
+    subject = f"Your LEWIS Personal Wellbeing Insight Report · Report ID {rep_id}"
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Your Personal Wellbeing Insight Report</title>
+      <style>
+        body {{
+          font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+          background-color: #f4faf8;
+          margin: 0;
+          padding: 24px 12px;
+          color: #334155;
+        }}
+        .email-card {{
+          max-width: 620px;
+          margin: 0 auto;
+          background: #ffffff;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 174, 157, 0.08);
+          border: 1px solid rgba(0, 174, 157, 0.16);
+        }}
+        .header {{
+          background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
+          padding: 32px 32px 26px;
+          text-align: center;
+          color: #ffffff;
+        }}
+        .header h1 {{
+          margin: 10px 0 4px;
+          font-size: 22px;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+        }}
+        .header p {{
+          margin: 0;
+          font-size: 13.5px;
+          opacity: 0.92;
+        }}
+        .content {{
+          padding: 32px 30px;
+        }}
+        .greeting {{
+          font-size: 16px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 14px;
+        }}
+        .badge {{
+          display: inline-block;
+          background: #e6f7f5;
+          color: #007064;
+          font-size: 12px;
+          font-weight: 700;
+          padding: 4px 12px;
+          border-radius: 999px;
+          margin-bottom: 14px;
+          border: 1px solid rgba(0, 174, 157, 0.25);
+        }}
+        .verified-card {{
+          background: #f0fdf9;
+          border: 1.5px solid #00ae9d;
+          border-radius: 14px;
+          padding: 20px;
+          margin: 20px 0;
+        }}
+        .btn {{
+          display: inline-block;
+          background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
+          color: #ffffff !important;
+          text-decoration: none;
+          padding: 14px 28px;
+          font-weight: 700;
+          font-size: 15px;
+          border-radius: 999px;
+          box-shadow: 0 4px 16px rgba(0, 174, 157, 0.3);
+          margin: 14px 0;
+          text-align: center;
+        }}
+        .footer {{
+          background: #f8fafc;
+          padding: 24px 30px;
+          text-align: center;
+          font-size: 12px;
+          color: #64748b;
+          border-top: 1px solid #f1f5f9;
+        }}
+      </style>
+    </head>
+    <body>
+      <div class="email-card">
+        <div class="header">
+          <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 8px;">
+            <tr>
+              <td style="vertical-align: middle; padding-right: 10px;">
+                <svg width="30" height="30" viewBox="0 0 82 82" style="display: block;">
+                  <path d="M11 41 V11 H41" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#86efac" />
+                  <circle cx="41" cy="41" r="11" fill="#ffffff" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#86efac" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11" cy="71" r="7" fill="#ffffff" />
+                </svg>
+              </td>
+              <td style="vertical-align: middle;">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;">Lewis</span>
+              </td>
+            </tr>
+          </table>
+          <h1>Your Personalised Insight Report</h1>
+          <p>Validated Wellbeing Intelligence Reflection</p>
+        </div>
+
+        <div class="content">
+          <div class="badge">Verified Quality Validation Passed</div>
+          <div class="greeting">Hello {name},</div>
+          <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 16px;">
+            Your personalized wellbeing assessment has completed our manual quality verification process. 
+            Your complete <strong>Personal Insight Report</strong> is now fully compiled and ready.
+          </p>
+
+          <div class="verified-card">
+            <h3 style="margin: 0 0 8px 0; color: #007064; font-size: 16px;">Report Details</h3>
+            <table style="width: 100%; font-size: 13.5px; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 6px 0; color: #64748b;">Report Identifier:</td>
+                <td style="padding: 6px 0; text-align: right; font-weight: 700; font-family: monospace; color: #1e293b;">{rep_id}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0; color: #64748b;">Order Reference:</td>
+                <td style="padding: 6px 0; text-align: right; font-weight: 700; font-family: monospace; color: #1e293b;">{order_ref}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0; color: #64748b;">Verification Date:</td>
+                <td style="padding: 6px 0; text-align: right; font-weight: 700; color: #1e293b;">{date_str}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0; color: #64748b;">Status:</td>
+                <td style="padding: 6px 0; text-align: right; font-weight: 700; color: #00ae9d;">Fully Verified</td>
+              </tr>
+            </table>
+
+            <div style="text-align: center; margin-top: 18px;">
+              <a href="{report_link}" class="btn">View Verified Insight Report</a>
+            </div>
+          </div>
+
+          <p style="font-size: 13.5px; line-height: 1.6; color: #64748b;">
+            Your report provides a multi-dimensional reflection across your physical, emotional, and cognitive wellbeing patterns, giving you actionable recommendations tailored to your unique profile.
+          </p>
+
+          <!-- Lewis Brand Logo Signature -->
+          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #e2e8f0; width: 100%;">
+            <tr>
+              <td style="vertical-align: middle; width: 34px; padding-right: 12px;">
+                <svg width="30" height="30" viewBox="0 0 82 82" style="display: block;">
+                  <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+                  <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11" cy="71" r="7" fill="#00AE9D" />
+                </svg>
+              </td>
+              <td style="vertical-align: middle;">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; font-weight: 800; color: #16302B; letter-spacing: -0.02em;">Lewis</span>
+                <div style="font-size: 11.5px; color: #64748b; margin-top: 1px;">Wellbeing Intelligence</div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0 0 6px;">© 2026 LEWIS Well-Being · A Lifed Health Intelligence System</p>
+          <p style="margin: 0; font-size: 11px; color: #94a3b8;">
+            Lewis is a non-clinical wellbeing reflection and does not provide medical diagnosis or psychiatric treatment.
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+    """
+
+    text_content = f"""
+Hello {name},
+
+Your LEWIS Personal Wellbeing Insight Report has completed manual quality verification and is now ready.
+
+Report ID: {rep_id}
+Order Reference: {order_ref}
+Date: {date_str}
+
+You can view your complete verified reflection report here:
+{report_link}
+
+Support: lewissupport@lifedhealth.com
+
+Lewis Wellbeing Intelligence
+A Lifed Health Intelligence System
+    """
+
+    return send_email(to_email=user_email, subject=subject, html_content=html_content, text_content=text_content)
+
+
+def schedule_report_delivery_email(
+    user_email: str,
+    user_name: Optional[str] = None,
+    report_uuid: Optional[str] = None,
+    order_id: Optional[str] = None,
+    delay_seconds: Optional[int] = None
+):
+    """
+    Schedules sending the completed insight report 5 minutes (default 300s) after payment confirmation.
+    """
+    import time
+    import threading
+
+    if delay_seconds is None:
+        delay_seconds = int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "300"))
+
+    def delayed_worker():
+        if delay_seconds > 0:
+            logger.info("Report email for %s scheduled with %d seconds delay (manual verification interval)...", user_email, delay_seconds)
+            time.sleep(delay_seconds)
+
+        rep_json = None
+        if report_uuid:
+            try:
+                from auth import get_report_by_uuid
+                rec = get_report_by_uuid(report_uuid)
+                if rec and rec.get("report_json"):
+                    rep_json = rec["report_json"]
+            except Exception as e:
+                logger.warning("Could not fetch report data for email: %s", e)
+
+        send_report_delivery_email(
+            user_email=user_email,
+            user_name=user_name,
+            report_uuid=report_uuid,
+            order_id=order_id,
+            report_data=rep_json
+        )
+
+    t = threading.Thread(target=delayed_worker, daemon=True)
+    t.start()

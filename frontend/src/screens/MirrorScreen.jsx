@@ -43,36 +43,15 @@ export default function MirrorScreen() {
     ? `₹${paymentConfig.plans.personal_report.amount_inr}` 
     : '₹749'
 
-  const handleGetReport = async () => {
-    if (isDownloading || isUnlocking) return
-
-    // If not unlocked, navigate to Billing screen to collect delivery info
+  const handleGetReport = () => {
+    // If not unlocked, navigate to Billing screen to collect delivery info and process payment
     if (!isReportUnlocked) {
       setScreen('billing')
       return
     }
 
-    // If already unlocked, verify with backend PDF endpoint and export
-    setIsDownloading(true)
-    setDownloadSuccess(false)
-    try {
-      const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-      const repId = analysis?.report_uuid
-      if (repId) {
-        const verifyPdf = await fetch(`${API_BASE}/reports/${repId}/pdf`)
-        if (!verifyPdf.ok && verifyPdf.status === 403) {
-          throw new Error('Report entitlement is not active. Please complete payment.')
-        }
-      }
-      await exportReportPdf('Lewis-Insight-Report.pdf')
-      setDownloadSuccess(true)
-      setTimeout(() => setDownloadSuccess(false), 4000)
-    } catch (err) {
-      console.error('PDF export fallback:', err)
-      window.print()
-    } finally {
-      setIsDownloading(false)
-    }
+    // If unlocked, view delivery status on payment confirmation screen
+    setScreen('paymentConfirm')
   }
 
   useEffect(() => {
@@ -436,13 +415,13 @@ export default function MirrorScreen() {
             boxSizing: 'border-box',
           }}>
             <p className="mirror-unlock-title" style={{
-              margin: '0 0 clamp(8px, 1.2vh, 10px) 0',
+              margin: 0,
               fontSize: 'clamp(14px, 1.2vw, 15.5px)',
               fontWeight: 700,
               color: isReportUnlocked ? '#007064' : '#414242',
             }}>
               {isReportUnlocked 
-                ? '✓ Verified Entitlement · Personalised Insight Report Unlocked' 
+                ? '✓ Payment Confirmed · Personalised Report Preparing' 
                 : `₹749, inclusive of all taxes. One-time payment, no subscription.`}
             </p>
 
@@ -453,6 +432,7 @@ export default function MirrorScreen() {
               disabled={isDownloading || isUnlocking}
               className="mirror-unlock-btn"
               style={{
+                marginTop: 'clamp(8px, 1.2vh, 10px)',
                 width: '100%',
                 padding: 'clamp(12px, 1.6vh, 15px) 20px',
                 fontSize: 'clamp(16px, 1.35vw, 18px)',
@@ -468,15 +448,9 @@ export default function MirrorScreen() {
                 opacity: (isDownloading || isUnlocking) ? 0.85 : 1,
               }}
             >
-              {isUnlocking 
-                ? 'Preparing report & opening checkout...' 
-                : (isDownloading 
-                    ? '✓ Payment Verified! Downloading personalised report...' 
-                    : (downloadSuccess 
-                        ? '✓ Report Downloaded! (Click to re-download)' 
-                        : (isReportUnlocked 
-                            ? 'Download Personalised Report (PDF)' 
-                            : 'Unlock your insight report at ₹749')))}
+              {isReportUnlocked 
+                ? 'View Report Delivery Status' 
+                : 'Unlock your insight report at ₹749'}
             </motion.button>
 
             <p className="mirror-unlock-note" style={{
@@ -486,8 +460,8 @@ export default function MirrorScreen() {
               lineHeight: 1.35,
             }}>
               {isReportUnlocked 
-                ? 'High-resolution vector PDF generated from your validated biometric & psychological data.'
-                : 'Instant automatic PDF download upon payment. Pay via UPI, Card, Netbanking or Wallet.'}
+                ? 'Your report is being verified and will be delivered directly to your email inbox within 5–10 minutes.'
+                : 'Your personalised insight report is sent to your email after manual verification. Pay via UPI, Card, or Netbanking.'}
             </p>
           </div>
 

@@ -431,6 +431,41 @@ def verify_payment(
         user_phone=user_phone
     )
 
+    # Asynchronously dispatch Brevo confirmation email & schedule 5-min report delivery
+    target_email = user_email or res.get("user_email")
+    if target_email:
+        try:
+            import threading
+            from mailer import send_payment_confirmation_email, schedule_report_delivery_email
+            target_name = user_name or res.get("user_name") or ""
+            target_amount = f"₹{res.get('amount', 74900) / 100:.0f}" if res.get("currency", "INR") == "INR" else f"{res.get('currency', '')} {res.get('amount', 74900) / 100:.2f}"
+            
+            # 1. Immediate payment confirmation email
+            t_confirm = threading.Thread(
+                target=send_payment_confirmation_email,
+                kwargs={
+                    "user_email": target_email,
+                    "user_name": target_name,
+                    "order_id": order_id,
+                    "payment_id": payment_id,
+                    "amount_formatted": target_amount,
+                    "currency": res.get("currency", "INR"),
+                    "report_uuid": res.get("report_uuid") or report_uuid
+                },
+                daemon=True
+            )
+            t_confirm.start()
+
+            # 2. Scheduled report delivery email (5 minutes later)
+            schedule_report_delivery_email(
+                user_email=target_email,
+                user_name=target_name,
+                report_uuid=res.get("report_uuid") or report_uuid,
+                order_id=order_id
+            )
+        except Exception as mail_err:
+            logger.warning("Could not spawn email delivery threads: %s", mail_err)
+
     return {
         "status": "success",
         "verified": True,
