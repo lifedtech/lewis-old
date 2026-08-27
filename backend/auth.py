@@ -226,11 +226,20 @@ def init_db():
                         );
                         CREATE INDEX IF NOT EXISTS idx_journey_status_active ON lewis_journey_sessions (status, last_active_at);
 
+                        CREATE TABLE IF NOT EXISTS lewis_system_counters (
+                            counter_name TEXT PRIMARY KEY,
+                            current_val BIGINT NOT NULL
+                        );
+                        INSERT INTO lewis_system_counters (counter_name, current_val) VALUES ('order_seq', 99) ON CONFLICT DO NOTHING;
+                        INSERT INTO lewis_system_counters (counter_name, current_val) VALUES ('report_seq', 199) ON CONFLICT DO NOTHING;
+
                         CREATE TABLE IF NOT EXISTS lewis_payment_orders (
                             id SERIAL PRIMARY KEY,
                             order_id TEXT UNIQUE NOT NULL,
                             report_uuid TEXT NOT NULL,
                             payment_id TEXT,
+                            payment_transaction_id TEXT,
+                            razorpay_order_id TEXT,
                             plan_id TEXT NOT NULL,
                             amount INTEGER NOT NULL,
                             currency TEXT DEFAULT 'INR',
@@ -240,6 +249,10 @@ def init_db():
                             user_name TEXT,
                             user_phone TEXT,
                             billing_details_json TEXT,
+                            confirmation_mail_sent BOOLEAN DEFAULT FALSE,
+                            confirmation_mail_sent_at TIMESTAMP WITH TIME ZONE,
+                            report_mail_sent BOOLEAN DEFAULT FALSE,
+                            report_mail_sent_at TIMESTAMP WITH TIME ZONE,
                             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                             paid_at TIMESTAMP WITH TIME ZONE
@@ -268,6 +281,20 @@ def init_db():
                                 WHERE table_name='lewis_payment_orders' AND column_name='billing_details_json'
                             ) THEN
                                 ALTER TABLE lewis_payment_orders ADD COLUMN billing_details_json TEXT;
+                            END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='payment_transaction_id') THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN payment_transaction_id TEXT;
+                            END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='razorpay_order_id') THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN razorpay_order_id TEXT;
+                            END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='confirmation_mail_sent') THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN confirmation_mail_sent BOOLEAN DEFAULT FALSE;
+                                ALTER TABLE lewis_payment_orders ADD COLUMN confirmation_mail_sent_at TIMESTAMP WITH TIME ZONE;
+                            END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='report_mail_sent') THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent BOOLEAN DEFAULT FALSE;
+                                ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent_at TIMESTAMP WITH TIME ZONE;
                             END IF;
                         END $$;
 
@@ -413,22 +440,56 @@ def init_db():
         """)
 
         cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_system_counters (
+                counter_name TEXT PRIMARY KEY,
+                current_val INTEGER NOT NULL
+            )
+        """)
+        cursor.execute("INSERT OR IGNORE INTO lewis_system_counters (counter_name, current_val) VALUES ('order_seq', 99)")
+        cursor.execute("INSERT OR IGNORE INTO lewis_system_counters (counter_name, current_val) VALUES ('report_seq', 199)")
+
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS lewis_payment_orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 order_id TEXT UNIQUE NOT NULL,
                 report_uuid TEXT NOT NULL,
                 payment_id TEXT,
+                payment_transaction_id TEXT,
+                razorpay_order_id TEXT,
                 plan_id TEXT NOT NULL,
                 amount INTEGER NOT NULL,
                 currency TEXT DEFAULT 'INR',
                 status TEXT DEFAULT 'created',
                 signature TEXT,
                 user_email TEXT,
+                user_name TEXT,
+                user_phone TEXT,
+                billing_details_json TEXT,
+                confirmation_mail_sent INTEGER DEFAULT 0,
+                confirmation_mail_sent_at TIMESTAMP,
+                report_mail_sent INTEGER DEFAULT 0,
+                report_mail_sent_at TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 paid_at TIMESTAMP
             )
         """)
+
+        for col_stmt in (
+            "ALTER TABLE lewis_payment_orders ADD COLUMN user_name TEXT",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN user_phone TEXT",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN billing_details_json TEXT",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN payment_transaction_id TEXT",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN razorpay_order_id TEXT",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN confirmation_mail_sent INTEGER DEFAULT 0",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN confirmation_mail_sent_at TIMESTAMP",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent INTEGER DEFAULT 0",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent_at TIMESTAMP",
+        ):
+            try:
+                cursor.execute(col_stmt)
+            except sqlite3.OperationalError:
+                pass
 
         conn.commit()
         conn.close()
@@ -437,14 +498,71 @@ def init_db():
 
 init_db()
 
+_in_mem_counters: Dict[str, int] = {"order_seq": 99, "report_seq": 199}
+
+def _get_next_counter_val(counter_name: str, initial: int = 0) -> int:
+    """Atomically increment and return the next counter integer."""
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO lewis_system_counters (counter_name, current_val)
+                        VALUES (%s, %s + 1)
+                        ON CONFLICT (counter_name)
+                        DO UPDATE SET current_val = lewis_system_counters.current_val + 1
+                        RETURNING current_val;
+                    """, (counter_name, initial))
+                    res = cur.fetchone()
+                    conn.commit()
+                conn.close()
+                if res and res[0] is not None:
+                    return int(res[0])
+        except Exception as e:
+            logger.warning("Postgres counter increment error (%s), using local fallback", e)
+
+    # SQLite fallback
+    try:
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        cur = conn.cursor()
+        cur.execute("CREATE TABLE IF NOT EXISTS lewis_system_counters (counter_name TEXT PRIMARY KEY, current_val INTEGER NOT NULL)")
+        cur.execute("INSERT OR IGNORE INTO lewis_system_counters (counter_name, current_val) VALUES (?, ?)", (counter_name, initial))
+        cur.execute("UPDATE lewis_system_counters SET current_val = current_val + 1 WHERE counter_name = ?", (counter_name,))
+        cur.execute("SELECT current_val FROM lewis_system_counters WHERE counter_name = ?", (counter_name,))
+        row = cur.fetchone()
+        conn.commit()
+        conn.close()
+        if row and row[0] is not None:
+            return int(row[0])
+    except Exception as e:
+        logger.warning("SQLite counter increment error (%s), using memory", e)
+
+    # In-memory fallback
+    _in_mem_counters[counter_name] = _in_mem_counters.get(counter_name, initial) + 1
+    return _in_mem_counters[counter_name]
+
+
+def get_next_order_id() -> str:
+    """Generate sequential Order ID starting from LS20260100."""
+    val = _get_next_counter_val('order_seq', initial=99)
+    return f"LS2026{str(val).zfill(4)}"
+
+
+def get_next_report_id() -> str:
+    """Generate sequential Report ID starting from LSR20260200."""
+    val = _get_next_counter_val('report_seq', initial=199)
+    return f"LSR2026{str(val).zfill(4)}"
+
+
 def generate_anonymous_user_code(user_id: int) -> str:
     """Generate a non-reversible anonymous subject ID (e.g. ANON-SUBJ-8F92A1D0)."""
     digest = hmac.new(ANON_SALT.encode('utf-8'), str(user_id).encode('utf-8'), hashlib.sha256).hexdigest()
     return f"ANON-SUBJ-{digest[:8].upper()}"
 
 def generate_report_uuid() -> str:
-    """Generate a unique identifier for an anonymized report."""
-    return f"REP-{uuid.uuid4().hex[:12].upper()}"
+    """Generate a sequential unique identifier for a report starting from LSR20260200."""
+    return get_next_report_id()
 
 _EMAIL_RE = re.compile(r'[\w\.-]+@[\w\.-]+\.\w+')
 _URL_RE = re.compile(r'\b(?:https?://|www\.)\S+', re.IGNORECASE)
@@ -1556,7 +1674,7 @@ def get_abandoned_users_list(inactive_minutes: int = 10) -> List[Dict[str, Any]]
                             "reminder_status": r['reminder_status'] or 'none',
                             "reminder_sent_at": str(r['reminder_sent_at']) if r['reminder_sent_at'] else None,
                             "eligible_for_10min_reminder": eligible,
-                            "restart_url": "/#landing"
+                            "restart_url": "/"
                         })
                 conn.close()
                 return abandoned_list
@@ -1610,7 +1728,7 @@ def get_abandoned_users_list(inactive_minutes: int = 10) -> List[Dict[str, Any]]
                 "reminder_status": r[10] or 'none',
                 "reminder_sent_at": str(r[11]) if r[11] else None,
                 "eligible_for_10min_reminder": eligible,
-                "restart_url": "/#landing"
+                "restart_url": "/"
             })
         conn.close()
     except Exception as e:
@@ -1728,16 +1846,19 @@ def save_payment_order(
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO lewis_payment_orders
-            (order_id, report_uuid, plan_id, amount, currency, status, user_email, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, 'created', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            (order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, 'created', ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ON CONFLICT (order_id) DO UPDATE SET
                 report_uuid = excluded.report_uuid,
                 plan_id = excluded.plan_id,
                 amount = excluded.amount,
                 currency = excluded.currency,
                 user_email = COALESCE(excluded.user_email, lewis_payment_orders.user_email),
+                user_name = COALESCE(excluded.user_name, lewis_payment_orders.user_name),
+                user_phone = COALESCE(excluded.user_phone, lewis_payment_orders.user_phone),
+                billing_details_json = COALESCE(excluded.billing_details_json, lewis_payment_orders.billing_details_json),
                 updated_at = CURRENT_TIMESTAMP
-        """, (order_id, report_uuid, plan_id, amount, currency, user_email))
+        """, (order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json))
         conn.commit()
         conn.close()
     except Exception as e:
@@ -1747,13 +1868,13 @@ def save_payment_order(
 
 
 def get_payment_order(order_id: str) -> Optional[Dict[str, Any]]:
-    """Retrieve payment order by Razorpay order ID."""
+    """Retrieve payment order by Order ID or Razorpay Order ID."""
     if has_pg and DATABASE_URL:
         try:
             conn = get_pg_conn()
             if conn:
                 with conn.cursor() as cur:
-                    cur.execute("SELECT * FROM lewis_payment_orders WHERE order_id = %s LIMIT 1", (order_id,))
+                    cur.execute("SELECT * FROM lewis_payment_orders WHERE order_id = %s OR razorpay_order_id = %s LIMIT 1", (order_id, order_id))
                     row = cur.fetchone()
                 conn.close()
                 if row:
@@ -1765,7 +1886,7 @@ def get_payment_order(order_id: str) -> Optional[Dict[str, Any]]:
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        cur.execute("SELECT * FROM lewis_payment_orders WHERE order_id = ? LIMIT 1", (order_id,))
+        cur.execute("SELECT * FROM lewis_payment_orders WHERE order_id = ? OR razorpay_order_id = ? LIMIT 1", (order_id, order_id))
         row = cur.fetchone()
         conn.close()
         if row:
@@ -1797,6 +1918,7 @@ def record_successful_payment(
     if order_id in IN_MEMORY_ORDERS:
         IN_MEMORY_ORDERS[order_id].update({
             "payment_id": payment_id,
+            "payment_transaction_id": payment_id,
             "signature": signature,
             "status": "paid",
             "user_email": user_email or IN_MEMORY_ORDERS[order_id].get("user_email"),
@@ -1819,6 +1941,7 @@ def record_successful_payment(
                     cur.execute("""
                         UPDATE lewis_payment_orders
                         SET payment_id = %s,
+                            payment_transaction_id = %s,
                             signature = %s,
                             status = 'paid',
                             user_email = COALESCE(%s, user_email),
@@ -1826,8 +1949,8 @@ def record_successful_payment(
                             user_phone = COALESCE(%s, user_phone),
                             paid_at = NOW(),
                             updated_at = NOW()
-                        WHERE order_id = %s;
-                    """, (payment_id, signature, user_email, user_name, user_phone, order_id))
+                        WHERE order_id = %s OR razorpay_order_id = %s;
+                    """, (payment_id, payment_id, signature, user_email, user_name, user_phone, order_id, order_id))
 
                     if target_report_uuid:
                         cur.execute("""
@@ -1850,13 +1973,16 @@ def record_successful_payment(
         cur.execute("""
             UPDATE lewis_payment_orders
             SET payment_id = ?,
+                payment_transaction_id = ?,
                 signature = ?,
                 status = 'paid',
                 user_email = COALESCE(?, user_email),
+                user_name = COALESCE(?, user_name),
+                user_phone = COALESCE(?, user_phone),
                 paid_at = CURRENT_TIMESTAMP,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE order_id = ?
-        """, (payment_id, signature, user_email, order_id))
+            WHERE order_id = ? OR razorpay_order_id = ?
+        """, (payment_id, payment_id, signature, user_email, user_name, user_phone, order_id, order_id))
 
         if target_report_uuid:
             cur.execute("""
@@ -1873,6 +1999,54 @@ def record_successful_payment(
         logger.warning("SQLite error recording payment success: %s", e)
 
     return get_payment_order(order_id) or {"order_id": order_id, "payment_id": payment_id, "status": "paid", "report_uuid": target_report_uuid}
+
+
+def update_order_email_status(order_id: str, email_type: str = "confirmation", status: bool = True) -> bool:
+    """
+    Record in database whether confirmation email or report delivery email has been sent.
+    """
+    col_flag = "confirmation_mail_sent" if email_type == "confirmation" else "report_mail_sent"
+    col_time = "confirmation_mail_sent_at" if email_type == "confirmation" else "report_mail_sent_at"
+
+    if order_id in IN_MEMORY_ORDERS:
+        IN_MEMORY_ORDERS[order_id][col_flag] = status
+        IN_MEMORY_ORDERS[order_id][col_time] = datetime.now(timezone.utc).isoformat()
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute(f"""
+                        UPDATE lewis_payment_orders
+                        SET {col_flag} = %s,
+                            {col_time} = NOW(),
+                            updated_at = NOW()
+                        WHERE order_id = %s OR razorpay_order_id = %s;
+                    """, (status, order_id, order_id))
+                    conn.commit()
+                conn.close()
+                return True
+        except Exception as e:
+            logger.error("PostgreSQL error updating order email status: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute(f"""
+            UPDATE lewis_payment_orders
+            SET {col_flag} = ?,
+                {col_time} = CURRENT_TIMESTAMP,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE order_id = ? OR razorpay_order_id = ?
+        """, (1 if status else 0, order_id, order_id))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        logger.warning("SQLite error updating order email status: %s", e)
+
+    return False
 
 
 def is_report_unlocked(report_uuid: str) -> bool:

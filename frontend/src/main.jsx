@@ -22,8 +22,7 @@ class ErrorBoundary extends Component {
       localStorage.removeItem('lewis_auth_token')
       localStorage.removeItem('lewis_user')
       if (typeof window !== 'undefined') {
-        window.location.hash = 'landing'
-        window.history.replaceState({ screen: 'landing' }, '', '#landing')
+        window.history.replaceState({ screen: 'landing' }, '', window.location.pathname + window.location.search)
       }
     } catch (e) {
       console.warn(e)

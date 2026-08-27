@@ -35,8 +35,12 @@ export default function App() {
     const initialScreen = hash || useLewisStore.getState().currentScreen || 'landing'
     useLewisStore.getState().setScreen(initialScreen, { skipHistory: true })
 
-    if (!window.history.state?.screen) {
-      window.history.replaceState({ screen: initialScreen }, '', `#${initialScreen}`)
+    const newUrl = initialScreen === 'landing'
+      ? (window.location.pathname + window.location.search)
+      : `#${initialScreen}`
+
+    if (!window.history.state?.screen || (initialScreen === 'landing' && window.location.hash)) {
+      window.history.replaceState({ screen: initialScreen }, '', newUrl)
     }
 
     const handlePopState = (event) => {

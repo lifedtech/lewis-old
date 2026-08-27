@@ -70,14 +70,35 @@ def send_email(
         if bcc:
             recipients.extend(bcc)
 
-        with smtplib.SMTP(MAIL_HOST, MAIL_PORT, timeout=20) as server:
-            server.ehlo(MAIL_EHLO_DOMAIN)
-            server.starttls()
-            server.ehlo(MAIL_EHLO_DOMAIN)
-            server.login(MAIL_USERNAME, MAIL_PASSWORD)
-            server.sendmail(MAIL_FROM_ADDRESS, recipients, msg.as_string())
+        # Robust connection with 120s timeout for large 5.4MB attachments
+        connected = False
+        last_err = None
 
-        logger.info("Successfully sent email to %s (Subject: %s, Attachments: %d)", to_email, subject, len(attachments or []))
+        for port in [MAIL_PORT, 465, 587, 2525]:
+            try:
+                if port == 465:
+                    server = smtplib.SMTP_SSL(MAIL_HOST, port, timeout=120)
+                    server.ehlo(MAIL_EHLO_DOMAIN)
+                else:
+                    server = smtplib.SMTP(MAIL_HOST, port, timeout=120)
+                    server.ehlo(MAIL_EHLO_DOMAIN)
+                    server.starttls()
+                    server.ehlo(MAIL_EHLO_DOMAIN)
+
+                server.login(MAIL_USERNAME, MAIL_PASSWORD)
+                server.sendmail(MAIL_FROM_ADDRESS, recipients, msg.as_string())
+                server.quit()
+                connected = True
+                logger.info("Successfully dispatched email to %s via port %d (Subject: %s, Attachments: %d)", to_email, port, subject, len(attachments or []))
+                break
+            except Exception as e:
+                last_err = e
+                logger.warning("SMTP attempt on port %d failed: %s; trying fallback...", port, e)
+
+        if not connected:
+            logger.error("Failed to send email to %s after all port attempts: %s", to_email, last_err)
+            return False
+
         return True
     except Exception as exc:
         logger.error("Failed to send email to %s: %s", to_email, exc)
@@ -95,7 +116,7 @@ def send_payment_confirmation_email(
 ) -> bool:
     """
     Send a customer confirmation email after payment.
-    Informs user that report is preparing with manual verification and will arrive in 5–10 mins.
+    Informs user that their report is preparing and will arrive in 5–10 mins.
     """
     name = (user_name or "there").strip()
     order_ref = order_id or "ORD-REF"
@@ -111,7 +132,7 @@ def send_payment_confirmation_email(
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Payment Confirmation & Report Delivery</title>
+      <title>Payment Confirmation</title>
       <style>
         body {{
           font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
@@ -155,29 +176,29 @@ def send_payment_confirmation_email(
           color: #1e293b;
           margin-bottom: 14px;
         }}
-        .alert-box {{
+        .notice-box {{
           background: #f0fdf9;
           border-left: 4px solid #00ae9d;
           border-radius: 12px;
-          padding: 18px 20px;
-          margin: 22px 0;
+          padding: 16px 20px;
+          margin: 20px 0;
         }}
-        .alert-box h3 {{
+        .notice-box h3 {{
           margin: 0 0 6px 0;
           color: #007064;
-          font-size: 15px;
+          font-size: 14.5px;
           font-weight: 800;
         }}
-        .alert-box p {{
+        .notice-box p {{
           margin: 0;
-          font-size: 13.5px;
-          line-height: 1.55;
+          font-size: 13px;
+          line-height: 1.5;
           color: #134e48;
         }}
         .details-table {{
           width: 100%;
           border-collapse: collapse;
-          margin: 24px 0 12px;
+          margin: 20px 0 12px;
           font-size: 13.5px;
         }}
         .details-table tr {{
@@ -203,11 +224,6 @@ def send_payment_confirmation_email(
           color: #64748b;
           border-top: 1px solid #f1f5f9;
         }}
-        .footer a {{
-          color: #00ae9d;
-          text-decoration: none;
-          font-weight: 700;
-        }}
       </style>
     </head>
     <body>
@@ -216,7 +232,7 @@ def send_payment_confirmation_email(
           <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 8px;">
             <tr>
               <td style="vertical-align: middle; padding-right: 10px;">
-                <svg width="30" height="30" viewBox="0 0 82 82" style="display: block;">
+                <svg width="32" height="32" viewBox="0 0 82 82" style="display: block;">
                   <path d="M11 41 V11 H41" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
                   <circle cx="71" cy="11" r="7" fill="#86efac" />
                   <circle cx="41" cy="41" r="11" fill="#ffffff" />
@@ -236,17 +252,16 @@ def send_payment_confirmation_email(
         <div class="content">
           <div class="greeting">Hello {name},</div>
           <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 16px;">
-            We have successfully received your payment for the <strong>Personal Insight Report</strong>.
+            We have received your payment for the <strong>Personal Insight Report</strong>.
           </p>
 
-          <!-- Delivery Status Alert Box (Clean, No Emoticons) -->
-          <div class="alert-box">
-            <h3>Report Synthesis and Quality Verification in Progress</h3>
+          <div class="notice-box">
+            <h3>Preparing Your Report</h3>
             <p>
-              Your personalized report is being prepared and is currently undergoing our manual quality verification process. 
+              Your full personalized report is being prepared. 
               <strong>You will receive your complete report directly at this email address within 5 to 10 minutes.</strong>
             </p>
-            <p style="margin-top: 10px; font-size: 12.5px; color: #0f766e;">
+            <p style="margin-top: 8px; font-size: 12px; color: #0f766e;">
               Please check your Spam or Promotions folder if you do not see it in your primary inbox within 10 minutes.
             </p>
           </div>
@@ -255,7 +270,7 @@ def send_payment_confirmation_email(
           <table class="details-table">
             <tr>
               <td class="label">Item</td>
-              <td class="val">Personal Insight Report</td>
+              <td class="val">Personal Insight Report (PDF)</td>
             </tr>
             <tr>
               <td class="label">Amount Paid</td>
@@ -266,7 +281,7 @@ def send_payment_confirmation_email(
               <td class="val" style="font-family: monospace; font-size: 12.5px;">{order_ref}</td>
             </tr>
             <tr>
-              <td class="label">Transaction ID</td>
+              <td class="label">Payment Transaction ID</td>
               <td class="val" style="font-family: monospace; font-size: 12.5px;">{txn_ref}</td>
             </tr>
             <tr>
@@ -276,11 +291,11 @@ def send_payment_confirmation_email(
           </table>
 
           <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #cbd5e1; font-size: 13px; color: #64748b; line-height: 1.5;">
-            If you have any questions about your report or need assistance, simply reply to this email or contact us at 
-            <a href="mailto:lewissupport@lifedhealth.com" style="color: #00ae9d; font-weight: 700; text-decoration: none;">lewissupport@lifedhealth.com</a>.
+            If you have any questions or need assistance, write to us at 
+            <a href="mailto:lewissupport@lifedhealth.com" style="color: #00ae9d; font-weight: 700; text-decoration: none;">lewissupport@lifedhealth.com</a> quoting your Order ID.
           </div>
 
-          <!-- Lewis Brand Logo Signature -->
+          <!-- Lewis Brand Signature -->
           <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #e2e8f0; width: 100%;">
             <tr>
               <td style="vertical-align: middle; width: 34px; padding-right: 12px;">
@@ -316,12 +331,11 @@ Hello {name},
 
 Thank you for purchasing the LEWIS Personal Insight Report.
 
-We have successfully verified your payment of {price_str}.
+Payment received: {price_str}
 Order ID: {order_ref}
-Transaction ID: {txn_ref}
+Payment Transaction ID: {txn_ref}
 
-STATUS: Your report is preparing and undergoing manual quality verification.
-You will receive your full report directly at this email address within 5 to 10 minutes.
+Your report is currently being prepared. You will receive your complete report directly at this email address within 5 to 10 minutes.
 
 Note: Please check your Spam or Promotions folder if you do not see it in your primary inbox within 10 minutes.
 
@@ -331,7 +345,14 @@ Lewis Wellbeing Intelligence
 A Lifed Health Intelligence System
     """
 
-    return send_email(to_email=user_email, subject=subject, html_content=html_content, text_content=text_content)
+    sent = send_email(to_email=user_email, subject=subject, html_content=html_content, text_content=text_content)
+    if sent and order_id:
+        try:
+            from auth import update_order_email_status
+            update_order_email_status(order_id, "confirmation", True)
+        except Exception:
+            pass
+    return sent
 
 
 def send_support_notification_email(
@@ -402,11 +423,11 @@ def send_report_delivery_email(
     report_data: Optional[Dict[str, Any]] = None
 ) -> bool:
     """
-    Send the completed and verified Personal Wellbeing Insight Report to user email with attached PDF.
+    Send the completed Personal Wellbeing Insight Report to user email with attached PDF.
     """
     name = (user_name or "there").strip()
-    rep_id = report_uuid or "REP-INSIGHT"
-    order_ref = order_id or "ORD-REF"
+    rep_id = report_uuid or "LSR20260200"
+    order_ref = order_id or "LS20260100"
     date_str = datetime.now(timezone.utc).strftime("%d %B %Y")
     
     # Resolve public production domain (filter out localhost)
@@ -415,7 +436,7 @@ def send_report_delivery_email(
     frontend_base = prod_frontends[0] if prod_frontends else "https://lewiswellbeing.com"
     report_link = f"{frontend_base}/#mirror"
 
-    # 1. Generate Authoritative Vector PDF Attachment
+    # 1. Load exact authentic 25-page PDF Attachment
     pdf_bytes = None
     try:
         from pdf_generator import build_insight_report_pdf
@@ -428,7 +449,7 @@ def send_report_delivery_email(
     except Exception as pdf_err:
         logger.error("Failed to generate PDF for attachment (%s): %s", rep_id, pdf_err)
 
-    pdf_filename = f"LEWIS-Personal-Insight-Report-{rep_id}.pdf"
+    pdf_filename = f"LEWIS-Insight-Report-{rep_id}.pdf"
     attachments = []
     if pdf_bytes:
         attachments.append({
@@ -490,32 +511,18 @@ def send_report_delivery_email(
           color: #1e293b;
           margin-bottom: 14px;
         }}
-        .badge {{
-          display: inline-block;
-          background: #e6f7f5;
-          color: #007064;
-          font-size: 12px;
-          font-weight: 700;
-          padding: 4px 12px;
-          border-radius: 999px;
-          margin-bottom: 14px;
-          border: 1px solid rgba(0, 174, 157, 0.25);
-        }}
         .pdf-attached-box {{
           background: #eafbf7;
           border: 1.5px solid #00ae9d;
           border-radius: 12px;
           padding: 14px 18px;
           margin: 16px 0;
-          display: flex;
-          align-items: center;
-          gap: 12px;
         }}
-        .verified-card {{
-          background: #f0fdf9;
-          border: 1.5px solid #00ae9d;
+        .summary-card {{
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
           border-radius: 14px;
-          padding: 20px;
+          padding: 18px 20px;
           margin: 20px 0;
         }}
         .btn {{
@@ -523,9 +530,9 @@ def send_report_delivery_email(
           background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
           color: #ffffff !important;
           text-decoration: none;
-          padding: 14px 28px;
+          padding: 13px 26px;
           font-weight: 700;
-          font-size: 15px;
+          font-size: 14.5px;
           border-radius: 999px;
           box-shadow: 0 4px 16px rgba(0, 174, 157, 0.3);
           margin: 14px 0;
@@ -547,7 +554,7 @@ def send_report_delivery_email(
           <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 8px;">
             <tr>
               <td style="vertical-align: middle; padding-right: 10px;">
-                <svg width="30" height="30" viewBox="0 0 82 82" style="display: block;">
+                <svg width="32" height="32" viewBox="0 0 82 82" style="display: block;">
                   <path d="M11 41 V11 H41" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
                   <circle cx="71" cy="11" r="7" fill="#86efac" />
                   <circle cx="41" cy="41" r="11" fill="#ffffff" />
@@ -561,29 +568,27 @@ def send_report_delivery_email(
             </tr>
           </table>
           <h1>Your Personalised Insight Report</h1>
-          <p>Validated Wellbeing Intelligence Reflection</p>
+          <p>Wellbeing Intelligence Reflection</p>
         </div>
 
         <div class="content">
-          <div class="badge">Verified Quality Validation Passed</div>
           <div class="greeting">Hello {name},</div>
           <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 16px;">
-            Your personalized wellbeing assessment has completed our manual quality verification process. 
-            Your complete <strong>Personal Insight Report</strong> is now fully compiled and ready.
+            Your complete <strong>Personal Insight Report</strong> is compiled and attached directly to this email.
           </p>
 
           <!-- PDF Attachment Notice -->
           <div class="pdf-attached-box">
             <div style="font-size: 13.5px; color: #016257; line-height: 1.5;">
-              <strong>PDF Report Attached:</strong> Your full 25-page vector Insight Report document (<code>{pdf_filename}</code>) is attached directly to this email. You can download and save it to your device anytime.
+              <strong>PDF Report Attached:</strong> Your full 25-page Insight Report document (<code>{pdf_filename}</code>) is attached directly to this email. You can download and save it to your device anytime.
             </div>
           </div>
 
-          <div class="verified-card">
-            <h3 style="margin: 0 0 8px 0; color: #007064; font-size: 16px;">Report Summary</h3>
+          <div class="summary-card">
+            <h3 style="margin: 0 0 8px 0; color: #1e293b; font-size: 15px;">Report Details</h3>
             <table style="width: 100%; font-size: 13.5px; border-collapse: collapse;">
               <tr>
-                <td style="padding: 6px 0; color: #64748b;">Report Identifier:</td>
+                <td style="padding: 6px 0; color: #64748b;">Report ID:</td>
                 <td style="padding: 6px 0; text-align: right; font-weight: 700; font-family: monospace; color: #1e293b;">{rep_id}</td>
               </tr>
               <tr>
@@ -591,17 +596,13 @@ def send_report_delivery_email(
                 <td style="padding: 6px 0; text-align: right; font-weight: 700; font-family: monospace; color: #1e293b;">{order_ref}</td>
               </tr>
               <tr>
-                <td style="padding: 6px 0; color: #64748b;">Verification Date:</td>
+                <td style="padding: 6px 0; color: #64748b;">Date:</td>
                 <td style="padding: 6px 0; text-align: right; font-weight: 700; color: #1e293b;">{date_str}</td>
-              </tr>
-              <tr>
-                <td style="padding: 6px 0; color: #64748b;">Validation Status:</td>
-                <td style="padding: 6px 0; text-align: right; font-weight: 700; color: #00ae9d;">Fully Verified</td>
               </tr>
             </table>
 
-            <div style="text-align: center; margin-top: 18px;">
-              <a href="{report_link}" class="btn">View Verified Insight Report Online</a>
+            <div style="text-align: center; margin-top: 16px;">
+              <a href="{report_link}" class="btn">View Online Summary</a>
             </div>
           </div>
 
@@ -643,30 +644,32 @@ def send_report_delivery_email(
     text_content = f"""
 Hello {name},
 
-Your LEWIS Personal Wellbeing Insight Report has completed manual quality verification and is now ready.
+Your LEWIS Personal Wellbeing Insight Report is attached to this email (PDF).
 
 Report ID: {rep_id}
 Order Reference: {order_ref}
 Date: {date_str}
 
-ATTACHMENT: Your verified report PDF ({pdf_filename}) is attached directly to this email.
-
-You can also view your verified reflection online anytime here:
-{report_link}
-
-Support: lewissupport@lifedhealth.com
+Please find your complete 25-page Insight Report attached directly as a PDF document.
 
 Lewis Wellbeing Intelligence
 A Lifed Health Intelligence System
     """
 
-    return send_email(
+    sent = send_email(
         to_email=user_email,
         subject=subject,
         html_content=html_content,
         text_content=text_content,
         attachments=attachments
     )
+    if sent and order_id:
+        try:
+            from auth import update_order_email_status
+            update_order_email_status(order_id, "report", True)
+        except Exception:
+            pass
+    return sent
 
 
 def schedule_report_delivery_email(

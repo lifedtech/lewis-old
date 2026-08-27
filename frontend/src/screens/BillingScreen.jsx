@@ -8,6 +8,10 @@ import {
   formatCurrencyPrice, 
   CURRENCY_METADATA 
 } from '../lib/geoCurrency.js'
+import { 
+  ALL_COUNTRY_CODES, 
+  getDefaultCountryDialCode 
+} from '../lib/countryData.js'
 import LewisLogo from '../components/LewisLogo.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
 import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
@@ -30,20 +34,35 @@ export default function BillingScreen() {
     paymentConfig
   } = useLewisStore()
 
+  const initialCurrency = detectLocalCurrency()
   const [fullName, setFullName] = useState(storeName || authUser?.name || '')
   const [email, setEmail] = useState(storeEmail || authUser?.email || '')
   const [phone, setPhone] = useState(storePhone || '')
-  const [currency, setCurrency] = useState(detectLocalCurrency())
+  const [currency, setCurrency] = useState(initialCurrency)
+  const [countryCode, setCountryCode] = useState(getDefaultCountryDialCode(initialCurrency))
   const [liveRates, setLiveRates] = useState(null)
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [isSupportOpen, setIsSupportOpen] = useState(false)
 
+  // Handle currency selection & automatically update country code to match
+  const handleCurrencyChange = (newCurr) => {
+    setCurrency(newCurr)
+    const matchingDial = getDefaultCountryDialCode(newCurr)
+    if (matchingDial) {
+      setCountryCode(matchingDial)
+    }
+  }
+
   // Detect Country & Currency asynchronously in background
   useEffect(() => {
     detectCountryByIp().then(detected => {
-      if (detected) setCurrency(detected)
+      if (detected) {
+        setCurrency(detected)
+        const matchingDial = getDefaultCountryDialCode(detected)
+        if (matchingDial) setCountryCode(matchingDial)
+      }
     })
 
     // Fetch live rates from backend
@@ -65,7 +84,7 @@ export default function BillingScreen() {
     const nextErrors = {}
     const trimmedName = (fullName || '').trim()
     const trimmedEmail = (email || '').trim()
-    const trimmedPhone = (phone || '').trim().replace(/\D/g, '')
+    const cleanDigits = (phone || '').trim().replace(/\D/g, '')
 
     if (!trimmedName || trimmedName.length < 2) {
       nextErrors.fullName = 'Please enter your full name (minimum 2 characters).'
@@ -77,10 +96,12 @@ export default function BillingScreen() {
       nextErrors.email = 'Please enter a valid email address (e.g., name@example.com).'
     }
 
-    if (!trimmedPhone) {
+    if (!cleanDigits) {
       nextErrors.phone = 'Please enter your mobile phone number.'
-    } else if (trimmedPhone.length < 10) {
-      nextErrors.phone = 'Please enter a valid 10-digit mobile number.'
+    } else if (countryCode === '+91' && cleanDigits.length < 10) {
+      nextErrors.phone = 'Please enter a valid 10-digit Indian mobile number.'
+    } else if (cleanDigits.length < 6) {
+      nextErrors.phone = 'Please enter a valid mobile number (minimum 6 digits).'
     }
 
     setErrors(nextErrors)
@@ -97,12 +118,13 @@ export default function BillingScreen() {
 
     const trimmedName = fullName.trim()
     const trimmedEmail = email.trim()
-    const trimmedPhone = phone.trim()
+    const cleanPhoneDigits = phone.trim().replace(/[^\d]/g, '')
+    const fullFormattedPhone = `${countryCode} ${cleanPhoneDigits}`
 
     // Save into store
     setProfileField('name', trimmedName)
     setProfileField('email', trimmedEmail)
-    setProfileField('phone', trimmedPhone)
+    setProfileField('phone', fullFormattedPhone)
 
     setIsSubmitting(true)
 
@@ -113,7 +135,7 @@ export default function BillingScreen() {
         reportId: analysisData?.report_uuid,
         userEmail: trimmedEmail,
         userName: trimmedName,
-        userPhone: trimmedPhone,
+        userPhone: fullFormattedPhone,
         onSuccess: (verifyData) => {
           setIsSubmitting(false)
           setPaymentSuccess({
@@ -122,7 +144,7 @@ export default function BillingScreen() {
             paymentId: verifyData.payment_id,
             email: trimmedEmail,
             name: trimmedName,
-            phone: trimmedPhone,
+            phone: fullFormattedPhone,
             currency: currency,
             amount: currentPriceObj.amount,
             paidAt: new Date().toISOString()
@@ -389,38 +411,74 @@ export default function BillingScreen() {
               <label htmlFor="billing-phone" style={{ fontSize: '13.5px', fontWeight: 700, color: INK }}>
                 Mobile Number <span style={{ color: '#d0574f' }}>*</span>
               </label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <span style={{
-                  position: 'absolute',
-                  left: '14px',
-                  fontSize: '14.5px',
-                  fontWeight: 700,
-                  color: '#64748b',
-                  pointerEvents: 'none',
-                }}>
-                  +91
-                </span>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                borderRadius: '12px',
+                border: errors.phone ? '1.5px solid #d0574f' : '1.5px solid #cbd5e1',
+                background: '#fcfdfd',
+                transition: 'border-color 0.2s',
+                overflow: 'hidden',
+                boxSizing: 'border-box',
+              }}>
+                {/* Interactive Country Dial Code Dropdown */}
+                <select
+                  value={countryCode}
+                  onChange={(e) => {
+                    setCountryCode(e.target.value)
+                    if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }))
+                  }}
+                  aria-label="Country dial code"
+                  title="Select Country Dial Code"
+                  style={{
+                    padding: '13px 8px 13px 14px',
+                    border: 'none',
+                    borderRight: '1.5px solid #e2e8f0',
+                    background: '#f8fafc',
+                    color: '#334155',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    fontFamily: NUNITO,
+                    outline: 'none',
+                    cursor: 'pointer',
+                    minWidth: '94px',
+                    maxWidth: '120px',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 6px center',
+                    backgroundSize: '12px',
+                  }}
+                >
+                  {ALL_COUNTRY_CODES.map((c, idx) => (
+                    <option key={`${c.country}-${c.code}-${idx}`} value={c.code}>
+                      {c.flag} {c.code} ({c.name})
+                    </option>
+                  ))}
+                </select>
+
+                {/* Phone Digits Input */}
                 <input
                   id="billing-phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => {
-                    const digits = e.target.value.replace(/\D/g, '').slice(0, 10)
-                    setPhone(digits)
+                    const val = e.target.value.replace(/[^\d\s-]/g, '').slice(0, 15)
+                    setPhone(val)
                     if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }))
                   }}
-                  placeholder="98765 43210"
+                  placeholder={countryCode === '+91' ? '98765 43210' : 'Phone number'}
                   style={{
+                    flex: 1,
                     width: '100%',
-                    padding: '13px 16px 13px 52px',
-                    borderRadius: '12px',
-                    border: errors.phone ? '1.5px solid #d0574f' : '1.5px solid #cbd5e1',
-                    background: '#fcfdfd',
+                    padding: '13px 16px',
+                    border: 'none',
+                    background: 'transparent',
                     fontSize: '15px',
                     fontFamily: NUNITO,
                     color: INK,
                     outline: 'none',
-                    transition: 'border-color 0.2s',
                     boxSizing: 'border-box',
                   }}
                 />
@@ -557,7 +615,7 @@ export default function BillingScreen() {
             </span>
             <select
               value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
+              onChange={(e) => handleCurrencyChange(e.target.value)}
               style={{
                 border: 'none',
                 background: 'transparent',

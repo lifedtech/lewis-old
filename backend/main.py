@@ -868,13 +868,13 @@ def send_abandoned_reminders(payload: SendRemindersInput):
                     f"We noticed you were halfway through your LEWIS assessment ({user['progress_percent']}% completed). "
                     f"Your personalized wellbeing report and nervous system blueprint are ready to be completed.\n\n"
                     f"Click below to retake or attend LEWIS from start:\n"
-                    f"https://lewis.cold-forest-a8ec.workers.dev/#landing\n\n"
+                    f"https://lewiswellbeing.com/\n\n"
                     f"Best regards,\nLEWIS Wellbeing Intelligence Team"
                 ),
                 "push_notification": {
                     "title": "Complete your LEWIS Assessment",
                     "body": "You were over 50% through! Finish now to receive your personalized report.",
-                    "action_url": "/#landing"
+                    "action_url": "/"
                 }
             }
             dispatched.append(notification_payload)

@@ -238,12 +238,13 @@ def create_order(
     currency: Optional[str] = "INR",
     user_email: Optional[str] = None,
     user_name: Optional[str] = None,
-    user_phone: Optional[str] = None
+    user_phone: Optional[str] = None,
+    billing_details: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Create a payment order in user's selected currency converted from base ₹749.
+    Create a payment order starting from LS20260100 in user's selected currency converted from base ₹749.
     """
-    from auth import save_payment_order
+    from auth import save_payment_order, get_next_order_id
 
     normalized_plan = (plan_key or "personal_report").strip().lower()
     plan_info = PLAN_CATALOG.get(normalized_plan)
@@ -255,25 +256,26 @@ def create_order(
     amount = pricing["amount_subunits"]
     curr_code = pricing["currency"]
 
+    lewis_order_id = get_next_order_id()
     mode = get_payment_mode()
     key_id, key_secret = get_razorpay_credentials()
 
     if mode == "mock" or not (key_id and key_secret):
-        # Local Development Mock Simulator
-        order_id = f"order_mock_{uuid.uuid4().hex[:14]}"
-        order_record = save_payment_order(
-            order_id=order_id,
+        save_payment_order(
+            order_id=lewis_order_id,
             report_uuid=report_uuid,
             plan_id=plan_info["id"],
             amount=amount,
             currency=curr_code,
             user_email=user_email,
             user_name=user_name,
-            user_phone=user_phone
+            user_phone=user_phone,
+            billing_details=billing_details
         )
-        logger.info("Created MOCK payment order %s for report %s (%s %s)", order_id, report_uuid, curr_code, pricing["formatted"])
+        logger.info("Created MOCK payment order %s for report %s (%s %s)", lewis_order_id, report_uuid, curr_code, pricing["formatted"])
         return {
-            "order_id": order_id,
+            "order_id": lewis_order_id,
+            "razorpay_order_id": lewis_order_id,
             "amount": amount,
             "currency": curr_code,
             "formatted_amount": pricing["formatted"],
@@ -284,9 +286,9 @@ def create_order(
             "key_id": "rzp_mock_lewis_test"
         }
 
-    # Live or Test Mode via Razorpay API
-    receipt_id = f"rcpt_{report_uuid[-8:]}_{int(time.time())}"
+    # Live Razorpay Mode
     notes = {
+        "order_id": lewis_order_id,
         "report_uuid": report_uuid,
         "plan_id": plan_info["id"],
         "user_email": user_email or "",
@@ -301,10 +303,10 @@ def create_order(
             rp_order = rp_client.order.create({
                 "amount": amount,
                 "currency": curr_code,
-                "receipt": receipt_id,
+                "receipt": lewis_order_id,
                 "notes": notes,
             })
-            order_id = rp_order["id"]
+            rp_order_id = rp_order["id"]
         else:
             resp = requests.post(
                 "https://api.razorpay.com/v1/orders",
@@ -312,30 +314,54 @@ def create_order(
                 json={
                     "amount": amount,
                     "currency": curr_code,
-                    "receipt": receipt_id,
+                    "receipt": lewis_order_id,
                     "notes": notes,
                 },
-                timeout=10
+                timeout=15
             )
             if not resp.ok:
                 raise RuntimeError(f"Razorpay order creation failed: {resp.status_code} {resp.text}")
             rp_order = resp.json()
-            order_id = rp_order["id"]
+            rp_order_id = rp_order["id"]
 
         save_payment_order(
-            order_id=order_id,
+            order_id=lewis_order_id,
             report_uuid=report_uuid,
             plan_id=plan_info["id"],
             amount=amount,
             currency=curr_code,
             user_email=user_email,
             user_name=user_name,
-            user_phone=user_phone
+            user_phone=user_phone,
+            billing_details=billing_details
         )
-        logger.info("Created Razorpay order %s for report %s (%s %s)", order_id, report_uuid, curr_code, pricing["formatted"])
+        # Also map razorpay_order_id
+        from auth import get_pg_conn, has_pg, DATABASE_URL, DB_PATH
+        import sqlite3
+        if has_pg and DATABASE_URL:
+            try:
+                conn = get_pg_conn()
+                if conn:
+                    with conn.cursor() as cur:
+                        cur.execute("UPDATE lewis_payment_orders SET razorpay_order_id = %s WHERE order_id = %s", (rp_order_id, lewis_order_id))
+                        conn.commit()
+                    conn.close()
+            except Exception:
+                pass
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cur = conn.cursor()
+            cur.execute("UPDATE lewis_payment_orders SET razorpay_order_id = ? WHERE order_id = ?", (rp_order_id, lewis_order_id))
+            conn.commit()
+            conn.close()
+        except Exception:
+            pass
+
+        logger.info("Created Live Razorpay order %s (Internal: %s) for report %s (%s %s)", rp_order_id, lewis_order_id, report_uuid, curr_code, pricing["formatted"])
 
         return {
-            "order_id": order_id,
+            "order_id": lewis_order_id,
+            "razorpay_order_id": rp_order_id,
             "amount": amount,
             "currency": curr_code,
             "formatted_amount": pricing["formatted"],
@@ -346,29 +372,8 @@ def create_order(
             "key_id": key_id
         }
     except Exception as exc:
-        logger.error("Razorpay order creation failed (%s). Falling back to mock order.", exc)
-        order_id = f"order_fallback_{uuid.uuid4().hex[:14]}"
-        save_payment_order(
-            order_id=order_id,
-            report_uuid=report_uuid,
-            plan_id=plan_info["id"],
-            amount=amount,
-            currency=curr_code,
-            user_email=user_email,
-            user_name=user_name,
-            user_phone=user_phone
-        )
-        return {
-            "order_id": order_id,
-            "amount": amount,
-            "currency": curr_code,
-            "formatted_amount": pricing["formatted"],
-            "plan": plan_info["id"],
-            "plan_name": plan_info["name"],
-            "report_uuid": report_uuid,
-            "payment_mode": "mock",
-            "key_id": "rzp_mock_lewis_test"
-        }
+        logger.error("Razorpay order creation error (%s).", exc)
+        raise exc
 
 
 def verify_payment(

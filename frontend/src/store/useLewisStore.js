@@ -147,8 +147,11 @@ export const useLewisStore = create((set, get) => ({
     set({ currentScreen: target })
     if (typeof window !== 'undefined' && (!options || !options.skipHistory)) {
       try {
-        if (window.history.state?.screen !== target) {
-          window.history.pushState({ screen: target }, '', `#${target}`)
+        const newUrl = target === 'landing'
+          ? (window.location.pathname + window.location.search)
+          : `#${target}`
+        if (window.history.state?.screen !== target || (target === 'landing' && window.location.hash)) {
+          window.history.pushState({ screen: target }, '', newUrl)
         }
       } catch (e) {
         console.warn('History pushState error:', e)
