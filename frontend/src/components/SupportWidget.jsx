@@ -3,24 +3,23 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { useDeviceViewport } from '../shared/hooks/useDeviceViewport.js'
 
-export default function SupportWidget() {
+export function SupportModal({ isOpen, onClose, initialName = '', initialEmail = '', screenName = '' }) {
   const { currentScreen } = useLewisStore()
-  const { isMobile } = useDeviceViewport()
-  const [isOpen, setIsOpen] = useState(false)
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const activeScreen = screenName || currentScreen
+  const [name, setName] = useState(initialName)
+  const [email, setEmail] = useState(initialEmail)
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'success' | 'error'
   const [errorMsg, setErrorMsg] = useState('')
 
-  const handleOpen = () => {
-    setName('')
-    setEmail('')
-    setQuery('')
-    setErrorMsg('')
-    setStatus('idle')
-    setIsOpen(true)
-  }
+  useEffect(() => {
+    if (isOpen) {
+      if (initialName && !name) setName(initialName)
+      if (initialEmail && !email) setEmail(initialEmail)
+      setStatus('idle')
+      setErrorMsg('')
+    }
+  }, [isOpen, initialName, initialEmail])
 
   const handleSubmit = async (e) => {
     e?.preventDefault()
@@ -34,7 +33,6 @@ export default function SupportWidget() {
 
     try {
       const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-      // Post support query to backend endpoint if available, fallback gracefully
       await fetch(`${API_BASE}/support/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -42,19 +40,18 @@ export default function SupportWidget() {
           name: name.trim() || 'Anonymous User',
           email: email.trim(),
           query: query.trim(),
-          screen: currentScreen,
+          screen: activeScreen,
           timestamp: new Date().toISOString()
         })
       }).catch(() => {
-        // Fallback: log to console if offline/local
-        console.log('[Support Query Logged]', { name, email, query, currentScreen })
+        console.log('[Support Query Logged]', { name, email, query, activeScreen })
       })
 
       setStatus('success')
       setTimeout(() => {
         setQuery('')
         setStatus('idle')
-        setIsOpen(false)
+        if (onClose) onClose()
       }, 2500)
     } catch {
       setStatus('error')
@@ -62,7 +59,313 @@ export default function SupportWidget() {
     }
   }
 
-  if (currentScreen === 'landing' || currentScreen === 'mirror' || currentScreen === 'report') {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px',
+          boxSizing: 'border-box',
+        }}>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'rgba(22, 36, 31, 0.45)',
+              backdropFilter: 'blur(6px)',
+            }}
+          />
+
+          {/* Modal Window Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 15 }}
+            transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+            style={{
+              position: 'relative',
+              background: '#ffffff',
+              borderRadius: '24px',
+              width: '100%',
+              maxWidth: '430px',
+              padding: '28px 24px',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
+              border: '1px solid rgba(0, 174, 157, 0.18)',
+              boxSizing: 'border-box',
+              zIndex: 1,
+              fontFamily: "'Nunito', system-ui, sans-serif",
+            }}
+          >
+            {/* Close Icon Button */}
+            <button
+              onClick={onClose}
+              style={{
+                position: 'absolute',
+                top: '18px',
+                right: '18px',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                border: '1px solid #eef2f1',
+                background: '#f8faf9',
+                color: '#657370',
+                fontSize: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                outline: 'none',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#eef2f1'
+                e.currentTarget.style.color = '#414242'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#f8faf9'
+                e.currentTarget.style.color = '#657370'
+              }}
+            >
+              ✕
+            </button>
+
+            {/* Modal Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '10px',
+                background: 'rgba(0, 174, 157, 0.12)',
+                color: '#00ae9d',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </div>
+              <h3 style={{
+                margin: 0,
+                fontSize: '20px',
+                fontWeight: 800,
+                color: '#414242',
+                letterSpacing: '-0.02em',
+              }}>
+                Support
+              </h3>
+            </div>
+
+            <p style={{
+              margin: '0 0 18px 0',
+              fontSize: '13px',
+              color: '#657370',
+              lineHeight: 1.45,
+            }}>
+              Facing an issue or have a question? Leave a message and our team will assist you.
+            </p>
+
+            {/* Form or Success Screen */}
+            {status === 'success' ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                style={{
+                  background: '#f0fdf4',
+                  border: '1.5px solid #86efac',
+                  borderRadius: '16px',
+                  padding: '24px 16px',
+                  textAlign: 'center',
+                  margin: '12px 0',
+                }}
+              >
+                <div style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                  fontWeight: 800,
+                  margin: '0 auto 10px',
+                }}>
+                  ✓
+                </div>
+                <h4 style={{ margin: '0 0 4px 0', color: '#166534', fontWeight: 800, fontSize: '15.5px' }}>
+                  Query Sent Successfully!
+                </h4>
+                <p style={{ margin: 0, color: '#15803d', fontSize: '12.5px' }}>
+                  Our support team will reach out to you shortly.
+                </p>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* Name Input */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      borderRadius: '12px',
+                      border: '1.5px solid #dcdcdc',
+                      background: '#ffffff',
+                      fontSize: '13.5px',
+                      fontFamily: "'Nunito', sans-serif",
+                      color: '#414242',
+                      boxSizing: 'border-box',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#00ae9d'
+                      e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#dcdcdc'
+                      e.target.style.boxShadow = 'none'
+                    }}
+                  />
+                </div>
+
+                {/* Email Input */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
+                    Your Email <span style={{ color: '#00ae9d' }}>*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      borderRadius: '12px',
+                      border: '1.5px solid #dcdcdc',
+                      background: '#ffffff',
+                      fontSize: '13.5px',
+                      fontFamily: "'Nunito', sans-serif",
+                      color: '#414242',
+                      boxSizing: 'border-box',
+                      outline: 'none',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#00ae9d'
+                      e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#dcdcdc'
+                      e.target.style.boxShadow = 'none'
+                    }}
+                  />
+                </div>
+
+                {/* Query Textarea */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
+                    How can we help? <span style={{ color: '#00ae9d' }}>*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    placeholder="Describe your issue or query here..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      borderRadius: '12px',
+                      border: '1.5px solid #dcdcdc',
+                      background: '#ffffff',
+                      fontSize: '13px',
+                      fontFamily: "'Nunito', sans-serif",
+                      color: '#414242',
+                      boxSizing: 'border-box',
+                      outline: 'none',
+                      resize: 'none',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#00ae9d'
+                      e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#dcdcdc'
+                      e.target.style.boxShadow = 'none'
+                    }}
+                  />
+                </div>
+
+                {/* Error Notification */}
+                {errorMsg && (
+                  <p style={{ margin: 0, color: '#d0574f', fontSize: '12px', fontWeight: 700 }}>
+                    {errorMsg}
+                  </p>
+                )}
+
+                {/* Submit Action Button */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={status === 'sending'}
+                  style={{
+                    marginTop: '4px',
+                    width: '100%',
+                    padding: '12px 18px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: '#00ae9d',
+                    color: '#ffffff',
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    cursor: status === 'sending' ? 'wait' : 'pointer',
+                    boxShadow: '0 4px 14px rgba(0, 174, 157, 0.3)',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  {status === 'sending' ? 'Sending Query...' : 'Submit Message'}
+                </motion.button>
+              </form>
+            )}
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+export default function SupportWidget() {
+  const { currentScreen } = useLewisStore()
+  const { isMobile } = useDeviceViewport()
+  const [isOpen, setIsOpen] = useState(false)
+
+  if (['landing', 'mirror', 'report', 'billing', 'payment', 'paymentConfirm'].includes(currentScreen)) {
     return null
   }
 

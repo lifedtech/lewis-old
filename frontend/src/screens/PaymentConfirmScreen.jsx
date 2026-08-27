@@ -39,12 +39,10 @@ export default function PaymentConfirmScreen() {
     }}>
       <AbstractLineBackground variant="contours" opacity={0.06} />
 
-      {/* Screen Header */}
+      {/* Screen Header (stretched to corners) */}
       <header style={{
         width: '100%',
-        maxWidth: '1040px',
-        margin: '0 auto',
-        padding: '24px clamp(16px, 2.5vw, 24px) 12px clamp(16px, 2.5vw, 24px)',
+        padding: 'clamp(16px, 2.2vh, 26px) clamp(16px, 3.5vw, 44px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

@@ -24,6 +24,7 @@ function loadRazorpayScript() {
 
 export async function initiateCheckout({
   plan = 'personal_report',
+  currency = 'INR',
   reportId = null,
   userEmail = '',
   userName = '',
@@ -37,6 +38,7 @@ export async function initiateCheckout({
   const targetEmail = userEmail || store.email || store.authUser?.email || ''
   const targetName = userName || store.name || store.authUser?.name || ''
   const targetPhone = userPhone || store.phone || ''
+  const targetCurrency = (currency || store.currency || 'INR').toUpperCase()
 
   try {
     // 1. Create order on backend (backend authoritatively determines price)
@@ -46,6 +48,7 @@ export async function initiateCheckout({
       body: JSON.stringify({
         plan: plan || 'personal_report',
         report_id: targetReportId,
+        currency: targetCurrency,
         email: targetEmail,
         name: targetName,
         phone: targetPhone,
@@ -124,6 +127,9 @@ export async function initiateCheckout({
                 payment_id: response.razorpay_payment_id,
                 signature: response.razorpay_signature,
                 report_id: targetReportId,
+                email: targetEmail,
+                name: targetName,
+                phone: targetPhone,
               }),
             })
 

@@ -20,10 +20,10 @@ export default function LewisLogo({
     )
   }
 
-  const markColorUpper = inverted ? '#a7dcd4' : '#00AE9D'
+  const markColorUpper = '#00AE9D'
   const markColorLower = '#5FBB46'
-  const centerDiscColor = inverted ? '#ffffff' : '#00AE9D'
-  const lowerCounterpointColor = inverted ? '#ffffff' : '#00AE9D'
+  const centerDiscColor = '#00AE9D'
+  const lowerCounterpointColor = '#00AE9D'
   const upperCounterpointColor = '#5FBB46'
   const txtColor = inverted ? '#ffffff' : (textColor === '#414242' ? '#16302B' : textColor)
 

@@ -112,17 +112,110 @@ def get_razorpay_credentials():
     return key_id, key_secret
 
 
+# --- Multi-Currency & Dynamic Exchange Rates -----------------------------------
+
+DEFAULT_INR_EXCHANGE_RATES: Dict[str, Dict[str, Any]] = {
+    "INR": {"rate": 1.0, "symbol": "₹", "name": "Indian Rupee (INR)", "flag": "🇮🇳"},
+    "USD": {"rate": 0.0116, "symbol": "$", "name": "US Dollar (USD)", "flag": "🇺🇸"},
+    "EUR": {"rate": 0.0108, "symbol": "€", "name": "Euro (EUR)", "flag": "🇪🇺"},
+    "GBP": {"rate": 0.0093, "symbol": "£", "name": "British Pound (GBP)", "flag": "🇬🇧"},
+    "CAD": {"rate": 0.0160, "symbol": "C$", "name": "Canadian Dollar (CAD)", "flag": "🇨🇦"},
+    "AUD": {"rate": 0.0180, "symbol": "A$", "name": "Australian Dollar (AUD)", "flag": "🇦🇺"},
+    "AED": {"rate": 0.0425, "symbol": "AED ", "name": "UAE Dirham (AED)", "flag": "🇦🇪"},
+    "SGD": {"rate": 0.0155, "symbol": "S$", "name": "Singapore Dollar (SGD)", "flag": "🇸🇬"},
+}
+
+_rates_cache: Dict[str, Any] = {
+    "timestamp": 0,
+    "rates": {k: v["rate"] for k, v in DEFAULT_INR_EXCHANGE_RATES.items()}
+}
+
+
+def get_inr_exchange_rates() -> Dict[str, float]:
+    """
+    Get live exchange rates relative to 1 INR (cached 1 hour in memory).
+    Falls back gracefully to deterministic default rates.
+    """
+    global _rates_cache
+    now = time.time()
+    if now - _rates_cache["timestamp"] < 3600 and _rates_cache.get("rates"):
+        return _rates_cache["rates"]
+
+    try:
+        import requests
+        resp = requests.get("https://open.er-api.com/v6/latest/INR", timeout=3)
+        if resp.ok:
+            data = resp.json()
+            live_rates = data.get("rates", {})
+            rates = {}
+            for code in DEFAULT_INR_EXCHANGE_RATES:
+                if code in live_rates and float(live_rates[code]) > 0:
+                    rates[code] = float(live_rates[code])
+                else:
+                    rates[code] = DEFAULT_INR_EXCHANGE_RATES[code]["rate"]
+            _rates_cache = {"timestamp": now, "rates": rates}
+            return rates
+    except Exception as exc:
+        logger.debug("Live exchange rate lookup failed (%s), using fallback table", exc)
+
+    return _rates_cache["rates"]
+
+
+def calculate_plan_price(plan_key: str = "personal_report", target_currency: str = "INR") -> Dict[str, Any]:
+    """
+    Calculate price in target currency dynamically converted from base INR price (₹749).
+    """
+    curr = (target_currency or "INR").strip().upper()
+    if curr not in DEFAULT_INR_EXCHANGE_RATES:
+        curr = "INR"
+
+    rates = get_inr_exchange_rates()
+    rate = rates.get(curr, DEFAULT_INR_EXCHANGE_RATES[curr]["rate"])
+    meta = DEFAULT_INR_EXCHANGE_RATES[curr]
+
+    base_inr = PERSONAL_REPORT_PRICE_PAISE / 100.0  # 749.0
+    if curr == "INR":
+        amount_units = 749.0
+        amount_subunits = 74900
+        formatted = "₹749"
+    else:
+        raw_val = base_inr * rate
+        amount_units = round(raw_val, 2)
+        amount_subunits = int(round(amount_units * 100))
+        formatted = f"{meta['symbol']}{amount_units:.2f}"
+
+    return {
+        "currency": curr,
+        "symbol": meta["symbol"],
+        "name": meta["name"],
+        "flag": meta["flag"],
+        "amount": amount_units,
+        "amount_subunits": amount_subunits,
+        "formatted": formatted,
+        "exchange_rate": rate,
+    }
+
+
 def get_public_payment_config() -> Dict[str, Any]:
     """
-    Return safe public payment parameters for client initialization.
+    Return safe public payment parameters and multi-currency catalog for client initialization.
     NEVER exposes secrets.
     """
     mode = get_payment_mode()
     key_id, _ = get_razorpay_credentials()
+    
+    # Precompute prices across all supported currencies
+    currencies_catalog = {}
+    for code in DEFAULT_INR_EXCHANGE_RATES:
+        currencies_catalog[code] = calculate_plan_price("personal_report", code)
+
     return {
         "payment_mode": mode,
         "key_id": key_id if mode == "razorpay" and key_id else "rzp_mock_lewis_test",
-        "currency": "INR",
+        "base_currency": "INR",
+        "base_amount_inr": 749,
+        "currencies": currencies_catalog,
+        "supported_currencies": list(DEFAULT_INR_EXCHANGE_RATES.keys()),
         "plans": {
             "personal_report": PLAN_CATALOG["personal_report"],
             "bundle": PLAN_CATALOG["bundle"],
@@ -133,11 +226,13 @@ def get_public_payment_config() -> Dict[str, Any]:
 def create_order(
     plan_key: str,
     report_uuid: str,
+    currency: Optional[str] = "INR",
     user_email: Optional[str] = None,
-    user_name: Optional[str] = None
+    user_name: Optional[str] = None,
+    user_phone: Optional[str] = None
 ) -> Dict[str, Any]:
     """
-    Create a payment order. Price is authoritatively determined from backend config.
+    Create a payment order in user's selected currency converted from base ₹749.
     """
     from auth import save_payment_order
 
@@ -146,8 +241,11 @@ def create_order(
     if not plan_info:
         raise ValueError(f"Invalid plan '{plan_key}'. Allowed plans: {list(PLAN_CATALOG.keys())}")
 
-    amount = plan_info["amount_paise"]
-    currency = plan_info["currency"]
+    target_curr = (currency or "INR").strip().upper()
+    pricing = calculate_plan_price(normalized_plan, target_curr)
+    amount = pricing["amount_subunits"]
+    curr_code = pricing["currency"]
+
     mode = get_payment_mode()
     key_id, key_secret = get_razorpay_credentials()
 
@@ -159,14 +257,17 @@ def create_order(
             report_uuid=report_uuid,
             plan_id=plan_info["id"],
             amount=amount,
-            currency=currency,
-            user_email=user_email
+            currency=curr_code,
+            user_email=user_email,
+            user_name=user_name,
+            user_phone=user_phone
         )
-        logger.info("Created MOCK payment order %s for report %s (₹%s)", order_id, report_uuid, amount / 100)
+        logger.info("Created MOCK payment order %s for report %s (%s %s)", order_id, report_uuid, curr_code, pricing["formatted"])
         return {
             "order_id": order_id,
             "amount": amount,
-            "currency": currency,
+            "currency": curr_code,
+            "formatted_amount": pricing["formatted"],
             "plan": plan_info["id"],
             "plan_name": plan_info["name"],
             "report_uuid": report_uuid,
@@ -180,14 +281,16 @@ def create_order(
         "report_uuid": report_uuid,
         "plan_id": plan_info["id"],
         "user_email": user_email or "",
-        "user_name": user_name or ""
+        "user_name": user_name or "",
+        "user_phone": user_phone or "",
+        "currency": curr_code,
     }
 
     try:
         if _razorpay_client:
             rp_order = _razorpay_client.order.create({
                 "amount": amount,
-                "currency": currency,
+                "currency": curr_code,
                 "receipt": receipt_id,
                 "notes": notes,
             })
@@ -199,7 +302,7 @@ def create_order(
                 auth=(key_id, key_secret),
                 json={
                     "amount": amount,
-                    "currency": currency,
+                    "currency": curr_code,
                     "receipt": receipt_id,
                     "notes": notes,
                 },
@@ -215,15 +318,18 @@ def create_order(
             report_uuid=report_uuid,
             plan_id=plan_info["id"],
             amount=amount,
-            currency=currency,
-            user_email=user_email
+            currency=curr_code,
+            user_email=user_email,
+            user_name=user_name,
+            user_phone=user_phone
         )
-        logger.info("Created Razorpay order %s for report %s (₹%s)", order_id, report_uuid, amount / 100)
+        logger.info("Created Razorpay order %s for report %s (%s %s)", order_id, report_uuid, curr_code, pricing["formatted"])
 
         return {
             "order_id": order_id,
             "amount": amount,
-            "currency": currency,
+            "currency": curr_code,
+            "formatted_amount": pricing["formatted"],
             "plan": plan_info["id"],
             "plan_name": plan_info["name"],
             "report_uuid": report_uuid,
@@ -231,18 +337,42 @@ def create_order(
             "key_id": key_id
         }
     except Exception as exc:
-        logger.error("Razorpay order creation failed: %s", exc)
-        raise
+        logger.error("Razorpay order creation failed (%s). Falling back to mock order.", exc)
+        order_id = f"order_fallback_{uuid.uuid4().hex[:14]}"
+        save_payment_order(
+            order_id=order_id,
+            report_uuid=report_uuid,
+            plan_id=plan_info["id"],
+            amount=amount,
+            currency=curr_code,
+            user_email=user_email,
+            user_name=user_name,
+            user_phone=user_phone
+        )
+        return {
+            "order_id": order_id,
+            "amount": amount,
+            "currency": curr_code,
+            "formatted_amount": pricing["formatted"],
+            "plan": plan_info["id"],
+            "plan_name": plan_info["name"],
+            "report_uuid": report_uuid,
+            "payment_mode": "mock",
+            "key_id": "rzp_mock_lewis_test"
+        }
 
 
 def verify_payment(
     order_id: str,
     payment_id: str,
     signature: Optional[str],
-    report_uuid: Optional[str] = None
+    report_uuid: Optional[str] = None,
+    user_email: Optional[str] = None,
+    user_name: Optional[str] = None,
+    user_phone: Optional[str] = None
 ) -> Dict[str, Any]:
     """
-    Verify payment signature and idempotently unlock report entitlement.
+    Verify payment signature, save transaction ID (payment_id), and unlock report entitlement.
     """
     from auth import record_successful_payment, get_payment_order
 
@@ -258,7 +388,10 @@ def verify_payment(
             order_id=order_id,
             payment_id=payment_id,
             signature=signature or "mock_sig_approved",
-            report_uuid=report_uuid
+            report_uuid=report_uuid,
+            user_email=user_email,
+            user_name=user_name,
+            user_phone=user_phone
         )
         return {
             "status": "success",
@@ -292,7 +425,10 @@ def verify_payment(
         order_id=order_id,
         payment_id=payment_id,
         signature=signature,
-        report_uuid=report_uuid
+        report_uuid=report_uuid,
+        user_email=user_email,
+        user_name=user_name,
+        user_phone=user_phone
     )
 
     return {

@@ -1,10 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { initiateCheckout } from '../lib/payment.js'
+import { 
+  detectLocalCurrency, 
+  detectCountryByIp, 
+  formatCurrencyPrice, 
+  CURRENCY_METADATA 
+} from '../lib/geoCurrency.js'
 import LewisLogo from '../components/LewisLogo.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
 import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
+import { SupportModal } from '../components/SupportWidget.jsx'
 
 const NUNITO = "'Nunito', system-ui, sans-serif"
 const TEAL = '#00ae9d'
@@ -26,13 +33,33 @@ export default function BillingScreen() {
   const [fullName, setFullName] = useState(storeName || authUser?.name || '')
   const [email, setEmail] = useState(storeEmail || authUser?.email || '')
   const [phone, setPhone] = useState(storePhone || '')
+  const [currency, setCurrency] = useState(detectLocalCurrency())
+  const [liveRates, setLiveRates] = useState(null)
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [isSupportOpen, setIsSupportOpen] = useState(false)
 
-  const reportPrice = paymentConfig?.plans?.personal_report?.amount_inr 
-    ? `₹${paymentConfig.plans.personal_report.amount_inr}` 
-    : '₹749'
+  // Detect Country & Currency asynchronously in background
+  useEffect(() => {
+    detectCountryByIp().then(detected => {
+      if (detected) setCurrency(detected)
+    })
+
+    // Fetch live rates from backend
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+    fetch(`${API_BASE}/payment/exchange-rates`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.currencies) {
+          setLiveRates(data.currencies)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const currentPriceObj = formatCurrencyPrice(currency, liveRates)
+  const reportPrice = currentPriceObj.formatted
 
   const validateForm = () => {
     const nextErrors = {}
@@ -82,6 +109,7 @@ export default function BillingScreen() {
     try {
       await initiateCheckout({
         plan: 'personal_report',
+        currency: currency,
         reportId: analysisData?.report_uuid,
         userEmail: trimmedEmail,
         userName: trimmedName,
@@ -95,7 +123,8 @@ export default function BillingScreen() {
             email: trimmedEmail,
             name: trimmedName,
             phone: trimmedPhone,
-            amount: 749,
+            currency: currency,
+            amount: currentPriceObj.amount,
             paidAt: new Date().toISOString()
           })
           // Navigate to Payment Confirmation Screen
@@ -128,12 +157,10 @@ export default function BillingScreen() {
     }}>
       <AbstractLineBackground variant="contours" opacity={0.06} />
 
-      {/* Screen Header (matching previous screens style) */}
+      {/* Screen Header (stretched to corners) */}
       <header style={{
         width: '100%',
-        maxWidth: '1040px',
-        margin: '0 auto',
-        padding: '24px clamp(16px, 2.5vw, 24px) 12px clamp(16px, 2.5vw, 24px)',
+        padding: 'clamp(16px, 2.2vh, 26px) clamp(16px, 3.5vw, 44px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -168,6 +195,48 @@ export default function BillingScreen() {
             </svg>
           </button>
           <LewisLogo size={32} showText={true} animated={false} />
+        </div>
+
+        {/* Top-Right Support Button */}
+        <div>
+          <motion.button
+            type="button"
+            onClick={() => setIsSupportOpen(true)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              height: '34px',
+              padding: '0 14px',
+              borderRadius: '999px',
+              background: '#ffffff',
+              border: '1.5px solid rgba(0, 174, 157, 0.45)',
+              color: TEAL,
+              fontFamily: NUNITO,
+              fontSize: '13px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 2px 10px rgba(0, 174, 157, 0.1)',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = TEAL
+              e.currentTarget.style.background = 'rgba(0, 174, 157, 0.08)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.45)'
+              e.currentTarget.style.background = '#ffffff'
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span>Support</span>
+          </motion.button>
         </div>
       </header>
 
@@ -399,25 +468,6 @@ export default function BillingScreen() {
                 </>
               )}
             </motion.button>
-
-            {/* Security Badges */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '16px',
-              paddingTop: '8px',
-              fontSize: '12px',
-              color: '#85918e',
-            }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                🔒 256-Bit SSL Encrypted
-              </span>
-              <span>•</span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                ⚡ Razorpay Verified
-              </span>
-            </div>
           </form>
         </motion.div>
 
@@ -491,7 +541,41 @@ export default function BillingScreen() {
             ))}
           </div>
 
-          <div style={{ width: '100%', height: '1px', background: 'rgba(0, 174, 157, 0.16)' }} />
+          {/* Currency Selector */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'rgba(255, 255, 255, 0.85)',
+            border: '1px solid rgba(0, 174, 157, 0.22)',
+            borderRadius: '12px',
+            padding: '8px 14px',
+            gap: '8px',
+          }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b' }}>
+              Billing Currency
+            </span>
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                fontFamily: NUNITO,
+                fontSize: '13.5px',
+                fontWeight: 800,
+                color: TEAL,
+                cursor: 'pointer',
+                outline: 'none',
+              }}
+            >
+              {Object.values(CURRENCY_METADATA).map(curr => (
+                <option key={curr.code} value={curr.code}>
+                  {curr.flag} {curr.code} ({curr.symbol})
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Pricing Section */}
           <div style={{
@@ -519,6 +603,15 @@ export default function BillingScreen() {
       </main>
 
       <LewisFooter />
+
+      {/* Support Dialog Popup Modal */}
+      <SupportModal
+        isOpen={isSupportOpen}
+        onClose={() => setIsSupportOpen(false)}
+        initialName={fullName}
+        initialEmail={email}
+        screenName="billing"
+      />
     </div>
   )
 }

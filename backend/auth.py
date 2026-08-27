@@ -237,12 +237,39 @@ def init_db():
                             status TEXT DEFAULT 'created',
                             signature TEXT,
                             user_email TEXT,
+                            user_name TEXT,
+                            user_phone TEXT,
+                            billing_details_json TEXT,
                             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                             paid_at TIMESTAMP WITH TIME ZONE
                         );
                         CREATE INDEX IF NOT EXISTS idx_payment_order_report ON lewis_payment_orders (report_uuid);
                         CREATE INDEX IF NOT EXISTS idx_payment_order_id ON lewis_payment_orders (order_id);
+                        CREATE INDEX IF NOT EXISTS idx_payment_order_payment_id ON lewis_payment_orders (payment_id);
+
+                        -- Ensure columns exist if table was created previously
+                        DO $$
+                        BEGIN
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns 
+                                WHERE table_name='lewis_payment_orders' AND column_name='user_name'
+                            ) THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN user_name TEXT;
+                            END IF;
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns 
+                                WHERE table_name='lewis_payment_orders' AND column_name='user_phone'
+                            ) THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN user_phone TEXT;
+                            END IF;
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns 
+                                WHERE table_name='lewis_payment_orders' AND column_name='billing_details_json'
+                            ) THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN billing_details_json TEXT;
+                            END IF;
+                        END $$;
 
                         -- Ensure is_unlocked exists on assessment records
                         DO $$
@@ -1642,11 +1669,16 @@ def save_payment_order(
     plan_id: str,
     amount: int,
     currency: str = "INR",
-    user_email: Optional[str] = None
+    user_email: Optional[str] = None,
+    user_name: Optional[str] = None,
+    user_phone: Optional[str] = None,
+    billing_details: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Save or initialize a pending payment order record.
+    Save or initialize a pending payment order record with full customer billing details.
     """
+    billing_json = json.dumps(billing_details) if billing_details else None
+
     IN_MEMORY_ORDERS[order_id] = {
         "order_id": order_id,
         "report_uuid": report_uuid,
@@ -1655,6 +1687,9 @@ def save_payment_order(
         "currency": currency,
         "status": "created",
         "user_email": user_email,
+        "user_name": user_name,
+        "user_phone": user_phone,
+        "billing_details_json": billing_json,
         "payment_id": None,
         "signature": None,
         "created_at": datetime.now(timezone.utc).isoformat(),
@@ -1669,15 +1704,19 @@ def save_payment_order(
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO lewis_payment_orders
-                        (order_id, report_uuid, plan_id, amount, currency, status, user_email, created_at, updated_at)
-                        VALUES (%s, %s, %s, %s, %s, 'created', %s, NOW(), NOW())
+                        (order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, created_at, updated_at)
+                        VALUES (%s, %s, %s, %s, %s, 'created', %s, %s, %s, %s, NOW(), NOW())
                         ON CONFLICT (order_id) DO UPDATE SET
                             report_uuid = EXCLUDED.report_uuid,
                             plan_id = EXCLUDED.plan_id,
                             amount = EXCLUDED.amount,
+                            currency = EXCLUDED.currency,
                             user_email = COALESCE(EXCLUDED.user_email, lewis_payment_orders.user_email),
+                            user_name = COALESCE(EXCLUDED.user_name, lewis_payment_orders.user_name),
+                            user_phone = COALESCE(EXCLUDED.user_phone, lewis_payment_orders.user_phone),
+                            billing_details_json = COALESCE(EXCLUDED.billing_details_json, lewis_payment_orders.billing_details_json),
                             updated_at = NOW();
-                    """, (order_id, report_uuid, plan_id, amount, currency, user_email))
+                    """, (order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json))
                     conn.commit()
                 conn.close()
                 return IN_MEMORY_ORDERS[order_id]
@@ -1695,6 +1734,7 @@ def save_payment_order(
                 report_uuid = excluded.report_uuid,
                 plan_id = excluded.plan_id,
                 amount = excluded.amount,
+                currency = excluded.currency,
                 user_email = COALESCE(excluded.user_email, lewis_payment_orders.user_email),
                 updated_at = CURRENT_TIMESTAMP
         """, (order_id, report_uuid, plan_id, amount, currency, user_email))
@@ -1740,11 +1780,14 @@ def record_successful_payment(
     order_id: str,
     payment_id: str,
     signature: Optional[str] = None,
-    report_uuid: Optional[str] = None
+    report_uuid: Optional[str] = None,
+    user_email: Optional[str] = None,
+    user_name: Optional[str] = None,
+    user_phone: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Idempotently record a successful payment, update order status to 'paid',
-    and unlock the corresponding assessment report.
+    save transaction ID (payment_id), and unlock the corresponding assessment report.
     """
     existing = get_payment_order(order_id)
     target_report_uuid = report_uuid or (existing.get("report_uuid") if existing else None)
@@ -1756,6 +1799,9 @@ def record_successful_payment(
             "payment_id": payment_id,
             "signature": signature,
             "status": "paid",
+            "user_email": user_email or IN_MEMORY_ORDERS[order_id].get("user_email"),
+            "user_name": user_name or IN_MEMORY_ORDERS[order_id].get("user_name"),
+            "user_phone": user_phone or IN_MEMORY_ORDERS[order_id].get("user_phone"),
             "paid_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat(),
         })
@@ -1775,10 +1821,13 @@ def record_successful_payment(
                         SET payment_id = %s,
                             signature = %s,
                             status = 'paid',
+                            user_email = COALESCE(%s, user_email),
+                            user_name = COALESCE(%s, user_name),
+                            user_phone = COALESCE(%s, user_phone),
                             paid_at = NOW(),
                             updated_at = NOW()
                         WHERE order_id = %s;
-                    """, (payment_id, signature, order_id))
+                    """, (payment_id, signature, user_email, user_name, user_phone, order_id))
 
                     if target_report_uuid:
                         cur.execute("""
@@ -1790,8 +1839,8 @@ def record_successful_payment(
                         """, (plan_id, target_report_uuid))
                     conn.commit()
                 conn.close()
-                logger.info("Recorded payment success in PostgreSQL for order %s (report %s)", order_id, target_report_uuid)
-                return get_payment_order(order_id) or {"order_id": order_id, "status": "paid"}
+                logger.info("Recorded payment success in PostgreSQL for order %s (txn: %s, report: %s)", order_id, payment_id, target_report_uuid)
+                return get_payment_order(order_id) or {"order_id": order_id, "payment_id": payment_id, "status": "paid"}
         except Exception as e:
             logger.error("PostgreSQL error recording payment success: %s", e)
 
@@ -1803,10 +1852,11 @@ def record_successful_payment(
             SET payment_id = ?,
                 signature = ?,
                 status = 'paid',
+                user_email = COALESCE(?, user_email),
                 paid_at = CURRENT_TIMESTAMP,
                 updated_at = CURRENT_TIMESTAMP
             WHERE order_id = ?
-        """, (payment_id, signature, order_id))
+        """, (payment_id, signature, user_email, order_id))
 
         if target_report_uuid:
             cur.execute("""
@@ -1818,11 +1868,11 @@ def record_successful_payment(
             """, (plan_id, target_report_uuid))
         conn.commit()
         conn.close()
-        logger.info("Recorded payment success in SQLite for order %s (report %s)", order_id, target_report_uuid)
+        logger.info("Recorded payment success in SQLite for order %s (txn: %s, report: %s)", order_id, payment_id, target_report_uuid)
     except Exception as e:
         logger.warning("SQLite error recording payment success: %s", e)
 
-    return get_payment_order(order_id) or {"order_id": order_id, "status": "paid", "report_uuid": target_report_uuid}
+    return get_payment_order(order_id) or {"order_id": order_id, "payment_id": payment_id, "status": "paid", "report_uuid": target_report_uuid}
 
 
 def is_report_unlocked(report_uuid: str) -> bool:

@@ -256,8 +256,10 @@ class SupportQueryInput(BaseModel):
 class CreatePaymentOrderInput(BaseModel):
     plan: str = Field(default="personal_report", max_length=50)
     report_id: str = Field(..., min_length=1, max_length=100)
+    currency: Optional[str] = Field(default="INR", max_length=10)
     email: Optional[ShortText] = None
     name: Optional[ShortText] = None
+    phone: Optional[ShortText] = None
 
 
 class VerifyPaymentInput(BaseModel):
@@ -265,6 +267,9 @@ class VerifyPaymentInput(BaseModel):
     payment_id: str = Field(..., min_length=1, max_length=100)
     signature: Optional[str] = Field(default=None, max_length=256)
     report_id: Optional[str] = Field(default=None, max_length=100)
+    email: Optional[ShortText] = None
+    name: Optional[ShortText] = None
+    phone: Optional[ShortText] = None
 
 
 # --- Endpoints -----------------------------------------------------------------
@@ -866,12 +871,13 @@ def get_payment_config():
 def create_payment_order_endpoint(payload: CreatePaymentOrderInput):
     """
     Server-authoritative order creation. Price is decided by backend,
-    never trusted from frontend input.
+    converted dynamically into selected currency from base ₹749.
     """
     try:
         order = create_order(
             plan_key=payload.plan,
             report_uuid=payload.report_id,
+            currency=payload.currency,
             user_email=payload.email,
             user_name=payload.name
         )
@@ -886,18 +892,43 @@ def create_payment_order_endpoint(payload: CreatePaymentOrderInput):
         raise HTTPException(status_code=500, detail="Failed to create payment order")
 
 
+@app.get("/payment/exchange-rates")
+def get_exchange_rates_endpoint():
+    """
+    Get live exchange rates and calculated multi-currency price table.
+    """
+    try:
+        from payment import calculate_plan_price, DEFAULT_INR_EXCHANGE_RATES
+        table = {
+            code: calculate_plan_price("personal_report", code)
+            for code in DEFAULT_INR_EXCHANGE_RATES
+        }
+        return {
+            "status": "success",
+            "base_currency": "INR",
+            "base_amount_inr": 749,
+            "currencies": table
+        }
+    except Exception as exc:
+        logger.error("Error fetching exchange rates: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to fetch exchange rates")
+
+
 @app.post("/payment/verify")
 def verify_payment_endpoint(payload: VerifyPaymentInput):
     """
     Idempotent signature verification. Unlocks report entitlement server-side
-    and records paid transaction.
+    and records paid transaction with customer details in the DB.
     """
     try:
         res = verify_payment(
             order_id=payload.order_id,
             payment_id=payload.payment_id,
             signature=payload.signature,
-            report_uuid=payload.report_id
+            report_uuid=payload.report_id,
+            user_email=payload.email,
+            user_name=payload.name,
+            user_phone=payload.phone
         )
         return res
     except ValueError as ve:
