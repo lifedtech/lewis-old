@@ -87,7 +87,7 @@ export default function LoginScreen() {
 
         <p className="sub" style={{ textAlign: 'center', marginBottom: '24px', fontSize: '14px', color: 'var(--text-mute)' }}>
           {mode === 'register' 
-            ? 'Sign up to securely save and download your full 16-page Lewis Insight Report.'
+            ? 'Sign up to securely save and download your personalised Lewis Insight Report.'
             : 'Sign in to access your saved reflections and full PDF report.'}
         </p>
 

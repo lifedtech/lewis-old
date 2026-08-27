@@ -56,6 +56,8 @@ import Stage8_4CumulativeScreen from '../screens/Stage8_4CumulativeScreen.jsx'
 import Stage9SensoryScreen from '../screens/Stage9SensoryScreen.jsx'
 import Stage10GeneratingScreen from '../screens/Stage10GeneratingScreen.jsx'
 import MirrorScreen from '../screens/MirrorScreen.jsx'
+import BillingScreen from '../screens/BillingScreen.jsx'
+import PaymentConfirmScreen from '../screens/PaymentConfirmScreen.jsx'
 import LoginScreen from '../screens/LoginScreen.jsx'
 
 const INSTRUMENT_SCREENS = Object.fromEntries(
@@ -114,7 +116,9 @@ const SCREENS = {
   stage9Sensory: Stage9SensoryScreen,
   stage10Generating: Stage10GeneratingScreen,
   mirror: MirrorScreen,
-  payment: MirrorScreen,
+  billing: BillingScreen,
+  payment: BillingScreen,
+  paymentConfirm: PaymentConfirmScreen,
   login: LoginScreen,
 }
 
@@ -122,7 +126,7 @@ export default function DesktopApp() {
   const { currentScreen } = useLewisStore()
   const validScreen = SCREENS[currentScreen] ? currentScreen : 'landing'
   const ActiveScreen = SCREENS[validScreen]
-  const isFullPage = ['landing', 'mirror', 'payment', 'stage10Generating', 'login'].includes(validScreen)
+  const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login'].includes(validScreen)
 
   const stageWrapRef = useRef(null)
   const stageMainRef = useRef(null)
@@ -135,13 +139,26 @@ export default function DesktopApp() {
     if (main) main.scrollTop = 0
   }, [validScreen])
 
+  // Full-bleed standalone pages (no app-shell padding or card border artifacts)
+  if (['landing', 'billing', 'payment', 'paymentConfirm', 'mirror'].includes(validScreen)) {
+    return (
+      <div style={{ width: '100%', minHeight: '100vh', margin: 0, padding: 0, overflowX: 'hidden' }}>
+        <AnimatePresence mode="wait">
+          <PageTransition key={validScreen}>
+            <ActiveScreen />
+          </PageTransition>
+        </AnimatePresence>
+      </div>
+    )
+  }
+
   return (
     <div
       className="app-shell"
-      style={isFullPage ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible', padding: validScreen === 'landing' ? 0 : undefined } : {}}
+      style={isFullPage ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible' } : {}}
     >
       {/* Background Dot Grid */}
-      <div className="bg-dot-grid" />
+      {!isFullPage && <div className="bg-dot-grid" />}
 
       {/* Desktop Header */}
       {!isFullPage && <DesktopHeader currentScreen={validScreen} />}
@@ -150,15 +167,7 @@ export default function DesktopApp() {
       {!isFullPage && <DesktopProgress currentScreen={validScreen} />}
 
       {/* Main View Router */}
-      {validScreen === 'landing' ? (
-        <main style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <AnimatePresence mode="wait">
-            <PageTransition key={validScreen}>
-              <ActiveScreen />
-            </PageTransition>
-          </AnimatePresence>
-        </main>
-      ) : isFullPage ? (
+      {isFullPage ? (
         <main style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
           <AnimatePresence mode="wait">
             <PageTransition key={validScreen}>

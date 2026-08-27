@@ -40,7 +40,9 @@ const initialState = () => ({
 
   // User Profile & Delivery (50% Milestone)
   email: savedUser?.email || '',
+  phone: '',
   subscribeNewsletter: true,
+  latestPaymentOrder: null,
 
   // Stage 1 Context
   name: '',
@@ -268,10 +270,11 @@ export const useLewisStore = create((set, get) => ({
     return false
   },
 
-  setPaymentSuccess: ({ reportUuid }) => {
+  setPaymentSuccess: (details = {}) => {
     set({
       isReportUnlocked: true,
-      unlockedReportId: reportUuid,
+      unlockedReportId: details.reportUuid || details.report_uuid,
+      latestPaymentOrder: details,
       isPaymentProcessing: false,
       paymentError: null
     })

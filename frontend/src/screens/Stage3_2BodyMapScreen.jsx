@@ -71,7 +71,7 @@ export default function Stage3_2BodyMapScreen() {
               margin: '0 0 10px 0',
               lineHeight: 1.3,
             }}>
-              STAGE 3 — ANS &amp; SOMATIC
+              STAGE 3 - ANS &amp; SOMATIC
             </p>
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",

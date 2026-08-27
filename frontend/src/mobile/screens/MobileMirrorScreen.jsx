@@ -44,33 +44,7 @@ export default function MobileMirrorScreen() {
     if (isDownloading || isUnlocking) return
 
     if (!isReportUnlocked) {
-      setIsUnlocking(true)
-      try {
-        await initiateCheckout({
-          plan: 'personal_report',
-          reportId: analysis?.report_uuid,
-          userEmail: email,
-          userName: name,
-          onSuccess: async () => {
-            setIsUnlocking(false)
-            setIsDownloading(true)
-            try {
-              await exportReportPdf('Lewis-Insight-Report.pdf')
-              setDownloadSuccess(true)
-              setTimeout(() => setDownloadSuccess(false), 5000)
-            } finally {
-              setIsDownloading(false)
-            }
-          },
-          onError: (err) => {
-            setIsUnlocking(false)
-            alert(err?.message || 'Payment initiation was cancelled or encountered an error.')
-          }
-        })
-      } catch (err) {
-        setIsUnlocking(false)
-        console.error('Checkout error:', err)
-      }
+      setScreen('billing')
       return
     }
 
@@ -371,7 +345,7 @@ export default function MobileMirrorScreen() {
             color: isReportUnlocked ? '#007064' : '#414242' 
           }}>
             {isReportUnlocked 
-              ? '✓ Verified Entitlement · 25-Page Insight Report Unlocked' 
+              ? '✓ Verified Entitlement · Personalised Insight Report Unlocked' 
               : `₹749, inclusive of all taxes. One-time payment, no subscription.`}
           </p>
 
@@ -396,11 +370,11 @@ export default function MobileMirrorScreen() {
             {isUnlocking 
               ? 'Preparing report & opening checkout...' 
               : (isDownloading 
-                  ? '✓ Payment Verified! Downloading 25-page report...' 
+                  ? '✓ Payment Verified! Downloading personalised report...' 
                   : (downloadSuccess 
                       ? '✓ Report Downloaded! (Click to re-download)' 
                       : (isReportUnlocked 
-                          ? 'Download Full 25-Page Report (PDF)' 
+                          ? 'Download Personalised Report (PDF)' 
                           : 'Unlock your insight report at ₹749')))}
           </button>
 

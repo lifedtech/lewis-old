@@ -97,7 +97,7 @@ export default function MobileStage10GeneratingScreen() {
     "Evaluating relational, financial & systemic support structures...",
     "Running neural cascade matrix & priority tension mapping...",
     "Synthesizing personalized growth & micro-resolution pathways...",
-    "Preparing your complete 25-Page Lewis Insight Mirror..."
+    "Preparing your personalized Lewis Insight Mirror..."
   ]
 
   useEffect(() => {

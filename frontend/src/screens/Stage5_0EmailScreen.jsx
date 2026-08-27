@@ -29,7 +29,7 @@ export default function Stage5_0EmailScreen() {
   const validateEmail = (val) => {
     const trimmed = (val || '').trim()
     if (!trimmed) {
-      return 'Please enter your email address to receive your report.'
+      return '' // Optional
     }
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!regex.test(trimmed)) {
@@ -61,7 +61,7 @@ export default function Stage5_0EmailScreen() {
       return
     }
     setError('')
-    setProfileField('email', email.trim())
+    setProfileField('email', email ? email.trim() : '')
     setProfileField('subscribeNewsletter', subscribe)
     setScreen('stage5_2Pss10')
   }
@@ -205,7 +205,7 @@ export default function Stage5_0EmailScreen() {
                 fontWeight: 700,
                 color: INK,
               }}>
-                <span>Where should we send your report? <span style={{ color: '#d0574f' }}>*</span></span>
+                <span>Where should we send your report? <span style={{ color: '#85918e', fontWeight: 500 }}>(optional)</span></span>
               </label>
 
               <div style={{ position: 'relative', width: '100%' }}>

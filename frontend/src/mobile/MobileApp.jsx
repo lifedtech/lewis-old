@@ -57,6 +57,8 @@ import Stage8_4CumulativeScreen from '../screens/Stage8_4CumulativeScreen.jsx'
 import Stage9SensoryScreen from '../screens/Stage9SensoryScreen.jsx'
 import MobileStage10GeneratingScreen from './screens/MobileStage10GeneratingScreen.jsx'
 import MobileMirrorScreen from './screens/MobileMirrorScreen.jsx'
+import BillingScreen from '../screens/BillingScreen.jsx'
+import PaymentConfirmScreen from '../screens/PaymentConfirmScreen.jsx'
 import LoginScreen from '../screens/LoginScreen.jsx'
 
 // Stepped questionnaire instruments rendered via MobileInstrumentScreen
@@ -116,7 +118,9 @@ const MOBILE_SCREENS = {
   stage9Sensory: Stage9SensoryScreen,
   stage10Generating: MobileStage10GeneratingScreen,
   mirror: MobileMirrorScreen,
-  payment: MobileMirrorScreen,
+  billing: BillingScreen,
+  payment: BillingScreen,
+  paymentConfirm: PaymentConfirmScreen,
   login: LoginScreen,
 }
 
@@ -124,7 +128,7 @@ export default function MobileApp() {
   const { currentScreen, setScreen } = useLewisStore()
   const validScreen = MOBILE_SCREENS[currentScreen] ? currentScreen : 'landing'
   const ActiveScreen = MOBILE_SCREENS[validScreen]
-  const isFullPage = ['landing', 'mirror', 'payment', 'stage10Generating', 'login'].includes(validScreen)
+  const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login'].includes(validScreen)
   const containerRef = useRef(null)
 
   // Scroll to top cleanly on screen change without locking native gestures

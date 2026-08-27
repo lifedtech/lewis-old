@@ -97,7 +97,7 @@ export default function Stage10GeneratingScreen() {
     "Evaluating relational, financial & systemic support structures...",
     "Running neural cascade matrix & priority tension mapping...",
     "Synthesizing personalized growth & micro-resolution pathways...",
-    "Preparing your complete 25-Page Lewis Insight Mirror..."
+    "Preparing your personalized Lewis Insight Mirror..."
   ]
 
   useEffect(() => {
@@ -149,10 +149,10 @@ export default function Stage10GeneratingScreen() {
     const timer = setInterval(() => {
       if (!mounted) return
       const elapsed = Date.now() - startTime
-      
+
       // Calculate target progress
       let currentProgress = Math.floor((elapsed / TOTAL_DURATION_MS) * 100)
-      
+
       // If backend hasn't responded yet, hold comfortably at 94%
       if (!isFinished && currentProgress > 94) {
         currentProgress = 94

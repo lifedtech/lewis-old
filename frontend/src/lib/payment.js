@@ -27,6 +27,7 @@ export async function initiateCheckout({
   reportId = null,
   userEmail = '',
   userName = '',
+  userPhone = '',
   onSuccess = () => {},
   onError = () => {},
 }) {
@@ -35,6 +36,7 @@ export async function initiateCheckout({
   const targetReportId = reportId || store.analysisData?.report_uuid || `REP-${Date.now().toString(36).toUpperCase()}`
   const targetEmail = userEmail || store.email || store.authUser?.email || ''
   const targetName = userName || store.name || store.authUser?.name || ''
+  const targetPhone = userPhone || store.phone || ''
 
   try {
     // 1. Create order on backend (backend authoritatively determines price)
@@ -46,6 +48,7 @@ export async function initiateCheckout({
         report_id: targetReportId,
         email: targetEmail,
         name: targetName,
+        phone: targetPhone,
       }),
     })
 
@@ -76,7 +79,14 @@ export async function initiateCheckout({
       }
 
       const verifyData = await verifyRes.json()
-      useLewisStore.getState().setPaymentSuccess({ reportUuid: targetReportId })
+      useLewisStore.getState().setPaymentSuccess({ 
+        reportUuid: targetReportId,
+        orderId: order.order_id,
+        paymentId: `pay_mock_${Date.now()}`,
+        email: targetEmail,
+        name: targetName,
+        phone: targetPhone,
+      })
       onSuccess(verifyData)
       return verifyData
     }
@@ -99,6 +109,7 @@ export async function initiateCheckout({
         prefill: {
           name: targetName,
           email: targetEmail,
+          contact: targetPhone,
         },
         theme: {
           color: '#00ae9d',
