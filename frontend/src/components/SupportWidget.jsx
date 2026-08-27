@@ -365,6 +365,9 @@ export default function SupportWidget() {
   const { isMobile } = useDeviceViewport()
   const [isOpen, setIsOpen] = useState(false)
 
+  const handleOpen = () => setIsOpen(true)
+  const handleClose = () => setIsOpen(false)
+
   if (['landing', 'mirror', 'report', 'billing', 'payment', 'paymentConfirm'].includes(currentScreen)) {
     return null
   }
