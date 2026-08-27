@@ -20,7 +20,7 @@ import logging
 from datetime import date
 from typing import Annotated, Any, Dict, List, Optional, Union
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, StringConstraints, EmailStr
@@ -1021,10 +1021,11 @@ def get_report_unlock_status(report_id: str):
 
 
 @app.get("/reports/{report_id}/pdf")
-def get_report_pdf_endpoint(report_id: str):
+def get_report_pdf_endpoint(report_id: str, format: Optional[str] = None):
     """
     Protected PDF / Full report entitlement gate.
     Returns 403 Forbidden if not paid/unlocked.
+    Streams the authoritative downloadable PDF report file or returns JSON.
     """
     unlocked = is_report_unlocked(report_id)
     if not unlocked:
@@ -1037,10 +1038,25 @@ def get_report_pdf_endpoint(report_id: str):
     if not report_rec:
         raise HTTPException(status_code=404, detail="Assessment report not found")
 
-    return {
-        "status": "authorized",
-        "report_uuid": report_id,
-        "is_unlocked": True,
-        "report_data": report_rec.get("report_json")
-    }
+    if format == "json":
+        return {
+            "status": "authorized",
+            "report_uuid": report_id,
+            "is_unlocked": True,
+            "report_data": report_rec.get("report_json")
+        }
+
+    from pdf_generator import build_insight_report_pdf
+    pdf_bytes = build_insight_report_pdf(
+        report_data=report_rec.get("report_json"),
+        report_uuid=report_id,
+        user_name=report_rec.get("user_name") or "Personal Client"
+    )
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"inline; filename=LEWIS-Insight-Report-{report_id}.pdf"
+        }
+    )
 

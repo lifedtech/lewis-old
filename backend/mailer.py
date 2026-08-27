@@ -4,6 +4,7 @@ import smtplib
 import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timezone
 from dotenv import load_dotenv
@@ -25,10 +26,11 @@ def send_email(
     subject: str,
     html_content: str,
     text_content: Optional[str] = None,
-    bcc: Optional[List[str]] = None
+    bcc: Optional[List[str]] = None,
+    attachments: Optional[List[Dict[str, Any]]] = None
 ) -> bool:
     """
-    Send an email via Brevo SMTP using TLS.
+    Send an email via Brevo SMTP using TLS with optional attachments.
     """
     if not to_email or "@" not in to_email:
         logger.warning("Invalid destination email: %s", to_email)
@@ -39,30 +41,43 @@ def send_email(
         return False
 
     try:
-        msg = MIMEMultipart("alternative")
+        if attachments:
+            msg = MIMEMultipart("mixed")
+            body_part = MIMEMultipart("alternative")
+            if text_content:
+                body_part.attach(MIMEText(text_content, "plain", "utf-8"))
+            body_part.attach(MIMEText(html_content, "html", "utf-8"))
+            msg.attach(body_part)
+
+            for att in attachments:
+                fname = att.get("filename", "attachment.pdf")
+                content = att.get("content", b"")
+                subtype = att.get("subtype", "pdf")
+                part = MIMEApplication(content, _subtype=subtype)
+                part.add_header("Content-Disposition", "attachment", filename=fname)
+                msg.attach(part)
+        else:
+            msg = MIMEMultipart("alternative")
+            if text_content:
+                msg.attach(MIMEText(text_content, "plain", "utf-8"))
+            msg.attach(MIMEText(html_content, "html", "utf-8"))
+
         msg["Subject"] = subject
         msg["From"] = f"{MAIL_FROM_NAME} <{MAIL_FROM_ADDRESS}>"
         msg["To"] = to_email
-
-        if text_content:
-            part1 = MIMEText(text_content, "plain", "utf-8")
-            msg.attach(part1)
-
-        part2 = MIMEText(html_content, "html", "utf-8")
-        msg.attach(part2)
 
         recipients = [to_email]
         if bcc:
             recipients.extend(bcc)
 
-        with smtplib.SMTP(MAIL_HOST, MAIL_PORT, timeout=15) as server:
+        with smtplib.SMTP(MAIL_HOST, MAIL_PORT, timeout=20) as server:
             server.ehlo(MAIL_EHLO_DOMAIN)
             server.starttls()
             server.ehlo(MAIL_EHLO_DOMAIN)
             server.login(MAIL_USERNAME, MAIL_PASSWORD)
             server.sendmail(MAIL_FROM_ADDRESS, recipients, msg.as_string())
 
-        logger.info("Successfully sent email to %s (Subject: %s)", to_email, subject)
+        logger.info("Successfully sent email to %s (Subject: %s, Attachments: %d)", to_email, subject, len(attachments or []))
         return True
     except Exception as exc:
         logger.error("Failed to send email to %s: %s", to_email, exc)
@@ -387,15 +402,41 @@ def send_report_delivery_email(
     report_data: Optional[Dict[str, Any]] = None
 ) -> bool:
     """
-    Send the completed and verified Personal Wellbeing Insight Report to user email.
+    Send the completed and verified Personal Wellbeing Insight Report to user email with attached PDF.
     """
     name = (user_name or "there").strip()
     rep_id = report_uuid or "REP-INSIGHT"
     order_ref = order_id or "ORD-REF"
     date_str = datetime.now(timezone.utc).strftime("%d %B %Y")
     
-    frontend_base = os.getenv("FRONTEND_URL", "https://lewiswellbeing.com").split(",")[0].strip()
+    # Resolve public production domain (filter out localhost)
+    raw_frontends = [u.strip() for u in os.getenv("FRONTEND_URL", "").split(",") if u.strip()]
+    prod_frontends = [u for u in raw_frontends if "localhost" not in u and "127.0.0.1" not in u]
+    frontend_base = prod_frontends[0] if prod_frontends else "https://lewiswellbeing.com"
     report_link = f"{frontend_base}/#mirror"
+
+    # 1. Generate Authoritative Vector PDF Attachment
+    pdf_bytes = None
+    try:
+        from pdf_generator import build_insight_report_pdf
+        pdf_bytes = build_insight_report_pdf(
+            report_data=report_data,
+            report_uuid=rep_id,
+            user_name=name,
+            order_id=order_ref
+        )
+    except Exception as pdf_err:
+        logger.error("Failed to generate PDF for attachment (%s): %s", rep_id, pdf_err)
+
+    pdf_filename = f"LEWIS-Personal-Insight-Report-{rep_id}.pdf"
+    attachments = []
+    if pdf_bytes:
+        attachments.append({
+            "filename": pdf_filename,
+            "content": pdf_bytes,
+            "maintype": "application",
+            "subtype": "pdf"
+        })
 
     subject = f"Your LEWIS Personal Wellbeing Insight Report · Report ID {rep_id}"
 
@@ -460,6 +501,16 @@ def send_report_delivery_email(
           margin-bottom: 14px;
           border: 1px solid rgba(0, 174, 157, 0.25);
         }}
+        .pdf-attached-box {{
+          background: #eafbf7;
+          border: 1.5px solid #00ae9d;
+          border-radius: 12px;
+          padding: 14px 18px;
+          margin: 16px 0;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }}
         .verified-card {{
           background: #f0fdf9;
           border: 1.5px solid #00ae9d;
@@ -521,8 +572,15 @@ def send_report_delivery_email(
             Your complete <strong>Personal Insight Report</strong> is now fully compiled and ready.
           </p>
 
+          <!-- PDF Attachment Notice -->
+          <div class="pdf-attached-box">
+            <div style="font-size: 13.5px; color: #016257; line-height: 1.5;">
+              <strong>PDF Report Attached:</strong> Your full 25-page vector Insight Report document (<code>{pdf_filename}</code>) is attached directly to this email. You can download and save it to your device anytime.
+            </div>
+          </div>
+
           <div class="verified-card">
-            <h3 style="margin: 0 0 8px 0; color: #007064; font-size: 16px;">Report Details</h3>
+            <h3 style="margin: 0 0 8px 0; color: #007064; font-size: 16px;">Report Summary</h3>
             <table style="width: 100%; font-size: 13.5px; border-collapse: collapse;">
               <tr>
                 <td style="padding: 6px 0; color: #64748b;">Report Identifier:</td>
@@ -537,13 +595,13 @@ def send_report_delivery_email(
                 <td style="padding: 6px 0; text-align: right; font-weight: 700; color: #1e293b;">{date_str}</td>
               </tr>
               <tr>
-                <td style="padding: 6px 0; color: #64748b;">Status:</td>
+                <td style="padding: 6px 0; color: #64748b;">Validation Status:</td>
                 <td style="padding: 6px 0; text-align: right; font-weight: 700; color: #00ae9d;">Fully Verified</td>
               </tr>
             </table>
 
             <div style="text-align: center; margin-top: 18px;">
-              <a href="{report_link}" class="btn">View Verified Insight Report</a>
+              <a href="{report_link}" class="btn">View Verified Insight Report Online</a>
             </div>
           </div>
 
@@ -591,7 +649,9 @@ Report ID: {rep_id}
 Order Reference: {order_ref}
 Date: {date_str}
 
-You can view your complete verified reflection report here:
+ATTACHMENT: Your verified report PDF ({pdf_filename}) is attached directly to this email.
+
+You can also view your verified reflection online anytime here:
 {report_link}
 
 Support: lewissupport@lifedhealth.com
@@ -600,7 +660,13 @@ Lewis Wellbeing Intelligence
 A Lifed Health Intelligence System
     """
 
-    return send_email(to_email=user_email, subject=subject, html_content=html_content, text_content=text_content)
+    return send_email(
+        to_email=user_email,
+        subject=subject,
+        html_content=html_content,
+        text_content=text_content,
+        attachments=attachments
+    )
 
 
 def schedule_report_delivery_email(

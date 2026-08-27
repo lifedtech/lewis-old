@@ -11,6 +11,12 @@ from dotenv import load_dotenv
 load_dotenv()
 logger = logging.getLogger("lewis.payment")
 
+import requests
+try:
+    import razorpay
+except ImportError:
+    razorpay = None
+
 # --- Configuration & Mode Resolution ------------------------------------------
 
 PAYMENT_MODE = os.getenv("PAYMENT_MODE", "mock").strip().lower()
@@ -75,16 +81,6 @@ PLAN_CATALOG: Dict[str, Dict[str, Any]] = {
     }
 }
 
-# Optional Razorpay SDK client
-_razorpay_client = None
-if PAYMENT_MODE == "razorpay" and RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET:
-    try:
-        import razorpay
-        _razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-        logger.info("Razorpay client initialized with Key ID: %s...", RAZORPAY_KEY_ID[:8])
-    except Exception as exc:
-        logger.warning("Could not initialize razorpay client (%s). Falling back to direct API.", exc)
-
 
 def get_payment_mode() -> str:
     mode = os.getenv("PAYMENT_MODE", "").strip().lower()
@@ -110,6 +106,19 @@ def get_razorpay_credentials():
         or ""
     ).strip()
     return key_id, key_secret
+
+
+def get_razorpay_client():
+    """Dynamically get or initialize Razorpay SDK client with current credentials."""
+    if razorpay is None:
+        return None
+    key_id, key_secret = get_razorpay_credentials()
+    if key_id and key_secret:
+        try:
+            return razorpay.Client(auth=(key_id, key_secret))
+        except Exception as exc:
+            logger.warning("Could not initialize razorpay client (%s). Falling back to direct API.", exc)
+    return None
 
 
 # --- Multi-Currency & Dynamic Exchange Rates -----------------------------------
@@ -287,8 +296,9 @@ def create_order(
     }
 
     try:
-        if _razorpay_client:
-            rp_order = _razorpay_client.order.create({
+        rp_client = get_razorpay_client()
+        if rp_client:
+            rp_order = rp_client.order.create({
                 "amount": amount,
                 "currency": curr_code,
                 "receipt": receipt_id,
@@ -296,7 +306,6 @@ def create_order(
             })
             order_id = rp_order["id"]
         else:
-            import requests
             resp = requests.post(
                 "https://api.razorpay.com/v1/orders",
                 auth=(key_id, key_secret),
