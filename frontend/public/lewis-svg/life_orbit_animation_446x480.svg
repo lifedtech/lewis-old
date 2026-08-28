@@ -8,10 +8,91 @@
 
   <defs>
     <linearGradient id="orbitStroke" x1="42" y1="60" x2="404" y2="420" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#C7D2E1" stop-opacity=".45"/>
-      <stop offset=".50" stop-color="#9DB0C6" stop-opacity=".9"/>
-      <stop offset="1" stop-color="#C7D2E1" stop-opacity=".45"/>
+      <stop offset="0%" stop-color="#C7D2E1" stop-opacity=".45"/>
+      <stop offset=".50%" stop-color="#00ae9d" stop-opacity=".85"/>
+      <stop offset="1%" stop-color="#C7D2E1" stop-opacity=".45"/>
     </linearGradient>
+
+    <!-- Leaf 1: Accomplishment & Agency -->
+    <g id="leaf-ac">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M3.4 19.6h4.6V15h4.6v-4.6h4.6V5.8h3.4"/>
+      </g>
+    </g>
+
+    <!-- Leaf 2: Environmental & Cultural -->
+    <g id="leaf-ec">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M4.6 19.8V12a7.4 7.4 0 0 1 14.8 0v7.8"/>
+        <path d="M2.4 19.8h19.2"/>
+        <path d="M9.9 19.8v-4.2a2.1 2.1 0 0 1 4.2 0v4.2"/>
+      </g>
+    </g>
+
+    <!-- Leaf 3: Emotional & Mental -->
+    <g id="leaf-em">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M3.4 7.6q2.65-2.8 5.3 0t5.3 0 5.3 0"/>
+        <path d="M3.4 13q2.65-1.9 5.3 0t5.3 0 5.3 0"/>
+        <path d="M3.4 18.1q2.65-1 5.3 0t5.3 0 5.3 0"/>
+      </g>
+    </g>
+
+    <!-- Leaf 4: Engagement & Energy -->
+    <g id="leaf-en">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M3.2 19.4C9 19 14 16 20 5"/>
+        <path d="M15.7 7.6 20 5l.1 5"/>
+      </g>
+    </g>
+
+    <!-- Leaf 5: Financial Wellness -->
+    <g id="leaf-fw">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M4.4 9.4h15.2v6.6a4.8 4.8 0 0 1-4.8 4.8H9.2a4.8 4.8 0 0 1-4.8-4.8Z"/>
+        <path d="M8.6 9.4V7a3.4 3.4 0 0 1 6.8 0v2.4"/>
+      </g>
+    </g>
+
+    <!-- Leaf 6: Intellectual & Growth -->
+    <g id="leaf-ig">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M12 7.6v12.5"/>
+        <path d="M12 7.6C10.4 6 8 5.2 5.2 5.2H3v12.4h2.2c2.8 0 5.2.8 6.8 2.5"/>
+        <path d="M12 7.6c1.6-1.6 4-2.4 6.8-2.4H21v12.4h-2.2c-2.8 0-5.2.8-6.8 2.5"/>
+      </g>
+    </g>
+
+    <!-- Leaf 7: Meaning & Spiritual -->
+    <g id="leaf-ms">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M12 2.6c1.1 6.1 3.3 8.3 9.4 9.4-6.1 1.1-8.3 3.3-9.4 9.4-1.1-6.1-3.3-8.3-9.4-9.4 6.1-1.1 8.3-3.3 9.4-9.4Z"/>
+      </g>
+    </g>
+
+    <!-- Leaf 8: Physical & Regeneration -->
+    <g id="leaf-ph">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M3 12.5h4.2l2.3 5.4 3.6-11.6 2.4 6.2H21"/>
+      </g>
+    </g>
+
+    <!-- Leaf 9: Relationships & Social -->
+    <g id="leaf-rs">
+      <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+      <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <circle cx="9" cy="12" r="5.9"/>
+        <circle cx="15" cy="12" r="5.9"/>
+      </g>
+    </g>
   </defs>
 
   <style>
@@ -26,12 +107,8 @@
     .inner-ring {
       fill: none;
       stroke: #eaf7f5;
-      stroke-width: 1.2;
-      opacity: 0.5;
-    }
-
-    .icon-circle {
-      fill: #eaf7f5;
+      stroke-width: 1.5;
+      opacity: 0.7;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -41,13 +118,10 @@
     }
   </style>
 
-  <!-- Outer orbit -->
+  <!-- Outer orbit line -->
   <circle class="orbit-line" cx="223" cy="240" r="172"/>
 
-  <!-- Inner circle behind person -->
-  <circle class="inner-ring" cx="223" cy="240" r="118"/>
-
-  <!-- Center person image: slightly reduced and moved a little down -->
+  <!-- Center person image -->
   <image id="personImage"
          href="no-bg-image.png"
          xlink:href="no-bg-image.png"
@@ -57,7 +131,7 @@
          height="530"
          preserveAspectRatio="xMidYMax meet"/>
 
-  <!-- 1 -->
+  <!-- 1. Accomplishment & Agency (-90 deg) -->
   <g transform="rotate(-90 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -67,18 +141,14 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-ac-leaf.svg"
-                   xlink:href="Icon-assets/lewis-ac-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-ac" xlink:href="#leaf-ac" x="-24" y="-24"/>
           </g>
         </g>
       </g>
     </g>
   </g>
 
-  <!-- 2 -->
+  <!-- 2. Environmental & Cultural (-50 deg) -->
   <g transform="rotate(-50 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -88,18 +158,14 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-ec-leaf.svg"
-                   xlink:href="Icon-assets/lewis-ec-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-ec" xlink:href="#leaf-ec" x="-24" y="-24"/>
           </g>
         </g>
       </g>
     </g>
   </g>
 
-  <!-- 3 -->
+  <!-- 3. Emotional & Mental (-10 deg) -->
   <g transform="rotate(-10 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -109,18 +175,14 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-em-leaf.svg"
-                   xlink:href="Icon-assets/lewis-em-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-em" xlink:href="#leaf-em" x="-24" y="-24"/>
           </g>
         </g>
       </g>
     </g>
   </g>
 
-  <!-- 4 -->
+  <!-- 4. Engagement & Energy (30 deg) -->
   <g transform="rotate(30 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -130,18 +192,14 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-en-leaf.svg"
-                   xlink:href="Icon-assets/lewis-en-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-en" xlink:href="#leaf-en" x="-24" y="-24"/>
           </g>
         </g>
       </g>
     </g>
   </g>
 
-  <!-- 5 -->
+  <!-- 5. Financial Wellness (70 deg) -->
   <g transform="rotate(70 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -151,18 +209,14 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-fw-leaf.svg"
-                   xlink:href="Icon-assets/lewis-fw-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-fw" xlink:href="#leaf-fw" x="-24" y="-24"/>
           </g>
         </g>
       </g>
     </g>
   </g>
 
-  <!-- 6 -->
+  <!-- 6. Intellectual & Growth (110 deg) -->
   <g transform="rotate(110 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -172,18 +226,14 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-ig-leaf.svg"
-                   xlink:href="Icon-assets/lewis-ig-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-ig" xlink:href="#leaf-ig" x="-24" y="-24"/>
           </g>
         </g>
       </g>
     </g>
   </g>
 
-  <!-- 7 -->
+  <!-- 7. Meaning & Spiritual (150 deg) -->
   <g transform="rotate(150 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -193,18 +243,14 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-ms-leaf.svg"
-                   xlink:href="Icon-assets/lewis-ms-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-ms" xlink:href="#leaf-ms" x="-24" y="-24"/>
           </g>
         </g>
       </g>
     </g>
   </g>
 
-  <!-- 8 -->
+  <!-- 8. Physical & Regeneration (190 deg) -->
   <g transform="rotate(190 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -214,18 +260,14 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-ph-leaf.svg"
-                   xlink:href="Icon-assets/lewis-ph-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-ph" xlink:href="#leaf-ph" x="-24" y="-24"/>
           </g>
         </g>
       </g>
     </g>
   </g>
 
-  <!-- 9 -->
+  <!-- 9. Relationships & Social (230 deg) -->
   <g transform="rotate(230 223 240)">
     <g>
       <animateTransform attributeName="transform" type="rotate"
@@ -235,11 +277,7 @@
           <g>
             <animateTransform attributeName="transform" type="rotate"
               from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
-            <circle class="icon-circle" cx="0" cy="0" r="27"/>
-            <image href="Icon-assets/lewis-rs-leaf.svg"
-                   xlink:href="Icon-assets/lewis-rs-leaf.svg"
-                   x="-22.5" y="-22.5" width="45" height="45"
-                   preserveAspectRatio="xMidYMid meet"/>
+            <use href="#leaf-rs" xlink:href="#leaf-rs" x="-24" y="-24"/>
           </g>
         </g>
       </g>

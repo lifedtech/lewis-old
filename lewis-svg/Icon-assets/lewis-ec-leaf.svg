@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5"/><g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.6 19.8V12a7.4 7.4 0 0 1 14.8 0v7.8"/><path d="M2.4 19.8h19.2"/><path d="M9.9 19.8v-4.2a2.1 2.1 0 0 1 4.2 0v4.2"/></g></svg>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M2 46V18C2 9.2 9.2 2 18 2h28v28c0 8.8-7.2 16-16 16Z" fill="#eaf7f5" stroke="#00ae9d" stroke-width="1.2" stroke-opacity="0.35"/>
+  <g transform="translate(12 12)" stroke="#017a6f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M4.6 19.8V12a7.4 7.4 0 0 1 14.8 0v7.8"/>
+    <path d="M2.4 19.8h19.2"/>
+    <path d="M9.9 19.8v-4.2a2.1 2.1 0 0 1 4.2 0v4.2"/>
+  </g>
+</svg>
