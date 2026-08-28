@@ -1,0 +1,249 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="446"
+     height="580"
+     viewBox="0 0 446 580"
+     role="img"
+     aria-label="Person in center with 9 LEWIS icons orbiting slowly around them">
+
+  <defs>
+    <linearGradient id="orbitStroke" x1="42" y1="60" x2="404" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#C7D2E1" stop-opacity=".45"/>
+      <stop offset=".50" stop-color="#9DB0C6" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#C7D2E1" stop-opacity=".45"/>
+    </linearGradient>
+  </defs>
+
+  <style>
+    .orbit-line {
+      fill: none;
+      stroke: url(#orbitStroke);
+      stroke-width: 1.8;
+      stroke-dasharray: 3 11;
+      stroke-linecap: round;
+    }
+
+    .inner-ring {
+      fill: none;
+      stroke: #eaf7f5;
+      stroke-width: 1.2;
+      opacity: 0.5;
+    }
+
+    .icon-circle {
+      fill: #eaf7f5;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      animateTransform {
+        display: none;
+      }
+    }
+  </style>
+
+  <!-- Outer orbit -->
+  <circle class="orbit-line" cx="223" cy="240" r="172"/>
+
+  <!-- Inner circle behind person -->
+  <circle class="inner-ring" cx="223" cy="240" r="118"/>
+
+  <!-- Center person image: slightly reduced and moved a little down -->
+  <image id="personImage"
+         href="no-bg-image.png"
+         xlink:href="no-bg-image.png"
+         x="15"
+         y="52"
+         width="410"
+         height="530"
+         preserveAspectRatio="xMidYMax meet"/>
+
+  <!-- 1 -->
+  <g transform="rotate(-90 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(90)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-ac-leaf.svg"
+                   xlink:href="Icon-assets/lewis-ac-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- 2 -->
+  <g transform="rotate(-50 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(50)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-ec-leaf.svg"
+                   xlink:href="Icon-assets/lewis-ec-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- 3 -->
+  <g transform="rotate(-10 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(10)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-em-leaf.svg"
+                   xlink:href="Icon-assets/lewis-em-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- 4 -->
+  <g transform="rotate(30 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(-30)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-en-leaf.svg"
+                   xlink:href="Icon-assets/lewis-en-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- 5 -->
+  <g transform="rotate(70 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(-70)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-fw-leaf.svg"
+                   xlink:href="Icon-assets/lewis-fw-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- 6 -->
+  <g transform="rotate(110 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(-110)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-ig-leaf.svg"
+                   xlink:href="Icon-assets/lewis-ig-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- 7 -->
+  <g transform="rotate(150 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(-150)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-ms-leaf.svg"
+                   xlink:href="Icon-assets/lewis-ms-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- 8 -->
+  <g transform="rotate(190 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(-190)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-ph-leaf.svg"
+                   xlink:href="Icon-assets/lewis-ph-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- 9 -->
+  <g transform="rotate(230 223 240)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 223 240" to="360 223 240" dur="60s" repeatCount="indefinite"/>
+      <g transform="translate(223 68)">
+        <g transform="rotate(-230)">
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 0 0" to="-360 0 0" dur="60s" repeatCount="indefinite"/>
+            <circle class="icon-circle" cx="0" cy="0" r="27"/>
+            <image href="Icon-assets/lewis-rs-leaf.svg"
+                   xlink:href="Icon-assets/lewis-rs-leaf.svg"
+                   x="-22.5" y="-22.5" width="45" height="45"
+                   preserveAspectRatio="xMidYMid meet"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+</svg>
