@@ -29,6 +29,7 @@ export async function initiateCheckout({
   userEmail = '',
   userName = '',
   userPhone = '',
+  couponCode = null,
   onSuccess = () => {},
   onError = () => {},
 }) {
@@ -52,6 +53,7 @@ export async function initiateCheckout({
         email: targetEmail,
         name: targetName,
         phone: targetPhone,
+        coupon_code: couponCode,
       }),
     })
 

@@ -28,7 +28,7 @@ export default function BillingScreen() {
     setPaymentSuccess, 
     name: storeName, 
     email: storeEmail, 
-    phone: storePhone, 
+    phone: storePhone,
     authUser,
     analysisData,
     paymentConfig
@@ -45,6 +45,11 @@ export default function BillingScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [isSupportOpen, setIsSupportOpen] = useState(false)
+
+  // Coupon State
+  const [couponInput, setCouponInput] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [couponError, setCouponError] = useState('')
 
   // Handle currency selection & automatically update country code to match
   const handleCurrencyChange = (newCurr) => {
@@ -77,8 +82,28 @@ export default function BillingScreen() {
       .catch(() => {})
   }, [])
 
-  const currentPriceObj = formatCurrencyPrice(currency, liveRates)
+  const currentPriceObj = formatCurrencyPrice(currency, liveRates, appliedCoupon)
   const reportPrice = currentPriceObj.formatted
+
+  const handleApplyCoupon = () => {
+    const code = (couponInput || '').trim().toUpperCase()
+    if (!code) {
+      setCouponError('Please enter a coupon code.')
+      return
+    }
+    if (code === 'LWSR97') {
+      setAppliedCoupon('LWSR97')
+      setCouponError('')
+    } else {
+      setCouponError('Invalid coupon code.')
+    }
+  }
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponInput('')
+    setCouponError('')
+  }
 
   const validateForm = () => {
     const nextErrors = {}
@@ -136,6 +161,7 @@ export default function BillingScreen() {
         userEmail: trimmedEmail,
         userName: trimmedName,
         userPhone: fullFormattedPhone,
+        couponCode: appliedCoupon,
         onSuccess: (verifyData) => {
           setIsSubmitting(false)
           setPaymentSuccess({
@@ -406,7 +432,7 @@ export default function BillingScreen() {
               )}
             </div>
 
-            {/* Phone Number */}
+            {/* Mobile Number */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <label htmlFor="billing-phone" style={{ fontSize: '13.5px', fontWeight: 700, color: INK }}>
                 Mobile Number <span style={{ color: '#d0574f' }}>*</span>
@@ -468,7 +494,7 @@ export default function BillingScreen() {
                     setPhone(val)
                     if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }))
                   }}
-                  placeholder={countryCode === '+91' ? '98765 43210' : 'Phone number'}
+                  placeholder="Phone number"
                   style={{
                     flex: 1,
                     width: '100%',
@@ -566,9 +592,6 @@ export default function BillingScreen() {
             }}>
               Personal Insight Report
             </h2>
-            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#64748b' }}>
-              Complete Personalised Lewis Wellbeing Intelligence Report
-            </p>
           </div>
 
           <div style={{ width: '100%', height: '1px', background: 'rgba(0, 174, 157, 0.16)' }} />
@@ -579,7 +602,6 @@ export default function BillingScreen() {
               'Full 9-domain psychological & biometric synthesis',
               'Personalized leverage point & anchor habit practice',
               'Cross-domain tension spillover analysis',
-              '30-day gentle experiment architecture',
               'Full measure citations and peer-reviewed scientific studies',
               'Delivered to your email within 5–10 minutes after verification',
             ].map((item, idx) => (
@@ -633,6 +655,153 @@ export default function BillingScreen() {
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Promo / Coupon Code Section */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            background: '#ffffff',
+            border: '1px solid rgba(0, 174, 157, 0.22)',
+            borderRadius: '14px',
+            padding: '12px 14px',
+            boxSizing: 'border-box',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label htmlFor="coupon-input" style={{
+                fontSize: '13px',
+                fontWeight: 700,
+                color: '#334155',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                margin: 0,
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={TEAL} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                  <line x1="7" y1="7" x2="7.01" y2="7" />
+                </svg>
+                <span>Coupon Code</span>
+              </label>
+              {appliedCoupon && (
+                <span style={{
+                  fontSize: '11.5px',
+                  fontWeight: 800,
+                  color: '#017a6f',
+                  background: 'rgba(0, 174, 157, 0.12)',
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}>
+                  <span>✓</span>
+                  <span>Applied</span>
+                </span>
+              )}
+            </div>
+
+            {!appliedCoupon ? (
+              <div style={{ display: 'flex', gap: '8px', marginTop: '2px' }}>
+                <input
+                  id="coupon-input"
+                  type="text"
+                  value={couponInput}
+                  onChange={(e) => {
+                    setCouponInput(e.target.value.toUpperCase())
+                    if (couponError) setCouponError('')
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleApplyCoupon()
+                    }
+                  }}
+                  placeholder="Enter coupon code"
+                  style={{
+                    flex: 1,
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    border: couponError ? '1.5px solid #d0574f' : '1.5px solid #cbd5e1',
+                    background: '#f8fafc',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    fontFamily: NUNITO,
+                    color: INK,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleApplyCoupon}
+                  style={{
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #00ae9d 0%, #017a6f 100%)',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontSize: '13.5px',
+                    fontWeight: 700,
+                    fontFamily: NUNITO,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(0, 174, 157, 0.18)',
+                  }}
+                >
+                  Apply
+                </button>
+              </div>
+            ) : (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'rgba(0, 174, 157, 0.06)',
+                padding: '9px 12px',
+                borderRadius: '10px',
+                border: '1px solid rgba(0, 174, 157, 0.25)',
+                marginTop: '2px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{
+                    fontSize: '13.5px',
+                    fontWeight: 800,
+                    color: '#007064',
+                    fontFamily: 'monospace',
+                    letterSpacing: '0.08em',
+                  }}>
+                    {appliedCoupon}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveCoupon}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#d0574f',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    padding: '2px 6px',
+                    fontFamily: NUNITO,
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+
+            {couponError && (
+              <span style={{ fontSize: '11.5px', color: '#d0574f', fontWeight: 600 }}>
+                {couponError}
+              </span>
+            )}
           </div>
 
           {/* Pricing Section */}

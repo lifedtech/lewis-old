@@ -260,6 +260,7 @@ class CreatePaymentOrderInput(BaseModel):
     email: Optional[ShortText] = None
     name: Optional[ShortText] = None
     phone: Optional[ShortText] = None
+    coupon_code: Optional[str] = Field(default=None, max_length=50)
 
 
 class VerifyPaymentInput(BaseModel):
@@ -925,7 +926,8 @@ def create_payment_order_endpoint(payload: CreatePaymentOrderInput):
             currency=payload.currency,
             user_email=payload.email,
             user_name=payload.name,
-            user_phone=payload.phone
+            user_phone=payload.phone,
+            coupon_code=payload.coupon_code
         )
         return {
             "status": "success",

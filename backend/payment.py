@@ -170,9 +170,14 @@ def get_inr_exchange_rates() -> Dict[str, float]:
     return _rates_cache["rates"]
 
 
-def calculate_plan_price(plan_key: str = "personal_report", target_currency: str = "INR") -> Dict[str, Any]:
+def calculate_plan_price(
+    plan_key: str = "personal_report", 
+    target_currency: str = "INR", 
+    coupon_code: Optional[str] = None
+) -> Dict[str, Any]:
     """
-    Calculate price in target currency dynamically converted from base INR price (₹749).
+    Calculate price in target currency dynamically converted from base INR price (₹749),
+    with optional coupon code discounting (e.g. LWSR97 -> 97.3% off).
     """
     curr = (target_currency or "INR").strip().upper()
     if curr not in DEFAULT_INR_EXCHANGE_RATES:
@@ -182,11 +187,14 @@ def calculate_plan_price(plan_key: str = "personal_report", target_currency: str
     rate = rates.get(curr, DEFAULT_INR_EXCHANGE_RATES[curr]["rate"])
     meta = DEFAULT_INR_EXCHANGE_RATES[curr]
 
-    base_inr = PERSONAL_REPORT_PRICE_PAISE / 100.0  # 749.0
+    is_lwsr97 = bool(coupon_code and coupon_code.strip().upper() == "LWSR97")
+    discount_multiplier = (1.0 - 0.973) if is_lwsr97 else 1.0  # 97.3% off
+
+    base_inr = (PERSONAL_REPORT_PRICE_PAISE / 100.0) * discount_multiplier
     if curr == "INR":
-        amount_units = 749.0
-        amount_subunits = 74900
-        formatted = "₹749"
+        amount_units = round(base_inr) if is_lwsr97 else 749.0
+        amount_subunits = int(amount_units * 100)
+        formatted = f"₹{int(amount_units)}"
     else:
         raw_val = base_inr * rate
         amount_units = round(raw_val, 2)
@@ -239,7 +247,8 @@ def create_order(
     user_email: Optional[str] = None,
     user_name: Optional[str] = None,
     user_phone: Optional[str] = None,
-    billing_details: Optional[Dict[str, Any]] = None
+    billing_details: Optional[Dict[str, Any]] = None,
+    coupon_code: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Create a payment order starting from LS20260100 in user's selected currency converted from base ₹749.
@@ -252,7 +261,7 @@ def create_order(
         raise ValueError(f"Invalid plan '{plan_key}'. Allowed plans: {list(PLAN_CATALOG.keys())}")
 
     target_curr = (currency or "INR").strip().upper()
-    pricing = calculate_plan_price(normalized_plan, target_curr)
+    pricing = calculate_plan_price(normalized_plan, target_curr, coupon_code=coupon_code)
     amount = pricing["amount_subunits"]
     curr_code = pricing["currency"]
 

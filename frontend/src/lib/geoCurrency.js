@@ -106,22 +106,27 @@ export async function detectCountryByIp() {
 /**
  * Calculate formatted price for a given currency code
  */
-export function formatCurrencyPrice(currCode = 'INR', liveRates = null) {
+export function formatCurrencyPrice(currCode = 'INR', liveRates = null, couponCode = null) {
   const code = (currCode || 'INR').toUpperCase()
   const meta = CURRENCY_METADATA[code] || CURRENCY_METADATA.INR
   const rate = (liveRates && liveRates[code]?.rate) ? liveRates[code].rate : meta.defaultRate
 
+  const isLWSR97 = couponCode && couponCode.trim().toUpperCase() === 'LWSR97'
+  const discountMultiplier = isLWSR97 ? (1 - 0.973) : 1.0 // 97.3% off
+
   if (code === 'INR') {
+    const rawVal = BASE_INR_PRICE * discountMultiplier
+    const finalAmount = isLWSR97 ? Math.round(rawVal) : BASE_INR_PRICE
     return {
       code: 'INR',
       symbol: '₹',
-      amount: BASE_INR_PRICE,
-      formatted: `₹${BASE_INR_PRICE}`,
+      amount: finalAmount,
+      formatted: `₹${finalAmount}`,
       meta,
     }
   }
 
-  const rawAmount = BASE_INR_PRICE * rate
+  const rawAmount = BASE_INR_PRICE * rate * discountMultiplier
   const amount = Number(rawAmount.toFixed(meta.precision))
   return {
     code,
