@@ -326,7 +326,7 @@ def submit_support_query(payload: SupportQueryInput):
 @app.post("/support/test-email")
 def test_email_endpoint(payload: dict):
     """
-    Test endpoint to verify Brevo SMTP delivery.
+    Test endpoint to verify Brevo API mail delivery.
     Provide {"to_email": "your_email@example.com"} in JSON body.
     """
     to_email = payload.get("to_email")
@@ -337,9 +337,9 @@ def test_email_endpoint(payload: dict):
         from mailer import send_email
         success = send_email(
             to_email=to_email,
-            subject="LEWIS Email Verification Test · Brevo SMTP Online",
-            html_content="<h2 style='color: #00ae9d;'>LEWIS Email Test Successful!</h2><p>Your Brevo SMTP configuration is working perfectly.</p>",
-            text_content="LEWIS Email Test Successful! Your Brevo SMTP configuration is working perfectly."
+            subject="LEWIS Email Verification Test · Brevo API Online",
+            html_content="<h2 style='color: #00ae9d;'>LEWIS Email Test Successful!</h2><p>Your Brevo API configuration is working perfectly.</p>",
+            text_content="LEWIS Email Test Successful! Your Brevo API configuration is working perfectly."
         )
         if success:
             return {"status": "success", "message": f"Test email successfully sent to {to_email}"}

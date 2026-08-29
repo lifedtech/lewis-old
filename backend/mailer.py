@@ -1,24 +1,23 @@
-# mailer.py — Automated Email Delivery Engine via Brevo SMTP
+# mailer.py — Automated Email Delivery Engine via the Brevo HTTP API
 import os
-import smtplib
+import base64
 import logging
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.application import MIMEApplication
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 logger = logging.getLogger("lewis.mailer")
 
-MAIL_HOST = os.getenv("MAIL_HOST", "smtp-relay.brevo.com")
-MAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
-MAIL_USERNAME = os.getenv("MAIL_USERNAME", "a3b03f001@smtp-brevo.com")
-MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "")
+# Raw SMTP (587/465/2525) was timing out on every port from Railway — a
+# common PaaS anti-abuse policy that blocks outbound SMTP entirely, so no
+# amount of port-fallback tuning could fix it. Brevo's HTTP API sends over
+# plain HTTPS instead, sidestepping SMTP-port blocking altogether.
+BREVO_API_URL = "https://api.brevo.com/v3/smtp/email"
+BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
 MAIL_FROM_ADDRESS = os.getenv("MAIL_FROM_ADDRESS", "lewissupport@lifedhealth.com")
 MAIL_FROM_NAME = os.getenv("MAIL_FROM_NAME", "LEWIS Well-Being").replace('"', '')
-MAIL_EHLO_DOMAIN = os.getenv("MAIL_EHLO_DOMAIN", "lifedhealth.com")
 
 
 def send_email(
@@ -30,87 +29,49 @@ def send_email(
     attachments: Optional[List[Dict[str, Any]]] = None
 ) -> bool:
     """
-    Send an email via Brevo SMTP using TLS with optional attachments.
+    Send an email via Brevo's transactional email HTTP API.
     """
     if not to_email or "@" not in to_email:
         logger.warning("Invalid destination email: %s", to_email)
         return False
 
-    if not MAIL_USERNAME or not MAIL_PASSWORD:
-        logger.warning("SMTP credentials not configured. Email to %s skipped.", to_email)
+    if not BREVO_API_KEY:
+        logger.warning("BREVO_API_KEY not configured. Email to %s skipped.", to_email)
         return False
 
+    payload: Dict[str, Any] = {
+        "sender": {"name": MAIL_FROM_NAME, "email": MAIL_FROM_ADDRESS},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "htmlContent": html_content,
+    }
+    if text_content:
+        payload["textContent"] = text_content
+    if bcc:
+        payload["bcc"] = [{"email": b} for b in bcc]
+    if attachments:
+        payload["attachment"] = [
+            {
+                "name": att.get("filename", "attachment.pdf"),
+                "content": base64.b64encode(att.get("content", b"")).decode("ascii"),
+            }
+            for att in attachments
+        ]
+
     try:
-        if attachments:
-            msg = MIMEMultipart("mixed")
-            body_part = MIMEMultipart("alternative")
-            if text_content:
-                body_part.attach(MIMEText(text_content, "plain", "utf-8"))
-            body_part.attach(MIMEText(html_content, "html", "utf-8"))
-            msg.attach(body_part)
-
-            for att in attachments:
-                fname = att.get("filename", "attachment.pdf")
-                content = att.get("content", b"")
-                subtype = att.get("subtype", "pdf")
-                part = MIMEApplication(content, _subtype=subtype)
-                part.add_header("Content-Disposition", "attachment", filename=fname)
-                msg.attach(part)
-        else:
-            msg = MIMEMultipart("alternative")
-            if text_content:
-                msg.attach(MIMEText(text_content, "plain", "utf-8"))
-            msg.attach(MIMEText(html_content, "html", "utf-8"))
-
-        msg["Subject"] = subject
-        msg["From"] = f"{MAIL_FROM_NAME} <{MAIL_FROM_ADDRESS}>"
-        msg["To"] = to_email
-
-        recipients = [to_email]
-        if bcc:
-            recipients.extend(bcc)
-
-        # Try the configured port first, then fall back. 465 used to be tried
-        # first with a 25s timeout, but cloud egress (Railway included) commonly
-        # filters/blackholes 465 instead of refusing it outright — a filtered
-        # port doesn't fail fast, it hangs until the timeout. That silently
-        # cost every single email an extra ~25s before falling through to 587
-        # (the port that actually works), which is the "mail is delayed" bug.
-        connected = False
-        last_err = None
-
-        ports_to_try = [MAIL_PORT, 587, 465, 2525]
-        # Deduplicate while preserving order
-        unique_ports = list(dict.fromkeys(ports_to_try))
-
-        for port in unique_ports:
-            try:
-                if port == 465:
-                    server = smtplib.SMTP_SSL(MAIL_HOST, port, timeout=10)
-                    server.ehlo(MAIL_EHLO_DOMAIN)
-                else:
-                    server = smtplib.SMTP(MAIL_HOST, port, timeout=10)
-                    server.ehlo(MAIL_EHLO_DOMAIN)
-                    server.starttls()
-                    server.ehlo(MAIL_EHLO_DOMAIN)
-
-                server.login(MAIL_USERNAME, MAIL_PASSWORD)
-                server.sendmail(MAIL_FROM_ADDRESS, recipients, msg.as_string())
-                server.quit()
-                connected = True
-                logger.info("Successfully dispatched email to %s via port %d (Subject: %s, Attachments: %d)", to_email, port, subject, len(attachments or []))
-                break
-            except Exception as e:
-                last_err = e
-                logger.warning("SMTP attempt on port %d failed: %s; trying next port...", port, e)
-
-        if not connected:
-            logger.error("Failed to send email to %s after all port attempts: %s", to_email, last_err)
-            return False
-
-        return True
+        resp = requests.post(
+            BREVO_API_URL,
+            headers={"api-key": BREVO_API_KEY, "Content-Type": "application/json", "accept": "application/json"},
+            json=payload,
+            timeout=20,
+        )
+        if resp.ok:
+            logger.info("Successfully dispatched email to %s via Brevo API (Subject: %s, Attachments: %d)", to_email, subject, len(attachments or []))
+            return True
+        logger.error("Brevo API send to %s failed: %s %s", to_email, resp.status_code, resp.text[:500])
+        return False
     except Exception as exc:
-        logger.error("Failed to send email to %s: %s", to_email, exc)
+        logger.error("Failed to send email to %s via Brevo API: %s", to_email, exc)
         return False
 
 
