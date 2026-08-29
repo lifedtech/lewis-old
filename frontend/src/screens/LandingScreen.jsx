@@ -5,6 +5,7 @@ import LewisLogo from '../components/LewisLogo.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
 import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 import LewisHeroIllustration from '../components/LewisHeroIllustration.jsx'
+import TopFrameworkPills from '../components/TopFrameworkPills.jsx'
 import Icon from '../report/icons.jsx'
 import './landing.css'
 
@@ -218,6 +219,9 @@ export default function LandingScreen() {
           )}
         </AnimatePresence>
       </header>
+
+      {/* TOP SCIENTIFIC FRAMEWORK PILLS CAROUSEL */}
+      <TopFrameworkPills onExploreMethodology={(e) => navigateTo(e, 'research')} />
 
       {/* DEDICATED PAGE VIEWS */}
       <AnimatePresence mode="wait">
