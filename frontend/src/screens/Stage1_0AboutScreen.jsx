@@ -3,12 +3,31 @@ import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 
 export default function Stage1_0AboutScreen() {
-  const { setScreen, setProfileField, ageCategory, gender, name: storeName } = useLewisStore()
+  const { setScreen, setProfileField, ageCategory, gender, name: storeName, journeySessionId, getJourneyDurationSeconds } = useLewisStore()
   const [name, setName] = useState(storeName || '')
 
   const handleNext = () => {
-    if (!name.trim()) return
-    setProfileField('name', name.trim())
+    const trimmed = name.trim()
+    if (!trimmed) return
+    setProfileField('name', trimmed)
+
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+    const durationSec = getJourneyDurationSeconds ? getJourneyDurationSeconds() : 0
+    fetch(`${API_BASE}/journey/ping`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: journeySessionId,
+        user_name: trimmed,
+        age_category: ageCategory || null,
+        gender: gender || null,
+        current_stage: 1,
+        current_screen: 'stage1_0About',
+        progress_percent: 5.0,
+        duration_seconds: durationSec,
+      }),
+    }).catch(() => {})
+
     setScreen('stage1_1Identity')
   }
 

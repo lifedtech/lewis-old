@@ -231,7 +231,9 @@ class JourneyPingInput(BaseModel):
     session_id: str = Field(..., min_length=1, max_length=128)
     user_name: Optional[ShortText] = None
     user_email: Optional[ShortText] = None
-    current_stage: int = Field(default=0, ge=0, le=10)
+    age_category: Optional[ShortText] = None
+    gender: Optional[ShortText] = None
+    current_stage: int = Field(default=0, ge=0, le=20)
     current_screen: str = Field(default="landing", max_length=100)
     progress_percent: float = Field(default=0.0, ge=0.0, le=100.0)
     duration_seconds: int = Field(default=0, ge=0)
@@ -731,7 +733,9 @@ def calculate_full_assessment(payload: FullAssessmentInput, request: Request = N
             user_email=payload.email,
             report_data=full_response,
             started_at_iso=payload.started_at,
-            duration_seconds=payload.duration_seconds
+            duration_seconds=payload.duration_seconds,
+            age_category=payload.ageCategory,
+            gender=payload.gender,
         )
         full_response["report_uuid"] = saved_rec_uuid
         logger.info("Encrypted assessment record %s saved successfully", saved_rec_uuid)
@@ -772,12 +776,14 @@ def calculate_full_assessment(payload: FullAssessmentInput, request: Request = N
 
 @app.post("/journey/ping")
 def journey_ping(payload: JourneyPingInput):
-    """Record heartbeat telemetry, user progression, and encrypted user details."""
+    """Record heartbeat telemetry, user progression, name, age, and encrypted user details."""
     try:
         res = record_journey_ping(
             session_id=payload.session_id,
             user_name=payload.user_name,
             user_email=payload.user_email,
+            age_category=payload.age_category,
+            gender=payload.gender,
             current_stage=payload.current_stage,
             current_screen=payload.current_screen,
             progress_percent=payload.progress_percent,

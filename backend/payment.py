@@ -342,31 +342,11 @@ def create_order(
             user_email=user_email,
             user_name=user_name,
             user_phone=user_phone,
-            billing_details=billing_details
+            billing_details=billing_details,
+            razorpay_order_id=rp_order_id
         )
-        # Also map razorpay_order_id
-        from auth import get_pg_conn, has_pg, DATABASE_URL, DB_PATH
-        import sqlite3
-        if has_pg and DATABASE_URL:
-            try:
-                conn = get_pg_conn()
-                if conn:
-                    with conn.cursor() as cur:
-                        cur.execute("UPDATE lewis_payment_orders SET razorpay_order_id = %s WHERE order_id = %s", (rp_order_id, lewis_order_id))
-                        conn.commit()
-                    conn.close()
-            except Exception:
-                pass
-        try:
-            conn = sqlite3.connect(DB_PATH)
-            cur = conn.cursor()
-            cur.execute("UPDATE lewis_payment_orders SET razorpay_order_id = ? WHERE order_id = ?", (rp_order_id, lewis_order_id))
-            conn.commit()
-            conn.close()
-        except Exception:
-            pass
 
-        logger.info("Created Live Razorpay order %s (Internal: %s) for report %s (%s %s)", rp_order_id, lewis_order_id, report_uuid, curr_code, pricing["formatted"])
+        logger.info("Created Live Razorpay order %s (Internal LEWIS ID: %s) for report %s (%s %s)", rp_order_id, lewis_order_id, report_uuid, curr_code, pricing["formatted"])
 
         return {
             "order_id": lewis_order_id,
@@ -432,15 +412,17 @@ def verify_payment(
     if not signature:
         raise ValueError("Missing payment signature for live verification")
 
-    msg = f"{order_id}|{payment_id}"
-    expected_signature = hmac.new(
-        key_secret.encode("utf-8"),
-        msg.encode("utf-8"),
-        hashlib.sha256
-    ).hexdigest()
+    db_order = get_payment_order(order_id)
+    rp_order_id = (db_order.get("razorpay_order_id") if db_order else None) or order_id
 
-    if not hmac.compare_digest(expected_signature, signature):
-        logger.warning("HMAC signature mismatch for order %s and payment %s", order_id, payment_id)
+    msg1 = f"{order_id}|{payment_id}"
+    sig1 = hmac.new(key_secret.encode("utf-8"), msg1.encode("utf-8"), hashlib.sha256).hexdigest()
+
+    msg2 = f"{rp_order_id}|{payment_id}"
+    sig2 = hmac.new(key_secret.encode("utf-8"), msg2.encode("utf-8"), hashlib.sha256).hexdigest()
+
+    if not (hmac.compare_digest(sig1, signature) or hmac.compare_digest(sig2, signature)):
+        logger.warning("HMAC signature mismatch for order %s (rp: %s) and payment %s", order_id, rp_order_id, payment_id)
         raise ValueError("Payment signature verification failed")
 
     # Idempotent state recording & entitlement grant

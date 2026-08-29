@@ -80,6 +80,8 @@ export default function App() {
           session_id: store.journeySessionId,
           user_name: store.name || store.authUser?.name || null,
           user_email: store.email || store.authUser?.email || null,
+          age_category: store.ageCategory || null,
+          gender: store.gender || null,
           current_stage: idx >= 0 ? Math.min(10, Math.floor(idx / 5)) : 0,
           current_screen: currentScreen,
           progress_percent: pct,

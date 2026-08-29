@@ -103,13 +103,14 @@ export async function initiateCheckout({
     }
 
     return new Promise((resolve, reject) => {
+      const razorpayOrderId = order.razorpay_order_id || order.order_id
       const options = {
         key: order.key_id,
         amount: order.amount,
         currency: order.currency || 'INR',
         name: 'LEWIS Wellbeing Intelligence',
         description: order.plan_name || 'Personal Insight Report',
-        order_id: order.order_id,
+        order_id: razorpayOrderId,
         image: '/logo.png',
         prefill: {
           name: targetName,
@@ -125,7 +126,7 @@ export async function initiateCheckout({
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                order_id: response.razorpay_order_id || order.order_id,
+                order_id: response.razorpay_order_id || razorpayOrderId || order.order_id,
                 payment_id: response.razorpay_payment_id,
                 signature: response.razorpay_signature,
                 report_id: targetReportId,
@@ -141,7 +142,14 @@ export async function initiateCheckout({
             }
 
             const verifyData = await verifyRes.json()
-            useLewisStore.getState().setPaymentSuccess({ reportUuid: targetReportId })
+            useLewisStore.getState().setPaymentSuccess({ 
+              reportUuid: targetReportId,
+              orderId: order.order_id || razorpayOrderId,
+              paymentId: response.razorpay_payment_id,
+              email: targetEmail,
+              name: targetName,
+              phone: targetPhone,
+            })
             onSuccess(verifyData)
             resolve(verifyData)
           } catch (err) {

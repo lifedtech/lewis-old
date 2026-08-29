@@ -198,6 +198,8 @@ def init_db():
                             user_name_encrypted TEXT,
                             user_email_encrypted TEXT,
                             user_email_hash TEXT,
+                            age_category TEXT,
+                            gender TEXT,
                             wellbeing_band TEXT,
                             overall_score REAL,
                             report_json TEXT NOT NULL,
@@ -212,6 +214,8 @@ def init_db():
                             user_name_encrypted TEXT,
                             user_email_encrypted TEXT,
                             user_email_hash TEXT,
+                            age_category TEXT,
+                            gender TEXT,
                             current_stage INTEGER DEFAULT 0,
                             current_screen TEXT DEFAULT 'landing',
                             progress_percent REAL DEFAULT 0.0,
@@ -295,6 +299,20 @@ def init_db():
                             IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='report_mail_sent') THEN
                                 ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent BOOLEAN DEFAULT FALSE;
                                 ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent_at TIMESTAMP WITH TIME ZONE;
+                            END IF;
+
+                            -- Age & Gender columns for journey sessions & assessment records
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_journey_sessions' AND column_name='age_category') THEN
+                                ALTER TABLE lewis_journey_sessions ADD COLUMN age_category TEXT;
+                            END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_journey_sessions' AND column_name='gender') THEN
+                                ALTER TABLE lewis_journey_sessions ADD COLUMN gender TEXT;
+                            END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_assessment_records' AND column_name='age_category') THEN
+                                ALTER TABLE lewis_assessment_records ADD COLUMN age_category TEXT;
+                            END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_assessment_records' AND column_name='gender') THEN
+                                ALTER TABLE lewis_assessment_records ADD COLUMN gender TEXT;
                             END IF;
                         END $$;
 
@@ -397,6 +415,8 @@ def init_db():
                 user_name_encrypted TEXT,
                 user_email_encrypted TEXT,
                 user_email_hash TEXT,
+                age_category TEXT,
+                gender TEXT,
                 wellbeing_band TEXT,
                 overall_score REAL,
                 report_json TEXT NOT NULL,
@@ -413,6 +433,10 @@ def init_db():
             "ALTER TABLE lewis_assessment_records ADD COLUMN is_unlocked BOOLEAN DEFAULT 0",
             "ALTER TABLE lewis_assessment_records ADD COLUMN unlocked_at TIMESTAMP",
             "ALTER TABLE lewis_assessment_records ADD COLUMN paid_plan TEXT",
+            "ALTER TABLE lewis_assessment_records ADD COLUMN age_category TEXT",
+            "ALTER TABLE lewis_assessment_records ADD COLUMN gender TEXT",
+            "ALTER TABLE lewis_journey_sessions ADD COLUMN age_category TEXT",
+            "ALTER TABLE lewis_journey_sessions ADD COLUMN gender TEXT",
         ):
             try:
                 cursor.execute(col_stmt)
@@ -425,6 +449,8 @@ def init_db():
                 user_name_encrypted TEXT,
                 user_email_encrypted TEXT,
                 user_email_hash TEXT,
+                age_category TEXT,
+                gender TEXT,
                 current_stage INTEGER DEFAULT 0,
                 current_screen TEXT DEFAULT 'landing',
                 progress_percent REAL DEFAULT 0.0,
@@ -1377,10 +1403,12 @@ def save_encrypted_assessment_record(
     user_email: Optional[str],
     report_data: Dict[str, Any],
     started_at_iso: Optional[str] = None,
-    duration_seconds: Optional[int] = None
+    duration_seconds: Optional[int] = None,
+    age_category: Optional[str] = None,
+    gender: Optional[str] = None
 ) -> str:
     """
-    Store the user's name, email, and full generated report in the database.
+    Store the user's name, email, age group, gender, and full generated report in the database.
     User name and email ID are encrypted at rest using AES-Fernet.
     """
     report_uuid = generate_report_uuid()
@@ -1400,9 +1428,9 @@ def save_encrypted_assessment_record(
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO lewis_assessment_records
-                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, wellbeing_band, overall_score, report_json, started_at, duration_seconds)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (report_uuid, name_enc, email_enc, email_hash, wellbeing_band, overall_score, report_json_str, started_at_iso, duration_seconds))
+                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, started_at, duration_seconds)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, started_at_iso, duration_seconds))
                     conn.commit()
                 conn.close()
                 logger.info("Saved encrypted assessment record %s to PostgreSQL", report_uuid)
@@ -1415,9 +1443,9 @@ def save_encrypted_assessment_record(
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO lewis_assessment_records
-            (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, wellbeing_band, overall_score, report_json, started_at, duration_seconds)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (report_uuid, name_enc, email_enc, email_hash, wellbeing_band, overall_score, report_json_str, started_at_iso, duration_seconds))
+            (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, started_at, duration_seconds)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, started_at_iso, duration_seconds))
         conn.commit()
         conn.close()
         logger.info("Saved encrypted assessment record %s to SQLite", report_uuid)
@@ -1431,13 +1459,15 @@ def record_journey_ping(
     session_id: str,
     user_name: Optional[str] = None,
     user_email: Optional[str] = None,
+    age_category: Optional[str] = None,
+    gender: Optional[str] = None,
     current_stage: int = 0,
     current_screen: str = 'landing',
     progress_percent: float = 0.0,
     duration_seconds: int = 0
 ) -> Dict[str, Any]:
     """
-    Heartbeat and telemetry recording for tracking journey progression and dropouts.
+    Heartbeat and telemetry recording for tracking journey progression, name, age, and dropouts.
     Encrypts user name and email if present.
     """
     if not session_id:
@@ -1455,12 +1485,14 @@ def record_journey_ping(
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO lewis_journey_sessions
-                        (session_id, user_name_encrypted, user_email_encrypted, user_email_hash, current_stage, current_screen, progress_percent, duration_seconds, reached_50_pct, last_active_at, status)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 'in_progress')
+                        (session_id, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, current_stage, current_screen, progress_percent, duration_seconds, reached_50_pct, last_active_at, status)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 'in_progress')
                         ON CONFLICT (session_id) DO UPDATE SET
                             user_name_encrypted = COALESCE(EXCLUDED.user_name_encrypted, lewis_journey_sessions.user_name_encrypted),
                             user_email_encrypted = COALESCE(EXCLUDED.user_email_encrypted, lewis_journey_sessions.user_email_encrypted),
                             user_email_hash = COALESCE(EXCLUDED.user_email_hash, lewis_journey_sessions.user_email_hash),
+                            age_category = COALESCE(EXCLUDED.age_category, lewis_journey_sessions.age_category),
+                            gender = COALESCE(EXCLUDED.gender, lewis_journey_sessions.gender),
                             current_stage = EXCLUDED.current_stage,
                             current_screen = EXCLUDED.current_screen,
                             progress_percent = GREATEST(lewis_journey_sessions.progress_percent, EXCLUDED.progress_percent),
@@ -1468,7 +1500,7 @@ def record_journey_ping(
                             reached_50_pct = (lewis_journey_sessions.reached_50_pct OR EXCLUDED.reached_50_pct),
                             last_active_at = NOW()
                         WHERE lewis_journey_sessions.status != 'completed';
-                    """, (session_id, name_enc, email_enc, email_hash, current_stage, current_screen, progress_percent, duration_seconds, reached_50))
+                    """, (session_id, name_enc, email_enc, email_hash, age_category, gender, current_stage, current_screen, progress_percent, duration_seconds, reached_50))
                     conn.commit()
                 conn.close()
                 return {"status": "success", "session_id": session_id}
@@ -1480,12 +1512,14 @@ def record_journey_ping(
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO lewis_journey_sessions
-            (session_id, user_name_encrypted, user_email_encrypted, user_email_hash, current_stage, current_screen, progress_percent, duration_seconds, reached_50_pct, last_active_at, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, 'in_progress')
+            (session_id, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, current_stage, current_screen, progress_percent, duration_seconds, reached_50_pct, last_active_at, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, 'in_progress')
             ON CONFLICT (session_id) DO UPDATE SET
                 user_name_encrypted = COALESCE(excluded.user_name_encrypted, lewis_journey_sessions.user_name_encrypted),
                 user_email_encrypted = COALESCE(excluded.user_email_encrypted, lewis_journey_sessions.user_email_encrypted),
                 user_email_hash = COALESCE(excluded.user_email_hash, lewis_journey_sessions.user_email_hash),
+                age_category = COALESCE(excluded.age_category, lewis_journey_sessions.age_category),
+                gender = COALESCE(excluded.gender, lewis_journey_sessions.gender),
                 current_stage = excluded.current_stage,
                 current_screen = excluded.current_screen,
                 progress_percent = MAX(lewis_journey_sessions.progress_percent, excluded.progress_percent),
@@ -1493,7 +1527,7 @@ def record_journey_ping(
                 reached_50_pct = (lewis_journey_sessions.reached_50_pct OR excluded.reached_50_pct),
                 last_active_at = CURRENT_TIMESTAMP
             WHERE lewis_journey_sessions.status != 'completed';
-        """, (session_id, name_enc, email_enc, email_hash, current_stage, current_screen, progress_percent, duration_seconds, reached_50))
+        """, (session_id, name_enc, email_enc, email_hash, age_category, gender, current_stage, current_screen, progress_percent, duration_seconds, reached_50))
         conn.commit()
         conn.close()
     except Exception as e:
@@ -1636,6 +1670,8 @@ def get_abandoned_users_list(inactive_minutes: int = 10) -> List[Dict[str, Any]]
                             session_id,
                             user_name_encrypted,
                             user_email_encrypted,
+                            age_category,
+                            gender,
                             current_stage,
                             current_screen,
                             progress_percent,
@@ -1663,6 +1699,8 @@ def get_abandoned_users_list(inactive_minutes: int = 10) -> List[Dict[str, Any]]
                             "session_id": r['session_id'],
                             "name": name or "Guest / Anonymous",
                             "email": email or "Not captured (exited before 50%)",
+                            "age_category": r.get('age_category') or None,
+                            "gender": r.get('gender') or None,
                             "current_stage": r['current_stage'],
                             "last_screen": r['current_screen'],
                             "progress_percent": float(r['progress_percent']),
@@ -1690,6 +1728,8 @@ def get_abandoned_users_list(inactive_minutes: int = 10) -> List[Dict[str, Any]]
                 session_id,
                 user_name_encrypted,
                 user_email_encrypted,
+                age_category,
+                gender,
                 current_stage,
                 current_screen,
                 progress_percent,
@@ -1709,24 +1749,26 @@ def get_abandoned_users_list(inactive_minutes: int = 10) -> List[Dict[str, Any]]
         for r in rows:
             name = decrypt_pii(r[1]) if r[1] else None
             email = decrypt_pii(r[2]) if r[2] else None
-            inact = round(float(r[12] or 0), 1)
-            is_50 = bool(r[9])
-            eligible = bool(is_50 and inact >= 10.0 and r[10] != 'sent' and email)
+            inact = round(float(r[14] or 0), 1)
+            is_50 = bool(r[11])
+            eligible = bool(is_50 and inact >= 10.0 and r[12] != 'sent' and email)
             
             abandoned_list.append({
                 "session_id": r[0],
                 "name": name or "Guest / Anonymous",
                 "email": email or "Not captured (exited before 50%)",
-                "current_stage": r[3],
-                "last_screen": r[4],
-                "progress_percent": float(r[5] or 0),
-                "time_spent_seconds": r[6] or 0,
-                "started_at": str(r[7]),
-                "last_active_at": str(r[8]),
+                "age_category": r[3] or None,
+                "gender": r[4] or None,
+                "current_stage": r[5],
+                "last_screen": r[6],
+                "progress_percent": float(r[7] or 0),
+                "time_spent_seconds": r[8] or 0,
+                "started_at": str(r[9]),
+                "last_active_at": str(r[10]),
                 "inactive_minutes": inact,
                 "reached_50_pct": is_50,
-                "reminder_status": r[10] or 'none',
-                "reminder_sent_at": str(r[11]) if r[11] else None,
+                "reminder_status": r[12] or 'none',
+                "reminder_sent_at": str(r[13]) if r[13] else None,
                 "eligible_for_10min_reminder": eligible,
                 "restart_url": "/"
             })
@@ -1790,15 +1832,17 @@ def save_payment_order(
     user_email: Optional[str] = None,
     user_name: Optional[str] = None,
     user_phone: Optional[str] = None,
-    billing_details: Optional[Dict[str, Any]] = None
+    billing_details: Optional[Dict[str, Any]] = None,
+    razorpay_order_id: Optional[str] = None
 ) -> Dict[str, Any]:
     """
-    Save or initialize a pending payment order record with full customer billing details.
+    Save or initialize a pending payment order record with full customer billing details and Razorpay Order ID.
     """
     billing_json = json.dumps(billing_details) if billing_details else None
 
     IN_MEMORY_ORDERS[order_id] = {
         "order_id": order_id,
+        "razorpay_order_id": razorpay_order_id,
         "report_uuid": report_uuid,
         "plan_id": plan_id,
         "amount": amount,
@@ -1822,9 +1866,10 @@ def save_payment_order(
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO lewis_payment_orders
-                        (order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, created_at, updated_at)
-                        VALUES (%s, %s, %s, %s, %s, 'created', %s, %s, %s, %s, NOW(), NOW())
+                        (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, created_at, updated_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, 'created', %s, %s, %s, %s, NOW(), NOW())
                         ON CONFLICT (order_id) DO UPDATE SET
+                            razorpay_order_id = COALESCE(EXCLUDED.razorpay_order_id, lewis_payment_orders.razorpay_order_id),
                             report_uuid = EXCLUDED.report_uuid,
                             plan_id = EXCLUDED.plan_id,
                             amount = EXCLUDED.amount,
@@ -1834,7 +1879,7 @@ def save_payment_order(
                             user_phone = COALESCE(EXCLUDED.user_phone, lewis_payment_orders.user_phone),
                             billing_details_json = COALESCE(EXCLUDED.billing_details_json, lewis_payment_orders.billing_details_json),
                             updated_at = NOW();
-                    """, (order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json))
+                    """, (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json))
                     conn.commit()
                 conn.close()
                 return IN_MEMORY_ORDERS[order_id]
@@ -1846,9 +1891,10 @@ def save_payment_order(
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO lewis_payment_orders
-            (order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, 'created', ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, 'created', ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ON CONFLICT (order_id) DO UPDATE SET
+                razorpay_order_id = COALESCE(excluded.razorpay_order_id, lewis_payment_orders.razorpay_order_id),
                 report_uuid = excluded.report_uuid,
                 plan_id = excluded.plan_id,
                 amount = excluded.amount,
@@ -1858,7 +1904,7 @@ def save_payment_order(
                 user_phone = COALESCE(excluded.user_phone, lewis_payment_orders.user_phone),
                 billing_details_json = COALESCE(excluded.billing_details_json, lewis_payment_orders.billing_details_json),
                 updated_at = CURRENT_TIMESTAMP
-        """, (order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json))
+        """, (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json))
         conn.commit()
         conn.close()
     except Exception as e:
