@@ -130,10 +130,10 @@ def _worker_loop() -> None:
             # forever, burying the one useful line (get_redis_url()'s
             # startup warning) that explains why.
             now = time.time()
-            if now - last_error_log > 30:
+            if now - last_error_log > 60:
                 logger.error("Mail worker loop error (Redis down?): %s", loop_err)
                 last_error_log = now
-            time.sleep(2)  # don't spin hot while Redis is unreachable
+            time.sleep(15)  # Back off 15s when Redis is unreachable
 
 
 def start_worker() -> None:

@@ -1516,6 +1516,27 @@ def record_journey_ping(
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         cur.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_journey_sessions (
+                session_id TEXT PRIMARY KEY,
+                user_name_encrypted TEXT,
+                user_email_encrypted TEXT,
+                user_email_hash TEXT,
+                age_category TEXT,
+                gender TEXT,
+                current_stage INTEGER DEFAULT 0,
+                current_screen TEXT DEFAULT 'landing',
+                progress_percent REAL DEFAULT 0.0,
+                started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_active_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                completed_at TIMESTAMP,
+                duration_seconds INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'in_progress',
+                reached_50_pct BOOLEAN DEFAULT 0,
+                reminder_status TEXT DEFAULT 'none',
+                reminder_sent_at TIMESTAMP
+            )
+        """)
+        cur.execute("""
             INSERT INTO lewis_journey_sessions
             (session_id, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, current_stage, current_screen, progress_percent, duration_seconds, reached_50_pct, last_active_at, status)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, 'in_progress')
