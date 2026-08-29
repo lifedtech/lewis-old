@@ -907,6 +907,7 @@ def send_abandoned_reminders(payload: SendRemindersInput):
 # --- Support Query Handling & User Helpdesk ----------------------------------
 
 @app.post("/support/query")
+@app.post("/api/support/query")
 def submit_support_query_endpoint(payload: SupportQueryInput):
     """
     Save client support request to database and trigger executive notification & user confirmation email.
