@@ -17,7 +17,23 @@ import redis
 
 logger = logging.getLogger("lewis.mailqueue")
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+def get_redis_url() -> str:
+    """Resolve Redis connection string from Railway or standard environment variables."""
+    url = os.getenv("REDIS_URL") or os.getenv("REDIS_PRIVATE_URL")
+    if url:
+        return url
+    
+    host = os.getenv("REDISHOST") or os.getenv("REDIS_HOST")
+    if host:
+        port = os.getenv("REDISPORT") or os.getenv("REDIS_PORT", "6379")
+        password = os.getenv("REDISPASSWORD") or os.getenv("REDIS_PASSWORD", "")
+        user = os.getenv("REDISUSER", "default")
+        auth = f"{user}:{password}@" if password else ""
+        return f"redis://{auth}{host}:{port}/0"
+        
+    return "redis://localhost:6379/0"
+
+REDIS_URL = get_redis_url()
 QUEUE_KEY = "lewis:mail:queue"      # ready-to-send jobs (list)
 DELAYED_KEY = "lewis:mail:delayed"  # scheduled jobs (sorted set, score = due unix ts)
 DEAD_KEY = "lewis:mail:dead"        # jobs that exhausted retries (list, for manual inspection)
