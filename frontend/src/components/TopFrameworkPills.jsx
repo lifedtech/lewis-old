@@ -364,23 +364,6 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                {onExploreMethodology && (
-                  <button
-                    onClick={onExploreMethodology}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      color: TEAL,
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      fontFamily: "'Nunito', sans-serif",
-                    }}
-                  >
-                    View in Methodology →
-                  </button>
-                )}
                 <button
                   onClick={() => setSelectedId(null)}
                   aria-label="Close"
