@@ -32,20 +32,32 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
     setErrorMsg('')
 
     try {
-      const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-      await fetch(`${API_BASE}/support/query`, {
+      const API_BASE = import.meta.env.VITE_API_URL || ''
+      const payload = {
+        name: name.trim() || 'Anonymous User',
+        email: email.trim(),
+        query: query.trim(),
+        screen: activeScreen,
+        timestamp: new Date().toISOString()
+      }
+
+      let res = await fetch(`${API_BASE}/support/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim() || 'Anonymous User',
-          email: email.trim(),
-          query: query.trim(),
-          screen: activeScreen,
-          timestamp: new Date().toISOString()
-        })
-      }).catch(() => {
-        console.log('[Support Query Logged]', { name, email, query, activeScreen })
+        body: JSON.stringify(payload)
       })
+
+      if (!res.ok && API_BASE) {
+        res = await fetch('/support/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+      }
+
+      if (!res.ok) {
+        throw new Error('Support query submission failed')
+      }
 
       setStatus('success')
       setTimeout(() => {
@@ -53,7 +65,8 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
         setStatus('idle')
         if (onClose) onClose()
       }, 2500)
-    } catch {
+    } catch (err) {
+      console.error('Support query error:', err)
       setStatus('error')
       setErrorMsg('Could not send query. Please email lewissupport@lifedhealth.com directly.')
     }

@@ -41,7 +41,7 @@ export default function LewisFooter() {
       if (!res.ok) throw new Error('Failed to send query')
       setSubmitStatus({
         loading: false,
-        success: 'Thank you! Your query has been sent to Lifed Operations System. Our team will contact you shortly.',
+        success: 'Thank you! We have received your query. Our support executive will review it and contact you shortly.',
         error: null
       })
       setContactForm({ name: '', email: '', query: '' })
@@ -312,7 +312,7 @@ export default function LewisFooter() {
               /* Contact Support Query Form */
               <form onSubmit={handleSupportSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '12px' }}>
                 <p style={{ margin: 0, fontSize: '14.5px', color: 'rgba(22, 48, 43, 0.75)', lineHeight: 1.5 }}>
-                  Have a question or need assistance? Fill out your details below and your query will be sent directly to Lifed Operations.
+                  Have a question or need assistance? Fill out your details below and our support team will assist you.
                 </p>
 
                 {submitStatus.success && (
