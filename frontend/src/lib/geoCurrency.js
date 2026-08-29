@@ -111,12 +111,13 @@ export function formatCurrencyPrice(currCode = 'INR', liveRates = null, couponCo
   const meta = CURRENCY_METADATA[code] || CURRENCY_METADATA.INR
   const rate = (liveRates && liveRates[code]?.rate) ? liveRates[code].rate : meta.defaultRate
 
+  const isLWSR100 = couponCode && couponCode.trim().toUpperCase() === 'LWSR100'
   const isLWSR97 = couponCode && couponCode.trim().toUpperCase() === 'LWSR97'
-  const discountMultiplier = isLWSR97 ? (1 - 0.973) : 1.0 // 97.3% off
+  const discountMultiplier = isLWSR100 ? 0.0 : (isLWSR97 ? (1 - 0.973) : 1.0)
 
   if (code === 'INR') {
     const rawVal = BASE_INR_PRICE * discountMultiplier
-    const finalAmount = isLWSR97 ? Math.round(rawVal) : BASE_INR_PRICE
+    const finalAmount = isLWSR100 ? 0 : (isLWSR97 ? Math.round(rawVal) : BASE_INR_PRICE)
     return {
       code: 'INR',
       symbol: '₹',
@@ -127,12 +128,12 @@ export function formatCurrencyPrice(currCode = 'INR', liveRates = null, couponCo
   }
 
   const rawAmount = BASE_INR_PRICE * rate * discountMultiplier
-  const amount = Number(rawAmount.toFixed(meta.precision))
+  const amount = isLWSR100 ? 0 : Number(rawAmount.toFixed(meta.precision))
   return {
     code,
     symbol: meta.symbol,
     amount,
-    formatted: `${meta.symbol}${amount.toFixed(meta.precision)}`,
+    formatted: isLWSR100 ? `${meta.symbol}0` : `${meta.symbol}${amount.toFixed(meta.precision)}`,
     meta,
   }
 }

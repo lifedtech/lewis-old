@@ -64,7 +64,22 @@ export async function initiateCheckout({
 
     const { order } = await orderRes.json()
 
-    // 2. Handle Mock Development Simulator
+    // 2. Handle 100% Free Discount Code (e.g. LWSR100) or 0-Amount Orders
+    if (order.amount === 0 || order.payment_mode === 'free_discount' || order.status === 'paid') {
+      console.log('[Payment System] 100% Discount Code applied - Order auto-unlocked.')
+      useLewisStore.getState().setPaymentSuccess({ 
+        reportUuid: targetReportId,
+        orderId: order.order_id,
+        paymentId: order.payment_id || `pay_free_${order.order_id}`,
+        email: targetEmail,
+        name: targetName,
+        phone: targetPhone,
+      })
+      onSuccess(order)
+      return order
+    }
+
+    // 3. Handle Mock Development Simulator
     if (order.payment_mode === 'mock') {
       console.log('[Payment Simulator] Running in PAYMENT_MODE=mock')
       // Immediate simulated verification

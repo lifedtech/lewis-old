@@ -188,17 +188,24 @@ def calculate_plan_price(
     rate = rates.get(curr, DEFAULT_INR_EXCHANGE_RATES[curr]["rate"])
     meta = DEFAULT_INR_EXCHANGE_RATES[curr]
 
+    is_lwsr100 = bool(coupon_code and coupon_code.strip().upper() == "LWSR100")
     is_lwsr97 = bool(coupon_code and coupon_code.strip().upper() == "LWSR97")
-    discount_multiplier = (1.0 - 0.973) if is_lwsr97 else 1.0  # 97.3% off
+
+    if is_lwsr100:
+        discount_multiplier = 0.0  # 100% off
+    elif is_lwsr97:
+        discount_multiplier = (1.0 - 0.973)  # 97.3% off
+    else:
+        discount_multiplier = 1.0
 
     base_inr = (PERSONAL_REPORT_PRICE_PAISE / 100.0) * discount_multiplier
     if curr == "INR":
-        amount_units = round(base_inr) if is_lwsr97 else 749.0
+        amount_units = 0.0 if is_lwsr100 else (round(base_inr) if is_lwsr97 else 749.0)
         amount_subunits = int(amount_units * 100)
         formatted = f"₹{int(amount_units)}"
     else:
         raw_val = base_inr * rate
-        amount_units = round(raw_val, 2)
+        amount_units = 0.0 if is_lwsr100 else round(raw_val, 2)
         amount_subunits = int(round(amount_units * 100))
         formatted = f"{meta['symbol']}{amount_units:.2f}"
 
@@ -254,7 +261,7 @@ def create_order(
     """
     Create a payment order starting from LS20260100 in user's selected currency converted from base ₹749.
     """
-    from auth import save_payment_order, get_next_order_id
+    from auth import save_payment_order, record_successful_payment, get_next_order_id
 
     normalized_plan = (plan_key or "personal_report").strip().lower()
     plan_info = PLAN_CATALOG.get(normalized_plan)
@@ -269,6 +276,75 @@ def create_order(
     lewis_order_id = get_next_order_id()
     mode = get_payment_mode()
     key_id, key_secret = get_razorpay_credentials()
+
+    # 1. Handle 100% Free Discount Order (e.g. LWSR100)
+    is_lwsr100 = bool(coupon_code and coupon_code.strip().upper() == "LWSR100")
+    if amount == 0 or is_lwsr100:
+        free_payment_id = f"pay_free_{lewis_order_id}"
+        save_payment_order(
+            order_id=lewis_order_id,
+            report_uuid=report_uuid,
+            plan_id=plan_info["id"],
+            amount=0,
+            currency=curr_code,
+            user_email=user_email,
+            user_name=user_name,
+            user_phone=user_phone,
+            billing_details=billing_details,
+            razorpay_order_id=lewis_order_id
+        )
+        record_successful_payment(
+            order_id=lewis_order_id,
+            payment_id=free_payment_id,
+            signature="lwsr100_100_percent_discount",
+            report_uuid=report_uuid,
+            user_email=user_email,
+            user_name=user_name,
+            user_phone=user_phone
+        )
+        # Immediately send confirmation & schedule delivery
+        if user_email:
+            try:
+                import threading
+                from mailer import send_payment_confirmation_email, schedule_report_delivery_email
+                t_confirm = threading.Thread(
+                    target=send_payment_confirmation_email,
+                    kwargs={
+                        "user_email": user_email,
+                        "user_name": user_name or "",
+                        "order_id": lewis_order_id,
+                        "payment_id": free_payment_id,
+                        "amount_formatted": "₹0 (100% Promo)",
+                        "currency": curr_code,
+                        "report_uuid": report_uuid
+                    },
+                    daemon=True
+                )
+                t_confirm.start()
+                schedule_report_delivery_email(
+                    user_email=user_email,
+                    user_name=user_name or "",
+                    report_uuid=report_uuid,
+                    order_id=lewis_order_id
+                )
+            except Exception as mail_err:
+                logger.warning("Could not dispatch free promo emails: %s", mail_err)
+
+        logger.info("Processed 100%% Free Discount Order %s for %s", lewis_order_id, user_email)
+        return {
+            "order_id": lewis_order_id,
+            "razorpay_order_id": lewis_order_id,
+            "amount": 0,
+            "currency": curr_code,
+            "formatted_amount": pricing["formatted"],
+            "plan": plan_info["id"],
+            "plan_name": plan_info["name"],
+            "report_uuid": report_uuid,
+            "payment_mode": "free_discount",
+            "status": "paid",
+            "payment_id": free_payment_id,
+            "key_id": "free_coupon_lwsr100"
+        }
 
     if mode == "mock" or not (key_id and key_secret):
         save_payment_order(
@@ -386,12 +462,19 @@ def verify_payment(
     mode = get_payment_mode()
     key_id, key_secret = get_razorpay_credentials()
 
-    # Mock order handling
-    if order_id.startswith("order_mock_") or mode == "mock":
+    # Free 100% Discount orders & Mock orders
+    db_order = get_payment_order(order_id)
+    if (
+        payment_id.startswith("pay_free_")
+        or signature == "lwsr100_100_percent_discount"
+        or (db_order and db_order.get("amount") == 0)
+        or order_id.startswith("order_mock_")
+        or mode == "mock"
+    ):
         res = record_successful_payment(
             order_id=order_id,
             payment_id=payment_id,
-            signature=signature or "mock_sig_approved",
+            signature=signature or "approved_discount",
             report_uuid=report_uuid,
             user_email=user_email,
             user_name=user_name,

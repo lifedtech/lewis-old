@@ -91,8 +91,8 @@ export default function BillingScreen() {
       setCouponError('Please enter a coupon code.')
       return
     }
-    if (code === 'LWSR97') {
-      setAppliedCoupon('LWSR97')
+    if (code === 'LWSR100' || code === 'LWSR97') {
+      setAppliedCoupon(code)
       setCouponError('')
     } else {
       setCouponError('Invalid coupon code.')
