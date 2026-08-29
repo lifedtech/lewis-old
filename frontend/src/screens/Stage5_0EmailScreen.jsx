@@ -132,17 +132,17 @@ export default function Stage5_0EmailScreen() {
         </div>
 
         {/* RIGHT — Interactive Form Container */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
           <div style={{
             width: '100%',
             background: '#ffffff',
-            borderRadius: '24px',
+            borderRadius: '20px',
             border: '1px solid rgba(22, 36, 31, 0.08)',
-            padding: 'clamp(20px, 3vw, 36px)',
+            padding: 'clamp(16px, 2vw, 24px)',
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
-            gap: '22px',
+            gap: '14px',
             boxShadow: '0 4px 20px -2px rgba(22, 36, 31, 0.04)',
           }}>
 
@@ -151,7 +151,7 @@ export default function Stage5_0EmailScreen() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingBottom: '16px',
+              paddingBottom: '12px',
               borderBottom: '1px solid rgba(22, 36, 31, 0.06)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -159,19 +159,19 @@ export default function Stage5_0EmailScreen() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  width: '24px',
-                  height: '24px',
+                  width: '22px',
+                  height: '22px',
                   borderRadius: '50%',
                   background: 'rgba(0, 174, 157, 0.12)',
                   color: TEAL,
-                  fontSize: '13px',
+                  fontSize: '12px',
                   fontWeight: 800,
                 }}>
                   ✓
                 </span>
                 <span style={{
                   fontFamily: NUNITO,
-                  fontSize: '13.5px',
+                  fontSize: '13px',
                   fontWeight: 700,
                   color: INK,
                   letterSpacing: '0.02em',
@@ -181,11 +181,11 @@ export default function Stage5_0EmailScreen() {
               </div>
               <span style={{
                 fontFamily: MONO,
-                fontSize: '11px',
+                fontSize: '10.5px',
                 fontWeight: 700,
                 color: TEAL,
                 background: 'rgba(0, 174, 157, 0.08)',
-                padding: '4px 10px',
+                padding: '3px 9px',
                 borderRadius: '999px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
@@ -195,13 +195,13 @@ export default function Stage5_0EmailScreen() {
             </div>
 
             {/* Email Input Field */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <label htmlFor="user-email-input" style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 fontFamily: NUNITO,
-                fontSize: '14px',
+                fontSize: '13.5px',
                 fontWeight: 700,
                 color: INK,
               }}>
@@ -212,7 +212,7 @@ export default function Stage5_0EmailScreen() {
                 {/* Mail Icon */}
                 <div style={{
                   position: 'absolute',
-                  left: '16px',
+                  left: '14px',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   color: error ? '#d0574f' : (email ? TEAL : '#85918e'),
@@ -221,7 +221,7 @@ export default function Stage5_0EmailScreen() {
                   pointerEvents: 'none',
                   transition: 'color 0.2s ease',
                 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,13 2,6"></polyline>
                   </svg>
@@ -243,11 +243,11 @@ export default function Stage5_0EmailScreen() {
                   autoFocus
                   style={{
                     width: '100%',
-                    padding: '14px 16px 14px 46px',
-                    borderRadius: '12px',
+                    padding: '11px 14px 11px 42px',
+                    borderRadius: '10px',
                     border: error ? '1.5px solid #d0574f' : (email ? '1.5px solid #00ae9d' : '1.5px solid #c2ceca'),
                     background: '#fcfdfd',
-                    fontSize: '15px',
+                    fontSize: '14px',
                     fontFamily: NUNITO,
                     color: INK,
                     outline: 'none',
@@ -264,7 +264,7 @@ export default function Stage5_0EmailScreen() {
                   animate={{ opacity: 1, y: 0 }}
                   style={{
                     margin: '2px 0 0 4px',
-                    fontSize: '12.5px',
+                    fontSize: '12px',
                     color: '#d0574f',
                     fontFamily: NUNITO,
                     fontWeight: 600,
@@ -278,15 +278,15 @@ export default function Stage5_0EmailScreen() {
               {/* Progress & Privacy Callout */}
               <div style={{
                 background: '#f5f7f6',
-                borderRadius: '14px',
-                padding: '14px 18px',
-                marginTop: '6px',
+                borderRadius: '10px',
+                padding: '10px 14px',
+                marginTop: '4px',
                 textAlign: 'left',
               }}>
                 <p style={{
                   margin: 0,
-                  fontSize: '13.5px',
-                  lineHeight: 1.55,
+                  fontSize: '12.5px',
+                  lineHeight: 1.5,
                   color: 'rgba(65, 66, 66, 0.8)',
                   fontFamily: NUNITO,
                   fontWeight: 500,
@@ -314,8 +314,8 @@ export default function Stage5_0EmailScreen() {
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
-                gap: '12px',
-                padding: '2px 0',
+                gap: '10px',
+                padding: '1px 0',
                 cursor: 'pointer',
                 userSelect: 'none',
                 outline: 'none',
@@ -323,9 +323,9 @@ export default function Stage5_0EmailScreen() {
             >
               {/* Custom Checkbox Box */}
               <div style={{
-                width: '18px',
-                height: '18px',
-                minWidth: '18px',
+                width: '16px',
+                height: '16px',
+                minWidth: '16px',
                 borderRadius: '4px',
                 border: subscribe ? '1.5px solid #00ae9d' : '1.5px solid #a4b3ae',
                 background: subscribe ? '#00ae9d' : '#ffffff',
@@ -339,8 +339,8 @@ export default function Stage5_0EmailScreen() {
                   <motion.svg
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    width="12"
-                    height="12"
+                    width="11"
+                    height="11"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="#ffffff"
@@ -355,8 +355,8 @@ export default function Stage5_0EmailScreen() {
 
               <span style={{
                 fontFamily: NUNITO,
-                fontSize: '13.5px',
-                lineHeight: 1.5,
+                fontSize: '13px',
+                lineHeight: 1.45,
                 color: 'rgba(65, 66, 66, 0.85)',
                 fontWeight: 500,
                 textAlign: 'left',
@@ -372,16 +372,15 @@ export default function Stage5_0EmailScreen() {
             display: 'flex',
             justifyContent: 'flex-end',
             width: '100%',
-            marginTop: 'auto',
-            paddingTop: '16px',
+            marginTop: '12px',
             flexShrink: 0,
           }}>
             <button
               id="continue-email-btn"
               className="btn-primary"
               style={{
-                padding: '12px 36px',
-                fontSize: '15px',
+                padding: '11px 32px',
+                fontSize: '14.5px',
                 fontWeight: 700,
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -391,7 +390,7 @@ export default function Stage5_0EmailScreen() {
               onClick={handleNext}
             >
               <span>Continue Assessment</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
