@@ -359,60 +359,208 @@ def send_support_notification_email(
     user_name: str,
     user_email: str,
     query_text: str,
-    screen_name: Optional[str] = "Unknown"
+    screen_name: Optional[str] = "General",
+    query_id: Optional[str] = None
 ) -> bool:
     """
-    Forward incoming support query to support team and send auto-reply to user.
+    Forward incoming support query to the LEWIS support team and send an immediate reassurance email to the user.
     """
-    # 1. Forward to support team
-    team_subject = f"[Support Query] From {user_name} ({user_email}) · Screen: {screen_name}"
+    ticket_id = query_id or f"TICK-{datetime.now(timezone.utc).strftime('%H%M%S')}"
+    name_clean = (user_name or "there").strip()
+
+    # 1. Forward to Internal Support Team
+    team_subject = f"[Support Ticket #{ticket_id}] From {name_clean} ({user_email}) · Screen: {screen_name}"
     team_html = f"""
-    <div style="font-family: sans-serif; padding: 20px; color: #333;">
-      <h2 style="color: #00ae9d; margin-top: 0;">New LEWIS Support Request</h2>
-      <p><strong>Name:</strong> {user_name}</p>
-      <p><strong>Email:</strong> {user_email}</p>
-      <p><strong>Screen:</strong> {screen_name}</p>
-      <p><strong>Query:</strong></p>
-      <blockquote style="background: #f4faf8; border-left: 4px solid #00ae9d; padding: 12px; margin: 10px 0;">
-        {query_text}
-      </blockquote>
-      <p style="font-size: 12px; color: #888;">Received at {datetime.now(timezone.utc).isoformat()}</p>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; color: #1e293b; background: #f8fafc;">
+      <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0;">
+        <h2 style="color: #00ae9d; margin: 0 0 12px 0; font-size: 18px;">New LEWIS Support Request · #{ticket_id}</h2>
+        <table style="width: 100%; font-size: 13.5px; border-collapse: collapse; margin-bottom: 16px;">
+          <tr><td style="padding: 6px 0; color: #64748b; width: 120px;"><strong>Client Name:</strong></td><td style="padding: 6px 0; color: #0f172a;">{name_clean}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Client Email:</strong></td><td style="padding: 6px 0; color: #0f172a;"><a href="mailto:{user_email}" style="color: #00ae9d;">{user_email}</a></td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Origin Screen:</strong></td><td style="padding: 6px 0; color: #0f172a;">{screen_name}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Ticket ID:</strong></td><td style="padding: 6px 0; font-family: monospace; font-weight: 700; color: #00ae9d;">{ticket_id}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Received:</strong></td><td style="padding: 6px 0; color: #64748b;">{datetime.now(timezone.utc).strftime("%d %B %Y, %H:%M UTC")}</td></tr>
+        </table>
+        <h4 style="margin: 12px 0 6px; color: #334155; font-size: 14px;">User's Message / Problem:</h4>
+        <div style="background: #f4faf8; border-left: 4px solid #00ae9d; border-radius: 8px; padding: 14px 16px; margin: 0 0 16px 0; color: #334155; font-size: 14px; line-height: 1.5; white-space: pre-wrap;">
+{query_text}
+        </div>
+      </div>
     </div>
     """
     send_email(to_email=MAIL_FROM_ADDRESS, subject=team_subject, html_content=team_html)
 
-    # 2. Send acknowledgment to user
-    user_subject = "We received your message · LEWIS Support"
+    # 2. Reassurance Confirmation Email to User
+    user_subject = f"We have received your support request · Ticket #{ticket_id}"
     user_html = f"""
-    <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #334155; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0;">
-      <h3 style="color: #00ae9d; margin-top: 0;">Hello {user_name},</h3>
-      <p>Thank you for reaching out to LEWIS Support. We have received your message:</p>
-      <blockquote style="background: #f8fafc; border-left: 3px solid #00ae9d; padding: 10px 14px; color: #475569; font-style: italic;">
-        "{query_text}"
-      </blockquote>
-      <p>Our team is reviewing your message and will get back to you shortly at this email address.</p>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Support Request Received</title>
+      <style>
+        body {{
+          font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+          background-color: #f4faf8;
+          margin: 0;
+          padding: 24px 12px;
+          color: #334155;
+        }}
+        .email-card {{
+          max-width: 580px;
+          margin: 0 auto;
+          background: #ffffff;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 174, 157, 0.08);
+          border: 1px solid rgba(0, 174, 157, 0.16);
+        }}
+        .header {{
+          background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
+          padding: 28px 28px 24px;
+          text-align: center;
+          color: #ffffff;
+        }}
+        .header h1 {{
+          margin: 8px 0 2px;
+          font-size: 20px;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+        }}
+        .content {{
+          padding: 28px 26px;
+        }}
+        .greeting {{
+          font-size: 16px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 12px;
+        }}
+        .query-box {{
+          background: #f8fafc;
+          border-left: 3.5px solid #00ae9d;
+          border-radius: 8px;
+          padding: 12px 16px;
+          margin: 16px 0;
+          font-size: 13.5px;
+          color: #475569;
+          font-style: italic;
+          line-height: 1.5;
+        }}
+        .status-box {{
+          background: #eafbf7;
+          border: 1.5px solid #00ae9d;
+          border-radius: 12px;
+          padding: 14px 18px;
+          margin: 18px 0;
+          font-size: 13.5px;
+          color: #016257;
+          line-height: 1.5;
+        }}
+        .footer {{
+          background: #f8fafc;
+          padding: 20px 26px;
+          text-align: center;
+          font-size: 11.5px;
+          color: #64748b;
+          border-top: 1px solid #f1f5f9;
+        }}
+      </style>
+    </head>
+    <body>
+      <div class="email-card">
+        <div class="header">
+          <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 6px;">
+            <tr>
+              <td style="vertical-align: middle; padding-right: 8px;">
+                <svg width="28" height="28" viewBox="0 0 82 82" style="display: block;">
+                  <path d="M11 41 V11 H41" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#86efac" />
+                  <circle cx="41" cy="41" r="11" fill="#ffffff" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#86efac" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11" cy="71" r="7" fill="#ffffff" />
+                </svg>
+              </td>
+              <td style="vertical-align: middle;">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; font-weight: 800; color: #ffffff;">Lewis</span>
+              </td>
+            </tr>
+          </table>
+          <h1>Support Request Received</h1>
+          <p style="margin: 0; font-size: 12.5px; opacity: 0.9;">Ticket #{ticket_id}</p>
+        </div>
 
-      <!-- Lewis Brand Signature -->
-      <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0; width: 100%;">
-        <tr>
-          <td style="vertical-align: middle; width: 30px; padding-right: 10px;">
-            <svg width="26" height="26" viewBox="0 0 82 82" style="display: block;">
-              <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="71" cy="11" r="7" fill="#5FBB46" />
-              <circle cx="41" cy="41" r="11" fill="#00AE9D" />
-              <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="11" cy="71" r="7" fill="#00AE9D" />
-            </svg>
-          </td>
-          <td style="vertical-align: middle;">
-            <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; font-weight: 800; color: #16302B;">Lewis</span>
-            <div style="font-size: 11px; color: #64748b; margin-top: 1px;">Support Team · <a href="mailto:lewissupport@lifedhealth.com" style="color: #00ae9d; text-decoration: none;">lewissupport@lifedhealth.com</a></div>
-          </td>
-        </tr>
-      </table>
-    </div>
+        <div class="content">
+          <div class="greeting">Hello {name_clean},</div>
+          <p style="font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 12px;">
+            We have received your support query. Our support executive is actively reviewing your request and will look after this to resolve the problem you have faced as quickly as possible.
+          </p>
+
+          <div class="status-box">
+            <strong>What happens next:</strong> Our executive will investigate your inquiry and reply directly to this email address (<strong>{user_email}</strong>).
+          </div>
+
+          <div style="font-size: 13px; font-weight: 700; color: #334155; margin-top: 14px;">Your submitted query:</div>
+          <div class="query-box">
+            "{query_text}"
+          </div>
+
+          <p style="font-size: 13px; line-height: 1.5; color: #64748b; margin: 16px 0 0;">
+            If you have any further details or screenshots to share, you can simply reply directly to this email.
+          </p>
+
+          <!-- Lewis Brand Signature -->
+          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 22px; padding-top: 16px; border-top: 1px solid #e2e8f0; width: 100%;">
+            <tr>
+              <td style="vertical-align: middle; width: 30px; padding-right: 10px;">
+                <svg width="26" height="26" viewBox="0 0 82 82" style="display: block;">
+                  <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+                  <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11" cy="71" r="7" fill="#00AE9D" />
+                </svg>
+              </td>
+              <td style="vertical-align: middle;">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: 800; color: #16302B;">Lewis Concierge & Support Team</span>
+                <div style="font-size: 11px; color: #64748b; margin-top: 1px;"><a href="mailto:lewissupport@lifedhealth.com" style="color: #00ae9d; text-decoration: none;">lewissupport@lifedhealth.com</a></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0;">© 2026 LEWIS Well-Being · A Lifed Health Intelligence System</p>
+        </div>
+      </div>
+    </body>
+    </html>
     """
-    return send_email(to_email=user_email, subject=user_subject, html_content=user_html)
+
+    user_text = f"""
+Hello {name_clean},
+
+We have received your support query (Ticket #{ticket_id}).
+
+Our support executive is reviewing your request and will look after this to resolve the problem you have faced as quickly as possible.
+
+Your submitted query:
+"{query_text}"
+
+If you have additional details or screenshots, simply reply to this email.
+
+Best regards,
+LEWIS Support Team
+lewissupport@lifedhealth.com
+    """
+
+    return send_email(
+        to_email=user_email,
+        subject=user_subject,
+        html_content=user_html,
+        text_content=user_text
+    )
 
 
 def send_report_delivery_email(

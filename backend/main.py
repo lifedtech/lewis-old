@@ -253,6 +253,8 @@ class SupportQueryInput(BaseModel):
     name: str = Field(..., min_length=1, max_length=150)
     email: str = Field(..., min_length=3, max_length=200)
     query: str = Field(..., min_length=1, max_length=5000)
+    screen: Optional[str] = Field(default=None, max_length=100)
+    timestamp: Optional[str] = Field(default=None, max_length=100)
 
 
 class CreatePaymentOrderInput(BaseModel):
@@ -899,6 +901,51 @@ def send_abandoned_reminders(payload: SendRemindersInput):
     except Exception as exc:
         logger.error("Error processing abandoned reminders: %s", exc)
         raise HTTPException(status_code=500, detail="Failed to process reminder notifications")
+
+
+
+# --- Support Query Handling & User Helpdesk ----------------------------------
+
+@app.post("/support/query")
+def submit_support_query_endpoint(payload: SupportQueryInput):
+    """
+    Save client support request to database and trigger executive notification & user confirmation email.
+    """
+    try:
+        # 1. Save to Database (Postgres & SQLite)
+        db_res = save_support_query(
+            name=payload.name,
+            email=payload.email,
+            query=payload.query,
+            screen=payload.screen
+        )
+        query_id = db_res.get("query_id", "TICK-SUPPORT")
+
+        # 2. Asynchronously send confirmation email to user & forward to support team
+        import threading
+        from mailer import send_support_notification_email
+
+        t_support = threading.Thread(
+            target=send_support_notification_email,
+            kwargs={
+                "user_name": payload.name,
+                "user_email": payload.email,
+                "query_text": payload.query,
+                "screen_name": payload.screen or "General",
+                "query_id": query_id
+            },
+            daemon=True
+        )
+        t_support.start()
+
+        return {
+            "status": "success",
+            "message": "Support query received and recorded. A confirmation email has been dispatched.",
+            "query_id": query_id
+        }
+    except Exception as exc:
+        logger.error("Error handling support query: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to process support request")
 
 
 # --- Razorpay Payment & Report Entitlement Endpoints -------------------------

@@ -1309,9 +1309,10 @@ def get_onboarding_analytics_summary() -> Dict[str, Any]:
     }
 
 
-def save_support_query(name: str, email: str, query: str) -> dict:
-    """Save user support query and forward payload to Lifed Operations System DB/webhook if configured."""
-    query_id = str(uuid.uuid4())[:8]
+def save_support_query(name: str, email: str, query: str, screen: Optional[str] = None) -> dict:
+    """Save user support query to PostgreSQL / Supabase and local SQLite with fallback."""
+    query_id = f"TICK-{str(uuid.uuid4())[:8].upper()}"
+    screen_val = screen or "general"
 
     # Forward to Lifed Operations System Webhook if configured
     lifed_ops_webhook = os.getenv("LIFED_OPERATIONS_WEBHOOK_URL")
@@ -1323,54 +1324,55 @@ def save_support_query(name: str, email: str, query: str) -> dict:
                 "name": name,
                 "email": email,
                 "query": query,
+                "screen": screen_val,
                 "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
             })
             logger.info("Forwarded support query %s to Lifed Operations System", query_id)
         except Exception as exc:
             logger.warning("Failed to forward query to Lifed Operations webhook: %s", exc)
 
-    # 1. PostgreSQL Native Driver
-    if USE_POSTGRES:
+    # 1. PostgreSQL Native Driver / Supabase
+    if has_pg and DATABASE_URL:
         try:
-            conn = psycopg2.connect(DATABASE_URL)
-            cursor = conn.cursor()
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS lewis_support_queries (
-                    id SERIAL PRIMARY KEY,
-                    query_id TEXT UNIQUE NOT NULL,
-                    name TEXT NOT NULL,
-                    email TEXT NOT NULL,
-                    query TEXT NOT NULL,
-                    status TEXT DEFAULT 'pending',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """)
-            cursor.execute("""
-                INSERT INTO lewis_support_queries (query_id, name, email, query)
-                VALUES (%s, %s, %s, %s)
-            """, (query_id, name, email, query))
-            conn.commit()
-            conn.close()
-            return {"query_id": query_id}
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        CREATE TABLE IF NOT EXISTS lewis_support_queries (
+                            id SERIAL PRIMARY KEY,
+                            query_id TEXT UNIQUE NOT NULL,
+                            name TEXT NOT NULL,
+                            email TEXT NOT NULL,
+                            query TEXT NOT NULL,
+                            screen TEXT,
+                            status TEXT DEFAULT 'pending',
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                        );
+                    """)
+                    # Check column screen
+                    cur.execute("""
+                        DO $$
+                        BEGIN
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns 
+                                WHERE table_name='lewis_support_queries' AND column_name='screen'
+                            ) THEN
+                                ALTER TABLE lewis_support_queries ADD COLUMN screen TEXT;
+                            END IF;
+                        END $$;
+                    """)
+                    cur.execute("""
+                        INSERT INTO lewis_support_queries (query_id, name, email, query, screen)
+                        VALUES (%s, %s, %s, %s, %s)
+                    """, (query_id, name, email, query, screen_val))
+                    conn.commit()
+                conn.close()
+                logger.info("Saved support query %s for %s to PostgreSQL", query_id, email)
+                return {"query_id": query_id, "status": "saved"}
         except Exception as exc:
             logger.error("PostgreSQL support query save error (%s).", exc)
 
-    # 2. Supabase REST API
-    if USE_SUPABASE_REST:
-        try:
-            payload = {
-                "query_id": query_id,
-                "name": name,
-                "email": email,
-                "query": query,
-                "status": "pending"
-            }
-            _request("POST", f"{SUPABASE_URL}/rest/v1/lewis_support_queries", headers=get_supabase_headers(), json=payload)
-            return {"query_id": query_id}
-        except Exception as exc:
-            logger.error("Supabase REST support query save error (%s).", exc)
-
-    # 3. Local SQLite Fallback
+    # 2. Local SQLite Fallback
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
@@ -1381,20 +1383,22 @@ def save_support_query(name: str, email: str, query: str) -> dict:
                 name TEXT NOT NULL,
                 email TEXT NOT NULL,
                 query TEXT NOT NULL,
+                screen TEXT,
                 status TEXT DEFAULT 'pending',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
         cursor.execute("""
-            INSERT INTO lewis_support_queries (query_id, name, email, query)
-            VALUES (?, ?, ?, ?)
-        """, (query_id, name, email, query))
+            INSERT INTO lewis_support_queries (query_id, name, email, query, screen)
+            VALUES (?, ?, ?, ?, ?)
+        """, (query_id, name, email, query, screen_val))
         conn.commit()
         conn.close()
-        return {"query_id": query_id}
+        logger.info("Saved support query %s for %s to SQLite", query_id, email)
+        return {"query_id": query_id, "status": "saved"}
     except Exception as exc:
         logger.warning("Local SQLite support query save error (%s).", exc)
-        return {"query_id": query_id}
+        return {"query_id": query_id, "status": "fallback"}
 
 
 # --- Encrypted Assessment Records & Journey Dropout Telemetry -----------------
