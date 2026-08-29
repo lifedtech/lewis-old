@@ -70,17 +70,21 @@ def send_email(
         if bcc:
             recipients.extend(bcc)
 
-        # Robust connection with 120s timeout for large 5.4MB attachments
+        # Direct fast connection with fallback (SSL 465 -> TLS 587 -> 2525)
         connected = False
         last_err = None
 
-        for port in [MAIL_PORT, 465, 587, 2525]:
+        ports_to_try = [465, MAIL_PORT, 587, 2525]
+        # Deduplicate while preserving order
+        unique_ports = list(dict.fromkeys(ports_to_try))
+
+        for port in unique_ports:
             try:
                 if port == 465:
-                    server = smtplib.SMTP_SSL(MAIL_HOST, port, timeout=120)
+                    server = smtplib.SMTP_SSL(MAIL_HOST, port, timeout=25)
                     server.ehlo(MAIL_EHLO_DOMAIN)
                 else:
-                    server = smtplib.SMTP(MAIL_HOST, port, timeout=120)
+                    server = smtplib.SMTP(MAIL_HOST, port, timeout=25)
                     server.ehlo(MAIL_EHLO_DOMAIN)
                     server.starttls()
                     server.ehlo(MAIL_EHLO_DOMAIN)
@@ -93,7 +97,7 @@ def send_email(
                 break
             except Exception as e:
                 last_err = e
-                logger.warning("SMTP attempt on port %d failed: %s; trying fallback...", port, e)
+                logger.warning("SMTP attempt on port %d failed: %s; trying next port...", port, e)
 
         if not connected:
             logger.error("Failed to send email to %s after all port attempts: %s", to_email, last_err)
@@ -834,7 +838,7 @@ def schedule_report_delivery_email(
     import threading
 
     if delay_seconds is None:
-        delay_seconds = int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "10"))
+        delay_seconds = int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "0"))
 
     def delayed_worker():
         if delay_seconds > 0:
