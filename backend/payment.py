@@ -13,6 +13,7 @@ logger = logging.getLogger("lewis.payment")
 
 import requests
 try:
+    # pyrefly: ignore [missing-import]
     import razorpay
 except ImportError:
     razorpay = None
