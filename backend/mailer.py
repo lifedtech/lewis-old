@@ -686,11 +686,11 @@ def schedule_report_delivery_email(
     import threading
 
     if delay_seconds is None:
-        delay_seconds = int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "300"))
+        delay_seconds = int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "10"))
 
     def delayed_worker():
         if delay_seconds > 0:
-            logger.info("Report email for %s scheduled with %d seconds delay (manual verification interval)...", user_email, delay_seconds)
+            logger.info("Report email for %s scheduled with %d seconds delay (verification interval)...", user_email, delay_seconds)
             time.sleep(delay_seconds)
 
         rep_json = None
