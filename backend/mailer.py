@@ -833,7 +833,11 @@ def schedule_report_delivery_email(
     the way a bare time.sleep()-in-a-thread used to.
     """
     if delay_seconds is None:
-        delay_seconds = int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "0"))
+        # Root cause of "report mail sends instantly instead of after 5 min":
+        # REPORT_EMAIL_DELAY_SECONDS was never set in .env/.env.example, so
+        # this fell back to 0 (no delay) despite the docstring/callers above
+        # assuming 300s. Default to the intended 5 minutes instead.
+        delay_seconds = int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "300"))
 
     from mail_queue import enqueue
     enqueue(
