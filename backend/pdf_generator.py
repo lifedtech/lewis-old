@@ -17,6 +17,10 @@ ASSET_PDF_PATHS = [
     os.path.join(BASE_DIR, "assets", "Lewis-Insight-Report.pdf"),
     os.path.join(BASE_DIR, "..", "frontend", "Lewis-Insight-Report.pdf"),
     os.path.join(BASE_DIR, "..", "frontend", "public", "Lewis-Insight-Report.pdf"),
+    os.path.join(os.getcwd(), "assets", "Lewis-Insight-Report.pdf"),
+    os.path.join(os.getcwd(), "backend", "assets", "Lewis-Insight-Report.pdf"),
+    os.path.join(os.getcwd(), "frontend", "Lewis-Insight-Report.pdf"),
+    os.path.join(os.getcwd(), "frontend", "public", "Lewis-Insight-Report.pdf"),
 ]
 
 

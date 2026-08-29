@@ -78,8 +78,14 @@ def enqueue(kind: str, payload: dict, delay_seconds: int = 0) -> None:
         # Redis unreachable (e.g. REDIS_URL not configured yet in this env):
         # fall back to the old direct-send-in-a-thread behavior rather than
         # dropping the email outright.
-        logger.error("Redis enqueue failed (%s); sending %s directly instead", e, kind)
-        threading.Thread(target=_dispatch, args=(kind, payload), daemon=True).start()
+        logger.error("Redis enqueue failed (%s); scheduling %s directly instead (delay=%ds)", e, kind, delay_seconds)
+        if delay_seconds > 0:
+            def _delayed_thread():
+                time.sleep(delay_seconds)
+                _dispatch(kind, payload)
+            threading.Thread(target=_delayed_thread, daemon=True).start()
+        else:
+            threading.Thread(target=_dispatch, args=(kind, payload), daemon=True).start()
 
 
 def _promote_due_delayed() -> None:

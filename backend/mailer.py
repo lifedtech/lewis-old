@@ -63,7 +63,7 @@ def send_email(
             BREVO_API_URL,
             headers={"api-key": BREVO_API_KEY, "Content-Type": "application/json", "accept": "application/json"},
             json=payload,
-            timeout=20,
+            timeout=60,
         )
         if resp.ok:
             logger.info("Successfully dispatched email to %s via Brevo API (Subject: %s, Attachments: %d)", to_email, subject, len(attachments or []))
