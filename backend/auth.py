@@ -340,6 +340,7 @@ def init_db():
                         ALTER TABLE lewis_assessment_records ENABLE ROW LEVEL SECURITY;
                         ALTER TABLE lewis_journey_sessions ENABLE ROW LEVEL SECURITY;
                         ALTER TABLE lewis_payment_orders ENABLE ROW LEVEL SECURITY;
+                        ALTER TABLE lewis_system_counters ENABLE ROW LEVEL SECURITY;
                     """)
                     conn.commit()
                 conn.close()
