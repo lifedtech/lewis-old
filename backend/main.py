@@ -293,34 +293,6 @@ def read_root():
     return {"status": "success", "message": "Lewis Core Engine is online"}
 
 
-@app.post("/support/query")
-def submit_support_query(payload: SupportQueryInput):
-    try:
-        res = save_support_query(payload.name, payload.email, payload.query)
-        
-        # Asynchronously send email notification & user confirmation
-        try:
-            from mail_queue import enqueue
-            enqueue(
-                "support_notification",
-                {
-                    "user_name": payload.name,
-                    "user_email": payload.email,
-                    "query_text": payload.query,
-                    "screen_name": "Support Modal"
-                }
-            )
-        except Exception as mail_err:
-            logger.warning("Could not queue support email: %s", mail_err)
-
-        return {
-            "status": "success",
-            "message": "Your query has been recorded and submitted to Lifed Operations System.",
-            "query_id": res.get("query_id")
-        }
-    except Exception as exc:
-        logger.error("Support query submission error: %s", exc)
-        raise HTTPException(status_code=500, detail="Failed to submit support query. Please try again.")
 
 
 @app.post("/support/test-email")
