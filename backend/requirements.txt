@@ -19,6 +19,7 @@ psycopg2-binary==2.9.12
 argon2-cffi==25.1.0
 cryptography>=43.0.0
 razorpay>=1.4.2
+redis==5.2.1
 
 # --- Pinned transitive dependencies (full closure, for reproducibility) ---
 annotated-doc==0.0.4

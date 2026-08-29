@@ -1749,7 +1749,7 @@ def _p16_pathway(enriched):
         + " is real, and your readings show a season with limited spare capacity. Under those conditions a large plan tends to fail in the first crowded week and leave you feeling worse than when you started, because now there is evidence. A small plan that survives contact with a real week is worth considerably more than an impressive one you abandon. If it feels almost too easy, it has been sized correctly."
     )
 
-    return _page(16, PART_FIVE, "Your plan · 1 of 5", "Your improvement pathway",
+    return _page(16, PART_FIVE, "Your plan · 1 of 6", "Your improvement pathway",
                  "A focused plan, deliberately reduced to fit this particular season. Lower intensity is not lower ambition. It is the fit for right now.", [
         {"type": "flow", "steps": steps,
          "first_move_label": "YOUR FIRST MOVE", "first_move": anchor["first_move"]},
@@ -1767,7 +1767,7 @@ def _p16_pathway(enriched):
 
 def _p17_anchor(enriched):
     anchor = _pick_anchor(enriched)
-    return _page(17, PART_FIVE, "Your plan · 2 of 5", "Your anchor practice",
+    return _page(17, PART_FIVE, "Your plan · 2 of 6", "Your anchor practice",
                  "One practice, described properly. This is the single thing this report would ask you to keep if you kept nothing else.", [
         {"type": "practice", "tag": anchor["tag"], "title": anchor["title"], "cols": [
             {"label": "WHEN", "text": anchor["when"], "icon": "clock"},
@@ -1787,7 +1787,7 @@ def _p17_anchor(enriched):
 
 def _p18_seven_days(enriched):
     anchor = _pick_anchor(enriched)
-    return _page(18, PART_FIVE, "Your plan · 3 of 5", "Your next seven days",
+    return _page(18, PART_FIVE, "Your plan · 3 of 6", "Your next seven days",
                  "One action a day, and deliberately nothing more. If a day is missed, the week is not.", [
         {"type": "sevendays", "title": None,
          "rows": [{"day": d, "focus": f, "action": a} for (d, f, a) in anchor["seven_days"]]},
@@ -1801,7 +1801,7 @@ def _p18_seven_days(enriched):
 
 def _p19_supports(enriched):
     supports = _build_supports(enriched)
-    return _page(19, PART_FIVE, "Your plan · 4 of 5", "Your optional supports",
+    return _page(19, PART_FIVE, "Your plan · 4 of 6", "Your optional supports",
                  "Small additions, chosen for your specific pattern. Take one at a time, and only after the anchor is steady. This is a shelf to choose from, not a list to complete.", [
         {"type": "supports", "items": [
             {"tag": s["tag"], "title": s["title"], "body": s["body"], "why": s["why"]}
@@ -1819,7 +1819,7 @@ def _p20_choosing(enriched):
     choose_rows.append(["You are already at capacity", "None of them",
                         "The anchor alone is a complete plan. Additions are genuinely optional"])
     adjustments = _adjustment_cards(enriched)
-    return _page(20, PART_FIVE, "Your plan · 5 of 5", "Choosing, and small adjustments",
+    return _page(20, PART_FIVE, "Your plan · 5 of 6", "Choosing, and small adjustments",
                  "Match the support to the situation you are actually in this week, then make the small changes that cost nothing.", [
         {"type": "table", "title": "HOW TO CHOOSE BETWEEN THEM",
          "columns": ["If this is your situation", "Try this one", "Because"],
@@ -1943,7 +1943,7 @@ def _p22_thirty_days(enriched):
     blocks.append(_callout("ON THE DAYS IT DOES NOT GO WELL",
         "You will miss days. That is expected, and it is built into the design of this plan rather than being a failure of it. A missed day tells you something about fit, which is genuinely useful information. If several days slip, the right response is to make the practice smaller rather than to try harder, and certainly rather than to think less of yourself. The plan should shrink before self judgement grows.",
         variant="synthesis", icon="heart"))
-    return _page(21, PART_SIX, "Your next month", "A thirty day experiment",
+    return _page(22, PART_SIX, "Your next month", "A thirty day experiment",
                  "The purpose is to learn something about your own life, not to complete a perfect routine. One repeated cue becomes the spine. Everything else stays optional.",
                  blocks, next_line="What stands behind everything you have just read.")
 
@@ -1957,7 +1957,7 @@ def _p23_what_stands_behind(enriched):
         + (_join_names(unread) + " were left unread rather than guessed. " if unread else "")
         + "That difference in wording is deliberate, and it is worth trusting when you read it."
     )
-    return _page(22, PART_SIX, "About this reflection", "What stands behind this report",
+    return _page(23, PART_SIX, "About this reflection", "What stands behind this report",
                  "A report that asks for your trust should be equally clear about where it is confident, where it is not, and what happens to what you shared.", [
         _cards([
             ("HOW YOUR READING WAS FORMED", None,
@@ -1992,7 +1992,7 @@ def _p24_appendix_measures(enriched):
     ordered = [c for c in AREA_ORDER if c in scored_codes]
     measure_rows = [[AREA_CODE_TO_NAME[c], MEASURE_ROWS[c][0], MEASURE_ROWS[c][1]] for c in ordered]
 
-    return _page(23, PART_SIX, "Appendix · 1 of 2", "The measures behind your reading",
+    return _page(24, PART_SIX, "Appendix · 1 of 2", "The measures behind your reading",
                  "For readers who would like to know what stands behind each part of this report. Nothing here is required in order to use your reflection, and none of it changes what your report says.", [
         {"type": "table", "title": "THE MEASURES BEHIND EACH OF THE NINE AREAS",
          "columns": ["Area", "Established measure used", "What it is designed to capture"],
@@ -2043,7 +2043,7 @@ def _p25_appendix_research(enriched):
     blocks.append({"type": "colophon", "title": "Your Lewis Insight Report",
                    "prepared": prepared, "line": NON_CLINICAL_LINE})
 
-    return _page(24, PART_SIX, "Appendix · 2 of 2", "The research behind what was suggested",
+    return _page(25, PART_SIX, "Appendix · 2 of 2", "The research behind what was suggested",
                  "Every practice and program in this report was chosen for a reason that can be named and checked. Here are those reasons in full.",
                  blocks)
 
@@ -2072,6 +2072,7 @@ def build_insight_report(enriched: dict) -> dict:
         _p18_seven_days(enriched),
         _p19_supports(enriched),
         _p20_choosing(enriched),
+        _p21_programs(enriched),
         _p22_thirty_days(enriched),
         _p23_what_stands_behind(enriched),
         _p24_appendix_measures(enriched),

@@ -17,6 +17,7 @@
 import os
 import hmac
 import logging
+from contextlib import asynccontextmanager
 from datetime import date
 from typing import Annotated, Any, Dict, List, Optional, Union
 
@@ -64,12 +65,20 @@ logger = logging.getLogger("lewis.api")
 # free (full endpoint/field map) and have no reason to be public once this
 # is a real deployment. Gated by the same ENVIRONMENT=production signal
 # used for the secret-config fail-fast checks in auth.py.
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    from mail_queue import start_worker
+    start_worker()
+    yield
+
+
 app = FastAPI(
     title="Lewis Core Engine",
     version="1.1",
     docs_url=None if IS_PRODUCTION else "/docs",
     redoc_url=None if IS_PRODUCTION else "/redoc",
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
+    lifespan=lifespan,
 )
 
 # --- CORS: explicit origins only; a wildcard is never honored -----------------
@@ -291,20 +300,18 @@ def submit_support_query(payload: SupportQueryInput):
         
         # Asynchronously send email notification & user confirmation
         try:
-            import threading
-            from mailer import send_support_notification_email
-            threading.Thread(
-                target=send_support_notification_email,
-                kwargs={
+            from mail_queue import enqueue
+            enqueue(
+                "support_notification",
+                {
                     "user_name": payload.name,
                     "user_email": payload.email,
                     "query_text": payload.query,
                     "screen_name": "Support Modal"
-                },
-                daemon=True
-            ).start()
+                }
+            )
         except Exception as mail_err:
-            logger.warning("Could not dispatch support email thread: %s", mail_err)
+            logger.warning("Could not queue support email: %s", mail_err)
 
         return {
             "status": "success",
@@ -923,21 +930,18 @@ def submit_support_query_endpoint(payload: SupportQueryInput):
         query_id = db_res.get("query_id", "TICK-SUPPORT")
 
         # 2. Asynchronously send confirmation email to user & forward to support team
-        import threading
-        from mailer import send_support_notification_email
+        from mail_queue import enqueue
 
-        t_support = threading.Thread(
-            target=send_support_notification_email,
-            kwargs={
+        enqueue(
+            "support_notification",
+            {
                 "user_name": payload.name,
                 "user_email": payload.email,
                 "query_text": payload.query,
                 "screen_name": payload.screen or "General",
                 "query_id": query_id
-            },
-            daemon=True
+            }
         )
-        t_support.start()
 
         return {
             "status": "success",

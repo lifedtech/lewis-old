@@ -70,21 +70,26 @@ def send_email(
         if bcc:
             recipients.extend(bcc)
 
-        # Direct fast connection with fallback (SSL 465 -> TLS 587 -> 2525)
+        # Try the configured port first, then fall back. 465 used to be tried
+        # first with a 25s timeout, but cloud egress (Railway included) commonly
+        # filters/blackholes 465 instead of refusing it outright — a filtered
+        # port doesn't fail fast, it hangs until the timeout. That silently
+        # cost every single email an extra ~25s before falling through to 587
+        # (the port that actually works), which is the "mail is delayed" bug.
         connected = False
         last_err = None
 
-        ports_to_try = [465, MAIL_PORT, 587, 2525]
+        ports_to_try = [MAIL_PORT, 587, 465, 2525]
         # Deduplicate while preserving order
         unique_ports = list(dict.fromkeys(ports_to_try))
 
         for port in unique_ports:
             try:
                 if port == 465:
-                    server = smtplib.SMTP_SSL(MAIL_HOST, port, timeout=25)
+                    server = smtplib.SMTP_SSL(MAIL_HOST, port, timeout=10)
                     server.ehlo(MAIL_EHLO_DOMAIN)
                 else:
-                    server = smtplib.SMTP(MAIL_HOST, port, timeout=25)
+                    server = smtplib.SMTP(MAIL_HOST, port, timeout=10)
                     server.ehlo(MAIL_EHLO_DOMAIN)
                     server.starttls()
                     server.ehlo(MAIL_EHLO_DOMAIN)
@@ -824,6 +829,35 @@ A Lifed Health Intelligence System
     return sent
 
 
+def deferred_report_delivery(
+    user_email: str,
+    user_name: Optional[str] = None,
+    report_uuid: Optional[str] = None,
+    order_id: Optional[str] = None
+) -> bool:
+    """
+    Worker-side handler for a queued "report_delivery" job: fetch the report
+    (it may not have existed yet at enqueue time) and send it.
+    """
+    rep_json = None
+    if report_uuid:
+        try:
+            from auth import get_report_by_uuid
+            rec = get_report_by_uuid(report_uuid)
+            if rec and rec.get("report_json"):
+                rep_json = rec["report_json"]
+        except Exception as e:
+            logger.warning("Could not fetch report data for email: %s", e)
+
+    return send_report_delivery_email(
+        user_email=user_email,
+        user_name=user_name,
+        report_uuid=report_uuid,
+        order_id=order_id,
+        report_data=rep_json
+    )
+
+
 def schedule_report_delivery_email(
     user_email: str,
     user_name: Optional[str] = None,
@@ -832,36 +866,17 @@ def schedule_report_delivery_email(
     delay_seconds: Optional[int] = None
 ):
     """
-    Schedules sending the completed insight report 5 minutes (default 300s) after payment confirmation.
+    Queues the completed insight report for delivery 5 minutes (default 300s,
+    REPORT_EMAIL_DELAY_SECONDS) after payment confirmation, via the Redis mail
+    queue — so a process restart during that window doesn't silently lose it
+    the way a bare time.sleep()-in-a-thread used to.
     """
-    import time
-    import threading
-
     if delay_seconds is None:
         delay_seconds = int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "0"))
 
-    def delayed_worker():
-        if delay_seconds > 0:
-            logger.info("Report email for %s scheduled with %d seconds delay (verification interval)...", user_email, delay_seconds)
-            time.sleep(delay_seconds)
-
-        rep_json = None
-        if report_uuid:
-            try:
-                from auth import get_report_by_uuid
-                rec = get_report_by_uuid(report_uuid)
-                if rec and rec.get("report_json"):
-                    rep_json = rec["report_json"]
-            except Exception as e:
-                logger.warning("Could not fetch report data for email: %s", e)
-
-        send_report_delivery_email(
-            user_email=user_email,
-            user_name=user_name,
-            report_uuid=report_uuid,
-            order_id=order_id,
-            report_data=rep_json
-        )
-
-    t = threading.Thread(target=delayed_worker, daemon=True)
-    t.start()
+    from mail_queue import enqueue
+    enqueue(
+        "report_delivery",
+        {"user_email": user_email, "user_name": user_name, "report_uuid": report_uuid, "order_id": order_id},
+        delay_seconds=delay_seconds
+    )
