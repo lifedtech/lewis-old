@@ -22,7 +22,7 @@ def get_redis_url() -> str:
     url = os.getenv("REDIS_URL") or os.getenv("REDIS_PRIVATE_URL")
     if url:
         return url
-    
+
     host = os.getenv("REDISHOST") or os.getenv("REDIS_HOST")
     if host:
         port = os.getenv("REDISPORT") or os.getenv("REDIS_PORT", "6379")
@@ -30,7 +30,18 @@ def get_redis_url() -> str:
         user = os.getenv("REDISUSER", "default")
         auth = f"{user}:{password}@" if password else ""
         return f"redis://{auth}{host}:{port}/0"
-        
+
+    # None of REDIS_URL / REDIS_PRIVATE_URL / REDISHOST / REDIS_HOST were set
+    # in this process's environment — falling back to localhost, which will
+    # never work in production. Log this loudly ONCE at startup so "why is
+    # it hitting localhost" is answered directly in the deploy log instead
+    # of surfacing only as a recurring, unexplained connection-refused error.
+    logger.warning(
+        "No REDIS_URL/REDIS_PRIVATE_URL/REDISHOST/REDIS_HOST found in env — "
+        "defaulting to redis://localhost:6379/0. On Railway: add REDIS_URL "
+        "to this service's Variables tab, referencing the Redis service "
+        "(e.g. ${{Redis.REDIS_URL}}), then redeploy."
+    )
     return "redis://localhost:6379/0"
 
 REDIS_URL = get_redis_url()
@@ -103,6 +114,7 @@ def _handle_job(raw: str) -> None:
 
 def _worker_loop() -> None:
     logger.info("Mail queue worker started (redis=%s)", REDIS_URL)
+    last_error_log = 0.0
     while True:
         try:
             _promote_due_delayed()
@@ -112,7 +124,15 @@ def _worker_loop() -> None:
             _, raw = popped
             _handle_job(raw)
         except Exception as loop_err:
-            logger.error("Mail worker loop error (Redis down?): %s", loop_err)
+            # Redis unreachable retries every 2s (so it recovers fast once
+            # fixed), but only LOGS every 30s — otherwise an unreachable
+            # Redis floods the deploy log with one identical line per retry
+            # forever, burying the one useful line (get_redis_url()'s
+            # startup warning) that explains why.
+            now = time.time()
+            if now - last_error_log > 30:
+                logger.error("Mail worker loop error (Redis down?): %s", loop_err)
+                last_error_log = now
             time.sleep(2)  # don't spin hot while Redis is unreachable
 
 
