@@ -339,6 +339,25 @@ def send_support_notification_email(
     name_clean = (user_name or "there").strip()
 
     # 1. Forward to Internal Support Team & Founders
+    team_subject = f"[Support Ticket #{ticket_id}] From {name_clean} ({user_email}) · Screen: {screen_name}"
+    team_html = f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; color: #1e293b; background: #f8fafc;">
+      <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0;">
+        <h2 style="color: #00ae9d; margin: 0 0 12px 0; font-size: 18px;">New LEWIS Support Request · #{ticket_id}</h2>
+        <table style="width: 100%; font-size: 13.5px; border-collapse: collapse; margin-bottom: 16px;">
+          <tr><td style="padding: 6px 0; color: #64748b; width: 120px;"><strong>Client Name:</strong></td><td style="padding: 6px 0; color: #0f172a;">{name_clean}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Client Email:</strong></td><td style="padding: 6px 0; color: #0f172a;"><a href="mailto:{user_email}" style="color: #00ae9d;">{user_email}</a></td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Origin Screen:</strong></td><td style="padding: 6px 0; color: #0f172a;">{screen_name}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Ticket ID:</strong></td><td style="padding: 6px 0; font-family: monospace; font-weight: 700; color: #00ae9d;">{ticket_id}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Received:</strong></td><td style="padding: 6px 0; color: #64748b;">{datetime.now(timezone.utc).strftime("%d %B %Y, %H:%M UTC")}</td></tr>
+        </table>
+        <h4 style="margin: 12px 0 6px; color: #334155; font-size: 14px;">User's Message / Problem:</h4>
+        <div style="background: #f4faf8; border-left: 4px solid #00ae9d; border-radius: 8px; padding: 14px 16px; margin: 0 0 16px 0; color: #334155; font-size: 14px; line-height: 1.5; white-space: pre-wrap;">
+{query_text}
+        </div>
+      </div>
+    </div>
+    """
     team_recipients_raw = os.getenv("SUPPORT_NOTIFICATION_EMAILS", "projectlifed@gmail.com,aayushraj1601@gmail.com")
     team_bccs = [e.strip() for e in team_recipients_raw.split(",") if e.strip() and e.strip() != MAIL_FROM_ADDRESS]
     send_email(to_email=MAIL_FROM_ADDRESS, subject=team_subject, html_content=team_html, bcc=team_bccs)
