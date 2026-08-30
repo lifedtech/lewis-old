@@ -21,7 +21,7 @@ from contextlib import asynccontextmanager
 from datetime import date
 from typing import Annotated, Any, Dict, List, Optional, Union
 
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, StringConstraints, EmailStr
@@ -60,6 +60,18 @@ from payment import (
 )
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("lewis.api")
+
+# Shared-secret gate for /admin/* ops routes (manual report resend etc.) — these
+# trigger real outbound email on demand, so unlike the read-only /analytics/*
+# routes they can't be left open. Set LEWIS_ADMIN_KEY in production; unset
+# locally just disables the gate for dev convenience.
+ADMIN_KEY = os.getenv("LEWIS_ADMIN_KEY", "")
+
+
+def require_admin(x_admin_key: Optional[str] = Header(None)) -> None:
+    if IS_PRODUCTION or ADMIN_KEY:
+        if not ADMIN_KEY or not x_admin_key or not hmac.compare_digest(x_admin_key, ADMIN_KEY):
+            raise HTTPException(status_code=401, detail="Missing or invalid X-Admin-Key")
 
 # SEC-009: /docs, /redoc, and the raw OpenAPI schema are attacker recon for
 # free (full endpoint/field map) and have no reason to be public once this
@@ -1151,5 +1163,47 @@ def get_static_insight_report_pdf():
             "Cache-Control": "public, max-age=86400"
         }
     )
+
+
+# --- Ops: manual report-mail resend (safety net alongside the automatic queue) --
+
+@app.get("/admin/pending-reports")
+def list_pending_report_deliveries(min_age_seconds: int = 0, _: None = Depends(require_admin)):
+    """
+    Paid orders whose report email hasn't gone out yet — same query the
+    background reconciliation loop runs, exposed for manual follow-up.
+    """
+    from auth import get_pending_report_deliveries
+    pending = get_pending_report_deliveries(min_age_seconds=min_age_seconds)
+    return {"status": "success", "count": len(pending), "orders": pending}
+
+
+@app.post("/admin/resend-report/{order_id}")
+def resend_report_delivery(order_id: str, _: None = Depends(require_admin)):
+    """
+    Manually (re)send the report-delivery email for one order right now,
+    bypassing the delay queue. Reuses the same delivery path the automatic
+    queue uses, so a resend is indistinguishable from a normal delivery.
+    """
+    from auth import get_payment_order
+    from mailer import deferred_report_delivery
+
+    order = get_payment_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail=f"No order found for {order_id}")
+    if order.get("status") != "paid":
+        raise HTTPException(status_code=409, detail=f"Order {order_id} is not marked paid (status={order.get('status')})")
+    if not order.get("user_email"):
+        raise HTTPException(status_code=422, detail=f"Order {order_id} has no user_email on file")
+
+    sent = deferred_report_delivery(
+        user_email=order["user_email"],
+        user_name=order.get("user_name"),
+        report_uuid=order.get("report_uuid"),
+        order_id=order_id,
+    )
+    if not sent:
+        raise HTTPException(status_code=502, detail="Send failed — check server logs (Brevo/PDF errors)")
+    return {"status": "success", "order_id": order_id, "user_email": order["user_email"]}
 
 
