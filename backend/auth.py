@@ -2280,6 +2280,37 @@ def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
     except Exception as e:
         logger.warning("SQLite pending report deliveries query error: %s", e)
 
+    # In-memory fallback tier (same pattern as get_payment_order/is_report_unlocked):
+    # if a write to Postgres/SQLite silently failed, IN_MEMORY_ORDERS is still
+    # the one place that order definitely exists. Without this, an order that
+    # only ever landed in memory could never be found by reconciliation,
+    # while get_payment_order (which does check IN_MEMORY_ORDERS) would find
+    # it fine — exactly the "resend works, pending-list never shows it" gap.
+    seen = {p["order_id"] for p in pending}
+    cutoff = datetime.now(timezone.utc) - timedelta(seconds=min_age_seconds)
+    for order_id, order in IN_MEMORY_ORDERS.items():
+        if order_id in seen:
+            continue
+        if order.get("status") != "paid" or not order.get("user_email"):
+            continue
+        if order.get("report_mail_sent"):
+            continue
+        paid_at = order.get("paid_at")
+        if not paid_at:
+            continue
+        try:
+            paid_at_dt = datetime.fromisoformat(paid_at)
+        except ValueError:
+            continue
+        if paid_at_dt <= cutoff:
+            pending.append({
+                "order_id": order_id,
+                "report_uuid": order.get("report_uuid"),
+                "user_email": order.get("user_email"),
+                "user_name": order.get("user_name"),
+                "paid_at": paid_at,
+            })
+
     return pending
 
 
