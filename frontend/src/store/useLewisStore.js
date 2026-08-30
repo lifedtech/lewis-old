@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 // Load persisted auth from localStorage safely
 let savedToken = null
@@ -139,7 +140,15 @@ const initialState = () => ({
   paymentError: null,
 })
 
-export const useLewisStore = create((set, get) => ({
+// A refresh used to wipe every answer and drop the user back on 'landing'
+// — the store was pure in-memory with no persistence at all. sessionStorage
+// (not localStorage) so it survives a refresh/back-forward within the same
+// tab/test session but doesn't linger indefinitely across browser restarts.
+// authToken/authUser/isAuthenticated already have their own dedicated
+// localStorage handling above and in setAuth/logout — excluded here to
+// avoid two sources of truth for auth. Transient in-flight/error flags are
+// excluded so a refresh never resurrects a stuck spinner or stale error.
+export const useLewisStore = create(persist((set, get) => ({
   ...initialState(),
 
   setScreen: (screenName, options = {}) => {
@@ -294,5 +303,16 @@ export const useLewisStore = create((set, get) => ({
       }
     }
     set(initialState())
+  },
+}), {
+  name: 'lewis-journey-store',
+  storage: createJSONStorage(() => sessionStorage),
+  partialize: (state) => {
+    const {
+      authToken, authUser, isAuthenticated, authPendingDownload,
+      isPaymentProcessing, paymentError, analysisError,
+      ...persisted
+    } = state
+    return persisted
   },
 }))

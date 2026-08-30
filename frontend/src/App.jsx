@@ -15,7 +15,7 @@ export default function App() {
   const { isMobile } = useDeviceViewport()
   useAdaptiveScreenBrain()
 
-  const { currentScreen, setScreen } = useLewisStore()
+  const { currentScreen } = useLewisStore()
   const [bootLoading, setBootLoading] = useState(true)
 
   useEffect(() => {
@@ -110,8 +110,12 @@ export default function App() {
           <LewisLoadingScreen
             key="boot-loader"
             onComplete={() => {
+              // Was: setScreen('landing') here unconditionally, on every
+              // boot — including a refresh mid-screen. The hash-sync effect
+              // above already resolves the correct screen (from the URL,
+              // or the persisted store) before this fires; forcing
+              // 'landing' here clobbered that every single time.
               setBootLoading(false)
-              setScreen('landing')
             }}
           />
         )}
