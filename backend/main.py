@@ -1092,3 +1092,22 @@ def get_report_pdf_endpoint(report_id: str, format: Optional[str] = None):
         }
     )
 
+
+@app.get("/download/Lewis-Insight-Report.pdf")
+@app.get("/assets/Lewis-Insight-Report.pdf")
+def get_static_insight_report_pdf():
+    """
+    Public downloadable authentic 25-page Lewis Insight Report PDF file.
+    """
+    from pdf_generator import build_insight_report_pdf
+    pdf_bytes = build_insight_report_pdf()
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": "attachment; filename=LEWIS-Insight-Report.pdf",
+            "Cache-Control": "public, max-age=86400"
+        }
+    )
+
+

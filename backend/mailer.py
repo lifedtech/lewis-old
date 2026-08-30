@@ -50,13 +50,17 @@ def send_email(
     if bcc:
         payload["bcc"] = [{"email": b} for b in bcc]
     if attachments:
-        payload["attachment"] = [
-            {
-                "name": att.get("filename", "attachment.pdf"),
-                "content": base64.b64encode(att.get("content", b"")).decode("ascii"),
-            }
-            for att in attachments
-        ]
+        formatted_attachments = []
+        for att in attachments:
+            name_val = att.get("filename") or att.get("name") or "LEWIS-Insight-Report.pdf"
+            item = {"name": name_val}
+            if att.get("url"):
+                item["url"] = att["url"]
+            elif att.get("content"):
+                raw = att["content"]
+                item["content"] = base64.b64encode(raw).decode("ascii") if isinstance(raw, bytes) else str(raw)
+            formatted_attachments.append(item)
+        payload["attachment"] = formatted_attachments
 
     try:
         resp = requests.post(
@@ -570,13 +574,20 @@ def send_report_delivery_email(
         logger.error("Failed to generate PDF for attachment (%s): %s", rep_id, pdf_err)
 
     pdf_filename = f"LEWIS-Insight-Report-{rep_id}.pdf"
+    public_pdf_url = "https://lewis-production-953f.up.railway.app/download/Lewis-Insight-Report.pdf"
+    direct_pdf_download = f"https://lewis-production-953f.up.railway.app/reports/{rep_id}/pdf" if rep_id else public_pdf_url
+
     attachments = []
     if pdf_bytes:
         attachments.append({
             "filename": pdf_filename,
             "content": pdf_bytes,
-            "maintype": "application",
-            "subtype": "pdf"
+            "url": public_pdf_url
+        })
+    else:
+        attachments.append({
+            "filename": pdf_filename,
+            "url": public_pdf_url
         })
 
     subject = f"Your LEWIS Personal Wellbeing Insight Report · Report ID {rep_id}"
@@ -721,8 +732,9 @@ def send_report_delivery_email(
               </tr>
             </table>
 
-            <div style="text-align: center; margin-top: 16px;">
-              <a href="{report_link}" class="btn">View Online Summary</a>
+            <div style="text-align: center; margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+              <a href="{direct_pdf_download}" class="btn" style="background: #00ae9d; color: #ffffff !important; padding: 12px 24px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Download Report PDF</a>
+              <a href="{report_link}" style="display: inline-block; background: #ffffff; color: #00ae9d !important; border: 1.5px solid #00ae9d; padding: 11px 22px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 14px;">View Online Summary</a>
             </div>
           </div>
 
