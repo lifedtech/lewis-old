@@ -738,11 +738,6 @@ def send_report_delivery_email(
                 <td style="padding: 6px 0; text-align: right; font-weight: 700; color: #1e293b;">{date_str}</td>
               </tr>
             </table>
-
-            <div style="text-align: center; margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-              <a href="{direct_pdf_download}" class="btn" style="background: #00ae9d; color: #ffffff !important; padding: 12px 24px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 14px; display: inline-block;">Download Report PDF</a>
-              <a href="{report_link}" style="display: inline-block; background: #ffffff; color: #00ae9d !important; border: 1.5px solid #00ae9d; padding: 11px 22px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 14px;">View Online Summary</a>
-            </div>
           </div>
 
           <p style="font-size: 13.5px; line-height: 1.6; color: #64748b;">
@@ -790,8 +785,6 @@ Order Reference: {order_ref}
 Date: {date_str}
 
 Please find your complete 25-page Insight Report attached directly as a PDF document.
-
-Direct PDF Download Link: {direct_pdf_download}
 
 Lewis Wellbeing Intelligence
 A Lifed Health Intelligence System

@@ -581,8 +581,13 @@ def _get_next_counter_val(counter_name: str, initial: int = 0) -> int:
                     res = cur.fetchone()
                     conn.commit()
                 conn.close()
-                if res and res[0] is not None:
-                    return int(res[0])
+                # get_pg_conn() always uses RealDictCursor — res is a
+                # RealDictRow (dict-like), not a tuple, so res[0] raised
+                # KeyError every single call, silently caught below, and
+                # fell through to the SQLite/in-memory fallback. This
+                # counter has never actually used Postgres until this fix.
+                if res and res.get("current_val") is not None:
+                    return int(res["current_val"])
         except Exception as e:
             logger.warning("Postgres counter increment error (%s), using local fallback", e)
 
