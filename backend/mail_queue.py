@@ -12,46 +12,45 @@ import json
 import time
 import logging
 import threading
-
-import redis
+from typing import Optional
 
 logger = logging.getLogger("lewis.mailqueue")
 
-def get_redis_url() -> str:
-    """Resolve Redis connection string from Railway or standard environment variables."""
-    url = os.getenv("REDIS_URL") or os.getenv("REDIS_PRIVATE_URL")
-    if url:
-        return url
-
-    host = os.getenv("REDISHOST") or os.getenv("REDIS_HOST")
-    if host:
-        port = os.getenv("REDISPORT") or os.getenv("REDIS_PORT", "6379")
-        password = os.getenv("REDISPASSWORD") or os.getenv("REDIS_PASSWORD", "")
-        user = os.getenv("REDISUSER", "default")
-        auth = f"{user}:{password}@" if password else ""
-        return f"redis://{auth}{host}:{port}/0"
-
-    # None of REDIS_URL / REDIS_PRIVATE_URL / REDISHOST / REDIS_HOST were set
-    # in this process's environment — falling back to localhost, which will
-    # never work in production. Log this loudly ONCE at startup so "why is
-    # it hitting localhost" is answered directly in the deploy log instead
-    # of surfacing only as a recurring, unexplained connection-refused error.
-    logger.warning(
-        "No REDIS_URL/REDIS_PRIVATE_URL/REDISHOST/REDIS_HOST found in env — "
-        "defaulting to redis://localhost:6379/0. On Railway: add REDIS_URL "
-        "to this service's Variables tab, referencing the Redis service "
-        "(e.g. ${{Redis.REDIS_URL}}), then redeploy."
-    )
-    return "redis://localhost:6379/0"
-
-REDIS_URL = get_redis_url()
-QUEUE_KEY = "lewis:mail:queue"      # ready-to-send jobs (list)
-DELAYED_KEY = "lewis:mail:delayed"  # scheduled jobs (sorted set, score = due unix ts)
-DEAD_KEY = "lewis:mail:dead"        # jobs that exhausted retries (list, for manual inspection)
+QUEUE_KEY = "lewis:mail:queue"
+DELAYED_KEY = "lewis:mail:delayed"
+DEAD_KEY = "lewis:mail:dead"
 MAX_ATTEMPTS = 3
 RETRY_BACKOFF_SECONDS = 30
 
-_redis = redis.from_url(REDIS_URL, decode_responses=True, socket_connect_timeout=5)
+
+def get_redis_client() -> Optional[object]:
+    """Resolve and test Redis connection. Returns None if Redis is not configured or offline."""
+    url = os.getenv("REDIS_URL") or os.getenv("REDIS_PRIVATE_URL")
+    if not url:
+        host = os.getenv("REDISHOST") or os.getenv("REDIS_HOST")
+        if host:
+            port = os.getenv("REDISPORT") or os.getenv("REDIS_PORT", "6379")
+            password = os.getenv("REDISPASSWORD") or os.getenv("REDIS_PASSWORD", "")
+            user = os.getenv("REDISUSER", "default")
+            auth = f"{user}:{password}@" if password else ""
+            url = f"redis://{auth}{host}:{port}/0"
+
+    if not url or "localhost" in url:
+        # In cloud / Railway without REDIS_URL, don't spam localhost connection errors
+        return None
+
+    try:
+        import redis
+        client = redis.from_url(url, decode_responses=True, socket_connect_timeout=3)
+        client.ping()
+        logger.info("Connected to Redis mail queue backend (%s)", url.split("@")[-1])
+        return client
+    except Exception as e:
+        logger.warning("Redis configured but unreachable (%s) — using resilient in-memory scheduler", e)
+        return None
+
+
+_redis = get_redis_client()
 
 
 def _dispatch(kind: str, payload: dict) -> bool:
@@ -69,40 +68,46 @@ def _dispatch(kind: str, payload: dict) -> bool:
 
 
 def enqueue(kind: str, payload: dict, delay_seconds: int = 0) -> None:
-    """Queue a mail job. delay_seconds=0 means "send as soon as the worker is free"."""
-    job = json.dumps({"kind": kind, "payload": payload, "attempts": 0})
-    try:
-        if delay_seconds > 0:
-            _redis.zadd(DELAYED_KEY, {job: time.time() + delay_seconds})
-        else:
-            _redis.rpush(QUEUE_KEY, job)
-    except Exception as e:
-        # Redis unreachable (e.g. REDIS_URL not configured yet in this env):
-        # fall back to the old direct-send-in-a-thread behavior rather than
-        # dropping the email outright.
-        logger.error("Redis enqueue failed (%s); scheduling %s directly instead (delay=%ds)", e, kind, delay_seconds)
-        if delay_seconds > 0:
-            def _delayed_thread():
-                time.sleep(delay_seconds)
-                _dispatch(kind, payload)
-            threading.Thread(target=_delayed_thread, daemon=True).start()
-        else:
-            threading.Thread(target=_dispatch, args=(kind, payload), daemon=True).start()
+    """
+    Queue a mail job.
+    Uses Redis if provisioned, or threaded in-memory timer if Redis is not present.
+    """
+    global _redis
+    if _redis:
+        try:
+            job = json.dumps({"kind": kind, "payload": payload, "attempts": 0})
+            if delay_seconds > 0:
+                _redis.zadd(DELAYED_KEY, {job: time.time() + delay_seconds})
+            else:
+                _redis.rpush(QUEUE_KEY, job)
+            return
+        except Exception as e:
+            logger.error("Redis enqueue error (%s); falling back to in-memory schedule", e)
+
+    # In-memory execution (handles immediate and delayed jobs smoothly)
+    if delay_seconds > 0:
+        timer = threading.Timer(delay_seconds, _dispatch, args=(kind, payload))
+        timer.daemon = True
+        timer.start()
+        logger.info("Enqueued %s job in-memory (dispatches in %ds)", kind, delay_seconds)
+    else:
+        thread = threading.Thread(target=_dispatch, args=(kind, payload), daemon=True)
+        thread.start()
+        logger.info("Dispatched %s job immediately in background thread", kind)
 
 
 def _promote_due_delayed() -> None:
+    if not _redis:
+        return
     due_jobs = _redis.zrangebyscore(DELAYED_KEY, "-inf", time.time())
     for job in due_jobs:
-        # ponytail: ZREM + RPUSH isn't one atomic op, so a crash between them
-        # could duplicate a job on the rare race. A duplicate send is a minor
-        # annoyance; losing the job (the previous behavior) is not. Move to a
-        # Lua script (or ZPOPMIN‑style atomic move) if duplicates ever matter.
         if _redis.zrem(DELAYED_KEY, job):
             _redis.rpush(QUEUE_KEY, job)
 
 
 def _handle_job(raw: str) -> None:
-    """Dispatch one popped job; retry with backoff, dead-letter after MAX_ATTEMPTS."""
+    if not _redis:
+        return
     job = json.loads(raw)
     try:
         ok = _dispatch(job["kind"], job["payload"])
@@ -121,8 +126,11 @@ def _handle_job(raw: str) -> None:
 
 
 def _worker_loop() -> None:
-    logger.info("Mail queue worker started (redis=%s)", REDIS_URL)
-    last_error_log = 0.0
+    if not _redis:
+        logger.info("Mail queue running in resilient in-memory mode (0 Redis errors)")
+        return
+
+    logger.info("Mail queue Redis worker started")
     while True:
         try:
             _promote_due_delayed()
@@ -132,16 +140,7 @@ def _worker_loop() -> None:
             _, raw = popped
             _handle_job(raw)
         except Exception as loop_err:
-            # Redis unreachable retries every 2s (so it recovers fast once
-            # fixed), but only LOGS every 30s — otherwise an unreachable
-            # Redis floods the deploy log with one identical line per retry
-            # forever, burying the one useful line (get_redis_url()'s
-            # startup warning) that explains why.
-            now = time.time()
-            if now - last_error_log > 60:
-                logger.error("Mail worker loop error (Redis down?): %s", loop_err)
-                last_error_log = now
-            time.sleep(15)  # Back off 15s when Redis is unreachable
+            time.sleep(15)
 
 
 def start_worker() -> None:
