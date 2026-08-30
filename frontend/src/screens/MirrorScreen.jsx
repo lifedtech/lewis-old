@@ -272,36 +272,6 @@ export default function MirrorScreen() {
                 </RadarChart>
               </ResponsiveContainer>
             </div>
-
-            {/* Color-coded Status Dots Legend */}
-            <div className="mirror-legend" style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              gap: 'clamp(8px, 1.5vw, 16px)',
-              marginTop: '4px',
-              fontSize: '13.5px',
-              fontWeight: 600,
-              color: '#52605d',
-            }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#00ae9d' }} />
-                Strong
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#5fbb46' }} />
-                Steady
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#fbbf24' }} />
-                Under pressure
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#fb7185' }} />
-                Running on empty
-              </span>
-            </div>
           </div>
 
           {/* Dynamic / Image 2 Descriptive Text */}

@@ -59,6 +59,7 @@ import MirrorScreen from '../screens/MirrorScreen.jsx'
 import BillingScreen from '../screens/BillingScreen.jsx'
 import PaymentConfirmScreen from '../screens/PaymentConfirmScreen.jsx'
 import LoginScreen from '../screens/LoginScreen.jsx'
+import ReportReviewScreen from '../screens/ReportReviewScreen.jsx'
 
 const INSTRUMENT_SCREENS = Object.fromEntries(
   Object.keys(INSTRUMENTS).map((id) => {
@@ -120,13 +121,16 @@ const SCREENS = {
   payment: BillingScreen,
   paymentConfirm: PaymentConfirmScreen,
   login: LoginScreen,
+  reportReview: ReportReviewScreen,
+  review: ReportReviewScreen,
+  'report-review': ReportReviewScreen,
 }
 
 export default function DesktopApp() {
   const { currentScreen } = useLewisStore()
   const validScreen = SCREENS[currentScreen] ? currentScreen : 'landing'
   const ActiveScreen = SCREENS[validScreen]
-  const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login'].includes(validScreen)
+  const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login', 'reportReview', 'review', 'report-review'].includes(validScreen)
 
   const stageWrapRef = useRef(null)
   const stageMainRef = useRef(null)
@@ -140,7 +144,7 @@ export default function DesktopApp() {
   }, [validScreen])
 
   // Full-bleed standalone pages (no app-shell padding or card border artifacts)
-  if (['landing', 'billing', 'payment', 'paymentConfirm', 'mirror'].includes(validScreen)) {
+  if (['landing', 'billing', 'payment', 'paymentConfirm', 'mirror', 'reportReview', 'review', 'report-review'].includes(validScreen)) {
     return (
       <div style={{ width: '100%', minHeight: '100vh', margin: 0, padding: 0, overflowX: 'hidden' }}>
         <AnimatePresence mode="wait">

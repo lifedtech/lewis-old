@@ -649,39 +649,6 @@ export default function LandingScreen() {
                     </motion.article>
                   ))}
                 </div>
-
-                {/* Newsletter / Research Updates Subscription Box */}
-                <div style={{
-                  background: '#ffffff',
-                  borderRadius: '24px',
-                  border: '1px solid #eef2f0',
-                  padding: 'clamp(36px, 5vw, 48px)',
-                  textAlign: 'center',
-                  boxShadow: '0 4px 20px rgba(0, 174, 157, 0.05)',
-                }}>
-                  <div style={{
-                    width: '56px',
-                    height: '56px',
-                    borderRadius: '18px',
-                    background: '#eaf7f5',
-                    color: '#00ae9d',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '16px',
-                  }}>
-                    <Icon name="sparkles" size={26} />
-                  </div>
-                  <h3 style={{ margin: '0 0 8px', fontSize: '24px', fontWeight: 800, color: '#414242' }}>
-                    Occasional Wellbeing Research
-                  </h3>
-                  <p style={{ margin: '0 auto 24px', fontSize: '15px', color: '#657370', maxWidth: '480px', lineHeight: 1.6 }}>
-                    New methodology notes, peer-reviewed findings, and practical wellbeing practices published monthly.
-                  </p>
-                  <button onClick={handleNext} className="landing-primary-btn" style={{ padding: '14px 32px', fontSize: '15px' }}>
-                    Begin reflection &rarr;
-                  </button>
-                </div>
               </div>
             </section>
           </motion.div>

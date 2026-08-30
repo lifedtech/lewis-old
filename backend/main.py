@@ -49,7 +49,7 @@ from report_gate import check_report
 from auth import (
     register_user, login_user, verify_token, revoke_session,
     save_assessment_submission, get_user_assessments, get_onboarding_analytics_summary,
-    IS_PRODUCTION, save_support_query, save_encrypted_assessment_record,
+    IS_PRODUCTION, save_support_query, save_report_review, save_encrypted_assessment_record,
     record_journey_ping, mark_journey_completed, get_journey_analytics_overview,
     get_abandoned_users_list, mark_reminders_sent,
     is_report_unlocked, get_report_by_uuid,
@@ -264,6 +264,19 @@ class SupportQueryInput(BaseModel):
     query: str = Field(..., min_length=1, max_length=5000)
     screen: Optional[str] = Field(default=None, max_length=100)
     timestamp: Optional[str] = Field(default=None, max_length=100)
+
+
+class ReportReviewInput(BaseModel):
+    user_email: str = Field(..., min_length=3, max_length=200)
+    rating: int = Field(..., ge=1, le=5)
+    depth_resonance: Optional[str] = Field(default=None, max_length=200)
+    clarity_actionability: Optional[str] = Field(default=None, max_length=200)
+    relief_impact: Optional[str] = Field(default=None, max_length=200)
+    feedback_comments: Optional[str] = Field(default=None, max_length=5000)
+    user_name: Optional[str] = Field(default=None, max_length=150)
+    report_id: Optional[str] = Field(default=None, max_length=100)
+    order_id: Optional[str] = Field(default=None, max_length=100)
+    metadata: Optional[Dict[str, Any]] = None
 
 
 class CreatePaymentOrderInput(BaseModel):
@@ -923,6 +936,35 @@ def submit_support_query_endpoint(payload: SupportQueryInput):
     except Exception as exc:
         logger.error("Error handling support query: %s", exc)
         raise HTTPException(status_code=500, detail="Failed to process support request")
+
+
+@app.post("/reviews/report")
+@app.post("/api/reviews/report")
+def submit_report_review_endpoint(payload: ReportReviewInput):
+    """
+    Save client insight report review and feedback directly to database.
+    """
+    try:
+        db_res = save_report_review(
+            user_email=payload.user_email,
+            rating=payload.rating,
+            depth_resonance=payload.depth_resonance,
+            clarity_actionability=payload.clarity_actionability,
+            relief_impact=payload.relief_impact,
+            feedback_comments=payload.feedback_comments,
+            user_name=payload.user_name,
+            report_id=payload.report_id,
+            order_id=payload.order_id,
+            metadata=payload.metadata,
+        )
+        return {
+            "status": "success",
+            "message": "Insight report review recorded successfully in database.",
+            "review_id": db_res.get("review_id")
+        }
+    except Exception as exc:
+        logger.error("Error handling report review: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to record report review")
 
 
 # --- Razorpay Payment & Report Entitlement Endpoints -------------------------

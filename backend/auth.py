@@ -329,6 +329,24 @@ def init_db():
                             END IF;
                         END $$;
 
+                        CREATE TABLE IF NOT EXISTS lewis_report_reviews (
+                            id SERIAL PRIMARY KEY,
+                            review_id TEXT UNIQUE NOT NULL,
+                            report_id TEXT,
+                            order_id TEXT,
+                            user_email TEXT NOT NULL,
+                            user_name TEXT,
+                            rating INTEGER NOT NULL,
+                            depth_resonance TEXT,
+                            clarity_actionability TEXT,
+                            relief_impact TEXT,
+                            feedback_comments TEXT,
+                            metadata_json TEXT,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                        );
+                        CREATE INDEX IF NOT EXISTS idx_report_review_email ON lewis_report_reviews (user_email);
+                        CREATE INDEX IF NOT EXISTS idx_report_review_id ON lewis_report_reviews (review_id);
+
                         -- All access to these tables goes through this backend's own
                         -- privileged connection (DATABASE_URL) or the Supabase service
                         -- key, both of which bypass RLS. Enabling it with no anon/
@@ -341,6 +359,7 @@ def init_db():
                         ALTER TABLE lewis_journey_sessions ENABLE ROW LEVEL SECURITY;
                         ALTER TABLE lewis_payment_orders ENABLE ROW LEVEL SECURITY;
                         ALTER TABLE lewis_system_counters ENABLE ROW LEVEL SECURITY;
+                        ALTER TABLE lewis_report_reviews ENABLE ROW LEVEL SECURITY;
                     """)
                     conn.commit()
                 conn.close()
@@ -499,6 +518,24 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 paid_at TIMESTAMP
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_report_reviews (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                review_id TEXT UNIQUE NOT NULL,
+                report_id TEXT,
+                order_id TEXT,
+                user_email TEXT NOT NULL,
+                user_name TEXT,
+                rating INTEGER NOT NULL,
+                depth_resonance TEXT,
+                clarity_actionability TEXT,
+                relief_impact TEXT,
+                feedback_comments TEXT,
+                metadata_json TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
 
@@ -1399,6 +1436,71 @@ def save_support_query(name: str, email: str, query: str, screen: Optional[str] 
     except Exception as exc:
         logger.warning("Local SQLite support query save error (%s).", exc)
         return {"query_id": query_id, "status": "fallback"}
+
+
+def save_report_review(
+    user_email: str,
+    rating: int,
+    depth_resonance: Optional[str] = None,
+    clarity_actionability: Optional[str] = None,
+    relief_impact: Optional[str] = None,
+    feedback_comments: Optional[str] = None,
+    user_name: Optional[str] = None,
+    report_id: Optional[str] = None,
+    order_id: Optional[str] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+) -> dict:
+    """Save user insight report review to PostgreSQL / Supabase and local SQLite with fallback."""
+    review_id = f"REV-{str(uuid.uuid4())[:8].upper()}"
+    metadata_json = json.dumps(metadata) if metadata else None
+
+    # 1. PostgreSQL Native Driver / Supabase
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO lewis_report_reviews (
+                            review_id, report_id, order_id, user_email, user_name,
+                            rating, depth_resonance, clarity_actionability, relief_impact,
+                            feedback_comments, metadata_json
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (
+                        review_id, report_id, order_id, user_email, user_name,
+                        rating, depth_resonance, clarity_actionability, relief_impact,
+                        feedback_comments, metadata_json
+                    ))
+                    conn.commit()
+                conn.close()
+                logger.info("Saved report review %s for %s to PostgreSQL", review_id, user_email)
+                return {"review_id": review_id, "status": "saved"}
+        except Exception as exc:
+            logger.error("PostgreSQL report review save error (%s).", exc)
+
+    # 2. Local SQLite Fallback
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO lewis_report_reviews (
+                review_id, report_id, order_id, user_email, user_name,
+                rating, depth_resonance, clarity_actionability, relief_impact,
+                feedback_comments, metadata_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            review_id, report_id, order_id, user_email, user_name,
+            rating, depth_resonance, clarity_actionability, relief_impact,
+            feedback_comments, metadata_json
+        ))
+        conn.commit()
+        conn.close()
+        logger.info("Saved report review %s for %s to SQLite", review_id, user_email)
+        return {"review_id": review_id, "status": "saved"}
+    except Exception as exc:
+        logger.warning("Local SQLite report review save error (%s).", exc)
+        return {"review_id": review_id, "status": "fallback"}
+
 
 
 # --- Encrypted Assessment Records & Journey Dropout Telemetry -----------------

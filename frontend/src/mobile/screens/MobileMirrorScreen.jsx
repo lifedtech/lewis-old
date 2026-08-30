@@ -247,35 +247,6 @@ export default function MobileMirrorScreen() {
               </RadarChart>
             </ResponsiveContainer>
           </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            gap: '8px',
-            marginTop: '4px',
-            fontSize: '11px',
-            fontWeight: 600,
-            color: '#52605d',
-          }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00ae9d' }} />
-              Strong
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#5fbb46' }} />
-              Steady
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#fbbf24' }} />
-              Under pressure
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#fb7185' }} />
-              Running on empty
-            </span>
-          </div>
         </div>
 
         {/* Descriptive Text */}

@@ -1146,6 +1146,23 @@ function Colophon({ block }) {
         </svg>
         <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '16px', color: '#16302B' }}>Lewis</span>
       </div>
+      <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #eee' }}>
+        <a 
+          href="#report-review" 
+          style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            fontSize: '11px', 
+            fontWeight: 700, 
+            color: '#00ae9d', 
+            textDecoration: 'none' 
+          }}
+        >
+          <span>★ Share Your Insight Report Review</span>
+          <span>→</span>
+        </a>
+      </div>
     </div>
   )
 }

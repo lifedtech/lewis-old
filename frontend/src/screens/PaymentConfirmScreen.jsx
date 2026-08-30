@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
 import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 import { SupportModal } from '../components/SupportWidget.jsx'
+import ReviewModal from '../components/ReviewModal.jsx'
 
 const NUNITO = "'Nunito', system-ui, sans-serif"
 const TEAL = '#00ae9d'
@@ -21,6 +22,14 @@ export default function PaymentConfirmScreen() {
   } = useLewisStore()
 
   const [isSupportOpen, setIsSupportOpen] = useState(false)
+  const [isReviewOpen, setIsReviewOpen] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsReviewOpen(true)
+    }, 750)
+    return () => clearTimeout(timer)
+  }, [])
 
   const customerEmail = latestPaymentOrder?.email || storeEmail || 'your email'
   const customerPhone = latestPaymentOrder?.phone || storePhone || ''
@@ -60,6 +69,41 @@ export default function PaymentConfirmScreen() {
           <LewisLogo size={32} showText={true} animated={false} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <motion.button
+            type="button"
+            onClick={() => setIsReviewOpen(true)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              height: '34px',
+              padding: '0 14px',
+              borderRadius: '999px',
+              background: '#ffffff',
+              border: '1.5px solid rgba(0, 174, 157, 0.45)',
+              color: TEAL,
+              fontFamily: NUNITO,
+              fontSize: '13px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 2px 10px rgba(0, 174, 157, 0.1)',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = TEAL
+              e.currentTarget.style.background = 'rgba(0, 174, 157, 0.08)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.45)'
+              e.currentTarget.style.background = '#ffffff'
+            }}
+          >
+            <span style={{ fontSize: '15px', color: '#00ae9d' }}>★</span>
+            <span>Rate Experience</span>
+          </motion.button>
+
           <motion.button
             type="button"
             onClick={() => setIsSupportOpen(true)}
@@ -208,7 +252,7 @@ export default function PaymentConfirmScreen() {
 
               {/* Quality Verification Callout Box (Zero Emoticons) */}
               <div style={{
-                background: 'linear-gradient(135deg, #eaf6f4 0%, #e1f4ef 100%)',
+                background: '#eaf6f4',
                 border: '1.2px solid #00ae9d',
                 borderRadius: '14px',
                 padding: '14px 18px',
@@ -278,11 +322,11 @@ export default function PaymentConfirmScreen() {
                   fontSize: '15px',
                   fontWeight: 700,
                   borderRadius: '999px',
-                  background: 'linear-gradient(135deg, #00ae9d 0%, #017a6f 100%)',
+                  background: '#00ae9d',
                   color: '#ffffff',
                   border: 'none',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 16px rgba(0, 174, 157, 0.28)',
+                  boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
                   fontFamily: NUNITO,
                 }}
               >
@@ -425,6 +469,15 @@ export default function PaymentConfirmScreen() {
 
       {/* Support Popup Modal */}
       <SupportModal isOpen={isSupportOpen} onClose={() => setIsSupportOpen(false)} />
+
+      {/* Review / Experience Feedback Modal */}
+      <ReviewModal
+        isOpen={isReviewOpen}
+        onClose={() => setIsReviewOpen(false)}
+        customerName={customerName}
+        customerEmail={customerEmail}
+        orderId={orderId}
+      />
     </div>
   )
 }

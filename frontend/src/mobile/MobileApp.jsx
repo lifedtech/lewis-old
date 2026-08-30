@@ -60,6 +60,7 @@ import MobileMirrorScreen from './screens/MobileMirrorScreen.jsx'
 import BillingScreen from '../screens/BillingScreen.jsx'
 import PaymentConfirmScreen from '../screens/PaymentConfirmScreen.jsx'
 import LoginScreen from '../screens/LoginScreen.jsx'
+import ReportReviewScreen from '../screens/ReportReviewScreen.jsx'
 
 // Stepped questionnaire instruments rendered via MobileInstrumentScreen
 const MOBILE_INSTRUMENT_SCREENS = Object.fromEntries(
@@ -122,13 +123,16 @@ const MOBILE_SCREENS = {
   payment: BillingScreen,
   paymentConfirm: PaymentConfirmScreen,
   login: LoginScreen,
+  reportReview: ReportReviewScreen,
+  review: ReportReviewScreen,
+  'report-review': ReportReviewScreen,
 }
 
 export default function MobileApp() {
   const { currentScreen, setScreen } = useLewisStore()
   const validScreen = MOBILE_SCREENS[currentScreen] ? currentScreen : 'landing'
   const ActiveScreen = MOBILE_SCREENS[validScreen]
-  const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login'].includes(validScreen)
+  const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login', 'reportReview', 'review', 'report-review'].includes(validScreen)
   const containerRef = useRef(null)
 
   // Scroll to top cleanly on screen change without locking native gestures
