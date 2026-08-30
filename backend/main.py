@@ -1178,24 +1178,6 @@ def list_pending_report_deliveries(min_age_seconds: int = 0, _: None = Depends(r
     return {"status": "success", "count": len(pending), "orders": pending}
 
 
-@app.get("/admin/debug-order/{order_id}")
-def debug_order_backing_store(order_id: str, _: None = Depends(require_admin)):
-    """
-    Diagnostic-only: raw order row plus which backing store is actually
-    configured, so a "found by lookup, missing from the pending-reports
-    query" mismatch can be root-caused instead of guessed at. Read-only.
-    """
-    import auth
-    order = auth.get_payment_order(order_id)
-    return {
-        "status": "success",
-        "has_pg": auth.has_pg,
-        "database_url_set": bool(auth.DATABASE_URL),
-        "order_id_in_memory": order_id in auth.IN_MEMORY_ORDERS,
-        "order": order,
-    }
-
-
 @app.post("/admin/resend-report/{order_id}")
 def resend_report_delivery(order_id: str, _: None = Depends(require_admin)):
     """
