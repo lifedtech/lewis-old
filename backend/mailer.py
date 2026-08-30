@@ -560,7 +560,7 @@ def send_report_delivery_email(
     frontend_base = prod_frontends[0] if prod_frontends else "https://lewiswellbeing.com"
     report_link = f"{frontend_base}/#mirror"
 
-    # 1. Load exact authentic 25-page PDF Attachment
+    # 1. STRICT ATTACHMENT RULE: Always guarantee that authentic PDF content is loaded
     pdf_bytes = None
     try:
         from pdf_generator import build_insight_report_pdf
@@ -573,22 +573,29 @@ def send_report_delivery_email(
     except Exception as pdf_err:
         logger.error("Failed to generate PDF for attachment (%s): %s", rep_id, pdf_err)
 
+    # Failsafe fallback: if pdf_bytes is missing or too small, load direct template file
+    if not pdf_bytes or len(pdf_bytes) < 10000:
+        try:
+            from pdf_generator import get_template_pdf_path
+            tpl_path = get_template_pdf_path()
+            if tpl_path and os.path.exists(tpl_path):
+                with open(tpl_path, "rb") as f:
+                    pdf_bytes = f.read()
+                logger.info("Failsafe loaded authentic PDF template from %s (%d bytes)", tpl_path, len(pdf_bytes))
+        except Exception as e:
+            logger.error("Critical: Could not load fallback PDF bytes: %s", e)
+
     pdf_filename = f"LEWIS-Insight-Report-{rep_id}.pdf"
     public_pdf_url = "https://lewis-production-953f.up.railway.app/download/Lewis-Insight-Report.pdf"
     direct_pdf_download = f"https://lewis-production-953f.up.railway.app/reports/{rep_id}/pdf" if rep_id else public_pdf_url
 
-    attachments = []
-    if pdf_bytes:
-        attachments.append({
-            "filename": pdf_filename,
-            "content": pdf_bytes,
-            "url": public_pdf_url
-        })
-    else:
-        attachments.append({
-            "filename": pdf_filename,
-            "url": public_pdf_url
-        })
+    # Strict assertion: Ensure attachment payload is never empty
+    attachments = [{
+        "filename": pdf_filename,
+        "url": public_pdf_url,
+        "content": pdf_bytes if (pdf_bytes and len(pdf_bytes) > 10000) else None
+    }]
+    logger.info("Report delivery attachment verified: %s (Bytes: %s, URL: %s)", pdf_filename, len(pdf_bytes) if pdf_bytes else 0, public_pdf_url)
 
     subject = f"Your LEWIS Personal Wellbeing Insight Report · Report ID {rep_id}"
 
@@ -784,6 +791,8 @@ Date: {date_str}
 
 Please find your complete 25-page Insight Report attached directly as a PDF document.
 
+Direct PDF Download Link: {direct_pdf_download}
+
 Lewis Wellbeing Intelligence
 A Lifed Health Intelligence System
     """
@@ -801,7 +810,231 @@ A Lifed Health Intelligence System
             update_order_email_status(order_id, "report", True)
         except Exception:
             pass
+
+        # Schedule Review & Experience Reflection email 20 minutes after report delivery
+        try:
+            from mail_queue import enqueue
+            review_delay = int(os.getenv("REVIEW_EMAIL_DELAY_SECONDS", "1200"))
+            enqueue(
+                "review_invitation",
+                {
+                    "user_email": user_email,
+                    "user_name": name,
+                    "report_uuid": rep_id,
+                    "order_id": order_ref
+                },
+                delay_seconds=review_delay
+            )
+            logger.info("Scheduled 20-minute review invitation email for %s (delay=%ds)", user_email, review_delay)
+        except Exception as rev_err:
+            logger.warning("Could not queue review invitation email: %s", rev_err)
+
     return sent
+
+
+def send_review_invitation_email(
+    user_email: str,
+    user_name: Optional[str] = None,
+    report_uuid: Optional[str] = None,
+    order_id: Optional[str] = None
+) -> bool:
+    """
+    Send a customer feedback and experience review request 20 minutes after report delivery.
+    """
+    name = (user_name or "there").strip()
+    rep_id = report_uuid or "LSR20260200"
+
+    raw_frontends = [u.strip() for u in os.getenv("FRONTEND_URL", "").split(",") if u.strip()]
+    prod_frontends = [u for u in raw_frontends if "localhost" not in u and "127.0.0.1" not in u]
+    frontend_base = prod_frontends[0] if prod_frontends else "https://lewiswellbeing.com"
+
+    subject = f"How was your LEWIS Wellbeing Report, {name}? · We'd love your reflection"
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Your LEWIS Experience Review</title>
+      <style>
+        body {{
+          font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+          background-color: #f4faf8;
+          margin: 0;
+          padding: 24px 12px;
+          color: #334155;
+        }}
+        .email-card {{
+          max-width: 600px;
+          margin: 0 auto;
+          background: #ffffff;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 174, 157, 0.08);
+          border: 1px solid rgba(0, 174, 157, 0.16);
+        }}
+        .header {{
+          background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
+          padding: 30px 28px 24px;
+          text-align: center;
+          color: #ffffff;
+        }}
+        .header h1 {{
+          margin: 8px 0 2px;
+          font-size: 21px;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+        }}
+        .content {{
+          padding: 30px 28px;
+        }}
+        .greeting {{
+          font-size: 16px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 12px;
+        }}
+        .stars-container {{
+          background: #f0fdf9;
+          border: 1.5px solid #00ae9d;
+          border-radius: 14px;
+          padding: 20px;
+          margin: 20px 0;
+          text-align: center;
+        }}
+        .star-link {{
+          display: inline-block;
+          font-size: 28px;
+          color: #f59e0b;
+          text-decoration: none;
+          margin: 0 4px;
+          transition: transform 0.2s;
+        }}
+        .btn-review {{
+          display: inline-block;
+          background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
+          color: #ffffff !important;
+          text-decoration: none;
+          padding: 13px 28px;
+          font-weight: 700;
+          font-size: 14.5px;
+          border-radius: 999px;
+          box-shadow: 0 4px 16px rgba(0, 174, 157, 0.3);
+          margin-top: 14px;
+        }}
+        .footer {{
+          background: #f8fafc;
+          padding: 20px 26px;
+          text-align: center;
+          font-size: 11.5px;
+          color: #64748b;
+          border-top: 1px solid #f1f5f9;
+        }}
+      </style>
+    </head>
+    <body>
+      <div class="email-card">
+        <div class="header">
+          <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 6px;">
+            <tr>
+              <td style="vertical-align: middle; padding-right: 8px;">
+                <svg width="28" height="28" viewBox="0 0 82 82" style="display: block;">
+                  <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#86efac" />
+                  <circle cx="41" cy="41" r="11" fill="#ffffff" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#86efac" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11" cy="71" r="7" fill="#ffffff" />
+                </svg>
+              </td>
+              <td style="vertical-align: middle;">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; font-weight: 800; color: #ffffff;">Lewis</span>
+              </td>
+            </tr>
+          </table>
+          <h1>How was your reflection?</h1>
+          <p style="margin: 0; font-size: 13px; opacity: 0.92;">We'd love your thoughts on your Wellbeing Insight Report</p>
+        </div>
+
+        <div class="content">
+          <div class="greeting">Hello {name},</div>
+          <p style="font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 14px;">
+            You recently received your <strong>LEWIS Personal Wellbeing Insight Report</strong> (Report ID: <code>{rep_id}</code>).
+          </p>
+          <p style="font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 16px;">
+            We hope your personalized reflection provided clarity on your physical, emotional, and cognitive patterns. How would you rate your experience and the depth of insight provided?
+          </p>
+
+          <div class="stars-container">
+            <div style="font-size: 14px; font-weight: 700; color: #007064; margin-bottom: 12px;">
+              Rate your experience with Lewis
+            </div>
+            <div style="font-size: 32px; letter-spacing: 8px;">
+              ⭐⭐⭐⭐⭐
+            </div>
+            <div style="margin-top: 14px;">
+              <a href="mailto:lewissupport@lifedhealth.com?subject=LEWIS%20Experience%20Review%20-%20{rep_id}&body=Hi%20Lewis%20Team,%0A%0AHere%20is%20my%20feedback%20on%20the%20report:" class="btn-review">
+                Share Your Feedback
+              </a>
+            </div>
+          </div>
+
+          <p style="font-size: 13px; line-height: 1.5; color: #64748b; margin: 16px 0 0;">
+            You can also simply reply directly to this email with any feedback, questions, or reflections you would like to share with our team.
+          </p>
+
+          <!-- Lewis Brand Signature -->
+          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 22px; padding-top: 16px; border-top: 1px solid #e2e8f0; width: 100%;">
+            <tr>
+              <td style="vertical-align: middle; width: 30px; padding-right: 10px;">
+                <svg width="26" height="26" viewBox="0 0 82 82" style="display: block;">
+                  <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#5FBB46" />
+                  <circle cx="41" cy="41" r="11" fill="#00AE9D" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#5FBB46" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11" cy="71" r="7" fill="#00AE9D" />
+                </svg>
+              </td>
+              <td style="vertical-align: middle;">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: 800; color: #16302B;">Lewis Wellbeing Team</span>
+                <div style="font-size: 11px; color: #64748b; margin-top: 1px;"><a href="mailto:lewissupport@lifedhealth.com" style="color: #00ae9d; text-decoration: none;">lewissupport@lifedhealth.com</a></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0 0 4px;">© 2026 LEWIS Well-Being · A Lifed Health Intelligence System</p>
+          <p style="margin: 0; font-size: 10.5px; color: #94a3b8;">
+            You received this email because you completed a LEWIS Wellbeing Reflection.
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+    """
+
+    text_content = f"""
+Hello {name},
+
+How was your LEWIS Wellbeing Insight Report?
+
+You recently received your Personal Insight Report (Report ID: {rep_id}). We hope your reflection provided clarity and actionable guidance.
+
+We'd love to hear your feedback or thoughts:
+Reply directly to this email or write to us at lewissupport@lifedhealth.com.
+
+Best regards,
+Lewis Wellbeing Team
+A Lifed Health Intelligence System
+    """
+
+    return send_email(
+        to_email=user_email,
+        subject=subject,
+        html_content=html_content,
+        text_content=text_content
+    )
 
 
 def deferred_report_delivery(

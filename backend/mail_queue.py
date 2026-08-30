@@ -62,6 +62,8 @@ def _dispatch(kind: str, payload: dict) -> bool:
         return mailer.deferred_report_delivery(**payload)
     if kind == "support_notification":
         return mailer.send_support_notification_email(**payload)
+    if kind == "review_invitation":
+        return mailer.send_review_invitation_email(**payload)
     logger.error("Unknown mail job kind: %s", kind)
     return False
 
