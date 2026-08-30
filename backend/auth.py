@@ -2223,6 +2223,58 @@ def update_order_email_status(order_id: str, email_type: str = "confirmation", s
     return False
 
 
+def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
+    """
+    Retrieve paid orders that were paid at least min_age_seconds ago whose report email has not yet been sent.
+    Provides guaranteed recovery even across server restarts or worker crashes.
+    """
+    pending = []
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT order_id, report_uuid, user_email, user_name, paid_at
+                        FROM lewis_payment_orders
+                        WHERE status = 'paid'
+                          AND user_email IS NOT NULL
+                          AND (report_mail_sent IS FALSE OR report_mail_sent IS NULL)
+                          AND paid_at <= NOW() - (%s || ' seconds')::interval
+                        ORDER BY paid_at ASC
+                        LIMIT 20;
+                    """, (str(min_age_seconds),))
+                    rows = cur.fetchall()
+                    for r in rows:
+                        pending.append(dict(r))
+                conn.close()
+                return pending
+        except Exception as e:
+            logger.warning("PostgreSQL pending report deliveries query error: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT order_id, report_uuid, user_email, user_name, paid_at
+            FROM lewis_payment_orders
+            WHERE status = 'paid'
+              AND user_email IS NOT NULL
+              AND (report_mail_sent = 0 OR report_mail_sent IS NULL)
+              AND datetime(paid_at) <= datetime('now', '-' || ? || ' seconds')
+            ORDER BY paid_at ASC
+            LIMIT 20;
+        """, (min_age_seconds,))
+        for r in cur.fetchall():
+            pending.append(dict(r))
+        conn.close()
+    except Exception as e:
+        logger.warning("SQLite pending report deliveries query error: %s", e)
+
+    return pending
+
+
 def is_report_unlocked(report_uuid: str) -> bool:
     """Check if a report is unlocked via paid entitlement."""
     if not report_uuid:

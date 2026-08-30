@@ -125,22 +125,48 @@ def _handle_job(raw: str) -> None:
             logger.error("Mail job %s dropped after %d attempts", job["kind"], MAX_ATTEMPTS)
 
 
-def _worker_loop() -> None:
-    if not _redis:
-        logger.info("Mail queue running in resilient in-memory mode (0 Redis errors)")
-        return
+def _reconcile_pending_deliveries() -> None:
+    """Check database for any paid orders older than 5 minutes whose report email has not yet been delivered."""
+    try:
+        from auth import get_pending_report_deliveries
+        from mailer import deferred_report_delivery
+        pending = get_pending_report_deliveries(min_age_seconds=int(os.getenv("REPORT_EMAIL_DELAY_SECONDS", "300")))
+        for ord_info in pending:
+            email = ord_info.get("user_email")
+            if not email:
+                continue
+            logger.info("Auto-reconciling unsent report delivery for order %s (%s)", ord_info.get("order_id"), email)
+            deferred_report_delivery(
+                user_email=email,
+                user_name=ord_info.get("user_name"),
+                report_uuid=ord_info.get("report_uuid"),
+                order_id=ord_info.get("order_id")
+            )
+    except Exception as e:
+        logger.warning("Pending deliveries reconciliation error: %s", e)
 
-    logger.info("Mail queue Redis worker started")
+
+def _worker_loop() -> None:
+    logger.info("Mail queue worker active (Redis: %s)", bool(_redis))
+    last_reconcile = 0.0
+
     while True:
         try:
-            _promote_due_delayed()
-            popped = _redis.blpop(QUEUE_KEY, timeout=1)
-            if not popped:
-                continue
-            _, raw = popped
-            _handle_job(raw)
+            now = time.time()
+            if now - last_reconcile > 30:
+                _reconcile_pending_deliveries()
+                last_reconcile = now
+
+            if _redis:
+                _promote_due_delayed()
+                popped = _redis.blpop(QUEUE_KEY, timeout=2)
+                if popped:
+                    _, raw = popped
+                    _handle_job(raw)
+            else:
+                time.sleep(2)
         except Exception as loop_err:
-            time.sleep(15)
+            time.sleep(10)
 
 
 def start_worker() -> None:

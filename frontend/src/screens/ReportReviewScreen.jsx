@@ -120,24 +120,9 @@ export default function ReportReviewScreen() {
         })
       }
 
-      if (!res.ok) {
-        // Fallback to support query endpoint
-        await fetch(`${API_BASE}/support/query`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: name.trim() || 'Lewis Client',
-            email: email.trim(),
-            query: `[Insight Report Review]\n• Rating: ${rating}/5\n• Resonance: ${resonanceChoice}\n• Clarity: ${clarityChoice}\n• Relief: ${impactChoice}\n• Comments: ${comments.trim() || 'None'}\n• Report ID: ${reportId || 'N/A'}`,
-            screen: 'InsightReportReviewScreen'
-          })
-        }).catch(() => {})
-      }
-
       setStatus('submitted')
     } catch (err) {
       console.warn('Network error recording review:', err)
-      // Even if network fails, provide graceful success to client
       setStatus('submitted')
     }
   }

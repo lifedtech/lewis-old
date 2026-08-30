@@ -53,31 +53,30 @@ export default function ReviewModal({
     e?.preventDefault()
     setStatus('submitting')
 
-    const reviewSummary = `[Lewis Experience Review]
-• Star Rating: ${rating}/5 (${RATING_LABELS[rating] || ''})
-• Assessment Flow: ${flowChoice}
-• Reflection Resonance: ${accuracyChoice}
-• Feedback: ${comments.trim() || 'None provided'}
-• Order ID: ${orderId || 'N/A'}`
-
     try {
       const API_BASE = import.meta.env.VITE_API_URL || ''
       const payload = {
-        name: customerName || 'Lewis User',
-        email: customerEmail || 'anonymous@lewis.app',
-        query: reviewSummary,
-        screen: 'PaymentConfirmation_Review',
-        timestamp: new Date().toISOString(),
+        user_email: customerEmail || 'client@lewis.app',
+        user_name: customerName || 'Lewis User',
+        rating: Number(rating),
+        depth_resonance: flowChoice,
+        clarity_actionability: accuracyChoice,
+        feedback_comments: comments.trim() || undefined,
+        order_id: orderId || undefined,
+        metadata: {
+          submitted_at: new Date().toISOString(),
+          source: 'PaymentConfirmation_Modal'
+        }
       }
 
-      let res = await fetch(`${API_BASE}/support/query`, {
+      let res = await fetch(`${API_BASE}/api/reviews/report`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
 
       if (!res.ok && API_BASE) {
-        await fetch('/support/query', {
+        await fetch('/api/reviews/report', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),

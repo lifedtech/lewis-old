@@ -841,12 +841,18 @@ def send_review_invitation_email(
     """
     Send a customer feedback and experience review request 20 minutes after report delivery.
     """
+    import urllib.parse
     name = (user_name or "there").strip()
     rep_id = report_uuid or "LSR20260200"
 
     raw_frontends = [u.strip() for u in os.getenv("FRONTEND_URL", "").split(",") if u.strip()]
     prod_frontends = [u for u in raw_frontends if "localhost" not in u and "127.0.0.1" not in u]
     frontend_base = prod_frontends[0] if prod_frontends else "https://lewiswellbeing.com"
+
+    encoded_email = urllib.parse.quote(user_email)
+    encoded_name = urllib.parse.quote(name)
+    order_param = f"&order_id={urllib.parse.quote(order_id)}" if order_id else ""
+    review_url = f"{frontend_base}/#report-review?report_id={rep_id}&email={encoded_email}&name={encoded_name}{order_param}"
 
     subject = f"How was your LEWIS Wellbeing Report, {name}? · We'd love your reflection"
 
@@ -875,7 +881,7 @@ def send_review_invitation_email(
           border: 1px solid rgba(0, 174, 157, 0.16);
         }}
         .header {{
-          background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
+          background: #00ae9d;
           padding: 30px 28px 24px;
           text-align: center;
           color: #ffffff;
@@ -896,31 +902,23 @@ def send_review_invitation_email(
           margin-bottom: 12px;
         }}
         .stars-container {{
-          background: #f0fdf9;
+          background: #f8faf9;
           border: 1.5px solid #00ae9d;
           border-radius: 14px;
-          padding: 20px;
+          padding: 22px;
           margin: 20px 0;
           text-align: center;
         }}
-        .star-link {{
-          display: inline-block;
-          font-size: 28px;
-          color: #f59e0b;
-          text-decoration: none;
-          margin: 0 4px;
-          transition: transform 0.2s;
-        }}
         .btn-review {{
           display: inline-block;
-          background: linear-gradient(135deg, #00ae9d 0%, #017a6f 100%);
+          background: #00ae9d;
           color: #ffffff !important;
           text-decoration: none;
           padding: 13px 28px;
           font-weight: 700;
           font-size: 14.5px;
           border-radius: 999px;
-          box-shadow: 0 4px 16px rgba(0, 174, 157, 0.3);
+          box-shadow: 0 4px 14px rgba(0, 174, 157, 0.25);
           margin-top: 14px;
         }}
         .footer {{
@@ -940,10 +938,10 @@ def send_review_invitation_email(
             <tr>
               <td style="vertical-align: middle; padding-right: 8px;">
                 <svg width="28" height="28" viewBox="0 0 82 82" style="display: block;">
-                  <path d="M11 41 V11 H41" fill="none" stroke="#00AE9D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
-                  <circle cx="71" cy="11" r="7" fill="#86efac" />
+                  <path d="M11 41 V11 H41" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="71" cy="11" r="7" fill="#ffffff" />
                   <circle cx="41" cy="41" r="11" fill="#ffffff" />
-                  <path d="M71 41 V71 H41" fill="none" stroke="#86efac" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M71 41 V71 H41" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
                   <circle cx="11" cy="71" r="7" fill="#ffffff" />
                 </svg>
               </td>
@@ -966,21 +964,21 @@ def send_review_invitation_email(
           </p>
 
           <div class="stars-container">
-            <div style="font-size: 14px; font-weight: 700; color: #007064; margin-bottom: 12px;">
-              Rate your experience with Lewis
+            <div style="font-size: 14px; font-weight: 700; color: #007064; margin-bottom: 10px;">
+              Rate your experience with your Insight Report
             </div>
-            <div style="font-size: 32px; letter-spacing: 8px;">
-              ⭐⭐⭐⭐⭐
+            <div style="font-size: 30px; letter-spacing: 6px; color: #00ae9d;">
+              ★★★★★
             </div>
             <div style="margin-top: 14px;">
-              <a href="mailto:lewissupport@lifedhealth.com?subject=LEWIS%20Experience%20Review%20-%20{rep_id}&body=Hi%20Lewis%20Team,%0A%0AHere%20is%20my%20feedback%20on%20the%20report:" class="btn-review">
-                Share Your Feedback
+              <a href="{review_url}" class="btn-review">
+                Review Your Insight Report →
               </a>
             </div>
           </div>
 
           <p style="font-size: 13px; line-height: 1.5; color: #64748b; margin: 16px 0 0;">
-            You can also simply reply directly to this email with any feedback, questions, or reflections you would like to share with our team.
+            Taking 1 minute to share your reflections helps us continuously refine and improve the Lewis experience for everyone.
           </p>
 
           <!-- Lewis Brand Signature -->
@@ -1017,12 +1015,10 @@ def send_review_invitation_email(
     text_content = f"""
 Hello {name},
 
-How was your LEWIS Wellbeing Insight Report?
+We hope your personalized reflection provided clarity on your physical, emotional, and cognitive patterns.
 
-You recently received your Personal Insight Report (Report ID: {rep_id}). We hope your reflection provided clarity and actionable guidance.
-
-We'd love to hear your feedback or thoughts:
-Reply directly to this email or write to us at lewissupport@lifedhealth.com.
+We'd love to hear your thoughts — please take 1 minute to share your review:
+{review_url}
 
 Best regards,
 Lewis Wellbeing Team
