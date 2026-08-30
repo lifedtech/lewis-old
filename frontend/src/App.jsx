@@ -29,22 +29,30 @@ export default function App() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Sync state with URL hash & support browser back/forward
+  // Sync state with URL hash & support browser back/forward.
+  // A hash can carry a query string (e.g. an emailed review link:
+  // #report-review?report_id=...&email=...) — split it off before using the
+  // hash as a screen key (SCREENS lookups are exact-match, so the raw hash
+  // never matches and silently falls back to 'landing'), but keep the query
+  // string in the URL itself so ReportReviewScreen's own hash parsing still
+  // finds report_id/email/name/order_id.
   useEffect(() => {
-    const hash = window.location.hash.replace('#', '')
-    const initialScreen = hash || useLewisStore.getState().currentScreen || 'landing'
+    const rawHash = window.location.hash.replace('#', '')
+    const [hashScreen, hashQuery] = rawHash.split('?')
+    const initialScreen = hashScreen || useLewisStore.getState().currentScreen || 'landing'
     useLewisStore.getState().setScreen(initialScreen, { skipHistory: true })
 
     const newUrl = initialScreen === 'landing'
       ? (window.location.pathname + window.location.search)
-      : `#${initialScreen}`
+      : `#${initialScreen}${hashQuery ? `?${hashQuery}` : ''}`
 
     if (!window.history.state?.screen || (initialScreen === 'landing' && window.location.hash)) {
       window.history.replaceState({ screen: initialScreen }, '', newUrl)
     }
 
     const handlePopState = (event) => {
-      const targetScreen = event.state?.screen || (window.location.hash ? window.location.hash.replace('#', '') : 'landing')
+      const popHash = window.location.hash ? window.location.hash.replace('#', '').split('?')[0] : 'landing'
+      const targetScreen = event.state?.screen || popHash
       if (targetScreen) {
         useLewisStore.getState().setScreen(targetScreen, { skipHistory: true })
       }

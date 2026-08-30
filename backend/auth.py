@@ -2248,7 +2248,15 @@ def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
                     for r in rows:
                         pending.append(dict(r))
                 conn.close()
-                return pending
+                # Only short-circuit on an actual match. Every other lookup in
+                # this file (get_payment_order, etc.) falls through to SQLite
+                # when Postgres legitimately finds nothing — this one returned
+                # unconditionally, so if an order's data actually lives in the
+                # SQLite fallback (Postgres unreachable/unconfigured at write
+                # time), this reconciliation safety net silently never found
+                # it, for any order, ever.
+                if pending:
+                    return pending
         except Exception as e:
             logger.warning("PostgreSQL pending report deliveries query error: %s", e)
 
