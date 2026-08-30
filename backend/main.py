@@ -1207,3 +1207,41 @@ def resend_report_delivery(order_id: str, _: None = Depends(require_admin)):
     return {"status": "success", "order_id": order_id, "user_email": order["user_email"]}
 
 
+@app.get("/admin/pending-reviews")
+def list_pending_review_deliveries(min_age_seconds: int = 0, _: None = Depends(require_admin)):
+    """
+    Orders whose report email went out but the review-invitation email
+    hasn't — same query the background reconciliation loop runs.
+    """
+    from auth import get_pending_review_deliveries
+    pending = get_pending_review_deliveries(min_age_seconds=min_age_seconds)
+    return {"status": "success", "count": len(pending), "orders": pending}
+
+
+@app.post("/admin/resend-review/{order_id}")
+def resend_review_invitation(order_id: str, _: None = Depends(require_admin)):
+    """
+    Manually (re)send the review-invitation email for one order right now.
+    """
+    from auth import get_payment_order
+    from mailer import send_review_invitation_email
+
+    order = get_payment_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail=f"No order found for {order_id}")
+    if not order.get("report_mail_sent"):
+        raise HTTPException(status_code=409, detail=f"Order {order_id} has not had its report email sent yet")
+    if not order.get("user_email"):
+        raise HTTPException(status_code=422, detail=f"Order {order_id} has no user_email on file")
+
+    sent = send_review_invitation_email(
+        user_email=order["user_email"],
+        user_name=order.get("user_name"),
+        report_uuid=order.get("report_uuid"),
+        order_id=order_id,
+    )
+    if not sent:
+        raise HTTPException(status_code=502, detail="Send failed — check server logs")
+    return {"status": "success", "order_id": order_id, "user_email": order["user_email"]}
+
+

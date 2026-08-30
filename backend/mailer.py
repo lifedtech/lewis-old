@@ -1018,12 +1018,19 @@ Lewis Wellbeing Team
 A Lifed Health Intelligence System
     """
 
-    return send_email(
+    sent = send_email(
         to_email=user_email,
         subject=subject,
         html_content=html_content,
         text_content=text_content
     )
+    if sent and order_id:
+        try:
+            from auth import update_order_email_status
+            update_order_email_status(order_id, "review", True)
+        except Exception:
+            pass
+    return sent
 
 
 def deferred_report_delivery(

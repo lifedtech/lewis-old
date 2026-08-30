@@ -257,6 +257,8 @@ def init_db():
                             confirmation_mail_sent_at TIMESTAMP WITH TIME ZONE,
                             report_mail_sent BOOLEAN DEFAULT FALSE,
                             report_mail_sent_at TIMESTAMP WITH TIME ZONE,
+                            review_mail_sent BOOLEAN DEFAULT FALSE,
+                            review_mail_sent_at TIMESTAMP WITH TIME ZONE,
                             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                             paid_at TIMESTAMP WITH TIME ZONE
@@ -299,6 +301,10 @@ def init_db():
                             IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='report_mail_sent') THEN
                                 ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent BOOLEAN DEFAULT FALSE;
                                 ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent_at TIMESTAMP WITH TIME ZONE;
+                            END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='review_mail_sent') THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent BOOLEAN DEFAULT FALSE;
+                                ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent_at TIMESTAMP WITH TIME ZONE;
                             END IF;
 
                             -- Age & Gender columns for journey sessions & assessment records
@@ -515,6 +521,8 @@ def init_db():
                 confirmation_mail_sent_at TIMESTAMP,
                 report_mail_sent INTEGER DEFAULT 0,
                 report_mail_sent_at TIMESTAMP,
+                review_mail_sent INTEGER DEFAULT 0,
+                review_mail_sent_at TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 paid_at TIMESTAMP
@@ -549,6 +557,8 @@ def init_db():
             "ALTER TABLE lewis_payment_orders ADD COLUMN confirmation_mail_sent_at TIMESTAMP",
             "ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent INTEGER DEFAULT 0",
             "ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent_at TIMESTAMP",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent INTEGER DEFAULT 0",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent_at TIMESTAMP",
         ):
             try:
                 cursor.execute(col_stmt)
@@ -2182,10 +2192,10 @@ def record_successful_payment(
 
 def update_order_email_status(order_id: str, email_type: str = "confirmation", status: bool = True) -> bool:
     """
-    Record in database whether confirmation email or report delivery email has been sent.
+    Record in database whether confirmation, report-delivery, or review-invitation email has been sent.
     """
-    col_flag = "confirmation_mail_sent" if email_type == "confirmation" else "report_mail_sent"
-    col_time = "confirmation_mail_sent_at" if email_type == "confirmation" else "report_mail_sent_at"
+    col_flag = f"{email_type}_mail_sent" if email_type in ("confirmation", "report", "review") else "report_mail_sent"
+    col_time = f"{email_type}_mail_sent_at" if email_type in ("confirmation", "report", "review") else "report_mail_sent_at"
 
     if order_id in IN_MEMORY_ORDERS:
         IN_MEMORY_ORDERS[order_id][col_flag] = status
@@ -2314,6 +2324,89 @@ def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
                 "user_email": order.get("user_email"),
                 "user_name": order.get("user_name"),
                 "paid_at": paid_at,
+            })
+
+    return pending
+
+
+def get_pending_review_deliveries(min_age_seconds: int = 1200) -> list:
+    """
+    Retrieve orders whose report email was sent at least min_age_seconds ago
+    but whose review-invitation email has not yet gone out. Mirrors
+    get_pending_report_deliveries() — the review invite had no equivalent
+    recovery path at all: send_review_invitation_email() never recorded its
+    result anywhere, so a job lost to a redeploy mid-delay (no Redis, an
+    in-memory threading.Timer killed by the restart) was unrecoverable,
+    silently, forever.
+    """
+    pending = []
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT order_id, report_uuid, user_email, user_name, report_mail_sent_at
+                        FROM lewis_payment_orders
+                        WHERE report_mail_sent IS TRUE
+                          AND user_email IS NOT NULL
+                          AND (review_mail_sent IS FALSE OR review_mail_sent IS NULL)
+                          AND report_mail_sent_at <= NOW() - (%s || ' seconds')::interval
+                        ORDER BY report_mail_sent_at ASC
+                        LIMIT 20;
+                    """, (str(min_age_seconds),))
+                    rows = cur.fetchall()
+                    for r in rows:
+                        pending.append(dict(r))
+                conn.close()
+                if pending:
+                    return pending
+        except Exception as e:
+            logger.warning("PostgreSQL pending review deliveries query error: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT order_id, report_uuid, user_email, user_name, report_mail_sent_at
+            FROM lewis_payment_orders
+            WHERE report_mail_sent = 1
+              AND user_email IS NOT NULL
+              AND (review_mail_sent = 0 OR review_mail_sent IS NULL)
+              AND datetime(report_mail_sent_at) <= datetime('now', '-' || ? || ' seconds')
+            ORDER BY report_mail_sent_at ASC
+            LIMIT 20;
+        """, (min_age_seconds,))
+        for r in cur.fetchall():
+            pending.append(dict(r))
+        conn.close()
+    except Exception as e:
+        logger.warning("SQLite pending review deliveries query error: %s", e)
+
+    seen = {p["order_id"] for p in pending}
+    cutoff = datetime.now(timezone.utc) - timedelta(seconds=min_age_seconds)
+    for order_id, order in IN_MEMORY_ORDERS.items():
+        if order_id in seen:
+            continue
+        if not order.get("report_mail_sent") or not order.get("user_email"):
+            continue
+        if order.get("review_mail_sent"):
+            continue
+        report_mail_sent_at = order.get("report_mail_sent_at")
+        if not report_mail_sent_at:
+            continue
+        try:
+            sent_at_dt = datetime.fromisoformat(report_mail_sent_at)
+        except ValueError:
+            continue
+        if sent_at_dt <= cutoff:
+            pending.append({
+                "order_id": order_id,
+                "report_uuid": order.get("report_uuid"),
+                "user_email": order.get("user_email"),
+                "user_name": order.get("user_name"),
+                "report_mail_sent_at": report_mail_sent_at,
             })
 
     return pending

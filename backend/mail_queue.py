@@ -146,6 +146,28 @@ def _reconcile_pending_deliveries() -> None:
         logger.warning("Pending deliveries reconciliation error: %s", e)
 
 
+def _reconcile_pending_reviews() -> None:
+    """Same recovery net as _reconcile_pending_deliveries(), for the review-invitation
+    email — it has no other recovery path (see get_pending_review_deliveries)."""
+    try:
+        from auth import get_pending_review_deliveries
+        from mailer import send_review_invitation_email
+        pending = get_pending_review_deliveries(min_age_seconds=int(os.getenv("REVIEW_EMAIL_DELAY_SECONDS", "1200")))
+        for ord_info in pending:
+            email = ord_info.get("user_email")
+            if not email:
+                continue
+            logger.info("Auto-reconciling unsent review invitation for order %s (%s)", ord_info.get("order_id"), email)
+            send_review_invitation_email(
+                user_email=email,
+                user_name=ord_info.get("user_name"),
+                report_uuid=ord_info.get("report_uuid"),
+                order_id=ord_info.get("order_id")
+            )
+    except Exception as e:
+        logger.warning("Pending reviews reconciliation error: %s", e)
+
+
 def _worker_loop() -> None:
     logger.info("Mail queue worker active (Redis: %s)", bool(_redis))
     last_reconcile = 0.0
@@ -155,6 +177,7 @@ def _worker_loop() -> None:
             now = time.time()
             if now - last_reconcile > 30:
                 _reconcile_pending_deliveries()
+                _reconcile_pending_reviews()
                 last_reconcile = now
 
             if _redis:
