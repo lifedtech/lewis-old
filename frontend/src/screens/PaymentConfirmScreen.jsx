@@ -25,19 +25,11 @@ export default function PaymentConfirmScreen() {
   const [isReviewOpen, setIsReviewOpen] = useState(false)
 
   useEffect(() => {
-    // Meta Pixel Purchase Event Tracking
-    if (typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', 'Purchase', {
-        value: latestPaymentOrder?.amount || 749,
-        currency: latestPaymentOrder?.currency || 'INR'
-      })
-    }
-
     const timer = setTimeout(() => {
       setIsReviewOpen(true)
     }, 750)
     return () => clearTimeout(timer)
-  }, [latestPaymentOrder])
+  }, [])
 
   const customerEmail = latestPaymentOrder?.email || storeEmail || 'your email'
   const customerPhone = latestPaymentOrder?.phone || storePhone || ''
@@ -257,7 +249,6 @@ export default function PaymentConfirmScreen() {
                   </h1>
                 </div>
               </div>
-
               {/* Quality Verification Callout Box (Zero Emoticons) */}
               <div style={{
                 background: '#eaf6f4',
