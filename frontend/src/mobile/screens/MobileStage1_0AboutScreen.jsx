@@ -58,7 +58,7 @@ export default function MobileStage1_0AboutScreen() {
             fontSize: '6px',
             fontWeight: 700,
             letterSpacing: '0.16em',
-            color: '#7a8683',
+            color: 'var(--dawn, #00ae9d)',
             textTransform: 'uppercase',
             margin: 0,
           }}>
@@ -71,7 +71,7 @@ export default function MobileStage1_0AboutScreen() {
             lineHeight: 1.15,
             letterSpacing: '-0.015em',
             margin: 0,
-            color: '#414242',
+            color: 'var(--text-main, #414242)',
           }}>
             About You
           </h1>
@@ -79,7 +79,7 @@ export default function MobileStage1_0AboutScreen() {
             fontFamily: "'Nunito', sans-serif",
             fontSize: '15px',
             fontWeight: 700,
-            color: '#5e6060',
+            color: 'var(--text-sub, #5e6060)',
             lineHeight: 1.45,
             margin: '2px 0 0 0',
           }}>
@@ -95,7 +95,7 @@ export default function MobileStage1_0AboutScreen() {
             <label style={{
               fontSize: '13px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               fontFamily: "'Nunito', sans-serif",
             }}>
               What would you like to be called?
@@ -112,18 +112,18 @@ export default function MobileStage1_0AboutScreen() {
               style={{
                 width: '100%',
                 padding: '11px 14px',
-                background: '#f8fcfa',
-                border: '1.5px solid rgba(0, 174, 157, 0.25)',
+                background: 'var(--raised, #f8fcfa)',
+                border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.25))',
                 borderRadius: '12px',
                 outline: 'none',
                 fontFamily: "'Nunito', sans-serif",
                 fontSize: '14px',
-                color: '#414242',
+                color: 'var(--text-main, #414242)',
                 boxSizing: 'border-box',
                 transition: 'border-color 0.2s ease',
               }}
-              onFocus={(e) => (e.target.style.borderColor = '#00ae9d')}
-              onBlur={(e) => (e.target.style.borderColor = 'rgba(0, 174, 157, 0.25)')}
+              onFocus={(e) => (e.target.style.borderColor = 'var(--dawn, #00ae9d)')}
+              onBlur={(e) => (e.target.style.borderColor = 'var(--border-color, rgba(0, 174, 157, 0.25))')}
             />
           </div>
 
@@ -132,10 +132,10 @@ export default function MobileStage1_0AboutScreen() {
             <label style={{
               fontSize: '13px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               fontFamily: "'Nunito', sans-serif",
             }}>
-              Which age group are you in? <span style={{ fontWeight: 400, color: '#85918e', fontSize: '11.5px' }}>(Optional)</span>
+              Which age group are you in? <span style={{ fontWeight: 400, color: 'var(--text-mute, #85918e)', fontSize: '11.5px' }}>(Optional)</span>
             </label>
             <div style={{
               display: 'grid',
@@ -154,9 +154,9 @@ export default function MobileStage1_0AboutScreen() {
                       minHeight: '38px',
                       padding: '8px 4px',
                       borderRadius: '12px',
-                      border: active ? '1.5px solid #00ae9d' : '1.2px solid rgba(0, 174, 157, 0.18)',
-                      background: active ? '#e6f7f2' : '#ffffff',
-                      color: active ? '#1b4d43' : '#414242',
+                      border: active ? '1.5px solid var(--dawn, #00ae9d)' : '1.2px solid var(--border-color, rgba(0, 174, 157, 0.18))',
+                      background: active ? 'var(--teal-tint, #e6f7f2)' : 'var(--raised, #ffffff)',
+                      color: active ? 'var(--dawn, #1b4d43)' : 'var(--text-main, #414242)',
                       fontFamily: "'Nunito', sans-serif",
                       fontSize: '13px',
                       fontWeight: active ? 700 : 600,
@@ -180,10 +180,10 @@ export default function MobileStage1_0AboutScreen() {
             <label style={{
               fontSize: '13px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               fontFamily: "'Nunito', sans-serif",
             }}>
-              What is your sex? <span style={{ fontWeight: 400, color: '#85918e', fontSize: '11.5px' }}>(Optional)</span>
+              What is your sex? <span style={{ fontWeight: 400, color: 'var(--text-mute, #85918e)', fontSize: '11.5px' }}>(Optional)</span>
             </label>
             <div style={{
               display: 'grid',
@@ -202,9 +202,9 @@ export default function MobileStage1_0AboutScreen() {
                       minHeight: '38px',
                       padding: '8px 8px',
                       borderRadius: '12px',
-                      border: active ? '1.5px solid #00ae9d' : '1.2px solid rgba(0, 174, 157, 0.18)',
-                      background: active ? '#e6f7f2' : '#ffffff',
-                      color: active ? '#1b4d43' : '#414242',
+                      border: active ? '1.5px solid var(--dawn, #00ae9d)' : '1.2px solid var(--border-color, rgba(0, 174, 157, 0.18))',
+                      background: active ? 'var(--teal-tint, #e6f7f2)' : 'var(--raised, #ffffff)',
+                      color: active ? 'var(--dawn, #1b4d43)' : 'var(--text-main, #414242)',
                       fontFamily: "'Nunito', sans-serif",
                       fontSize: '12.5px',
                       fontWeight: active ? 700 : 600,

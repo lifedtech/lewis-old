@@ -90,7 +90,7 @@ export default function Stage1_7PriorityScreen() {
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 14px 0',
             }}>
@@ -103,7 +103,7 @@ export default function Stage1_7PriorityScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               wordBreak: 'break-word',
             }}>
               Priority<br />Ranking
@@ -111,7 +111,7 @@ export default function Stage1_7PriorityScreen() {
             <p style={{
               margin: '12px 0 0 2px',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -130,9 +130,8 @@ export default function Stage1_7PriorityScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#414242',
+            color: 'var(--dawn, #00ae9d)',
             textTransform: 'uppercase',
-            
             margin: '0 0 8px 0'
           }}>
             DRAG TO REORDER

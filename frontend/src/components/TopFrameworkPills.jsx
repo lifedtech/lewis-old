@@ -215,14 +215,15 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
     <div style={{
       width: '100%',
       maxWidth: '100%',
-      background: 'rgba(255, 255, 255, 0.97)',
+      background: 'var(--lp-header-bg, rgba(255, 255, 255, 0.97))',
       backdropFilter: 'blur(12px)',
-      borderBottom: '1px solid rgba(0, 174, 157, 0.14)',
+      borderBottom: '1px solid var(--lp-border, rgba(0, 174, 157, 0.14))',
       padding: '8px 0',
       position: 'relative',
       zIndex: 20,
-      boxShadow: '0 2px 12px rgba(0, 174, 157, 0.05)',
+      boxShadow: 'var(--lp-shadow, 0 2px 12px rgba(0, 174, 157, 0.05))',
       boxSizing: 'border-box',
+      transition: 'background-color 0.3s ease, border-color 0.3s ease',
     }}>
       <div style={{
         width: '100%',
@@ -252,7 +253,7 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
             fontWeight: 800,
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            color: TEAL,
+            color: 'var(--lp-brand-text, #00ae9d)',
             fontFamily: "'Nunito', sans-serif",
             marginRight: '4px',
             flexShrink: 0,
@@ -277,20 +278,20 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
                   height: '24px',
                   padding: '0 clamp(6px, 0.7vw, 10px)',
                   borderRadius: '999px',
-                  border: isSelected ? `1.5px solid ${TEAL}` : '1px solid rgba(0, 174, 157, 0.22)',
-                  background: isSelected ? 'rgba(0, 174, 157, 0.12)' : '#ffffff',
-                  color: isSelected ? TEAL : INK,
+                  border: isSelected ? '1.5px solid var(--lp-brand-text, #00ae9d)' : '1px solid var(--lp-border, rgba(0, 174, 157, 0.22))',
+                  background: isSelected ? 'var(--lp-teal-tint, rgba(0, 174, 157, 0.12))' : 'var(--lp-card, #ffffff)',
+                  color: isSelected ? 'var(--lp-brand-text, #00ae9d)' : 'var(--lp-text-primary, #252626)',
                   fontFamily: "'Nunito', sans-serif",
                   fontSize: '11px',
                   fontWeight: isSelected ? 800 : 700,
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
-                  boxShadow: isSelected ? '0 2px 8px rgba(0, 174, 157, 0.18)' : '0 1px 3px rgba(0, 0, 0, 0.02)',
+                  boxShadow: isSelected ? '0 2px 8px rgba(41, 179, 163, 0.2)' : '0 1px 3px rgba(0, 0, 0, 0.02)',
                   transition: 'all 0.18s ease',
                 }}
               >
-                <PillIcon name={item.icon} size={11} color={isSelected ? TEAL : '#00ae9d'} />
+                <PillIcon name={item.icon} size={11} color={isSelected ? 'var(--lp-brand-text, #00ae9d)' : 'var(--lp-brand-text, #00ae9d)'} />
                 <span>{item.short}</span>
               </motion.button>
             )
@@ -308,8 +309,8 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             style={{
               overflow: 'hidden',
-              background: '#f4faf8',
-              borderTop: '1px solid rgba(0, 174, 157, 0.15)',
+              background: 'var(--lp-raised, #f4faf8)',
+              borderTop: '1px solid var(--lp-border, rgba(0, 174, 157, 0.15))',
               marginTop: '6px',
               width: '100%',
             }}
@@ -331,18 +332,18 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
                   width: '32px',
                   height: '32px',
                   borderRadius: '10px',
-                  background: 'rgba(0, 174, 157, 0.15)',
-                  color: TEAL,
+                  background: 'var(--lp-teal-tint, rgba(0, 174, 157, 0.15))',
+                  color: 'var(--lp-brand-text, #00ae9d)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
                 }}>
-                  <PillIcon name={selectedItem.icon} size={16} color={TEAL} />
+                  <PillIcon name={selectedItem.icon} size={16} color="var(--lp-brand-text, #00ae9d)" />
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                    <h4 style={{ margin: 0, fontSize: '13.5px', fontWeight: 800, color: INK, fontFamily: "'Nunito', sans-serif" }}>
+                    <h4 style={{ margin: 0, fontSize: '13.5px', fontWeight: 800, color: 'var(--lp-text-primary, #252626)', fontFamily: "'Nunito', sans-serif" }}>
                       {selectedItem.full}
                     </h4>
                     <span style={{
@@ -350,15 +351,15 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
                       fontWeight: 800,
                       letterSpacing: '0.06em',
                       textTransform: 'uppercase',
-                      color: TEAL,
-                      background: '#e1f5f2',
+                      color: 'var(--lp-brand-text, #00ae9d)',
+                      background: 'var(--lp-teal-tint, #e1f5f2)',
                       padding: '1px 6px',
                       borderRadius: '4px',
                     }}>
                       {selectedItem.category}
                     </span>
                   </div>
-                  <p style={{ margin: '3px 0 0', fontSize: '12.5px', color: '#556563', lineHeight: 1.4, fontFamily: "'Nunito', sans-serif" }}>
+                  <p style={{ margin: '3px 0 0', fontSize: '12.5px', color: 'var(--lp-text-secondary, #556563)', lineHeight: 1.4, fontFamily: "'Nunito', sans-serif" }}>
                     {selectedItem.desc}
                   </p>
                 </div>
@@ -369,8 +370,8 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
                   onClick={() => setSelectedId(null)}
                   aria-label="Close"
                   style={{
-                    background: 'rgba(0, 0, 0, 0.05)',
-                    border: 'none',
+                    background: 'var(--lp-raised, rgba(0, 0, 0, 0.05))',
+                    border: '1px solid var(--lp-border, transparent)',
                     borderRadius: '50%',
                     width: '24px',
                     height: '24px',
@@ -378,7 +379,7 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
-                    color: '#657370',
+                    color: 'var(--lp-text-muted, #657370)',
                     fontSize: '12px',
                   }}
                 >

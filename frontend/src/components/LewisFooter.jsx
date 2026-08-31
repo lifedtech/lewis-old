@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from './LewisLogo.jsx'
 
 /**
@@ -11,6 +12,8 @@ import LewisLogo from './LewisLogo.jsx'
  * - Copyright & Wellbeing Intelligence attribution bottom bar
  */
 export default function LewisFooter() {
+  const { theme } = useLewisStore()
+  const isDark = theme === 'dark'
   const [modalType, setModalType] = useState(null) // 'terms' | 'privacy' | 'contact'
   const [contactForm, setContactForm] = useState({ name: '', email: '', query: '' })
   const [submitStatus, setSubmitStatus] = useState({ loading: false, success: null, error: null })
@@ -55,7 +58,13 @@ export default function LewisFooter() {
   }
 
   return (
-    <footer style={{ backgroundColor: '#202323', width: '100%', color: '#ffffff', fontFamily: "'Nunito', sans-serif" }}>
+    <footer style={{
+      backgroundColor: isDark ? '#13201E' : '#202323',
+      borderTop: isDark ? '1px solid #22332F' : 'none',
+      width: '100%',
+      color: '#ffffff',
+      fontFamily: "'Nunito', sans-serif"
+    }}>
       {/* Main Footer Container */}
       <div style={{
         maxWidth: '1180px',
@@ -83,7 +92,7 @@ export default function LewisFooter() {
               margin: 0,
               fontSize: '13.5px',
               lineHeight: 1.6,
-              color: 'rgba(255, 255, 255, 0.65)'
+              color: isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.65)'
             }}>
               Lewis is a non-clinical wellbeing reflection. It does not provide medical diagnosis or psychiatric treatment.
             </p>
@@ -103,7 +112,7 @@ export default function LewisFooter() {
                 fontFamily: "'Manrope', sans-serif",
                 fontWeight: 700,
                 fontSize: '16px',
-                color: '#ffffff',
+                color: isDark ? '#E9F1EF' : '#ffffff',
                 margin: 0,
                 letterSpacing: '-0.01em'
               }}>
@@ -112,61 +121,70 @@ export default function LewisFooter() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <button
+                  className="footer-link-btn"
                   onClick={() => setModalType('terms')}
                   style={{
-                    background: 'none',
+                    background: 'transparent',
                     border: 'none',
                     padding: 0,
-                    color: 'rgba(255, 255, 255, 0.72)',
+                    color: isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)',
                     fontSize: '14px',
                     fontFamily: "'Nunito', sans-serif",
                     textAlign: 'left',
                     cursor: 'pointer',
                     transition: 'color 0.2s',
-                    textDecoration: 'none'
+                    textDecoration: 'none',
+                    outline: 'none',
+                    boxShadow: 'none'
                   }}
-                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.72)'}
+                  onMouseEnter={(e) => e.target.style.color = isDark ? '#38C9B7' : '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.color = isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)'}
                 >
                   Terms & Conditions
                 </button>
 
                 <button
+                  className="footer-link-btn"
                   onClick={() => setModalType('privacy')}
                   style={{
-                    background: 'none',
+                    background: 'transparent',
                     border: 'none',
                     padding: 0,
-                    color: 'rgba(255, 255, 255, 0.72)',
+                    color: isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)',
                     fontSize: '14px',
                     fontFamily: "'Nunito', sans-serif",
                     textAlign: 'left',
                     cursor: 'pointer',
                     transition: 'color 0.2s',
-                    textDecoration: 'none'
+                    textDecoration: 'none',
+                    outline: 'none',
+                    boxShadow: 'none'
                   }}
-                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.72)'}
+                  onMouseEnter={(e) => e.target.style.color = isDark ? '#38C9B7' : '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.color = isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)'}
                 >
                   Privacy Policy
                 </button>
 
                 <button
+                  className="footer-link-btn"
                   onClick={() => setModalType('contact')}
                   style={{
-                    background: 'none',
+                    background: 'transparent',
                     border: 'none',
                     padding: 0,
-                    color: 'rgba(255, 255, 255, 0.72)',
+                    color: isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)',
                     fontSize: '14px',
                     fontFamily: "'Nunito', sans-serif",
                     textAlign: 'left',
                     cursor: 'pointer',
                     transition: 'color 0.2s',
-                    textDecoration: 'none'
+                    textDecoration: 'none',
+                    outline: 'none',
+                    boxShadow: 'none'
                   }}
-                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.72)'}
+                  onMouseEnter={(e) => e.target.style.color = isDark ? '#38C9B7' : '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.color = isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)'}
                 >
                   Contact Support
                 </button>
@@ -179,28 +197,28 @@ export default function LewisFooter() {
                 fontFamily: "'Manrope', sans-serif",
                 fontWeight: 700,
                 fontSize: '16px',
-                color: '#ffffff',
+                color: isDark ? '#E9F1EF' : '#ffffff',
                 margin: 0,
                 letterSpacing: '-0.01em'
               }}>
                 Contact Us
               </h4>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: 'rgba(255, 255, 255, 0.72)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '14px', color: isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)' }}>
                 <a
                   href="mailto:lewissupport@lifedhealth.com"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
-                    color: 'rgba(255, 255, 255, 0.72)',
+                    color: isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)',
                     textDecoration: 'none',
                     transition: 'color 0.2s'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.72)'}
+                  onMouseEnter={(e) => e.currentTarget.style.color = isDark ? '#38C9B7' : '#ffffff'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = isDark ? '#94AAA6' : 'rgba(255, 255, 255, 0.72)'}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" strokeWidth="2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#38C9B7' : '#00ae9d'} strokeWidth="2">
                     <rect x="2" y="4" width="20" height="16" rx="2" />
                     <path d="M22 6L12 13L2 6" />
                   </svg>
@@ -208,7 +226,7 @@ export default function LewisFooter() {
                 </a>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" strokeWidth="2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#38C9B7' : '#00ae9d'} strokeWidth="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
@@ -224,7 +242,7 @@ export default function LewisFooter() {
       {/* Bottom Bar Section */}
       <div style={{
         width: '100%',
-        borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+        borderTop: isDark ? '1px solid #22332F' : '1px solid rgba(255, 255, 255, 0.12)',
         padding: '16px clamp(24px, 4vw, 48px) 20px clamp(24px, 4vw, 48px)',
         boxSizing: 'border-box'
       }}>
@@ -235,7 +253,7 @@ export default function LewisFooter() {
           alignItems: 'center',
           gap: '12px',
           fontSize: '13px',
-          color: 'rgba(255, 255, 255, 0.55)',
+          color: isDark ? '#708682' : 'rgba(255, 255, 255, 0.55)',
           lineHeight: 1.5
         }}>
           <span>© 2025–2026 Holobiont Pvt Ltd. All rights reserved.</span>
@@ -262,15 +280,16 @@ export default function LewisFooter() {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              backgroundColor: '#ffffff',
-              color: '#16302B',
+              backgroundColor: 'var(--lp-card, #ffffff)',
+              color: 'var(--lp-text-primary, #16302B)',
               borderRadius: '24px',
               padding: '36px',
               maxWidth: '560px',
               width: '100%',
               maxHeight: '85vh',
               overflowY: 'auto',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
+              border: '1px solid var(--lp-card-border, rgba(0,0,0,0.1))',
+              boxShadow: 'var(--lp-card-hover-shadow, 0 20px 50px rgba(0, 0, 0, 0.3))',
               position: 'relative'
             }}
           >
@@ -281,54 +300,54 @@ export default function LewisFooter() {
                 top: '20px',
                 right: '20px',
                 border: 'none',
-                background: 'rgba(22, 48, 43, 0.06)',
+                background: 'var(--lp-raised, rgba(22, 48, 43, 0.06))',
                 borderRadius: '50%',
                 width: '32px',
                 height: '32px',
                 cursor: 'pointer',
                 fontSize: '16px',
                 fontWeight: 700,
-                color: '#16302B'
+                color: 'var(--lp-text-primary, #16302B)'
               }}
             >
               ✕
             </button>
 
-            <h3 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '22px', fontWeight: 800, marginTop: 0, marginBottom: '16px' }}>
+            <h3 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '22px', fontWeight: 800, marginTop: 0, marginBottom: '16px', color: 'var(--lp-text-primary, #16302B)' }}>
               {modalType === 'terms' ? 'Terms & Conditions' : modalType === 'privacy' ? 'Privacy Policy' : 'Send Us Your Query'}
             </h3>
 
             {modalType === 'terms' ? (
-              <div style={{ fontSize: '14.5px', lineHeight: 1.6, color: 'rgba(22, 48, 43, 0.8)' }}>
+              <div style={{ fontSize: '14.5px', lineHeight: 1.6, color: 'var(--lp-text-secondary, rgba(22, 48, 43, 0.8))' }}>
                 <p><strong>Non-Clinical Use:</strong> Lewis is an evidence-based self-reflection tool. It provides non-clinical wellbeing metrics for personal insight and does not diagnose, treat, or replace professional healthcare.</p>
                 <p><strong>Data Ownership:</strong> You retain complete ownership of your inputs. Information entered into Lewis is processed strictly to compile your reflection mirror.</p>
               </div>
             ) : modalType === 'privacy' ? (
-              <div style={{ fontSize: '14.5px', lineHeight: 1.6, color: 'rgba(22, 48, 43, 0.8)' }}>
+              <div style={{ fontSize: '14.5px', lineHeight: 1.6, color: 'var(--lp-text-secondary, rgba(22, 48, 43, 0.8))' }}>
                 <p><strong>Privacy First:</strong> Your personal responses and psychological metrics are strictly confidential. Lifed Health does not sell or share personal health reflections with third parties.</p>
                 <p><strong>Security:</strong> All payload telemetry is encrypted in transit and at rest.</p>
               </div>
             ) : (
               /* Contact Support Query Form */
               <form onSubmit={handleSupportSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '12px' }}>
-                <p style={{ margin: 0, fontSize: '14.5px', color: 'rgba(22, 48, 43, 0.75)', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: '14.5px', color: 'var(--lp-text-secondary, rgba(22, 48, 43, 0.75))', lineHeight: 1.5 }}>
                   Have a question or need assistance? Fill out your details below and our support team will assist you.
                 </p>
 
                 {submitStatus.success && (
-                  <div style={{ background: '#e6f7f4', border: '1px solid #00ae9d', borderRadius: '12px', padding: '14px 16px', color: '#00776a', fontSize: '14px', lineHeight: 1.5, fontWeight: 700 }}>
+                  <div style={{ background: 'var(--lp-teal-tint, #e6f7f4)', border: '1px solid var(--lp-brand-text, #00ae9d)', borderRadius: '12px', padding: '14px 16px', color: 'var(--lp-brand-text, #00776a)', fontSize: '14px', lineHeight: 1.5, fontWeight: 700 }}>
                     {submitStatus.success}
                   </div>
                 )}
 
                 {submitStatus.error && (
-                  <div style={{ background: '#fdf2f2', border: '1px solid #e53e3e', borderRadius: '12px', padding: '14px 16px', color: '#c53030', fontSize: '14px', lineHeight: 1.5, fontWeight: 600 }}>
+                  <div style={{ background: 'rgba(229, 62, 62, 0.1)', border: '1px solid #e53e3e', borderRadius: '12px', padding: '14px 16px', color: '#e53e3e', fontSize: '14px', lineHeight: 1.5, fontWeight: 600 }}>
                     {submitStatus.error}
                   </div>
                 )}
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 700, color: '#16302B' }}>Your Name</label>
+                  <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--lp-text-primary, #16302B)' }}>Your Name</label>
                   <input
                     type="text"
                     required
@@ -338,7 +357,9 @@ export default function LewisFooter() {
                     style={{
                       padding: '12px 16px',
                       borderRadius: '12px',
-                      border: '1px solid rgba(22, 48, 43, 0.2)',
+                      border: '1px solid var(--lp-border, rgba(22, 48, 43, 0.2))',
+                      background: 'var(--lp-raised, #ffffff)',
+                      color: 'var(--lp-text-primary, #16302B)',
                       fontSize: '14.5px',
                       outline: 'none',
                       fontFamily: 'inherit'
@@ -347,7 +368,7 @@ export default function LewisFooter() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 700, color: '#16302B' }}>Mail ID (Email)</label>
+                  <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--lp-text-primary, #16302B)' }}>Mail ID (Email)</label>
                   <input
                     type="email"
                     required
@@ -357,7 +378,9 @@ export default function LewisFooter() {
                     style={{
                       padding: '12px 16px',
                       borderRadius: '12px',
-                      border: '1px solid rgba(22, 48, 43, 0.2)',
+                      border: '1px solid var(--lp-border, rgba(22, 48, 43, 0.2))',
+                      background: 'var(--lp-raised, #ffffff)',
+                      color: 'var(--lp-text-primary, #16302B)',
                       fontSize: '14.5px',
                       outline: 'none',
                       fontFamily: 'inherit'
@@ -366,7 +389,7 @@ export default function LewisFooter() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 700, color: '#16302B' }}>Your Query</label>
+                  <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--lp-text-primary, #16302B)' }}>Your Query</label>
                   <textarea
                     required
                     rows={4}
@@ -376,7 +399,9 @@ export default function LewisFooter() {
                     style={{
                       padding: '12px 16px',
                       borderRadius: '12px',
-                      border: '1px solid rgba(22, 48, 43, 0.2)',
+                      border: '1px solid var(--lp-border, rgba(22, 48, 43, 0.2))',
+                      background: 'var(--lp-raised, #ffffff)',
+                      color: 'var(--lp-text-primary, #16302B)',
                       fontSize: '14.5px',
                       outline: 'none',
                       fontFamily: 'inherit',
@@ -388,21 +413,25 @@ export default function LewisFooter() {
                 <button
                   type="submit"
                   disabled={submitStatus.loading}
+                  className="btn-primary"
                   style={{
                     marginTop: '8px',
                     padding: '14px 24px',
                     borderRadius: '14px',
                     border: 'none',
+                    background: '#00ae9d',
                     backgroundColor: '#00ae9d',
                     color: '#ffffff',
                     fontSize: '15px',
                     fontWeight: 800,
                     cursor: submitStatus.loading ? 'wait' : 'pointer',
-                    transition: 'background-color 0.2s',
+                    transition: 'all 0.2s ease',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '8px'
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(0, 174, 157, 0.3)',
+                    width: '100%',
                   }}
                 >
                   {submitStatus.loading ? 'Sending Query...' : 'Send Query'}

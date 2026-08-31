@@ -128,7 +128,7 @@ export default function Stage1_14SensoryPauseScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -142,7 +142,7 @@ export default function Stage1_14SensoryPauseScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Sensory Pause
             </h1>
@@ -150,7 +150,7 @@ export default function Stage1_14SensoryPauseScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -168,9 +168,8 @@ export default function Stage1_14SensoryPauseScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#414242',
+            color: 'var(--dawn, #00ae9d)',
             textTransform: 'uppercase',
-            
             margin: '0 0 14px 0',
             width: '100%'
           }}>
@@ -193,7 +192,7 @@ export default function Stage1_14SensoryPauseScreen() {
               margin: 0,
               fontSize: '13.5px',
               fontWeight: 700,
-              color: done ? '#414242' : '#414242',
+              color: done ? 'var(--dawn, #00ae9d)' : 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               textAlign: 'center',
             }}>

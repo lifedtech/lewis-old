@@ -92,23 +92,23 @@ const BLOG_ARTICLES = [
   },
 ]
 
-const eyebrowStyle = (color = '#00ae9d') => ({
+const eyebrowStyle = (color = 'var(--lp-brand-text, #00ae9d)') => ({
   margin: '0 0 18px', fontSize: '14px', fontWeight: 800, letterSpacing: '0.16em',
   textTransform: 'uppercase', color, fontFamily: "'Nunito', sans-serif",
 })
 
 const sectionH2Style = {
   margin: 0, fontSize: 'clamp(30px, 4vw, 44px)', lineHeight: 1.1, fontWeight: 800,
-  letterSpacing: '-0.025em', color: '#414242', fontFamily: "'Nunito', sans-serif",
+  letterSpacing: '-0.025em', color: 'var(--lp-text-primary, #414242)', fontFamily: "'Nunito', sans-serif",
 }
 
 const flatCardStyle = {
-  background: '#ffffff', borderRadius: '18px', padding: 'clamp(24px, 3vw, 32px)',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.03)',
-  border: '1px solid #f0f0f0',
+  background: 'var(--lp-card, #ffffff)', borderRadius: '18px', padding: 'clamp(24px, 3vw, 32px)',
+  boxShadow: 'var(--lp-shadow, 0 2px 12px rgba(0,0,0,0.03))',
+  border: '1px solid var(--lp-card-border, #f0f0f0)',
 }
 
-function IconBadge({ name, iconSize = 22, color = '#00ae9d' }) {
+function IconBadge({ name, iconSize = 22, color = 'var(--lp-brand-text, #00ae9d)' }) {
   return (
     <div style={{ color, marginBottom: '20px' }}>
       <Icon name={name} size={iconSize} />
@@ -116,8 +116,47 @@ function IconBadge({ name, iconSize = 22, color = '#00ae9d' }) {
   )
 }
 
+function ThemeToggle({ theme, toggleTheme, compact = false }) {
+  const isDark = theme === 'dark'
+  return (
+    <button
+      onClick={toggleTheme}
+      className="landing-theme-toggle-btn"
+      aria-label={isDark ? "Switch to Light mode" : "Switch to Dark mode"}
+      title={isDark ? "Switch to Light mode" : "Switch to Dark mode"}
+    >
+      <span className="theme-icon-wrap">
+        {isDark ? (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#38C9B7' }}>
+            <circle cx="12" cy="12" r="4.5" fill="rgba(56, 201, 183, 0.25)" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        ) : (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#00ae9d' }}>
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        )}
+      </span>
+      {!compact && (
+        <span>
+          {isDark ? 'Light' : 'Dark'}
+        </span>
+      )}
+    </button>
+  )
+}
+
 export default function LandingScreen() {
-  const { setScreen } = useLewisStore()
+  const { setScreen, theme, toggleTheme } = useLewisStore()
+  const isDark = theme === 'dark'
+
   // Active page tab: 'home' | 'how-it-works' | 'research'
   const [activePage, setActivePage] = useState('home')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -141,7 +180,8 @@ export default function LandingScreen() {
 
   return (
     <motion.div
-      className="landing-screen-wrapper"
+      className={`landing-screen-wrapper ${isDark ? 'dark' : ''}`}
+      data-theme={theme || 'light'}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -154,32 +194,53 @@ export default function LandingScreen() {
             onClick={(e) => navigateTo(e, 'home')}
             className="landing-logo-btn"
             aria-label="Lewis Home"
+            style={{
+              background: 'transparent',
+              backgroundColor: 'transparent',
+              border: 'none',
+              outline: 'none',
+              boxShadow: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
           >
-            <LewisLogo size={30} showText={true} />
+            <LewisLogo size={30} showText={true} inverted={isDark} />
           </button>
-          
-          {/* Desktop Navigation */}
-          <nav className="landing-desktop-nav" data-nav="1">
-            {NAV_LINKS.map((l) => (
-              <button
-                key={l.id}
-                onClick={(e) => navigateTo(e, l.id)}
-                data-nav-link="1"
-                className={`landing-nav-link ${activePage === l.id || (l.id === 'research' && activePage === 'blogs') ? 'active' : ''}`}
-              >
-                {l.label}
-              </button>
-            ))}
-          </nav>
 
-          {/* Mobile Hamburger Menu Button */}
-          <button
-            className="landing-mobile-menu-toggle"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            <Icon name={mobileMenuOpen ? "close" : "menu"} size={20} />
-          </button>
+          {/* Desktop Navigation */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <nav className="landing-desktop-nav" data-nav="1">
+              {NAV_LINKS.map((l) => (
+                <button
+                  key={l.id}
+                  onClick={(e) => navigateTo(e, l.id)}
+                  data-nav-link="1"
+                  className={`landing-nav-link ${activePage === l.id || (l.id === 'research' && activePage === 'blogs') ? 'active' : ''}`}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </nav>
+
+            {/* Desktop Theme Mode Switcher */}
+            <div className="landing-desktop-theme-toggle hide-on-mobile">
+              <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+            </div>
+          </div>
+
+          {/* Mobile Right Controls: Theme Toggle & Hamburger */}
+          <div style={{ display: 'none', alignItems: 'center', gap: '8px' }} className="landing-mobile-controls">
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} compact={true} />
+            <button
+              className="landing-mobile-menu-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              <Icon name={mobileMenuOpen ? "close" : "menu"} size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Mobile Dropdown Drawer */}
@@ -201,15 +262,35 @@ export default function LandingScreen() {
                   >
                     <span>{l.label}</span>
                     {activePage === l.id && (
-                      <span style={{ color: '#00ae9d', fontWeight: 800 }}>•</span>
+                      <span style={{ color: 'var(--lp-brand-text, #00ae9d)', fontWeight: 800 }}>•</span>
                     )}
                   </button>
                 ))}
+
+                <div style={{ padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--lp-text-secondary)' }}>Appearance</span>
+                  <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+                </div>
+
                 <div className="landing-mobile-drawer-cta">
                   <button
                     onClick={handleNext}
-                    className="landing-primary-btn"
-                    style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px 20px', fontSize: '15px' }}
+                    className="landing-primary-btn btn-primary"
+                    style={{
+                      width: '100%',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      padding: '14px 20px',
+                      fontSize: '15px',
+                      fontWeight: 700,
+                      background: '#00ae9d',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '999px',
+                      boxShadow: '0 4px 18px rgba(0, 174, 157, 0.35)'
+                    }}
                   >
                     Begin your reflection <Icon name="arrow" size={16} />
                   </button>
@@ -235,8 +316,8 @@ export default function LandingScreen() {
             transition={{ duration: 0.3 }}
           >
             {/* SECTION 1: HERO */}
-            <section id="top" style={{ position: 'relative', overflow: 'hidden', background: '#ffffff', padding: 'clamp(56px,8vw,90px) clamp(20px,4vw,40px) clamp(48px,6vw,72px)' }}>
-              <AbstractLineBackground variant="contours" opacity={0.08} />
+            <section id="top" style={{ position: 'relative', overflow: 'hidden', background: 'var(--lp-page-bg, #ffffff)', padding: 'clamp(56px,8vw,90px) clamp(20px,4vw,40px) clamp(48px,6vw,72px)' }}>
+              <AbstractLineBackground variant="contours" opacity={isDark ? 0.12 : 0.08} color={isDark ? '#38C9B7' : '#00ae9d'} />
               <div data-row="hero" style={{
                 position: 'relative', zIndex: 1,
                 maxWidth: '1180px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr 0.8fr',
@@ -246,43 +327,67 @@ export default function LandingScreen() {
                   <p style={eyebrowStyle()}>SCIENCE-BASED VIEW OF HOW YOU ARE LIVING</p>
                   <h1 style={{
                     margin: '0 0 22px', fontSize: 'clamp(30px, 4vw, 48px)', lineHeight: 1.12, fontWeight: 800,
-                    letterSpacing: '-0.025em', color: '#414242', fontFamily: "'Nunito', sans-serif",
+                    letterSpacing: '-0.025em', color: 'var(--lp-text-primary, #414242)', fontFamily: "'Nunito', sans-serif",
                   }}>
                     <span style={{ display: 'block' }}>Understand your wellbeing,</span>
                     <span style={{ display: 'block' }}>and exactly where to start.</span>
                   </h1>
-                  <p style={{ margin: '0 0 28px', fontSize: 'clamp(18px,1.8vw,21px)', lineHeight: 1.7, color: 'rgba(65,66,66,.72)', maxWidth: '580px' }}>
+                  <p style={{ margin: '0 0 28px', fontSize: 'clamp(18px,1.8vw,21px)', lineHeight: 1.7, color: 'var(--lp-text-secondary, rgba(65,66,66,.72))', maxWidth: '580px' }}>
                     LEWIS reads nine areas of your life together and turns what it finds into a plan you can actually follow. Twelve minutes, free to start.
                   </p>
                   <div data-row="ctas" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '18px', marginBottom: '30px' }}>
-                    <button onClick={handleNext} data-cta="1" className="landing-primary-btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 34px', fontSize: '18px', fontWeight: 700 }}>
+                    <button
+                      onClick={handleNext}
+                      data-cta="1"
+                      className="landing-primary-btn btn-primary"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '16px 34px',
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        background: '#00ae9d',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '999px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 18px rgba(0, 174, 157, 0.35)',
+                        transition: 'all 0.25s ease'
+                      }}
+                    >
                       Begin your reflection
                     </button>
                     <button
+                      className="landing-ghost-btn"
                       onClick={(e) => navigateTo(e, 'how-it-works')}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '10px',
                         background: 'transparent',
+                        backgroundColor: 'transparent',
                         border: 'none',
                         cursor: 'pointer',
                         fontSize: '18px',
                         fontWeight: 600,
-                        color: '#414242',
+                        color: 'var(--lp-text-primary, #414242)',
                         padding: '8px 12px',
                         transition: 'all 0.2s ease',
                         fontFamily: "'Nunito', sans-serif",
+                        outline: 'none',
+                        boxShadow: 'none',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#00ae9d'
+                        e.currentTarget.style.color = 'var(--lp-brand-text, #00ae9d)'
                         const circle = e.currentTarget.querySelector('.arrow-circle')
-                        if (circle) circle.style.borderColor = '#00ae9d'
+                        if (circle) circle.style.borderColor = 'var(--lp-brand-text, #00ae9d)'
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#414242'
+                        e.currentTarget.style.color = 'var(--lp-text-primary, #414242)'
                         const circle = e.currentTarget.querySelector('.arrow-circle')
-                        if (circle) circle.style.borderColor = '#dcdcdc'
+                        if (circle) circle.style.borderColor = 'var(--lp-border-strong, #dcdcdc)'
                       }}
                     >
                       <span>How Lewis works</span>
@@ -293,7 +398,7 @@ export default function LandingScreen() {
                         width: '28px',
                         height: '28px',
                         borderRadius: '50%',
-                        border: '1px solid #dcdcdc',
+                        border: '1px solid var(--lp-border-strong, #dcdcdc)',
                         fontSize: '14px',
                         transition: 'border-color 0.2s ease',
                       }}>
@@ -321,15 +426,17 @@ export default function LandingScreen() {
             transition={{ duration: 0.3 }}
           >
             {/* SUB-SECTION 1: WHAT IS LEWIS */}
-            <section style={{ position: 'relative', overflow: 'hidden', background: '#f8faf9', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px) clamp(40px,5vw,60px)' }}>
-              <AbstractLineBackground variant="waves" opacity={0.06} />
+            <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--lp-page-alt, #f8faf9)', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px) clamp(40px,5vw,60px)' }}>
+              <AbstractLineBackground variant="waves" opacity={isDark ? 0.10 : 0.06} color={isDark ? '#38C9B7' : '#00ae9d'} />
               <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
                 <button
                   onClick={(e) => navigateTo(e, 'home')}
+                  className="landing-back-home-btn"
                   style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'none',
-                    border: 'none', color: '#00ae9d', fontWeight: 700, fontSize: '14px',
-                    cursor: 'pointer', marginBottom: '20px', padding: 0
+                    display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'transparent',
+                    backgroundColor: 'transparent', border: 'none', color: 'var(--lp-brand-text, #00ae9d)',
+                    fontWeight: 700, fontSize: '14px', cursor: 'pointer', marginBottom: '20px', padding: 0,
+                    outline: 'none', boxShadow: 'none',
                   }}
                 >
                   &larr; Back to Home
@@ -340,7 +447,7 @@ export default function LandingScreen() {
                   alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
                 }}>
                   <h2 style={sectionH2Style}>A reflection, not a verdict.</h2>
-                  <p style={{ margin: 0, fontSize: 'clamp(18px,1.7vw,20px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
+                  <p style={{ margin: 0, fontSize: 'clamp(18px,1.7vw,20px)', lineHeight: 1.7, color: 'var(--lp-text-secondary, rgba(65,66,66,.75))' }}>
                     Lewis, the Lifed Everyday Wellbeing Intelligence System, is Lifed&rsquo;s non-clinical wellbeing reflection tool. It understands how life feels for you right now, reflects it back across nine connected areas, then names one small place to start.
                   </p>
                 </div>
@@ -348,8 +455,8 @@ export default function LandingScreen() {
                   {WHAT_CARDS.map((c) => (
                     <div key={c.title} style={flatCardStyle}>
                       <IconBadge name={c.icon} />
-                      <h3 style={{ margin: '0 0 9px', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.01em', color: '#414242' }}>{c.title}</h3>
-                      <p style={{ margin: 0, fontSize: '16.5px', lineHeight: 1.68, color: 'rgba(65,66,66,.72)' }}>{c.desc}</p>
+                      <h3 style={{ margin: '0 0 9px', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.01em', color: 'var(--lp-text-primary, #414242)' }}>{c.title}</h3>
+                      <p style={{ margin: 0, fontSize: '16.5px', lineHeight: 1.68, color: 'var(--lp-text-secondary, rgba(65,66,66,.72))' }}>{c.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -357,8 +464,8 @@ export default function LandingScreen() {
             </section>
 
             {/* SUB-SECTION 2: NINE AREAS */}
-            <section style={{ position: 'relative', overflow: 'hidden', background: '#ffffff', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)' }}>
-              <AbstractLineBackground variant="arcs" opacity={0.07} />
+            <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--lp-page-bg, #ffffff)', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)' }}>
+              <AbstractLineBackground variant="arcs" opacity={isDark ? 0.12 : 0.07} color={isDark ? '#38C9B7' : '#00ae9d'} />
               <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
                 <p style={eyebrowStyle()}>The nine areas</p>
                 <div data-row="lede" style={{
@@ -366,20 +473,19 @@ export default function LandingScreen() {
                   alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
                 }}>
                   <h2 style={sectionH2Style}>Nine areas of everyday wellbeing.</h2>
-                  <p style={{ margin: 0, fontSize: 'clamp(18px,1.7vw,20px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
+                  <p style={{ margin: 0, fontSize: 'clamp(18px,1.7vw,20px)', lineHeight: 1.7, color: 'var(--lp-text-secondary, rgba(65,66,66,.75))' }}>
                     One area on its own says very little. Read together, they usually explain the feeling you arrived with.
                   </p>
                 </div>
                 <div data-row="nine" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '14px', marginBottom: '16px' }}>
                   {DOMAINS.map((d) => (
                     <div key={d.name} className="landing-domain-card" style={{
-                      background: '#f8faf9', borderRadius: '16px', padding: '26px', display: 'flex', gap: '16px', alignItems: 'flex-start',
-                      border: '1px solid #eef2f0'
+                      borderRadius: '16px', padding: '26px', display: 'flex', gap: '16px', alignItems: 'flex-start',
                     }}>
-                      <span style={{ color: '#00ae9d', display: 'inline-flex', flexShrink: 0, marginTop: '2px' }}><Icon name={d.iconKey} size={22} /></span>
+                      <span style={{ color: 'var(--lp-brand-text, #00ae9d)', display: 'inline-flex', flexShrink: 0, marginTop: '2px' }}><Icon name={d.iconKey} size={22} /></span>
                       <div>
-                        <h3 style={{ margin: '0 0 5px', fontSize: '18px', fontWeight: 800, color: '#414242' }}>{d.name}</h3>
-                        <p style={{ margin: 0, fontSize: '15.5px', lineHeight: 1.6, color: 'rgba(65,66,66,.68)' }}>{d.desc}</p>
+                        <h3 style={{ margin: '0 0 5px', fontSize: '18px', fontWeight: 800, color: 'var(--lp-text-primary, #414242)' }}>{d.name}</h3>
+                        <p style={{ margin: 0, fontSize: '15.5px', lineHeight: 1.6, color: 'var(--lp-text-secondary, rgba(65,66,66,.68))' }}>{d.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -388,68 +494,76 @@ export default function LandingScreen() {
             </section>
 
             {/* SUB-SECTION 3: SCIENCE & RESEARCH FOUNDATION */}
-            <section style={{ position: 'relative', overflow: 'hidden', background: '#d6edea', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)' }}>
-              <AbstractLineBackground variant="nodes" opacity={0.12} color="#00776a" />
+            <section style={{
+              position: 'relative',
+              overflow: 'hidden',
+              background: 'var(--lp-science-bg, #d6edea)',
+              borderTop: isDark ? '1px solid var(--lp-border)' : 'none',
+              borderBottom: isDark ? '1px solid var(--lp-border)' : 'none',
+              padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)'
+            }}>
+              <AbstractLineBackground variant="nodes" opacity={isDark ? 0.15 : 0.12} color={isDark ? '#38C9B7' : '#00776a'} />
               <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
-                <p style={eyebrowStyle('#00776a')}>The science and research</p>
+                <p style={eyebrowStyle('var(--lp-science-text, #00776a)')}>The science and research</p>
                 <div data-row="lede" style={{
                   display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 'clamp(28px,5vw,64px)',
                   alignItems: 'start', marginBottom: 'clamp(32px,4vw,48px)',
                 }}>
                   <h2 style={sectionH2Style}>What Lewis is built on.</h2>
-                  <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'rgba(65,66,66,.78)' }}>
+                  <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'var(--lp-text-secondary, rgba(65,66,66,.78))' }}>
                     Established self-report research where it exists, and honesty about the parts that are reflection rather than measurement.
                   </p>
                 </div>
                 <div data-row="three" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '28px' }}>
                   {RESEARCH_CARDS.map((c) => (
                     <div key={c.title} style={flatCardStyle}>
-                      <IconBadge name={c.icon} size={24} iconSize={24} />
-                      <h3 style={{ margin: '0 0 9px', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.01em', color: '#414242' }}>{c.title}</h3>
-                      <p style={{ margin: 0, fontSize: '16.5px', lineHeight: 1.68, color: 'rgba(65,66,66,.72)' }}>{c.desc}</p>
+                      <IconBadge name={c.icon} size={24} iconSize={24} color="var(--lp-brand-text, #00ae9d)" />
+                      <h3 style={{ margin: '0 0 9px', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.01em', color: 'var(--lp-text-primary, #414242)' }}>{c.title}</h3>
+                      <p style={{ margin: 0, fontSize: '16.5px', lineHeight: 1.68, color: 'var(--lp-text-secondary, rgba(65,66,66,.72))' }}>{c.desc}</p>
                     </div>
                   ))}
                 </div>
-                <p style={{ margin: '0', fontSize: '16px', lineHeight: 1.7, color: 'rgba(65,66,66,.66)', maxWidth: '840px' }}>
+                <p style={{ margin: '0', fontSize: '16px', lineHeight: 1.7, color: 'var(--lp-text-muted, rgba(65,66,66,.66))', maxWidth: '840px' }}>
                   Lewis makes no claim about hormones, brain states or heart rhythms. It does not detect, name, treat or prevent any condition, and it is not a substitute for professional care.
                 </p>
               </div>
             </section>
 
             {/* SUB-SECTION 4: QUESTIONS & FAQS */}
-            <section style={{ background: '#ffffff', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)' }}>
+            <section style={{ background: 'var(--lp-page-bg, #ffffff)', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)' }}>
               <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
                 <p style={eyebrowStyle()}>Good to know</p>
                 <h2 style={{ ...sectionH2Style, marginBottom: 'clamp(28px,4vw,44px)' }}>Questions, answered.</h2>
-                <div style={{ maxWidth: '900px', borderTop: '1px solid #f4f4f4', marginBottom: '44px' }}>
+                <div style={{ maxWidth: '900px', borderTop: '1px solid var(--lp-faq-border, #f4f4f4)', marginBottom: '44px' }}>
                   {FAQS.map((f, i) => (
-                    <details key={f.q} open={i === 0} style={{ borderBottom: '1px solid #f4f4f4' }}>
+                    <details key={f.q} open={i === 0} style={{ borderBottom: '1px solid var(--lp-faq-border, #f4f4f4)' }}>
                       <summary style={{
                         display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '24px',
-                        padding: '22px 0', fontSize: 'clamp(18px,1.7vw,20px)', fontWeight: 800, color: '#414242',
+                        padding: '22px 0', fontSize: 'clamp(18px,1.7vw,20px)', fontWeight: 800, color: 'var(--lp-text-primary, #414242)',
                       }}>
                         {f.q}
-                        <span data-plus="1" style={{ color: '#00ae9d', fontSize: '24px', fontWeight: 700, lineHeight: 1, flexShrink: 0 }} />
+                        <span data-plus="1" style={{ color: 'var(--lp-brand-text, #00ae9d)', fontSize: '24px', fontWeight: 700, lineHeight: 1, flexShrink: 0 }} />
                       </summary>
-                      <p style={{ margin: 0, padding: '0 40px 24px 0', fontSize: '17.5px', lineHeight: 1.72, color: 'rgba(65,66,66,.72)' }}>{f.a}</p>
+                      <p style={{ margin: 0, padding: '0 40px 24px 0', fontSize: '17.5px', lineHeight: 1.72, color: 'var(--lp-text-secondary, rgba(65,66,66,.72))' }}>{f.a}</p>
                     </details>
                   ))}
                 </div>
 
                 <div style={{
-                  background: 'linear-gradient(135deg, #eaf7f5 0%, #f4faf9 100%)',
+                  background: isDark ? 'linear-gradient(135deg, #13201E 0%, #182725 100%)' : 'linear-gradient(135deg, #eaf7f5 0%, #f4faf9 100%)',
                   borderRadius: '24px',
                   padding: 'clamp(32px, 5vw, 48px)',
                   textAlign: 'center',
-                  border: '1px solid rgba(0, 174, 157, 0.2)',
+                  border: '1px solid var(--lp-teal-tint-border, rgba(0, 174, 157, 0.2))',
+                  boxShadow: 'var(--lp-shadow)',
                 }}>
-                  <h3 style={{ margin: '0 0 12px', fontSize: 'clamp(22px, 2.8vw, 32px)', fontWeight: 800, color: '#414242' }}>
+                  <h3 style={{ margin: '0 0 12px', fontSize: 'clamp(22px, 2.8vw, 32px)', fontWeight: 800, color: 'var(--lp-text-primary, #414242)' }}>
                     Ready to understand your wellbeing?
                   </h3>
-                  <p style={{ margin: '0 0 24px', fontSize: '16px', color: '#657370', maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto' }}>
+                  <p style={{ margin: '0 0 24px', fontSize: '16px', color: 'var(--lp-text-secondary, #657370)', maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto' }}>
                     Twelve minutes, nine connected areas, and a personalized plan designed for your real life.
                   </p>
-                  <button onClick={handleNext} className="landing-primary-btn" style={{ padding: '16px 36px', fontSize: '16px', fontWeight: 700 }}>
+                  <button onClick={handleNext} className="landing-primary-btn btn-primary" style={{ padding: '16px 36px', fontSize: '16px', fontWeight: 700 }}>
                     Begin your reflection &rarr;
                   </button>
                 </div>
@@ -467,15 +581,17 @@ export default function LandingScreen() {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.3 }}
           >
-            <section style={{ position: 'relative', overflow: 'hidden', background: '#f8faf9', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)' }}>
-              <AbstractLineBackground variant="waves" opacity={0.06} />
+            <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--lp-page-alt, #f8faf9)', padding: 'clamp(56px,7vw,88px) clamp(20px,4vw,40px)' }}>
+              <AbstractLineBackground variant="waves" opacity={isDark ? 0.10 : 0.06} color={isDark ? '#38C9B7' : '#00ae9d'} />
               <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
                 <button
                   onClick={(e) => navigateTo(e, 'home')}
+                  className="landing-back-home-btn"
                   style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'none',
-                    border: 'none', color: '#00ae9d', fontWeight: 700, fontSize: '14px',
-                    cursor: 'pointer', marginBottom: '20px', padding: 0
+                    display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'transparent',
+                    backgroundColor: 'transparent', border: 'none', color: 'var(--lp-brand-text, #00ae9d)',
+                    fontWeight: 700, fontSize: '14px', cursor: 'pointer', marginBottom: '20px', padding: 0,
+                    outline: 'none', boxShadow: 'none',
                   }}
                 >
                   &larr; Back to Home
@@ -486,7 +602,7 @@ export default function LandingScreen() {
                   alignItems: 'start', marginBottom: 'clamp(36px,4vw,52px)',
                 }}>
                   <h2 style={sectionH2Style}>The Research Blog.</h2>
-                  <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'rgba(65,66,66,.75)' }}>
+                  <p style={{ margin: 0, fontSize: 'clamp(16px,1.6vw,18px)', lineHeight: 1.7, color: 'var(--lp-text-secondary, rgba(65,66,66,.75))' }}>
                     Explorations into measurement validity, cross-domain wellbeing dynamics, and evidence-based restorative practices from Lifed.
                   </p>
                 </div>
@@ -499,41 +615,41 @@ export default function LandingScreen() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       style={{
-                        background: '#ffffff',
+                        background: 'var(--lp-card, #ffffff)',
                         borderRadius: '24px',
                         padding: 'clamp(28px, 4vw, 44px)',
-                        border: '1.5px solid rgba(0, 174, 157, 0.25)',
-                        boxShadow: '0 12px 36px rgba(0, 174, 157, 0.08)',
+                        border: '1.5px solid var(--lp-teal-tint-border, rgba(0, 174, 157, 0.25))',
+                        boxShadow: 'var(--lp-shadow, 0 12px 36px rgba(0, 174, 157, 0.08))',
                         marginBottom: '40px',
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '16px' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#00ae9d', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--lp-brand-text, #00ae9d)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                           {selectedArticle.category} · {selectedArticle.readTime}
                         </span>
                         <button
                           onClick={() => setSelectedArticle(null)}
                           style={{
-                            background: '#f4f6f5',
-                            border: 'none',
+                            background: 'var(--lp-raised, #f4f6f5)',
+                            border: '1px solid var(--lp-border, transparent)',
                             borderRadius: '50%',
                             width: '32px',
                             height: '32px',
                             cursor: 'pointer',
-                            color: '#657370',
+                            color: 'var(--lp-text-muted, #657370)',
                             fontSize: '14px',
                           }}
                         >
                           ✕
                         </button>
                       </div>
-                      <h3 style={{ margin: '0 0 16px', fontSize: 'clamp(24px, 2.5vw, 32px)', fontWeight: 800, color: '#414242' }}>
+                      <h3 style={{ margin: '0 0 16px', fontSize: 'clamp(24px, 2.5vw, 32px)', fontWeight: 800, color: 'var(--lp-text-primary, #414242)' }}>
                         {selectedArticle.title}
                       </h3>
-                      <div style={{ fontSize: '13px', color: '#85918e', marginBottom: '24px' }}>
+                      <div style={{ fontSize: '13px', color: 'var(--lp-text-muted, #85918e)', marginBottom: '24px' }}>
                         {selectedArticle.author} · {selectedArticle.date}
                       </div>
-                      <div style={{ fontSize: '16.5px', lineHeight: 1.8, color: '#52605d', borderTop: '1px solid #f0f2f1', paddingTop: '20px' }}>
+                      <div style={{ fontSize: '16.5px', lineHeight: 1.8, color: 'var(--lp-text-secondary, #52605d)', borderTop: '1px solid var(--lp-border, #f0f2f1)', paddingTop: '20px' }}>
                         <p style={{ marginTop: 0, marginBottom: '16px' }}>
                           {selectedArticle.excerpt}
                         </p>
@@ -551,8 +667,9 @@ export default function LandingScreen() {
                             fontWeight: 600,
                             padding: '4px 12px',
                             borderRadius: '999px',
-                            background: '#eaf7f5',
-                            color: '#00ae9d',
+                            background: 'var(--lp-teal-tint, #eaf7f5)',
+                            color: 'var(--lp-brand-text, #00ae9d)',
+                            border: '1px solid var(--lp-teal-tint-border, transparent)',
                           }}>
                             #{tag}
                           </span>
@@ -560,8 +677,17 @@ export default function LandingScreen() {
                       </div>
                       <button
                         onClick={handleNext}
-                        className="landing-primary-btn"
-                        style={{ padding: '12px 28px', fontSize: '14px' }}
+                        className="landing-primary-btn btn-primary"
+                        style={{
+                          padding: '12px 28px',
+                          fontSize: '14px',
+                          fontWeight: 700,
+                          background: '#00ae9d',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '999px',
+                          boxShadow: '0 4px 18px rgba(0, 174, 157, 0.35)'
+                        }}
                       >
                         Try Lewis Reflection &rarr;
                       </button>
@@ -581,11 +707,11 @@ export default function LandingScreen() {
                       key={article.id}
                       whileHover={{ y: -4 }}
                       style={{
-                        background: '#ffffff',
+                        background: 'var(--lp-card, #ffffff)',
                         borderRadius: '20px',
                         padding: '30px 26px',
-                        border: '1px solid #eef2f0',
-                        boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                        border: '1px solid var(--lp-border, #eef2f0)',
+                        boxShadow: 'var(--lp-shadow, 0 4px 16px rgba(0,0,0,0.03))',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
@@ -594,27 +720,27 @@ export default function LandingScreen() {
                       }}
                       onClick={() => setSelectedArticle(article)}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.4)'
-                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 174, 157, 0.08)'
+                        e.currentTarget.style.borderColor = 'var(--lp-teal-tint-border, rgba(0, 174, 157, 0.4))'
+                        e.currentTarget.style.boxShadow = 'var(--lp-card-hover-shadow)'
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = '#eef2f0'
-                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)'
+                        e.currentTarget.style.borderColor = 'var(--lp-border, #eef2f0)'
+                        e.currentTarget.style.boxShadow = 'var(--lp-shadow, 0 4px 16px rgba(0,0,0,0.03))'
                       }}
                     >
                       <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 800, color: '#00ae9d', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--lp-brand-text, #00ae9d)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                             {article.category}
                           </span>
-                          <span style={{ fontSize: '12px', color: '#94a39f' }}>
+                          <span style={{ fontSize: '12px', color: 'var(--lp-text-muted, #94a39f)' }}>
                             {article.readTime}
                           </span>
                         </div>
-                        <h3 style={{ margin: '0 0 12px', fontSize: '19px', fontWeight: 800, lineHeight: 1.35, color: '#414242' }}>
+                        <h3 style={{ margin: '0 0 12px', fontSize: '19px', fontWeight: 800, lineHeight: 1.35, color: 'var(--lp-text-primary, #414242)' }}>
                           {article.title}
                         </h3>
-                        <p style={{ margin: '0 0 20px', fontSize: '14.5px', lineHeight: 1.65, color: 'rgba(65,66,66,.72)' }}>
+                        <p style={{ margin: '0 0 20px', fontSize: '14.5px', lineHeight: 1.65, color: 'var(--lp-text-secondary, rgba(65,66,66,.72))' }}>
                           {article.excerpt}
                         </p>
                       </div>
@@ -627,8 +753,9 @@ export default function LandingScreen() {
                               fontWeight: 600,
                               padding: '3px 10px',
                               borderRadius: '999px',
-                              background: '#f4f6f5',
-                              color: '#657370',
+                              background: 'var(--lp-raised, #f4f6f5)',
+                              color: 'var(--lp-text-secondary, #657370)',
+                              border: '1px solid var(--lp-border, transparent)',
                             }}>
                               #{t}
                             </span>
@@ -638,7 +765,7 @@ export default function LandingScreen() {
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '6px',
-                          color: '#00ae9d',
+                          color: 'var(--lp-brand-text, #00ae9d)',
                           fontWeight: 700,
                           fontSize: '14px',
                         }}>

@@ -94,7 +94,7 @@ export default function Stage5_0EmailScreen() {
               fontSize: '12px',
               fontWeight: 700,
               letterSpacing: '0.12em',
-              color: '#85918e',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -108,7 +108,7 @@ export default function Stage5_0EmailScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.02em',
               margin: 0,
-              color: INK,
+              color: 'var(--text-main, #414242)',
               textAlign: 'left',
             }}>
               Save what you have built so far.
@@ -117,7 +117,7 @@ export default function Stage5_0EmailScreen() {
               margin: '12px 0 0 0',
               fontSize: '15px',
               fontWeight: 600,
-              color: 'rgba(65, 66, 66, 0.8)',
+              color: 'var(--text-sub, rgba(65, 66, 66, 0.8))',
               fontFamily: NUNITO,
               lineHeight: 1.6,
               maxWidth: '380px',
@@ -135,15 +135,15 @@ export default function Stage5_0EmailScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
           <div style={{
             width: '100%',
-            background: '#ffffff',
+            background: 'var(--raised, #ffffff)',
             borderRadius: '20px',
-            border: '1px solid rgba(22, 36, 31, 0.08)',
+            border: '1.5px solid var(--border-color, rgba(22, 36, 31, 0.08))',
             padding: 'clamp(16px, 2vw, 24px)',
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
             gap: '14px',
-            boxShadow: '0 4px 20px -2px rgba(22, 36, 31, 0.04)',
+            boxShadow: 'var(--shadow-soft, 0 4px 20px -2px rgba(22, 36, 31, 0.04))',
           }}>
 
             {/* Milestone Header Badge */}
@@ -152,7 +152,7 @@ export default function Stage5_0EmailScreen() {
               alignItems: 'center',
               justifyContent: 'space-between',
               paddingBottom: '12px',
-              borderBottom: '1px solid rgba(22, 36, 31, 0.06)',
+              borderBottom: '1px solid var(--border-color, rgba(22, 36, 31, 0.06))',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{
@@ -162,8 +162,8 @@ export default function Stage5_0EmailScreen() {
                   width: '22px',
                   height: '22px',
                   borderRadius: '50%',
-                  background: 'rgba(0, 174, 157, 0.12)',
-                  color: TEAL,
+                  background: 'var(--teal-tint, rgba(0, 174, 157, 0.12))',
+                  color: 'var(--dawn, #00ae9d)',
                   fontSize: '12px',
                   fontWeight: 800,
                 }}>
@@ -173,7 +173,7 @@ export default function Stage5_0EmailScreen() {
                   fontFamily: NUNITO,
                   fontSize: '13px',
                   fontWeight: 700,
-                  color: INK,
+                  color: 'var(--text-main, #414242)',
                   letterSpacing: '0.02em',
                 }}>
                   Halfway Milestone Reached (50%)
@@ -183,8 +183,8 @@ export default function Stage5_0EmailScreen() {
                 fontFamily: MONO,
                 fontSize: '10.5px',
                 fontWeight: 700,
-                color: TEAL,
-                background: 'rgba(0, 174, 157, 0.08)',
+                color: 'var(--dawn, #00ae9d)',
+                background: 'var(--teal-tint, rgba(0, 174, 157, 0.08))',
                 padding: '3px 9px',
                 borderRadius: '999px',
                 textTransform: 'uppercase',
@@ -203,9 +203,9 @@ export default function Stage5_0EmailScreen() {
                 fontFamily: NUNITO,
                 fontSize: '13.5px',
                 fontWeight: 700,
-                color: INK,
+                color: 'var(--text-main, #414242)',
               }}>
-                <span>Where should we send your report? <span style={{ color: '#85918e', fontWeight: 500 }}>(optional)</span></span>
+                <span>Where should we send your report? <span style={{ color: 'var(--text-sub, #85918e)', fontWeight: 500 }}>(optional)</span></span>
               </label>
 
               <div style={{ position: 'relative', width: '100%' }}>
@@ -215,7 +215,7 @@ export default function Stage5_0EmailScreen() {
                   left: '14px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: error ? '#d0574f' : (email ? TEAL : '#85918e'),
+                  color: error ? '#d0574f' : (email ? 'var(--dawn, #00ae9d)' : 'var(--text-sub, #85918e)'),
                   display: 'flex',
                   alignItems: 'center',
                   pointerEvents: 'none',
@@ -245,11 +245,11 @@ export default function Stage5_0EmailScreen() {
                     width: '100%',
                     padding: '11px 14px 11px 42px',
                     borderRadius: '10px',
-                    border: error ? '1.5px solid #d0574f' : (email ? '1.5px solid #00ae9d' : '1.5px solid #c2ceca'),
-                    background: '#fcfdfd',
+                    border: error ? '1.5px solid #d0574f' : (email ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-strong, #c2ceca)'),
+                    background: 'var(--bg-page, #fcfdfd)',
                     fontSize: '14px',
                     fontFamily: NUNITO,
-                    color: INK,
+                    color: 'var(--text-main, #414242)',
                     outline: 'none',
                     boxSizing: 'border-box',
                     transition: 'all 0.2s ease',
@@ -277,7 +277,8 @@ export default function Stage5_0EmailScreen() {
 
               {/* Progress & Privacy Callout */}
               <div style={{
-                background: '#f5f7f6',
+                background: 'var(--panel, #f5f7f6)',
+                border: '1px solid var(--border-color, rgba(22, 36, 31, 0.05))',
                 borderRadius: '10px',
                 padding: '10px 14px',
                 marginTop: '4px',
@@ -287,7 +288,7 @@ export default function Stage5_0EmailScreen() {
                   margin: 0,
                   fontSize: '12.5px',
                   lineHeight: 1.5,
-                  color: 'rgba(65, 66, 66, 0.8)',
+                  color: 'var(--text-sub, rgba(65, 66, 66, 0.8))',
                   fontFamily: NUNITO,
                   fontWeight: 500,
                 }}>
@@ -297,7 +298,7 @@ export default function Stage5_0EmailScreen() {
             </div>
 
             {/* Subtle Divider */}
-            <div style={{ width: '100%', height: '1px', background: 'rgba(22, 36, 31, 0.07)', margin: '0' }} />
+            <div style={{ width: '100%', height: '1px', background: 'var(--border-color, rgba(22, 36, 31, 0.07))', margin: '0' }} />
 
             {/* Research Newsletter Subscription Checkbox */}
             <div
@@ -327,8 +328,8 @@ export default function Stage5_0EmailScreen() {
                 height: '16px',
                 minWidth: '16px',
                 borderRadius: '4px',
-                border: subscribe ? '1.5px solid #00ae9d' : '1.5px solid #a4b3ae',
-                background: subscribe ? '#00ae9d' : '#ffffff',
+                border: subscribe ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-strong, #a4b3ae)',
+                background: subscribe ? 'var(--dawn, #00ae9d)' : 'transparent',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -343,7 +344,7 @@ export default function Stage5_0EmailScreen() {
                     height="11"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="#ffffff"
+                    stroke="var(--action-text, #ffffff)"
                     strokeWidth="3.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -355,9 +356,9 @@ export default function Stage5_0EmailScreen() {
 
               <span style={{
                 fontFamily: NUNITO,
-                fontSize: '13px',
+                fontSize: '12.5px',
                 lineHeight: 1.45,
-                color: 'rgba(65, 66, 66, 0.85)',
+                color: 'var(--text-sub, #414242)',
                 fontWeight: 500,
                 textAlign: 'left',
               }}>

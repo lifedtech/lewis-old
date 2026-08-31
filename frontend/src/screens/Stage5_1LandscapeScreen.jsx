@@ -76,7 +76,7 @@ export default function Stage5_1LandscapeScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -90,7 +90,7 @@ export default function Stage5_1LandscapeScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.015em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               textAlign: 'left',
             }}>
               Where you're resourced, and where depleted.
@@ -99,7 +99,7 @@ export default function Stage5_1LandscapeScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -115,7 +115,7 @@ export default function Stage5_1LandscapeScreen() {
               flexWrap: 'wrap',
               gap: '12px',
               fontSize: '11.5px',
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               marginTop: '16px',
               fontWeight: 600,
@@ -139,16 +139,17 @@ export default function Stage5_1LandscapeScreen() {
           <div style={{
             minHeight: '100px',
             padding: '16px 20px',
-            background: selectedBand ? selectedBand.bg : '#f2f9f6',
+            background: 'var(--raised, #f2f9f6)',
             borderRadius: '18px',
-            border: `1.5px solid ${selectedBand ? selectedBand.border : '#d2e7e0'}`,
+            border: `1.5px solid ${selectedBand ? selectedBand.border : 'var(--border-color, #d2e7e0)'}`,
             width: '100%',
             boxSizing: 'border-box',
             textAlign: 'left',
             transition: 'all 0.25s ease',
+            boxShadow: 'var(--shadow-soft, 0 4px 16px rgba(0,0,0,0.04))',
           }}>
             {!selectedNode ? (
-              <p style={{ margin: '8px 0', color: '#414242', fontStyle: 'italic', fontSize: '13.5px', textAlign: 'center', fontFamily: "'Nunito', sans-serif" }}>
+              <p style={{ margin: '8px 0', color: 'var(--text-sub, #414242)', fontStyle: 'italic', fontSize: '13.5px', textAlign: 'center', fontFamily: "'Nunito', sans-serif" }}>
                 Tap a point on the radar to read more.
               </p>
             ) : (
@@ -164,14 +165,14 @@ export default function Stage5_1LandscapeScreen() {
                     <span style={{ color: selectedBand.color, fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: '"Nunito", sans-serif' }}>
                       {selectedBand.label}{selectedTag}
                     </span>
-                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#414242', fontFamily: '"Nunito", sans-serif' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-main, #414242)', fontFamily: '"Nunito", sans-serif' }}>
                       Score: {selectedNode.score}/100
                     </span>
                   </div>
-                  <h4 style={{ color: '#1e293b', fontWeight: 800, margin: '0 0 4px 0', fontSize: '15px', fontFamily: "'Manrope', sans-serif" }}>
+                  <h4 style={{ color: 'var(--text-main, #1e293b)', fontWeight: 800, margin: '0 0 4px 0', fontSize: '15px', fontFamily: "'Manrope', sans-serif" }}>
                     {selectedNode.name}
                   </h4>
-                  <p style={{ color: '#414242', margin: 0, fontSize: '13px', lineHeight: 1.45, fontFamily: "'Nunito', sans-serif" }}>
+                  <p style={{ color: 'var(--text-sub, #414242)', margin: 0, fontSize: '13px', lineHeight: 1.45, fontFamily: "'Nunito', sans-serif" }}>
                     {selectedNode.insight}
                   </p>
                 </motion.div>
@@ -333,7 +334,7 @@ export default function Stage5_1LandscapeScreen() {
                       y={textY}
                       textAnchor={textAnchor}
                       dominantBaseline="central"
-                      fill={isSelected ? '#00ae9d' : '#414242'}
+                      fill={isSelected ? 'var(--dawn, #00ae9d)' : 'var(--text-sub, #414242)'}
                       fontSize="11.5"
                       fontWeight={isSelected ? '800' : '700'}
                       fontFamily='"Nunito", sans-serif'

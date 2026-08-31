@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
+import ThemeToggle from '../components/ThemeToggle.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
 import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 import { SupportModal } from '../components/SupportWidget.jsx'
 import ReviewModal from '../components/ReviewModal.jsx'
 
 const NUNITO = "'Nunito', system-ui, sans-serif"
-const TEAL = '#00ae9d'
-const INK = '#414242'
+const TEAL = 'var(--dawn, #00ae9d)'
+const INK = 'var(--text, #414242)'
 
 export default function PaymentConfirmScreen() {
   const {
@@ -18,7 +19,8 @@ export default function PaymentConfirmScreen() {
     phone: storePhone,
     name: storeName,
     latestPaymentOrder,
-    analysisData
+    analysisData,
+    theme
   } = useLewisStore()
 
   const [isSupportOpen, setIsSupportOpen] = useState(false)
@@ -44,15 +46,15 @@ export default function PaymentConfirmScreen() {
       minHeight: '100vh',
       width: '100%',
       maxWidth: '100%',
-      background: 'radial-gradient(ellipse at 50% 0%, #ebf7f4 0%, #f4faf8 45%, #ffffff 100%)',
-      color: INK,
+      background: theme === 'dark' ? 'var(--bg-page, #0C1514)' : 'radial-gradient(ellipse at 50% 0%, #ebf7f4 0%, #f4faf8 45%, #ffffff 100%)',
+      color: 'var(--text-main, #414242)',
       fontFamily: NUNITO,
       display: 'flex',
       flexDirection: 'column',
       boxSizing: 'border-box',
       position: 'relative',
     }}>
-      <AbstractLineBackground variant="contours" opacity={0.06} />
+      <AbstractLineBackground variant="nodes" opacity={theme === 'dark' ? 0.15 : 0.06} color={theme === 'dark' ? '#38C9B7' : '#00ae9d'} />
 
       {/* Screen Header (Stretched to outer corners) */}
       <header style={{
@@ -65,10 +67,23 @@ export default function PaymentConfirmScreen() {
         position: 'relative',
         zIndex: 10,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          onClick={() => setScreen('landing')}
+          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s ease' }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setScreen('landing')
+            }
+          }}
+          aria-label="Go to Landing Page"
+        >
           <LewisLogo size={32} showText={true} animated={false} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <ThemeToggle />
           <motion.button
             type="button"
             onClick={() => setIsReviewOpen(true)}
@@ -81,26 +96,24 @@ export default function PaymentConfirmScreen() {
               height: '34px',
               padding: '0 14px',
               borderRadius: '999px',
-              background: '#ffffff',
-              border: '1.5px solid rgba(0, 174, 157, 0.45)',
-              color: TEAL,
+              background: 'var(--raised, #ffffff)',
+              border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.45))',
+              color: 'var(--dawn, #00ae9d)',
               fontFamily: NUNITO,
               fontSize: '13px',
               fontWeight: 700,
               cursor: 'pointer',
-              boxShadow: '0 2px 10px rgba(0, 174, 157, 0.1)',
+              boxShadow: 'var(--shadow-soft, 0 2px 10px rgba(0, 174, 157, 0.1))',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = TEAL
-              e.currentTarget.style.background = 'rgba(0, 174, 157, 0.08)'
+              e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.45)'
-              e.currentTarget.style.background = '#ffffff'
+              e.currentTarget.style.borderColor = 'var(--panel-border, rgba(0, 174, 157, 0.45))'
             }}
           >
-            <span style={{ fontSize: '15px', color: '#00ae9d' }}>★</span>
+            <span style={{ fontSize: '15px', color: 'var(--dawn, #00ae9d)' }}>★</span>
             <span>Rate Experience</span>
           </motion.button>
 
@@ -116,23 +129,21 @@ export default function PaymentConfirmScreen() {
               height: '34px',
               padding: '0 14px',
               borderRadius: '999px',
-              background: '#ffffff',
-              border: '1.5px solid rgba(0, 174, 157, 0.45)',
-              color: TEAL,
+              background: 'var(--raised, #ffffff)',
+              border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.45))',
+              color: 'var(--dawn, #00ae9d)',
               fontFamily: NUNITO,
               fontSize: '13px',
               fontWeight: 700,
               cursor: 'pointer',
-              boxShadow: '0 2px 10px rgba(0, 174, 157, 0.1)',
+              boxShadow: 'var(--shadow-soft, 0 2px 10px rgba(0, 174, 157, 0.1))',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = TEAL
-              e.currentTarget.style.background = 'rgba(0, 174, 157, 0.08)'
+              e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.45)'
-              e.currentTarget.style.background = '#ffffff'
+              e.currentTarget.style.borderColor = 'var(--panel-border, rgba(0, 174, 157, 0.45))'
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -145,7 +156,6 @@ export default function PaymentConfirmScreen() {
         </div>
       </header>
 
-      {/* Main Content: Single Container with Left & Right Panes */}
       <main style={{
         flex: 1,
         maxWidth: '1000px',
@@ -164,10 +174,10 @@ export default function PaymentConfirmScreen() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.38, ease: 'easeOut' }}
           style={{
-            background: '#ffffff',
+            background: 'var(--raised, #ffffff)',
             borderRadius: '24px',
-            border: '1.5px solid rgba(0, 174, 157, 0.22)',
-            boxShadow: '0 16px 45px rgba(0, 174, 157, 0.09), 0 4px 16px rgba(0,0,0,0.02)',
+            border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.22))',
+            boxShadow: 'var(--shadow-soft, 0 16px 45px rgba(0, 174, 157, 0.09))',
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
             overflow: 'hidden',
@@ -175,7 +185,6 @@ export default function PaymentConfirmScreen() {
             width: '100%',
           }}
         >
-          {/* ── LEFT PANE: Status, Animated Badge & Action Buttons ── */}
           <div style={{
             padding: 'clamp(24px, 3.5vw, 36px)',
             display: 'flex',
@@ -185,9 +194,7 @@ export default function PaymentConfirmScreen() {
             boxSizing: 'border-box',
           }}>
             <div>
-              {/* Header Lockup: Animated Vector Tick + Title */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
-                {/* Animated Vector Tick Mark */}
                 <div style={{ position: 'relative', width: '52px', height: '52px', flexShrink: 0 }}>
                   <motion.div
                     initial={{ scale: 0.8, opacity: 0.6 }}
@@ -232,7 +239,7 @@ export default function PaymentConfirmScreen() {
                     fontWeight: 800,
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
-                    color: TEAL,
+                    color: 'var(--dawn, #00ae9d)',
                     display: 'block',
                     marginBottom: '2px',
                   }}>
@@ -242,17 +249,16 @@ export default function PaymentConfirmScreen() {
                     margin: 0,
                     fontSize: 'clamp(20px, 2.2vw, 25px)',
                     fontWeight: 800,
-                    color: '#1e293b',
+                    color: 'var(--text-main, #1e293b)',
                     lineHeight: 1.2,
                   }}>
                     Preparing your personalised report
                   </h1>
                 </div>
               </div>
-              {/* Quality Verification Callout Box (Zero Emoticons) */}
               <div style={{
-                background: '#eaf6f4',
-                border: '1.2px solid #00ae9d',
+                background: 'var(--panel, #eaf6f4)',
+                border: '1.2px solid var(--border-color, #00ae9d)',
                 borderRadius: '14px',
                 padding: '14px 18px',
                 marginBottom: '14px',
@@ -262,7 +268,7 @@ export default function PaymentConfirmScreen() {
                   margin: '0 0 6px 0',
                   fontSize: 'clamp(13.5px, 1.2vw, 15px)',
                   fontWeight: 700,
-                  color: '#015c53',
+                  color: 'var(--dawn, #015c53)',
                   lineHeight: 1.45,
                 }}>
                   Your report is preparing and needs manual verification. You will get your report within 5-10 mins on your email.
@@ -271,13 +277,13 @@ export default function PaymentConfirmScreen() {
                   margin: 0,
                   fontSize: '12px',
                   fontWeight: 600,
-                  color: '#027a6e',
+                  color: 'var(--text-sub, #027a6e)',
                   lineHeight: 1.4,
                 }}>
                   <span style={{
                     display: 'inline-block',
-                    background: '#00ae9d',
-                    color: '#ffffff',
+                    background: 'var(--dawn, #00ae9d)',
+                    color: 'var(--action-text, #ffffff)',
                     fontSize: '10px',
                     fontWeight: 800,
                     padding: '1px 6px',
@@ -292,16 +298,15 @@ export default function PaymentConfirmScreen() {
                 </p>
               </div>
 
-              {/* Delivery Status Indicator */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                background: '#f8faf9',
-                border: '1px solid rgba(0, 174, 157, 0.16)',
+                background: 'var(--panel, #f8faf9)',
+                border: '1px solid var(--border-color, rgba(0, 174, 157, 0.16))',
                 borderRadius: '12px',
                 padding: '10px 14px',
                 fontSize: '12.5px',
-                color: '#334155',
+                color: 'var(--text-sub, #334155)',
               }}>
                 <div>
                   <strong>Status:</strong> Dispatched to <strong>{customerEmail}</strong> upon quality review.
@@ -309,12 +314,12 @@ export default function PaymentConfirmScreen() {
               </div>
             </div>
 
-            {/* Actions & Concierge Contact */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '6px' }}>
               <motion.button
                 whileHover={{ scale: 1.015 }}
                 whileTap={{ scale: 0.985 }}
                 onClick={() => setScreen('mirror')}
+                className="btn-primary"
                 style={{
                   width: '100%',
                   padding: '13px 22px',
@@ -337,15 +342,15 @@ export default function PaymentConfirmScreen() {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#64748b',
+                  color: 'var(--text-sub, #64748b)',
                   fontSize: '13px',
                   fontWeight: 600,
                   cursor: 'pointer',
                   padding: '4px 8px',
                   transition: 'color 0.2s',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = INK}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-main, #414242)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-sub, #64748b)'}
               >
                 Back to Home
               </button>
@@ -353,11 +358,11 @@ export default function PaymentConfirmScreen() {
               <p style={{
                 margin: '2px 0 0 0',
                 fontSize: '11.5px',
-                color: '#85918e',
+                color: 'var(--text-sub, #85918e)',
                 lineHeight: 1.4,
               }}>
                 Need assistance? Contact concierge at{' '}
-                <a href="mailto:lewissupport@lifedhealth.com" style={{ color: TEAL, textDecoration: 'underline', fontWeight: 600 }}>
+                <a href="mailto:lewissupport@lifedhealth.com" style={{ color: 'var(--dawn, #00ae9d)', textDecoration: 'underline', fontWeight: 600 }}>
                   lewissupport@lifedhealth.com
                 </a>{' '}
                 quoting your Order ID.
@@ -365,10 +370,9 @@ export default function PaymentConfirmScreen() {
             </div>
           </div>
 
-          {/* ── RIGHT PANE: Official Receipt & Order Details ── */}
           <div style={{
-            background: '#f8faf9',
-            borderLeft: '1.5px solid rgba(0, 174, 157, 0.14)',
+            background: 'var(--panel, #f8faf9)',
+            borderLeft: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.14))',
             padding: 'clamp(24px, 3.5vw, 36px)',
             display: 'flex',
             flexDirection: 'column',
@@ -382,7 +386,7 @@ export default function PaymentConfirmScreen() {
                 fontWeight: 800,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
-                color: TEAL,
+                color: 'var(--dawn, #00ae9d)',
                 display: 'block',
                 marginBottom: '4px',
               }}>
@@ -392,70 +396,68 @@ export default function PaymentConfirmScreen() {
                 margin: 0,
                 fontSize: '19px',
                 fontWeight: 800,
-                color: '#1e293b',
+                color: 'var(--text-main, #1e293b)',
               }}>
                 Order Details & Delivery
               </h2>
 
-              <div style={{ width: '100%', height: '1px', background: 'rgba(0, 174, 157, 0.16)', margin: '14px 0' }} />
+              <div style={{ width: '100%', height: '1px', background: 'var(--border-color, rgba(0, 174, 157, 0.16))', margin: '14px 0' }} />
 
-              {/* Itemized Order Details */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
                   <span>Order Reference ID</span>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: INK }}>{orderId}</span>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--text-main, #414242)' }}>{orderId}</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
                   <span>Plan Purchased</span>
-                  <span style={{ fontWeight: 700, color: INK }}>Personal Insight Report (PDF)</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>Personal Insight Report (PDF)</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
                   <span>Amount Paid</span>
-                  <span style={{ fontWeight: 800, color: TEAL, fontSize: '14.5px' }}>{formattedAmount}</span>
+                  <span style={{ fontWeight: 800, color: 'var(--dawn, #00ae9d)', fontSize: '14.5px' }}>{formattedAmount}</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
                   <span>Delivery Email</span>
-                  <span style={{ fontWeight: 700, color: INK }}>{customerEmail}</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>{customerEmail}</span>
                 </div>
 
                 {customerPhone && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
                     <span>Mobile Number</span>
-                    <span style={{ fontWeight: 700, color: INK }}>{customerPhone}</span>
+                    <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>{customerPhone}</span>
                   </div>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
                   <span>Delivery Method</span>
-                  <span style={{ fontWeight: 700, color: INK }}>Email PDF Attachment</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>Email PDF Attachment</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: '#64748b' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
                   <span>Estimated Delivery</span>
-                  <span style={{ fontWeight: 700, color: '#008a7c' }}>Within 5 to 10 Minutes</span>
+                  <span style={{ fontWeight: 700, color: 'var(--dawn, #008a7c)' }}>Within 5 to 10 Minutes</span>
                 </div>
               </div>
             </div>
 
-            {/* Quality Checklist */}
             <div style={{
-              borderTop: '1px solid rgba(0, 174, 157, 0.16)',
+              borderTop: '1px solid var(--border-color, rgba(0, 174, 157, 0.16))',
               paddingTop: '14px',
               display: 'flex',
               flexDirection: 'column',
               gap: '8px',
             }}>
               {[
-                'Full 9-domain psychological & somatic reflection',
-                'Manual quality verification in progress',
-                'Vector PDF sent directly to your inbox',
-              ].map((text, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: TEAL, fontSize: '13px', fontWeight: 800 }}>✓</span>
-                  <span style={{ fontSize: '12px', color: '#475569' }}>{text}</span>
+                'Validated against 9 psychological baseline dimensions',
+                'Peer-reviewed self-report literature citations embedded',
+                'Encrypted & dispatched exclusively to your verified address',
+              ].map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-sub, #475569)' }}>
+                  <span style={{ color: 'var(--dawn, #00ae9d)', fontWeight: 800 }}>✓</span>
+                  <span>{item}</span>
                 </div>
               ))}
             </div>
@@ -463,10 +465,8 @@ export default function PaymentConfirmScreen() {
         </motion.div>
       </main>
 
-      {/* Standard Lewis Footer */}
       <LewisFooter />
 
-      {/* Support Popup Modal */}
       <SupportModal isOpen={isSupportOpen} onClose={() => setIsSupportOpen(false)} />
 
       {/* Review / Experience Feedback Modal */}

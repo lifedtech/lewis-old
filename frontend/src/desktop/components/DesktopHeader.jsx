@@ -1,5 +1,6 @@
 import React from 'react'
 import LewisLogo from '../../components/LewisLogo.jsx'
+import ThemeToggle from '../../components/ThemeToggle.jsx'
 import { useLewisStore } from '../../store/useLewisStore.js'
 import { SCREEN_ORDER } from '../../shared/constants/screenOrder.js'
 
@@ -21,16 +22,31 @@ export default function DesktopHeader({ currentScreen, onBack }) {
             onClick={() => {
               if (onBack) {
                 onBack()
-              } else if (typeof window !== 'undefined' && window.history.state?.screen) {
-                window.history.back()
-              } else if (currentIndex > 0 && SCREEN_ORDER[currentIndex - 1]) {
-                setScreen(SCREEN_ORDER[currentIndex - 1])
+                return
+              }
+              if (currentScreen === 'billing') {
+                setScreen('mirror')
+                return
+              }
+              if (currentScreen === 'reportReview') {
+                setScreen('billing')
+                return
+              }
+              if (currentScreen === 'paymentConfirm') {
+                setScreen('mirror')
+                return
+              }
+              const idx = SCREEN_ORDER.indexOf(currentScreen)
+              if (idx > 0 && SCREEN_ORDER[idx - 1]) {
+                setScreen(SCREEN_ORDER[idx - 1])
               } else {
                 setScreen('landing')
               }
             }}
+            className="header-back-btn"
             style={{
-              background: 'none',
+              background: 'transparent',
+              backgroundColor: 'transparent',
               border: 'none',
               padding: 0,
               color: 'var(--text-mute)',
@@ -42,9 +58,11 @@ export default function DesktopHeader({ currentScreen, onBack }) {
               fontSize: '14px',
               fontWeight: 600,
               transition: 'color 0.2s ease',
+              outline: 'none',
+              boxShadow: 'none',
             }}
             title="Go back to previous question"
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text)')}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--dawn, #00ae9d)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-mute)')}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -53,19 +71,35 @@ export default function DesktopHeader({ currentScreen, onBack }) {
             </svg>
           </button>
         )}
-        <LewisLogo size={32} showText={true} animated={false} />
+        <div
+          onClick={() => setScreen('landing')}
+          style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+          role="button"
+          tabIndex={0}
+          title="Go to Home"
+          aria-label="Go to Home"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setScreen('landing')
+            }
+          }}
+        >
+          <LewisLogo size={32} showText={true} animated={false} />
+        </div>
       </div>
 
       <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <ThemeToggle />
         {isAuthenticated && authUser ? (
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            background: 'rgba(0, 174, 157, 0.1)',
+            background: 'var(--panel-2)',
             padding: '4px 12px 4px 10px',
             borderRadius: '999px',
-            border: '1px solid rgba(0, 174, 157, 0.25)',
+            border: '1px solid var(--panel-border)',
           }}>
             <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--dawn)' }}>
               {authUser.name || authUser.email}

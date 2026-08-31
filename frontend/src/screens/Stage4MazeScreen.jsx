@@ -104,7 +104,7 @@ export default function Stage4MazeScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -118,7 +118,7 @@ export default function Stage4MazeScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Navigate your thoughts
             </h1>
@@ -126,7 +126,7 @@ export default function Stage4MazeScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -156,15 +156,16 @@ export default function Stage4MazeScreen() {
                 display: 'grid',
                 gridTemplateColumns: `repeat(${WIDTH}, 1fr)`,
                 gap: '2px',
-                background: '#f2f9f6',
+                background: 'var(--maze-bg, #eaf7f5)',
                 padding: '10px',
                 borderRadius: '20px',
-                border: '1.5px solid #d2e7e0',
-                boxShadow: '0 8px 24px rgba(0,174,157,0.08)',
+                border: '1.5px solid var(--maze-border, #c2e5dc)',
+                boxShadow: 'var(--maze-shadow, 0 8px 24px rgba(0,174,157,0.08))',
                 width: '100%',
                 maxWidth: '240px',
                 aspectRatio: '1/1',
                 margin: '0 auto',
+                boxSizing: 'border-box',
               }}
             >
               {maze.map((row, r) => (
@@ -177,7 +178,7 @@ export default function Stage4MazeScreen() {
                       key={`${r}-${c}`}
                       style={{
                         position: 'relative',
-                        backgroundColor: isPlayer ? '#00ae9d' : isTarget ? '#5fbb46' : cell === 1 ? '#c2e5dc' : 'transparent',
+                        backgroundColor: isPlayer ? '#00ae9d' : isTarget ? '#5fbb46' : cell === 1 ? 'var(--maze-wall, #c2e5dc)' : 'transparent',
                         borderRadius: isPlayer || isTarget ? '50%' : '3px',
                         boxShadow: isPlayer ? '0 0 10px rgba(0,174,157,0.6)' : isTarget ? '0 0 10px rgba(95,187,70,0.6)' : 'none',
                         transition: 'background-color 0.2s ease, transform 0.15s ease',
@@ -209,12 +210,12 @@ export default function Stage4MazeScreen() {
 
             {/* On-screen D-Pad Controls for Mobile/Touch */}
             <div className="dpad" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-              <button className="dpad-btn" onClick={() => move(-1, 0)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid rgba(0, 174, 157, 0.3)', background: '#eaf7f5', color: '#00ae9d', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▲</button>
+              <button className="dpad-btn" onClick={() => move(-1, 0)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.3))', background: 'var(--raised, #eaf7f5)', color: 'var(--dawn, #00ae9d)', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▲</button>
               <div style={{ display: 'flex', gap: '20px' }}>
-                <button className="dpad-btn" onClick={() => move(0, -1)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid rgba(0, 174, 157, 0.3)', background: '#eaf7f5', color: '#00ae9d', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>◀</button>
-                <button className="dpad-btn" onClick={() => move(0, 1)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid rgba(0, 174, 157, 0.3)', background: '#eaf7f5', color: '#00ae9d', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▶</button>
+                <button className="dpad-btn" onClick={() => move(0, -1)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.3))', background: 'var(--raised, #eaf7f5)', color: 'var(--dawn, #00ae9d)', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>◀</button>
+                <button className="dpad-btn" onClick={() => move(0, 1)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.3))', background: 'var(--raised, #eaf7f5)', color: 'var(--dawn, #00ae9d)', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▶</button>
               </div>
-              <button className="dpad-btn" onClick={() => move(1, 0)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid rgba(0, 174, 157, 0.3)', background: '#eaf7f5', color: '#00ae9d', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▼</button>
+              <button className="dpad-btn" onClick={() => move(1, 0)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.3))', background: 'var(--raised, #eaf7f5)', color: 'var(--dawn, #00ae9d)', fontSize: '15px', fontWeight: 800, cursor: 'pointer' }}>▼</button>
             </div>
           </div>
 

@@ -39,7 +39,7 @@ export default function PreStage0AgeScreen() {
           fontSize: '11px',
           fontWeight: 700,
           letterSpacing: '0.14em',
-          color: '#00ae9d',
+          color: 'var(--dawn, #00ae9d)',
           textTransform: 'uppercase',
           margin: '0 0 10px 0',
         }}>
@@ -54,7 +54,7 @@ export default function PreStage0AgeScreen() {
           lineHeight: 1.02,
           letterSpacing: '-0.035em',
           margin: '0 0 8px 0',
-          color: '#414242',
+          color: 'var(--text-main, #414242)',
         }}>
           Before We Begin
         </h1>
@@ -63,7 +63,7 @@ export default function PreStage0AgeScreen() {
         <p style={{
           margin: '0 0 32px 0',
           fontSize: 'clamp(13px, 1.6vw, 16px)',
-          color: '#414242',
+          color: 'var(--text-sub, #657370)',
           fontFamily: "'Nunito', sans-serif",
         }}>
           Please confirm your age eligibility to continue.
@@ -76,7 +76,7 @@ export default function PreStage0AgeScreen() {
             <label style={{
               display: 'block',
               textAlign: 'center',
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               fontSize: 'clamp(14px, 1.7vw, 17px)',
               fontFamily: "'Nunito', sans-serif",
               marginBottom: '20px',
@@ -95,18 +95,15 @@ export default function PreStage0AgeScreen() {
             }}>
               <button
                 onClick={() => handleNext(true)}
+                className="btn-primary"
                 style={{
                   padding: '12px 28px',
                   borderRadius: '999px',
-                  border: '1.5px solid #00ae9d',
-                  background: '#00ae9d',
-                  color: '#ffffff',
                   fontFamily: "'Nunito', sans-serif",
                   fontSize: '15px',
                   fontWeight: 700,
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
                 }}
               >
                 Yes, I am 18 or older
@@ -117,9 +114,9 @@ export default function PreStage0AgeScreen() {
                 style={{
                   padding: '12px 28px',
                   borderRadius: '999px',
-                  border: '1.5px solid #c2ceca',
-                  background: 'rgba(255, 255, 255, 0.6)',
-                  color: '#414242',
+                  border: '1.5px solid var(--border-color, #c2ceca)',
+                  background: 'var(--raised, rgba(255, 255, 255, 0.6))',
+                  color: 'var(--text-main, #414242)',
                   fontFamily: "'Nunito', sans-serif",
                   fontSize: '15px',
                   fontWeight: 600,
@@ -127,12 +124,10 @@ export default function PreStage0AgeScreen() {
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#00ae9d'
-                  e.currentTarget.style.color = '#414242'
+                  e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#c2ceca'
-                  e.currentTarget.style.color = '#414242'
+                  e.currentTarget.style.borderColor = 'var(--border-color, #c2ceca)'
                 }}
               >
                 No, I am under 18

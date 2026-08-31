@@ -206,11 +206,11 @@ export default function Stage10GeneratingScreen() {
     >
       {/* Single Premium Hero Card */}
       <div style={{
-        background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(244, 250, 248, 0.95) 100%)',
+        background: 'var(--raised, #ffffff)',
         backdropFilter: 'blur(20px)',
         borderRadius: '32px',
-        border: '1.5px solid rgba(0, 174, 157, 0.22)',
-        boxShadow: '0 24px 70px rgba(0, 174, 157, 0.12), 0 4px 20px rgba(0, 0, 0, 0.02)',
+        border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.22))',
+        boxShadow: 'var(--shadow-soft, 0 24px 70px rgba(0, 174, 157, 0.12))',
         padding: '48px clamp(24px, 5vw, 56px)',
         maxWidth: '540px',
         width: '100%',
@@ -247,7 +247,7 @@ export default function Stage10GeneratingScreen() {
           fontSize: 'clamp(24px, 3.2vw, 30px)',
           lineHeight: 1.2,
           letterSpacing: '-0.025em',
-          color: '#1e293b',
+          color: 'var(--text-main, #1e293b)',
           margin: '0 0 16px 0'
         }}>
           Preparing your personalised Well-being report
@@ -274,7 +274,7 @@ export default function Stage10GeneratingScreen() {
                 fontSize: '15px',
                 fontWeight: 600,
                 lineHeight: 1.5,
-                color: '#334155',
+                color: 'var(--text-sub, #334155)',
                 margin: 0,
                 maxWidth: '420px'
               }}
@@ -297,7 +297,7 @@ export default function Stage10GeneratingScreen() {
               fontSize: '11.5px',
               fontWeight: 700,
               letterSpacing: '0.1em',
-              color: '#64748b',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase'
             }}>
               COMPILING METRICS
@@ -306,7 +306,7 @@ export default function Stage10GeneratingScreen() {
               fontFamily: "'Nunito', sans-serif",
               fontSize: '14px',
               fontWeight: 800,
-              color: '#00ae9d'
+              color: 'var(--dawn, #00ae9d)'
             }}>
               {progressPercent}%
             </span>
@@ -316,7 +316,7 @@ export default function Stage10GeneratingScreen() {
             width: '100%',
             height: '8px',
             borderRadius: '999px',
-            background: '#d6edea',
+            background: 'var(--panel, #d6edea)',
             overflow: 'hidden',
             boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.06)'
           }}>
@@ -327,7 +327,7 @@ export default function Stage10GeneratingScreen() {
               style={{
                 width: '0%',
                 height: '100%',
-                background: 'linear-gradient(90deg, #00ae9d 0%, #017a6f 100%)',
+                background: 'linear-gradient(90deg, var(--dawn, #00ae9d) 0%, #017a6f 100%)',
                 borderRadius: '999px',
                 boxShadow: '0 0 12px rgba(0, 174, 157, 0.4)'
               }}

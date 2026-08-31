@@ -123,7 +123,7 @@ export default function Stage8_1EnergyArcScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -137,7 +137,7 @@ export default function Stage8_1EnergyArcScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               textAlign: 'left',
             }}>
               Energy Arc Mapping
@@ -146,7 +146,7 @@ export default function Stage8_1EnergyArcScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -176,13 +176,13 @@ export default function Stage8_1EnergyArcScreen() {
                     justifyContent: 'space-between',
                     padding: '12px 16px',
                     borderRadius: '14px',
-                    border: '1.5px solid #d2e7e0',
-                    background: '#ffffff',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                    border: '1.5px solid var(--border-color, #d2e7e0)',
+                    background: 'var(--raised, #ffffff)',
+                    boxShadow: 'var(--shadow-soft, 0 1px 4px rgba(0,0,0,0.03))',
                     boxSizing: 'border-box',
                   }}
                 >
-                  <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '14.5px', color: '#414242' }}>
+                  <span style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 700, fontSize: '14.5px', color: 'var(--text-main, #414242)' }}>
                     {tod.label}
                   </span>
 
@@ -198,9 +198,9 @@ export default function Stage8_1EnergyArcScreen() {
                           style={{
                             padding: '6px 14px',
                             borderRadius: '10px',
-                            border: selected ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
-                            background: selected ? '#00ae9d' : '#f2f9f6',
-                            color: selected ? '#ffffff' : '#414242',
+                            border: selected ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-color, #d2e7e0)',
+                            background: selected ? 'var(--dawn, #00ae9d)' : 'var(--panel, #f2f9f6)',
+                            color: selected ? 'var(--action-text, #ffffff)' : 'var(--text-main, #414242)',
                             fontFamily: "'Nunito', sans-serif",
                             fontWeight: selected ? 700 : 600,
                             fontSize: '12.5px',
@@ -220,7 +220,7 @@ export default function Stage8_1EnergyArcScreen() {
             })}
           </div>
 
-          <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+          <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: 'var(--text-sub, #64748b)', fontFamily: "'Nunito', sans-serif", fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
             Select your typical energy level for each phase of the day.
           </p>
 

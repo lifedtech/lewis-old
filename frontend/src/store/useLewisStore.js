@@ -25,6 +25,9 @@ if (typeof window !== 'undefined') {
 const initialState = () => ({
   currentScreen: 'landing',
 
+  // Theme State ('light' | 'dark')
+  theme: (typeof window !== 'undefined' && localStorage.getItem('lewis_theme')) || 'light',
+
   // Auth State
   isAuthenticated: !!savedToken,
   authUser: savedUser,
@@ -289,6 +292,31 @@ export const useLewisStore = create(persist((set, get) => ({
       latestPaymentOrder: details,
       isPaymentProcessing: false,
       paymentError: null
+    })
+  },
+
+  setTheme: (newTheme) => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('lewis_theme', newTheme)
+      } catch (e) {
+        console.warn('LocalStorage error:', e)
+      }
+    }
+    set({ theme: newTheme })
+  },
+
+  toggleTheme: () => {
+    set((state) => {
+      const nextTheme = state.theme === 'dark' ? 'light' : 'dark'
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('lewis_theme', nextTheme)
+        } catch (e) {
+          console.warn('LocalStorage error:', e)
+        }
+      }
+      return { theme: nextTheme }
     })
   },
 

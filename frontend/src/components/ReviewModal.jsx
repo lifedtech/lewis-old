@@ -130,19 +130,19 @@ export default function ReviewModal({
           exit={{ opacity: 0, scale: 0.94, y: 12 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           style={{
-            background: '#ffffff',
+            background: 'var(--raised, #ffffff)',
             borderRadius: '24px',
             maxWidth: '520px',
             width: '100%',
             maxHeight: '90vh',
             overflowY: 'auto',
-            boxShadow: '0 20px 50px rgba(0, 174, 157, 0.12), 0 8px 24px rgba(0,0,0,0.08)',
-            border: '1.5px solid rgba(0, 174, 157, 0.25)',
+            boxShadow: 'var(--shadow-soft, 0 20px 50px rgba(0, 174, 157, 0.12), 0 8px 24px rgba(0,0,0,0.08))',
+            border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.25))',
             padding: 'clamp(22px, 3.5vw, 32px)',
             boxSizing: 'border-box',
             position: 'relative',
             fontFamily: NUNITO,
-            color: INK,
+            color: 'var(--text-main, #414242)',
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -154,7 +154,7 @@ export default function ReviewModal({
               position: 'absolute',
               top: '18px',
               right: '18px',
-              background: '#f1f5f9',
+              background: 'var(--panel, #f1f5f9)',
               border: 'none',
               borderRadius: '50%',
               width: '32px',
@@ -163,16 +163,16 @@ export default function ReviewModal({
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              color: '#64748b',
+              color: 'var(--text-sub, #64748b)',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#e2e8f0'
-              e.currentTarget.style.color = INK
+              e.currentTarget.style.background = 'var(--panel-hover, #e2e8f0)'
+              e.currentTarget.style.color = 'var(--text-main, #414242)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#f1f5f9'
-              e.currentTarget.style.color = '#64748b'
+              e.currentTarget.style.background = 'var(--panel, #f1f5f9)'
+              e.currentTarget.style.color = 'var(--text-sub, #64748b)'
             }}
             aria-label="Close review"
           >
@@ -190,7 +190,7 @@ export default function ReviewModal({
                   width: '64px',
                   height: '64px',
                   borderRadius: '50%',
-                  background: '#00ae9d',
+                  background: 'var(--dawn, #00ae9d)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -203,10 +203,10 @@ export default function ReviewModal({
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </motion.div>
-              <h2 style={{ margin: '0 0 8px 0', fontSize: '22px', fontWeight: 800, color: INK }}>
+              <h2 style={{ margin: '0 0 8px 0', fontSize: '22px', fontWeight: 800, color: 'var(--text-main, #414242)' }}>
                 Thank You for Your Feedback!
               </h2>
-              <p style={{ margin: 0, fontSize: '14px', color: '#64748b', lineHeight: 1.5 }}>
+              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-sub, #64748b)', lineHeight: 1.5 }}>
                 Your insights help us continuously refine and elevate the Lewis self-reflection experience.
               </p>
             </div>
@@ -220,30 +220,30 @@ export default function ReviewModal({
                   fontWeight: 800,
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  color: TEAL,
+                  color: 'var(--dawn, #00ae9d)',
                   display: 'block',
                   marginBottom: '4px',
                 }}>
                   Quick Review
                 </span>
-                <h2 style={{ margin: 0, fontSize: '21px', fontWeight: 800, color: INK, lineHeight: 1.25 }}>
+                <h2 style={{ margin: 0, fontSize: '21px', fontWeight: 800, color: 'var(--text-main, #414242)', lineHeight: 1.25 }}>
                   Star Your Lewis Experience
                 </h2>
-                <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#64748b', lineHeight: 1.4 }}>
+                <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: 'var(--text-sub, #64748b)', lineHeight: 1.4 }}>
                   Help us know how the reflection journey felt for you today.
                 </p>
               </div>
 
               {/* Q1: Star Rating */}
               <div style={{
-                background: '#f8fafc',
-                border: '1.2px solid rgba(0, 174, 157, 0.18)',
+                background: 'var(--panel, #f8fafc)',
+                border: '1.2px solid var(--border-color, rgba(0, 174, 157, 0.18))',
                 borderRadius: '16px',
                 padding: '14px 18px',
                 marginBottom: '16px',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '8px' }}>
                   1. Overall Rating
                 </div>
                 <div style={{ display: 'inline-flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
@@ -263,7 +263,7 @@ export default function ReviewModal({
                           cursor: 'pointer',
                           fontSize: '32px',
                           lineHeight: 1,
-                          color: active ? LEWIS_GREEN : '#cbd5e1',
+                          color: active ? 'var(--dawn, #00ae9d)' : 'var(--border-strong, #cbd5e1)',
                           transition: 'transform 0.15s ease, color 0.15s ease',
                           transform: (hoverRating === star || rating === star) ? 'scale(1.18)' : 'scale(1)',
                         }}
@@ -274,14 +274,14 @@ export default function ReviewModal({
                     )
                   })}
                 </div>
-                <div style={{ fontSize: '12.5px', fontWeight: 700, color: LEWIS_GREEN, marginTop: '4px', height: '16px' }}>
+                <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--dawn, #00ae9d)', marginTop: '4px', height: '16px' }}>
                   {RATING_LABELS[hoverRating || rating]}
                 </div>
               </div>
 
               {/* Q2: Assessment Flow & Clarity */}
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '8px' }}>
                   2. How was the flow of the reflection questions?
                 </label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -297,9 +297,9 @@ export default function ReviewModal({
                           fontSize: '12px',
                           fontWeight: 700,
                           borderRadius: '999px',
-                          border: selected ? `1.5px solid ${TEAL}` : '1.5px solid #e2e8f0',
-                          background: selected ? 'rgba(0, 174, 157, 0.1)' : '#ffffff',
-                          color: selected ? TEAL : '#475569',
+                          border: selected ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-color, #e2e8f0)',
+                          background: selected ? 'var(--teal-tint, rgba(0, 174, 157, 0.1))' : 'var(--panel, #ffffff)',
+                          color: selected ? 'var(--dawn, #00ae9d)' : 'var(--text-sub, #475569)',
                           cursor: 'pointer',
                           transition: 'all 0.15s ease',
                         }}
@@ -314,7 +314,7 @@ export default function ReviewModal({
 
               {/* Q3: Mirror Resonance */}
               <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '8px' }}>
                   3. Did your Mirror summary feel relevant & resonant?
                 </label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -330,9 +330,9 @@ export default function ReviewModal({
                           fontSize: '12px',
                           fontWeight: 700,
                           borderRadius: '999px',
-                          border: selected ? `1.5px solid ${TEAL}` : '1.5px solid #e2e8f0',
-                          background: selected ? 'rgba(0, 174, 157, 0.1)' : '#ffffff',
-                          color: selected ? TEAL : '#475569',
+                          border: selected ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-color, #e2e8f0)',
+                          background: selected ? 'var(--teal-tint, rgba(0, 174, 157, 0.1))' : 'var(--panel, #ffffff)',
+                          color: selected ? 'var(--dawn, #00ae9d)' : 'var(--text-sub, #475569)',
                           cursor: 'pointer',
                           transition: 'all 0.15s ease',
                         }}
@@ -347,8 +347,8 @@ export default function ReviewModal({
 
               {/* Q4: Quick Thoughts (Optional) */}
               <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                  4. Any quick feedback or suggestions? <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '6px' }}>
+                  4. Any quick feedback or suggestions? <span style={{ fontWeight: 400, color: 'var(--text-sub, #94a3b8)' }}>(optional)</span>
                 </label>
                 <textarea
                   rows={2}
@@ -359,17 +359,18 @@ export default function ReviewModal({
                     width: '100%',
                     padding: '10px 12px',
                     borderRadius: '12px',
-                    border: '1.5px solid #e2e8f0',
+                    border: '1.5px solid var(--border-color, #e2e8f0)',
                     fontSize: '13px',
                     fontFamily: NUNITO,
-                    color: INK,
+                    background: 'var(--bg-page, #ffffff)',
+                    color: 'var(--text-main, #414242)',
                     boxSizing: 'border-box',
                     outline: 'none',
                     resize: 'none',
                     transition: 'border-color 0.2s',
                   }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = TEAL}
-                  onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
+                  onFocus={(e) => e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'}
+                  onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border-color, #e2e8f0)'}
                 />
               </div>
 
@@ -380,6 +381,7 @@ export default function ReviewModal({
                   disabled={status === 'submitting'}
                   whileHover={{ scale: 1.015 }}
                   whileTap={{ scale: 0.985 }}
+                  className="btn-primary"
                   style={{
                     flex: 1,
                     padding: '13px 20px',
@@ -403,7 +405,7 @@ export default function ReviewModal({
                   style={{
                     background: 'transparent',
                     border: 'none',
-                    color: '#64748b',
+                    color: 'var(--text-sub, #64748b)',
                     fontSize: '13px',
                     fontWeight: 700,
                     cursor: 'pointer',

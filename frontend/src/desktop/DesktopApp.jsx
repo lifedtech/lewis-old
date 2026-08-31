@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { INSTRUMENTS } from '../constants/instruments.js'
 import PageTransition from '../components/PageTransition.jsx'
+import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 
 // Desktop Components
 import DesktopHeader from './components/DesktopHeader.jsx'
@@ -127,7 +128,8 @@ const SCREENS = {
 }
 
 export default function DesktopApp() {
-  const { currentScreen } = useLewisStore()
+  const { currentScreen, theme } = useLewisStore()
+  const isDark = theme === 'dark'
   const validScreen = SCREENS[currentScreen] ? currentScreen : 'landing'
   const ActiveScreen = SCREENS[validScreen]
   const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login', 'reportReview', 'review', 'report-review'].includes(validScreen)
@@ -146,7 +148,10 @@ export default function DesktopApp() {
   // Full-bleed standalone pages (no app-shell padding or card border artifacts)
   if (['landing', 'billing', 'payment', 'paymentConfirm', 'mirror', 'reportReview', 'review', 'report-review'].includes(validScreen)) {
     return (
-      <div style={{ width: '100%', minHeight: '100vh', margin: 0, padding: 0, overflowX: 'hidden' }}>
+      <div style={{ width: '100%', minHeight: '100vh', margin: 0, padding: 0, overflowX: 'hidden', position: 'relative' }}>
+        {isDark && validScreen !== 'landing' && (
+          <AbstractLineBackground variant="nodes" opacity={0.15} color="#38C9B7" />
+        )}
         <AnimatePresence mode="wait">
           <PageTransition key={validScreen}>
             <ActiveScreen />
@@ -159,8 +164,16 @@ export default function DesktopApp() {
   return (
     <div
       className="app-shell"
-      style={isFullPage ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible' } : {}}
+      style={{
+        position: 'relative',
+        ...(isFullPage ? { height: 'auto', maxHeight: 'none', minHeight: '100dvh', overflow: 'visible' } : {})
+      }}
     >
+      {/* Dark Mode Abstract Line Background from Landing Research section */}
+      {isDark && (
+        <AbstractLineBackground variant="nodes" opacity={0.15} color="#38C9B7" />
+      )}
+
       {/* Background Dot Grid */}
       {!isFullPage && <div className="bg-dot-grid" />}
 
@@ -225,9 +238,11 @@ export default function DesktopApp() {
                 flex: 1,
                 minHeight: 0,
                 overflowY: 'auto',
-                overflowX: 'hidden',
+                overflowX: 'visible',
                 WebkitOverflowScrolling: 'touch',
                 overflowAnchor: 'none',
+                padding: '2px 8px 16px 8px',
+                boxSizing: 'border-box',
               }}
             >
               <AnimatePresence mode="wait">

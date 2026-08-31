@@ -222,7 +222,7 @@ export default function MobileStage10GeneratingScreen() {
         lineHeight: 1.2,
         letterSpacing: '-0.01em',
         margin: 0,
-        color: '#414242',
+        color: 'var(--text-main, #414242)',
       }}>
         Preparing your personalised Well-being report
       </h1>
@@ -248,7 +248,7 @@ export default function MobileStage10GeneratingScreen() {
               fontSize: '14.5px',
               fontWeight: 600,
               lineHeight: 1.45,
-              color: '#414242',
+              color: 'var(--text-sub, #414242)',
               margin: 0,
               maxWidth: '340px',
             }}
@@ -276,7 +276,7 @@ export default function MobileStage10GeneratingScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.12em',
-            color: '#00ae9d',
+            color: 'var(--dawn, #00ae9d)',
             textTransform: 'uppercase',
           }}>
             COMPILING METRICS
@@ -285,7 +285,7 @@ export default function MobileStage10GeneratingScreen() {
             fontFamily: '"Nunito", sans-serif',
             fontSize: '14px',
             fontWeight: 800,
-            color: '#00ae9d',
+            color: 'var(--dawn, #00ae9d)',
           }}>
             {progressPercent}%
           </span>
@@ -295,7 +295,7 @@ export default function MobileStage10GeneratingScreen() {
           width: '100%',
           height: '8px',
           borderRadius: '999px',
-          background: '#d6edea',
+          background: 'var(--panel, #d6edea)',
           overflow: 'hidden',
         }}>
           <motion.div
@@ -305,7 +305,7 @@ export default function MobileStage10GeneratingScreen() {
             style={{
               width: '0%',
               height: '100%',
-              background: 'linear-gradient(90deg, #00ae9d 0%, #008f81 100%)',
+              background: 'linear-gradient(90deg, var(--dawn, #00ae9d) 0%, #008f81 100%)',
               borderRadius: '999px',
               boxShadow: '0 0 8px rgba(0, 174, 157, 0.35)',
             }}

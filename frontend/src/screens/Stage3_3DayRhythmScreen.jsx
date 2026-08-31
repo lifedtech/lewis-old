@@ -160,7 +160,7 @@ export default function Stage3_3DayRhythmScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -174,7 +174,7 @@ export default function Stage3_3DayRhythmScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Diurnal Energy Cycle
             </h1>
@@ -182,7 +182,7 @@ export default function Stage3_3DayRhythmScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -213,15 +213,15 @@ export default function Stage3_3DayRhythmScreen() {
                     width: '100%',
                     padding: '8px 16px',
                     borderRadius: '16px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
-                    background: active ? '#e4f4ee' : '#f7faf8',
-                    color: active ? '#414242' : '#3a3a3a',
+                    border: active ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-color, #d2e7e0)',
+                    background: active ? 'var(--teal-tint, #e4f4ee)' : 'var(--raised, #f7faf8)',
+                    color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #3a3a3a)',
                     fontFamily: "'Nunito', sans-serif",
                     fontSize: '14px',
                     fontWeight: active ? 700 : 500,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    boxShadow: active ? '0 3px 12px rgba(0,174,157,0.15)' : '0 1px 3px rgba(0,0,0,0.02)',
+                    boxShadow: active ? '0 3px 12px rgba(0,174,157,0.15)' : 'none',
                     boxSizing: 'border-box',
                     textAlign: 'left',
                   }}
@@ -231,22 +231,22 @@ export default function Stage3_3DayRhythmScreen() {
                     width: '20px',
                     height: '20px',
                     borderRadius: '6px',
-                    border: active ? '2px solid #00ae9d' : '2px solid #b4c7c0',
-                    background: active ? '#00ae9d' : '#ffffff',
+                    border: active ? '2px solid var(--dawn, #00ae9d)' : '2px solid var(--border-strong, #b4c7c0)',
+                    background: active ? 'var(--dawn, #00ae9d)' : 'var(--card-bg, #ffffff)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                     transition: 'all 0.2s ease',
                   }}>
-                    {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 900, lineHeight: 1 }}>✓</span>}
+                    {active && <span style={{ color: 'var(--action-text, #ffffff)', fontSize: '11px', fontWeight: 900, lineHeight: 1 }}>✓</span>}
                   </div>
 
                   {/* Icon Badge from LIFED Program Icon Library */}
                   <RhythmTimeIcon periodId={p.id} isActive={active} size={32} />
 
                   {/* Label */}
-                  <span style={{ flex: 1, textAlign: 'left', fontSize: '14px', color: '#414242' }}>{p.label}</span>
+                  <span style={{ flex: 1, textAlign: 'left', fontSize: '14px', color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #414242)' }}>{p.label}</span>
                 </button>
               )
             })}

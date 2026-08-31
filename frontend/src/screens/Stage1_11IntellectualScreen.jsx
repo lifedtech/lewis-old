@@ -89,7 +89,7 @@ export default function Stage1_11IntellectualScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -103,7 +103,7 @@ export default function Stage1_11IntellectualScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Intellectual Pulse
             </h1>
@@ -111,7 +111,7 @@ export default function Stage1_11IntellectualScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '360px',
@@ -137,9 +137,9 @@ export default function Stage1_11IntellectualScreen() {
               minHeight: '160px',
               padding: '16px 20px',
               borderRadius: '16px',
-              border: '1.5px solid #d2e7e0',
-              background: '#f2f9f6',
-              color: '#414242',
+              border: '1.5px solid var(--border-color, #d2e7e0)',
+              background: 'var(--raised, #f2f9f6)',
+              color: 'var(--text-main, #414242)',
               fontFamily: "'Nunito', sans-serif",
               fontSize: '15px',
               lineHeight: 1.6,
@@ -149,13 +149,11 @@ export default function Stage1_11IntellectualScreen() {
               transition: 'all 0.2s ease',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#00ae9d'
-              e.target.style.background = '#ffffff'
-              e.target.style.boxShadow = '0 4px 16px rgba(0,174,157,0.12)'
+              e.target.style.borderColor = 'var(--dawn, #00ae9d)'
+              e.target.style.boxShadow = '0 0 0 3px var(--teal-tint, rgba(0,174,157,0.15))'
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = '#d2e7e0'
-              e.target.style.background = '#f2f9f6'
+              e.target.style.borderColor = 'var(--border-color, #d2e7e0)'
               e.target.style.boxShadow = 'none'
             }}
           />

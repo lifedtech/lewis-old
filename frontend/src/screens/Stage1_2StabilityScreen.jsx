@@ -45,7 +45,7 @@ export default function Stage1_2StabilityScreen() {
               fontSize: '11px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#00ae9d',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
             }}>
@@ -58,14 +58,14 @@ export default function Stage1_2StabilityScreen() {
               lineHeight: 1.05,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Life Stability Spectrum
             </h1>
             <p style={{
               margin: '10px 0 0 0',
               fontSize: 'clamp(13px, 1.5vw, 15.5px)',
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '520px',
@@ -97,11 +97,11 @@ export default function Stage1_2StabilityScreen() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                background: '#ffffff',
+                background: 'var(--raised, #ffffff)',
                 border: `1.5px solid ${label.color}`,
                 borderRadius: '24px',
                 padding: '8px 24px',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+                boxShadow: 'var(--shadow-soft, 0 2px 10px rgba(0,0,0,0.05))',
               }}
             >
               <span style={{
@@ -128,8 +128,8 @@ export default function Stage1_2StabilityScreen() {
                 position: 'absolute',
                 left: `clamp(28px, calc(${value}% + ${(50 - value) * 0.28}px), calc(100% - 28px))`,
                 transform: 'translateX(-50%)',
-                background: '#414242',
-                color: '#ffffff',
+                background: 'var(--dawn, #00ae9d)',
+                color: 'var(--action-text, #ffffff)',
                 fontSize: '12px',
                 fontWeight: 800,
                 fontFamily: '"Nunito", sans-serif',
@@ -158,7 +158,7 @@ export default function Stage1_2StabilityScreen() {
                 onChange={e => setProfileField('lifeStability', Number(e.target.value))}
                 className="classy-range-input"
                 style={{
-                  background: `linear-gradient(90deg, ${label.color} 0%, ${label.color} ${value}%, #e2ece8 ${value}%, #e2ece8 100%)`
+                  background: `linear-gradient(90deg, ${label.color} 0%, ${label.color} ${value}%, var(--border-strong, #e2ece8) ${value}%, var(--border-strong, #e2ece8) 100%)`
                 }}
               />
 
@@ -181,7 +181,7 @@ export default function Stage1_2StabilityScreen() {
                       width: '4px',
                       height: '4px',
                       borderRadius: '50%',
-                      background: value >= step ? 'rgba(255, 255, 255, 0.9)' : 'rgba(65, 66, 66, 0.25)',
+                      background: value >= step ? 'rgba(255, 255, 255, 0.9)' : 'var(--text-mute, rgba(65, 66, 66, 0.25))',
                       boxShadow: '0 0 2px rgba(0,0,0,0.15)'
                     }}
                   />
@@ -197,12 +197,12 @@ export default function Stage1_2StabilityScreen() {
               padding: '0 2px',
               fontSize: '11px',
               fontWeight: 800,
-              color: '#414242',
+              color: 'var(--text-sub, #94AAA6)',
               fontFamily: '"Nunito", sans-serif',
               letterSpacing: '0.08em'
             }}>
               <span>TURBULENT</span>
-              <span style={{ opacity: 0.45 }}>BALANCED</span>
+              <span style={{ color: 'var(--text-main, #E9F1EF)', opacity: 0.9 }}>BALANCED</span>
               <span>STEADY</span>
             </div>
           </div>

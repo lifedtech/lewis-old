@@ -9,12 +9,12 @@ import TopicLineIllustration from '../components/TopicLineIllustration.jsx'
 
 const MONO = '"Nunito", sans-serif'
 const NUNITO = "'Nunito', sans-serif"
-const TEAL = '#00ae9d'
-const INK = '#414242'
+const TEAL = 'var(--dawn, #00ae9d)'
+const INK = 'var(--text-main, #414242)'
 
 const eyebrowStyle = {
   fontFamily: MONO, fontSize: '10px', fontWeight: 700,
-  letterSpacing: '0.14em', color: INK, textTransform: 'uppercase',
+  letterSpacing: '0.14em', color: 'var(--dawn, #00ae9d)', textTransform: 'uppercase',
 }
 
 export default function InstrumentScreen({ id }) {
@@ -83,7 +83,7 @@ export default function InstrumentScreen({ id }) {
               <p style={{
                 margin: '10px 0 0 0',
                 fontSize: 'clamp(13px, 1.5vw, 15px)',
-                color: INK,
+                color: 'var(--text-sub, #657370)',
                 fontFamily: NUNITO,
                 lineHeight: 1.5,
                 maxWidth: '350px',
@@ -106,9 +106,9 @@ export default function InstrumentScreen({ id }) {
               <span style={eyebrowStyle}>
                 {spec.progress} · {step + 1} OF {spec.items.length}
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: INK }}>{pct}%</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-sub, #85918e)' }}>{pct}%</span>
             </div>
-            <div style={{ width: '100%', height: '4px', background: 'rgba(22, 36, 31, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '4px', background: 'var(--panel-border, rgba(22, 36, 31, 0.08))', borderRadius: '4px', overflow: 'hidden' }}>
               <motion.div
                 style={{ height: '100%', background: TEAL }}
                 animate={{ width: `${pct}%` }}
@@ -145,9 +145,9 @@ export default function InstrumentScreen({ id }) {
                         width: '100%',
                         padding: '9px 16px',
                         borderRadius: '14px',
-                        border: `1.5px solid ${active ? TEAL : '#d2e7e0'}`,
-                        background: active ? '#e4f4ee' : '#f2f9f6',
-                        color: INK,
+                        border: `1.5px solid ${active ? 'var(--dawn, #00ae9d)' : 'var(--border-color, #d2e7e0)'}`,
+                        background: active ? 'var(--teal-tint, #e4f4ee)' : 'var(--raised, #f2f9f6)',
+                        color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #414242)',
                         cursor: 'pointer',
                         transition: 'all 0.18s ease',
                         boxShadow: active ? '0 2px 8px rgba(0,174,157,0.12)' : 'none',
@@ -159,17 +159,17 @@ export default function InstrumentScreen({ id }) {
                         width: '18px',
                         height: '18px',
                         borderRadius: '50%',
-                        border: `2px solid ${active ? TEAL : '#c2ceca'}`,
-                        background: active ? TEAL : 'transparent',
+                        border: `2px solid ${active ? 'var(--dawn, #00ae9d)' : 'var(--border-strong, #c2ceca)'}`,
+                        background: active ? 'var(--dawn, #00ae9d)' : 'transparent',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
                         transition: 'all 0.18s ease',
                       }}>
-                        {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                        {active && <span style={{ color: 'var(--action-text, #ffffff)', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
                       </div>
-                      <span style={{ fontFamily: NUNITO, fontWeight: active ? 700 : 500, fontSize: '13.5px', color: INK }}>
+                      <span style={{ fontFamily: NUNITO, fontWeight: active ? 700 : 500, fontSize: '13.5px', color: active ? 'var(--dawn, #00ae9d)' : INK }}>
                         {opt}
                       </span>
                     </button>
@@ -179,7 +179,7 @@ export default function InstrumentScreen({ id }) {
             </motion.div>
           </AnimatePresence>
 
-          <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#64748b', fontFamily: NUNITO, fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: 'var(--text-mute, #64748b)', fontFamily: NUNITO, fontStyle: 'italic', textAlign: 'center', width: '100%' }}>
             {item.hint || spec.hint}
           </p>
         </div>

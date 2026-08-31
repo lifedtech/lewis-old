@@ -15,8 +15,21 @@ export default function App() {
   const { isMobile } = useDeviceViewport()
   useAdaptiveScreenBrain()
 
-  const { currentScreen } = useLewisStore()
+  const { currentScreen, theme } = useLewisStore()
   const [bootLoading, setBootLoading] = useState(true)
+
+  // Sync Theme ('light' | 'dark') to document root
+  useEffect(() => {
+    const currentTheme = theme || 'light'
+    document.documentElement.setAttribute('data-theme', currentTheme)
+    if (currentTheme === 'dark') {
+      document.documentElement.classList.add('dark')
+      document.body.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      document.body.classList.remove('dark')
+    }
+  }, [theme])
 
   useEffect(() => {
     // Early warmup ping to wake up backend container from cold start

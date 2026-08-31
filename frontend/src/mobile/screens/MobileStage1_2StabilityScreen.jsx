@@ -33,18 +33,18 @@ export default function MobileStage1_2StabilityScreen() {
         boxSizing: 'border-box',
       }}
     >
-      {/* Top Header — Eyebrow + Title + Subtitle (Decreased font sizes) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+      {/* Top Header — Left Aligned */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', textAlign: 'left', width: '100%' }}>
           <p className="mobile-eyebrow" style={{
             fontFamily: "'Nunito', sans-serif",
             fontSize: '6px',
             fontWeight: 700,
             letterSpacing: '0.16em',
-            color: '#7a8683',
+            color: 'var(--dawn, #00ae9d)',
             textTransform: 'uppercase',
-            margin: '0 0 2px 0',
+            margin: 0,
           }}>
-            CHOOSE ONE
+            SETUP PROFILE
           </p>
           <h1 style={{
             fontFamily: "'Manrope', sans-serif",
@@ -53,7 +53,7 @@ export default function MobileStage1_2StabilityScreen() {
             lineHeight: 1.15,
             letterSpacing: '-0.015em',
             margin: 0,
-            color: '#414242',
+            color: 'var(--text-main, #414242)',
             wordBreak: 'break-word',
           }}>
             Life Stability Spectrum
@@ -62,7 +62,7 @@ export default function MobileStage1_2StabilityScreen() {
             fontFamily: "'Nunito', sans-serif",
             fontSize: '15px',
             fontWeight: 700,
-            color: '#5e6060',
+            color: 'var(--text-sub, #5e6060)',
             lineHeight: 1.45,
             margin: '2px 0 0 0',
           }}>
@@ -91,11 +91,11 @@ export default function MobileStage1_2StabilityScreen() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                background: '#ffffff',
+                background: 'var(--raised, #ffffff)',
                 border: `1.5px solid ${label.color}`,
                 borderRadius: '20px',
                 padding: '6px 18px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                boxShadow: 'var(--shadow-soft, 0 2px 8px rgba(0,0,0,0.04))',
               }}
             >
               <span style={{
@@ -117,8 +117,8 @@ export default function MobileStage1_2StabilityScreen() {
                 position: 'absolute',
                 left: `clamp(26px, calc(${value}% + ${(50 - value) * 0.26}px), calc(100% - 26px))`,
                 transform: 'translateX(-50%)',
-                background: '#414242',
-                color: '#ffffff',
+                background: 'var(--dawn, #00ae9d)',
+                color: 'var(--action-text, #ffffff)',
                 fontSize: '11px',
                 fontWeight: 800,
                 fontFamily: "'Nunito', sans-serif",
@@ -146,7 +146,7 @@ export default function MobileStage1_2StabilityScreen() {
                 className="classy-range-input"
                 style={{
                   width: '100%',
-                  background: `linear-gradient(90deg, ${label.color} 0%, ${label.color} ${value}%, #e2ece8 ${value}%, #e2ece8 100%)`,
+                  background: `linear-gradient(90deg, ${label.color} 0%, ${label.color} ${value}%, var(--border-strong, #e2ece8) ${value}%, var(--border-strong, #e2ece8) 100%)`,
                 }}
               />
 
@@ -169,7 +169,7 @@ export default function MobileStage1_2StabilityScreen() {
                       width: '4px',
                       height: '4px',
                       borderRadius: '50%',
-                      background: value >= step ? 'rgba(255, 255, 255, 0.9)' : 'rgba(65, 66, 66, 0.25)',
+                      background: value >= step ? 'rgba(255, 255, 255, 0.9)' : 'var(--text-mute, rgba(65, 66, 66, 0.25))',
                     }}
                   />
                 ))}
@@ -184,12 +184,12 @@ export default function MobileStage1_2StabilityScreen() {
               padding: '0 2px',
               fontSize: '9.5px',
               fontWeight: 800,
-              color: '#5e6060',
+              color: 'var(--text-sub, #94AAA6)',
               fontFamily: "'Nunito', sans-serif",
               letterSpacing: '0.08em',
             }}>
               <span>TURBULENT</span>
-              <span style={{ opacity: 0.6 }}>BALANCED</span>
+              <span style={{ color: 'var(--text-main, #E9F1EF)', opacity: 0.9 }}>BALANCED</span>
               <span>STEADY</span>
             </div>
           </div>

@@ -1,6 +1,6 @@
-import logoPng from '../assets/logo.png'
 import logoIconPng from '../assets/logo-icon.png'
 import LewisMotionLogo from './LewisMotionLogo.jsx'
+import { useLewisStore } from '../store/useLewisStore.js'
 
 export default function LewisLogo({ 
   size = 32, 
@@ -8,10 +8,13 @@ export default function LewisLogo({
   layout = 'horizontal', 
   textColor = '#414242',
   animated = false,
-  inverted = false,
+  inverted = undefined,
   className = '',
   style = {}
 }) {
+  const storeTheme = useLewisStore((s) => s.theme)
+  const isDark = inverted !== undefined ? inverted : storeTheme === 'dark'
+
   if (animated) {
     return (
       <LewisMotionLogo
@@ -19,12 +22,12 @@ export default function LewisLogo({
         showText={showText}
         layout={layout}
         textColor={textColor}
-        inverted={inverted}
+        inverted={isDark}
       />
     )
   }
 
-  const txtColor = inverted ? '#ffffff' : (textColor === '#414242' ? '#16302B' : textColor)
+  const txtColor = isDark ? '#E9F1EF' : (textColor === '#414242' ? '#16302B' : textColor)
 
   if (layout === 'stacked') {
     return (
@@ -47,13 +50,21 @@ export default function LewisLogo({
             height: `${size}px`, 
             width: 'auto', 
             objectFit: 'contain',
-            filter: inverted ? 'brightness(0) invert(1)' : undefined,
             userSelect: 'none'
           }} 
         />
         {showText && (
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15, whiteSpace: 'nowrap' }}>
-            <span style={{ fontFamily: "'Manrope', 'Nunito', sans-serif", fontWeight: 800, fontSize: '20px', color: txtColor, letterSpacing: '-0.025em', whiteSpace: 'nowrap' }}>Lewis</span>
+            <span style={{ 
+              fontFamily: "'Manrope', 'Nunito', sans-serif", 
+              fontWeight: 800, 
+              fontSize: `${Math.max(16, Math.round(size * 0.58))}px`, 
+              color: txtColor, 
+              letterSpacing: '-0.025em', 
+              whiteSpace: 'nowrap' 
+            }}>
+              Lewis
+            </span>
           </div>
         )}
       </div>
@@ -70,7 +81,6 @@ export default function LewisLogo({
           height: `${size}px`, 
           width: 'auto', 
           objectFit: 'contain',
-          filter: inverted ? 'brightness(0) invert(1)' : undefined,
           userSelect: 'none',
           ...style 
         }} 
@@ -84,23 +94,36 @@ export default function LewisLogo({
       style={{ 
         display: 'inline-flex', 
         alignItems: 'center', 
+        gap: `${Math.max(7, Math.round(size * 0.26))}px`,
         flexShrink: 0, 
         whiteSpace: 'nowrap',
+        background: 'transparent',
+        backgroundColor: 'transparent',
         ...style 
       }}
     >
       <img 
-        src={logoPng} 
+        src={logoIconPng} 
         alt="Lewis" 
         style={{ 
           height: `${size}px`, 
           width: 'auto', 
           objectFit: 'contain',
-          filter: inverted ? 'brightness(0) invert(1)' : undefined,
           display: 'block',
           userSelect: 'none'
         }} 
       />
+      <span style={{
+        fontFamily: "'Manrope', 'Nunito', sans-serif",
+        fontWeight: 800,
+        fontSize: `${Math.max(18, Math.round(size * 0.68))}px`,
+        color: txtColor,
+        letterSpacing: '-0.025em',
+        lineHeight: 1,
+        userSelect: 'none',
+      }}>
+        Lewis
+      </span>
     </div>
   )
 }

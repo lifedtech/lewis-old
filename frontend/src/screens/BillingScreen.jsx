@@ -13,13 +13,14 @@ import {
   getDefaultCountryDialCode 
 } from '../lib/countryData.js'
 import LewisLogo from '../components/LewisLogo.jsx'
+import ThemeToggle from '../components/ThemeToggle.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
 import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 import { SupportModal } from '../components/SupportWidget.jsx'
 
 const NUNITO = "'Nunito', system-ui, sans-serif"
-const TEAL = '#00ae9d'
-const INK = '#414242'
+const TEAL = 'var(--dawn, #00ae9d)'
+const INK = 'var(--text, #414242)'
 
 export default function BillingScreen() {
   const { 
@@ -31,7 +32,8 @@ export default function BillingScreen() {
     phone: storePhone,
     authUser,
     analysisData,
-    paymentConfig
+    paymentConfig,
+    theme
   } = useLewisStore()
 
   const initialCurrency = detectLocalCurrency()
@@ -109,7 +111,6 @@ export default function BillingScreen() {
     const nextErrors = {}
     const trimmedName = (fullName || '').trim()
     const trimmedEmail = (email || '').trim()
-    const cleanDigits = (phone || '').trim().replace(/\D/g, '')
 
     if (!trimmedName || trimmedName.length < 2) {
       nextErrors.fullName = 'Please enter your full name (minimum 2 characters).'
@@ -119,14 +120,6 @@ export default function BillingScreen() {
       nextErrors.email = 'Please enter your email address to receive your report.'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       nextErrors.email = 'Please enter a valid email address (e.g., name@example.com).'
-    }
-
-    if (!cleanDigits) {
-      nextErrors.phone = 'Please enter your mobile phone number.'
-    } else if (countryCode === '+91' && cleanDigits.length < 10) {
-      nextErrors.phone = 'Please enter a valid 10-digit Indian mobile number.'
-    } else if (cleanDigits.length < 6) {
-      nextErrors.phone = 'Please enter a valid mobile number (minimum 6 digits).'
     }
 
     setErrors(nextErrors)
@@ -143,13 +136,10 @@ export default function BillingScreen() {
 
     const trimmedName = fullName.trim()
     const trimmedEmail = email.trim()
-    const cleanPhoneDigits = phone.trim().replace(/[^\d]/g, '')
-    const fullFormattedPhone = `${countryCode} ${cleanPhoneDigits}`
 
     // Save into store
     setProfileField('name', trimmedName)
     setProfileField('email', trimmedEmail)
-    setProfileField('phone', fullFormattedPhone)
 
     setIsSubmitting(true)
 
@@ -160,7 +150,7 @@ export default function BillingScreen() {
         reportId: analysisData?.report_uuid,
         userEmail: trimmedEmail,
         userName: trimmedName,
-        userPhone: fullFormattedPhone,
+        userPhone: '',
         couponCode: appliedCoupon,
         onSuccess: (verifyData) => {
           setIsSubmitting(false)
@@ -170,7 +160,7 @@ export default function BillingScreen() {
             paymentId: verifyData.payment_id,
             email: trimmedEmail,
             name: trimmedName,
-            phone: fullFormattedPhone,
+            phone: '',
             currency: currency,
             amount: currentPriceObj.amount,
             paidAt: new Date().toISOString()
@@ -194,8 +184,8 @@ export default function BillingScreen() {
       minHeight: '100vh',
       width: '100%',
       maxWidth: '100%',
-      background: 'radial-gradient(ellipse at 50% 0%, #ebf7f4 0%, #f4faf8 45%, #ffffff 100%)',
-      color: INK,
+      background: theme === 'dark' ? 'var(--bg-page, #0C1514)' : 'radial-gradient(ellipse at 50% 0%, #ebf7f4 0%, #f4faf8 45%, #ffffff 100%)',
+      color: 'var(--text-main, #414242)',
       fontFamily: NUNITO,
       display: 'flex',
       flexDirection: 'column',
@@ -203,7 +193,7 @@ export default function BillingScreen() {
       position: 'relative',
       overflow: 'hidden',
     }}>
-      <AbstractLineBackground variant="contours" opacity={0.06} />
+      <AbstractLineBackground variant="nodes" opacity={theme === 'dark' ? 0.15 : 0.06} color={theme === 'dark' ? '#38C9B7' : '#00ae9d'} />
 
       {/* Screen Header (stretched to corners) */}
       <header style={{
@@ -219,11 +209,13 @@ export default function BillingScreen() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
             onClick={() => setScreen('mirror')}
+            className="header-back-btn"
             style={{
-              background: 'none',
+              background: 'transparent',
+              backgroundColor: 'transparent',
               border: 'none',
               padding: 0,
-              color: '#85918e',
+              color: 'var(--text-sub, #85918e)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -232,21 +224,39 @@ export default function BillingScreen() {
               fontSize: '14px',
               fontWeight: 600,
               transition: 'color 0.2s ease',
+              outline: 'none',
+              boxShadow: 'none',
             }}
             title="Go back to reflection"
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#1e293b')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#85918e')}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--dawn, #00ae9d)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-sub, #85918e)')}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12" />
               <polyline points="12 19 5 12 12 5" />
             </svg>
           </button>
-          <LewisLogo size={32} showText={true} animated={false} />
+          <div
+            onClick={() => setScreen('landing')}
+            style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+            role="button"
+            tabIndex={0}
+            title="Go to Home"
+            aria-label="Go to Home"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setScreen('landing')
+              }
+            }}
+          >
+            <LewisLogo size={32} showText={true} animated={false} />
+          </div>
         </div>
 
-        {/* Top-Right Support Button */}
-        <div>
+        {/* Top-Right Theme Toggle & Support Button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <ThemeToggle />
           <motion.button
             type="button"
             onClick={() => setIsSupportOpen(true)}
@@ -259,23 +269,21 @@ export default function BillingScreen() {
               height: '34px',
               padding: '0 14px',
               borderRadius: '999px',
-              background: '#ffffff',
-              border: '1.5px solid rgba(0, 174, 157, 0.45)',
+              background: 'var(--raised, #ffffff)',
+              border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.45))',
               color: TEAL,
               fontFamily: NUNITO,
               fontSize: '13px',
               fontWeight: 700,
               cursor: 'pointer',
-              boxShadow: '0 2px 10px rgba(0, 174, 157, 0.1)',
+              boxShadow: 'var(--shadow-soft, 0 2px 10px rgba(0, 174, 157, 0.1))',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = TEAL
-              e.currentTarget.style.background = 'rgba(0, 174, 157, 0.08)'
+              e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(0, 174, 157, 0.45)'
-              e.currentTarget.style.background = '#ffffff'
+              e.currentTarget.style.borderColor = 'var(--panel-border, rgba(0, 174, 157, 0.45))'
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -309,12 +317,12 @@ export default function BillingScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
           style={{
-            background: 'rgba(255, 255, 255, 0.94)',
+            background: 'var(--raised, rgba(255, 255, 255, 0.94))',
             backdropFilter: 'blur(16px)',
             borderRadius: '24px',
-            border: '1px solid rgba(0, 174, 157, 0.18)',
+            border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.18))',
             padding: 'clamp(24px, 3.5vw, 36px)',
-            boxShadow: '0 10px 32px rgba(0, 174, 157, 0.06), 0 2px 8px rgba(0, 0, 0, 0.02)',
+            boxShadow: 'var(--shadow-soft, 0 10px 32px rgba(0, 174, 157, 0.06))',
             display: 'flex',
             flexDirection: 'column',
             gap: '20px',
@@ -327,7 +335,7 @@ export default function BillingScreen() {
               fontWeight: 800,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: TEAL,
+              color: 'var(--dawn, #00ae9d)',
               display: 'block',
               marginBottom: '6px',
             }}>
@@ -337,7 +345,7 @@ export default function BillingScreen() {
               margin: '0 0 6px 0',
               fontSize: 'clamp(22px, 2.4vw, 28px)',
               fontWeight: 800,
-              color: '#1e293b',
+              color: 'var(--text-main, #1e293b)',
               lineHeight: 1.2,
             }}>
               Where should we send your report?
@@ -345,7 +353,7 @@ export default function BillingScreen() {
             <p style={{
               margin: 0,
               fontSize: '14px',
-              color: '#64748b',
+              color: 'var(--text-sub, #64748b)',
               lineHeight: 1.5,
             }}>
               Your personalised Insight Report will be prepared and delivered directly to your verified email.
@@ -370,7 +378,7 @@ export default function BillingScreen() {
           <form onSubmit={handleContinuePayment} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             {/* Full Name */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label htmlFor="billing-name" style={{ fontSize: '13.5px', fontWeight: 700, color: INK }}>
+              <label htmlFor="billing-name" style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-main, #414242)' }}>
                 Full Name <span style={{ color: '#d0574f' }}>*</span>
               </label>
               <input
@@ -385,11 +393,11 @@ export default function BillingScreen() {
                 style={{
                   padding: '13px 16px',
                   borderRadius: '12px',
-                  border: errors.fullName ? '1.5px solid #d0574f' : '1.5px solid #cbd5e1',
-                  background: '#fcfdfd',
+                  border: errors.fullName ? '1.5px solid #d0574f' : '1.5px solid var(--border-color, #cbd5e1)',
+                  background: 'var(--bg-page, #fcfdfd)',
                   fontSize: '15px',
                   fontFamily: NUNITO,
-                  color: INK,
+                  color: 'var(--text-main, #414242)',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                   boxSizing: 'border-box',
@@ -402,7 +410,7 @@ export default function BillingScreen() {
 
             {/* Email Address */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label htmlFor="billing-email" style={{ fontSize: '13.5px', fontWeight: 700, color: INK }}>
+              <label htmlFor="billing-email" style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-main, #414242)' }}>
                 Email Address (for report delivery) <span style={{ color: '#d0574f' }}>*</span>
               </label>
               <input
@@ -417,11 +425,11 @@ export default function BillingScreen() {
                 style={{
                   padding: '13px 16px',
                   borderRadius: '12px',
-                  border: errors.email ? '1.5px solid #d0574f' : '1.5px solid #cbd5e1',
-                  background: '#fcfdfd',
+                  border: errors.email ? '1.5px solid #d0574f' : '1.5px solid var(--border-color, #cbd5e1)',
+                  background: 'var(--bg-page, #fcfdfd)',
                   fontSize: '15px',
                   fontFamily: NUNITO,
-                  color: INK,
+                  color: 'var(--text-main, #414242)',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                   boxSizing: 'border-box',
@@ -432,94 +440,13 @@ export default function BillingScreen() {
               )}
             </div>
 
-            {/* Mobile Number */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label htmlFor="billing-phone" style={{ fontSize: '13.5px', fontWeight: 700, color: INK }}>
-                Mobile Number <span style={{ color: '#d0574f' }}>*</span>
-              </label>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                borderRadius: '12px',
-                border: errors.phone ? '1.5px solid #d0574f' : '1.5px solid #cbd5e1',
-                background: '#fcfdfd',
-                transition: 'border-color 0.2s',
-                overflow: 'hidden',
-                boxSizing: 'border-box',
-              }}>
-                {/* Interactive Country Dial Code Dropdown */}
-                <select
-                  value={countryCode}
-                  onChange={(e) => {
-                    setCountryCode(e.target.value)
-                    if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }))
-                  }}
-                  aria-label="Country dial code"
-                  title="Select Country Dial Code"
-                  style={{
-                    padding: '13px 8px 13px 14px',
-                    border: 'none',
-                    borderRight: '1.5px solid #e2e8f0',
-                    background: '#f8fafc',
-                    color: '#334155',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    fontFamily: NUNITO,
-                    outline: 'none',
-                    cursor: 'pointer',
-                    minWidth: '94px',
-                    maxWidth: '120px',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 6px center',
-                    backgroundSize: '12px',
-                  }}
-                >
-                  {ALL_COUNTRY_CODES.map((c, idx) => (
-                    <option key={`${c.country}-${c.code}-${idx}`} value={c.code}>
-                      {c.flag} {c.code} ({c.name})
-                    </option>
-                  ))}
-                </select>
-
-                {/* Phone Digits Input */}
-                <input
-                  id="billing-phone"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/[^\d\s-]/g, '').slice(0, 15)
-                    setPhone(val)
-                    if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }))
-                  }}
-                  placeholder="Phone number"
-                  style={{
-                    flex: 1,
-                    width: '100%',
-                    padding: '13px 16px',
-                    border: 'none',
-                    background: 'transparent',
-                    fontSize: '15px',
-                    fontFamily: NUNITO,
-                    color: INK,
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-              {errors.phone && (
-                <span style={{ fontSize: '12px', color: '#d0574f', fontWeight: 600 }}>{errors.phone}</span>
-              )}
-            </div>
-
             {/* Continue Button */}
             <motion.button
               whileHover={{ scale: 1.015 }}
               whileTap={{ scale: 0.985 }}
               type="submit"
               disabled={isSubmitting}
+              className="btn-primary"
               style={{
                 marginTop: '10px',
                 width: '100%',
@@ -527,7 +454,7 @@ export default function BillingScreen() {
                 fontSize: '16px',
                 fontWeight: 700,
                 borderRadius: '999px',
-                background: 'linear-gradient(135deg, #00ae9d 0%, #017a6f 100%)',
+                background: '#00ae9d',
                 color: '#ffffff',
                 border: 'none',
                 cursor: isSubmitting ? 'wait' : 'pointer',
@@ -561,11 +488,11 @@ export default function BillingScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.08 }}
           style={{
-            background: '#fcfdfd',
+            background: 'var(--raised, #ffffff)',
             borderRadius: '24px',
-            border: '1.5px solid rgba(0, 174, 157, 0.22)',
+            border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.22))',
             padding: 'clamp(24px, 3.5vw, 36px)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.03)',
+            boxShadow: 'var(--shadow-soft, 0 4px 20px rgba(0, 0, 0, 0.03))',
             display: 'flex',
             flexDirection: 'column',
             gap: '20px',
@@ -578,7 +505,7 @@ export default function BillingScreen() {
               fontWeight: 800,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: '#007064',
+              color: 'var(--dawn, #00ae9d)',
               display: 'block',
               marginBottom: '4px',
             }}>
@@ -588,13 +515,13 @@ export default function BillingScreen() {
               margin: 0,
               fontSize: '20px',
               fontWeight: 800,
-              color: '#1e293b',
+              color: 'var(--text-main, #1e293b)',
             }}>
               Personal Insight Report
             </h2>
           </div>
 
-          <div style={{ width: '100%', height: '1px', background: 'rgba(0, 174, 157, 0.16)' }} />
+          <div style={{ width: '100%', height: '1px', background: 'var(--border-color, rgba(0, 174, 157, 0.16))' }} />
 
           {/* Included Features List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
@@ -607,14 +534,14 @@ export default function BillingScreen() {
             ].map((item, idx) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
                 <span style={{
-                  color: TEAL,
+                  color: 'var(--dawn, #00ae9d)',
                   fontSize: '14px',
                   fontWeight: 800,
                   marginTop: '1px',
                 }}>
                   ✓
                 </span>
-                <span style={{ fontSize: '13.5px', color: '#334155', lineHeight: 1.45 }}>
+                <span style={{ fontSize: '13.5px', color: 'var(--text-sub, #334155)', lineHeight: 1.45 }}>
                   {item}
                 </span>
               </div>
@@ -626,35 +553,71 @@ export default function BillingScreen() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'rgba(255, 255, 255, 0.85)',
-            border: '1px solid rgba(0, 174, 157, 0.22)',
+            background: 'var(--panel, rgba(255, 255, 255, 0.85))',
+            border: '1px solid var(--border-color, rgba(0, 174, 157, 0.22))',
             borderRadius: '12px',
             padding: '8px 14px',
             gap: '8px',
           }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#64748b' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-sub, #64748b)' }}>
               Billing Currency
             </span>
-            <select
-              value={currency}
-              onChange={(e) => handleCurrencyChange(e.target.value)}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                fontFamily: NUNITO,
-                fontSize: '13.5px',
-                fontWeight: 800,
-                color: TEAL,
-                cursor: 'pointer',
-                outline: 'none',
-              }}
-            >
-              {Object.values(CURRENCY_METADATA).map(curr => (
-                <option key={curr.code} value={curr.code}>
-                  {curr.flag} {curr.code} ({curr.symbol})
-                </option>
-              ))}
-            </select>
+            <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+              <select
+                value={currency}
+                onChange={(e) => handleCurrencyChange(e.target.value)}
+                className="currency-select"
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  backgroundColor: 'transparent',
+                  fontFamily: NUNITO,
+                  fontSize: '13.5px',
+                  fontWeight: 800,
+                  color: 'var(--dawn, #00ae9d)',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  boxShadow: 'none',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  MozUserSelect: 'none',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  paddingRight: '16px',
+                  paddingLeft: '0px',
+                  paddingTop: '2px',
+                  paddingBottom: '2px',
+                  margin: 0,
+                }}
+              >
+                {Object.values(CURRENCY_METADATA).map(curr => (
+                  <option
+                    key={curr.code}
+                    value={curr.code}
+                    style={{
+                      background: 'var(--card-bg, #13201E)',
+                      color: 'var(--text-main, #E9F1EF)',
+                      padding: '8px',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {curr.flag} {curr.code} ({curr.symbol})
+                  </option>
+                ))}
+              </select>
+              <span style={{
+                position: 'absolute',
+                right: 0,
+                pointerEvents: 'none',
+                color: 'var(--dawn, #00ae9d)',
+                fontSize: '11px',
+                fontWeight: 900,
+                lineHeight: 1,
+              }}>
+                ⌄
+              </span>
+            </div>
           </div>
 
           {/* Promo / Coupon Code Section */}
@@ -662,8 +625,8 @@ export default function BillingScreen() {
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
-            background: '#ffffff',
-            border: '1px solid rgba(0, 174, 157, 0.22)',
+            background: 'var(--panel, #ffffff)',
+            border: '1px solid var(--border-color, rgba(0, 174, 157, 0.22))',
             borderRadius: '14px',
             padding: '12px 14px',
             boxSizing: 'border-box',
@@ -672,13 +635,13 @@ export default function BillingScreen() {
               <label htmlFor="coupon-input" style={{
                 fontSize: '13px',
                 fontWeight: 700,
-                color: '#334155',
+                color: 'var(--text-main, #334155)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
                 margin: 0,
               }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={TEAL} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--dawn, #00ae9d)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
                   <line x1="7" y1="7" x2="7.01" y2="7" />
                 </svg>
@@ -688,7 +651,7 @@ export default function BillingScreen() {
                 <span style={{
                   fontSize: '11.5px',
                   fontWeight: 800,
-                  color: '#017a6f',
+                  color: 'var(--dawn, #017a6f)',
                   background: 'rgba(0, 174, 157, 0.12)',
                   padding: '2px 8px',
                   borderRadius: '999px',
@@ -723,12 +686,12 @@ export default function BillingScreen() {
                     flex: 1,
                     padding: '10px 14px',
                     borderRadius: '10px',
-                    border: couponError ? '1.5px solid #d0574f' : '1.5px solid #cbd5e1',
-                    background: '#f8fafc',
+                    border: couponError ? '1.5px solid #d0574f' : '1.5px solid var(--border-color, #cbd5e1)',
+                    background: 'var(--bg-page, #f8fafc)',
                     fontSize: '14px',
                     fontWeight: 700,
                     fontFamily: NUNITO,
-                    color: INK,
+                    color: 'var(--text-main, #414242)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                     outline: 'none',
@@ -738,10 +701,11 @@ export default function BillingScreen() {
                 <button
                   type="button"
                   onClick={handleApplyCoupon}
+                  className="btn-primary"
                   style={{
                     padding: '10px 18px',
                     borderRadius: '10px',
-                    background: 'linear-gradient(135deg, #00ae9d 0%, #017a6f 100%)',
+                    background: '#00ae9d',
                     color: '#ffffff',
                     border: 'none',
                     fontSize: '13.5px',
@@ -750,7 +714,10 @@ export default function BillingScreen() {
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
                     transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 8px rgba(0, 174, 157, 0.18)',
+                    boxShadow: '0 2px 8px rgba(0, 174, 157, 0.25)',
+                    margin: 0,
+                    minWidth: 'auto',
+                    minHeight: 'auto',
                   }}
                 >
                   Apply
@@ -771,7 +738,7 @@ export default function BillingScreen() {
                   <span style={{
                     fontSize: '13.5px',
                     fontWeight: 800,
-                    color: '#007064',
+                    color: 'var(--dawn, #007064)',
                     fontFamily: 'monospace',
                     letterSpacing: '0.08em',
                   }}>
@@ -811,17 +778,18 @@ export default function BillingScreen() {
             alignItems: 'baseline',
             padding: '4px 0',
           }}>
-            <span style={{ fontSize: '16px', fontWeight: 800, color: INK }}>Total Payable</span>
-            <span style={{ fontSize: '26px', fontWeight: 900, color: TEAL }}>{reportPrice}</span>
+            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-main, #414242)' }}>Total Payable</span>
+            <span style={{ fontSize: '26px', fontWeight: 900, color: 'var(--dawn, #00ae9d)' }}>{reportPrice}</span>
           </div>
 
           {/* Assurance Note */}
           <div style={{
-            background: 'rgba(0, 174, 157, 0.08)',
+            background: 'var(--panel, rgba(0, 174, 157, 0.08))',
+            border: '1px solid var(--border-color, rgba(0, 174, 157, 0.2))',
             borderRadius: '12px',
             padding: '12px 14px',
             fontSize: '12px',
-            color: '#00655a',
+            color: 'var(--text-sub, #00655a)',
             lineHeight: 1.45,
           }}>
             🛡️ <strong>Manual Quality Verification:</strong> Each report undergoes strict validation before dispatch to ensure 100% integrity of your personalized measurements.

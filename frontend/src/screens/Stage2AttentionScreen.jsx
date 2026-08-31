@@ -175,7 +175,7 @@ export default function Stage2AttentionScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -189,7 +189,7 @@ export default function Stage2AttentionScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Cognitive Focus
             </h1>
@@ -197,7 +197,7 @@ export default function Stage2AttentionScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -218,20 +218,21 @@ export default function Stage2AttentionScreen() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '16px',
-            background: '#f2f9f6',
-            border: '1.5px solid #d2e7e0',
+            background: 'var(--raised, #f2f9f6)',
+            border: '1.5px solid var(--border-color, #d2e7e0)',
             borderRadius: '20px',
             padding: '24px',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            boxShadow: 'var(--shadow-soft, 0 8px 24px rgba(0,174,157,0.08))',
           }}>
             {/* Score Badge */}
             <div style={{
               fontFamily: "'Nunito', sans-serif",
               fontSize: '12px',
               fontWeight: 700,
-              color: '#414242',
-              background: '#ffffff',
-              border: '1.5px solid #d2e7e0',
+              color: 'var(--dawn, #00ae9d)',
+              background: 'var(--card-bg, #ffffff)',
+              border: '1.5px solid var(--border-strong, #d2e7e0)',
               borderRadius: '20px',
               padding: '6px 18px',
               letterSpacing: '0.08em',
@@ -247,7 +248,7 @@ export default function Stage2AttentionScreen() {
               margin: 0,
               fontSize: '14.5px',
               fontWeight: 700,
-              color: color === 'orange' ? '#FF9466' : done ? '#00ae9d' : '#414242',
+              color: color === 'orange' ? '#FF9466' : done ? 'var(--dawn, #00ae9d)' : 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               textAlign: 'center',
               minHeight: '24px',

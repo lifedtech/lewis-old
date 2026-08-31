@@ -67,7 +67,7 @@ export default function Stage3_1AffectScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -81,7 +81,7 @@ export default function Stage3_1AffectScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Where is your mind sitting right now?
             </h1>
@@ -89,7 +89,7 @@ export default function Stage3_1AffectScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -120,10 +120,10 @@ export default function Stage3_1AffectScreen() {
               }}
             >
               {/* Axis Labels */}
-              <span style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Activated / High Energy</span>
-              <span style={{ position: 'absolute', bottom: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Calm / Low Energy</span>
-              <span style={{ position: 'absolute', top: '50%', left: '-26px', transform: 'translate(-50%, -50%) rotate(-90deg)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Unpleasant</span>
-              <span style={{ position: 'absolute', top: '50%', right: '-26px', transform: 'translate(50%, -50%) rotate(90deg)', fontSize: '11px', color: '#414242', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Pleasant</span>
+              <span style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: 'var(--text-sub, #94AAA6)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Activated / High Energy</span>
+              <span style={{ position: 'absolute', bottom: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '11px', color: 'var(--text-sub, #94AAA6)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Calm / Low Energy</span>
+              <span style={{ position: 'absolute', top: '50%', left: '-26px', transform: 'translate(-50%, -50%) rotate(-90deg)', fontSize: '11px', color: 'var(--text-sub, #94AAA6)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Unpleasant</span>
+              <span style={{ position: 'absolute', top: '50%', right: '-26px', transform: 'translate(50%, -50%) rotate(90deg)', fontSize: '11px', color: 'var(--text-sub, #94AAA6)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: '"Nunito", sans-serif' }}>Pleasant</span>
 
               {/* The Grid Canvas */}
               <div
@@ -134,29 +134,29 @@ export default function Stage3_1AffectScreen() {
                   width: '100%',
                   height: '100%',
                   background: `
-                    radial-gradient(circle at 15% 15%, rgba(214, 237, 234, 0.65) 0%, rgba(248, 230, 225, 0.3) 50%, transparent 80%),
-                    radial-gradient(circle at 85% 15%, rgba(230, 244, 208, 0.65) 0%, rgba(240, 250, 225, 0.3) 50%, transparent 80%),
-                    radial-gradient(circle at 15% 85%, rgba(214, 237, 234, 0.65) 0%, rgba(242, 238, 255, 0.3) 50%, transparent 80%),
-                    radial-gradient(circle at 85% 85%, rgba(214, 237, 234, 0.65) 0%, rgba(230, 250, 242, 0.3) 50%, transparent 80%),
-                    #f2f9f6
+                    radial-gradient(circle at 15% 15%, var(--lavender-soft, rgba(214, 237, 234, 0.65)) 0%, transparent 70%),
+                    radial-gradient(circle at 85% 15%, var(--sage-soft, rgba(230, 244, 208, 0.65)) 0%, transparent 70%),
+                    radial-gradient(circle at 15% 85%, var(--dawn-soft, rgba(214, 237, 234, 0.65)) 0%, transparent 70%),
+                    radial-gradient(circle at 85% 85%, var(--teal-tint, rgba(230, 250, 242, 0.65)) 0%, transparent 70%),
+                    var(--raised, #f2f9f6)
                   `,
-                  border: '1.5px solid #d2e7e0',
+                  border: '1.5px solid var(--border-strong, #d2e7e0)',
                   borderRadius: '24px',
                   position: 'relative',
                   cursor: 'crosshair',
                   overflow: 'hidden',
-                  boxShadow: '0 8px 28px rgba(0,174,157,0.08)'
+                  boxShadow: 'var(--shadow-soft, 0 8px 28px rgba(0,174,157,0.08))'
                 }}
               >
                 {/* Center Crosshair Lines */}
-                <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'rgba(0, 0, 0, 0.08)' }}></div>
-                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0, 0, 0, 0.08)' }}></div>
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'var(--border-strong, rgba(0, 0, 0, 0.08))' }}></div>
+                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'var(--border-strong, rgba(0, 0, 0, 0.08))' }}></div>
 
                 {/* Corner Quadrant Labels */}
-                <span style={{ position: 'absolute', top: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>Tense</span>
-                <span style={{ position: 'absolute', top: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>Alert</span>
-                <span style={{ position: 'absolute', bottom: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>Heavy</span>
-                <span style={{ position: 'absolute', bottom: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: '#414242', fontFamily: "'Nunito', sans-serif" }}>Serene</span>
+                <span style={{ position: 'absolute', top: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #414242)', fontFamily: "'Nunito', sans-serif" }}>Tense</span>
+                <span style={{ position: 'absolute', top: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #414242)', fontFamily: "'Nunito', sans-serif" }}>Alert</span>
+                <span style={{ position: 'absolute', bottom: '14px', left: '16px', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #414242)', fontFamily: "'Nunito', sans-serif" }}>Heavy</span>
+                <span style={{ position: 'absolute', bottom: '14px', right: '16px', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #414242)', fontFamily: "'Nunito', sans-serif" }}>Serene</span>
 
                 {/* Selector Dot */}
                 {hasSelected && (
@@ -168,11 +168,11 @@ export default function Stage3_1AffectScreen() {
                       position: 'absolute',
                       width: '28px',
                       height: '28px',
-                      background: '#ffffff',
-                      border: '3px solid #00ae9d',
+                      background: 'var(--action-fill, #00ae9d)',
+                      border: '3px solid #ffffff',
                       borderRadius: '50%',
                       transform: 'translate(-50%, -50%)',
-                      boxShadow: '0 4px 14px rgba(0, 174, 157, 0.35)',
+                      boxShadow: '0 4px 14px var(--teal-tint, rgba(0, 174, 157, 0.35))',
                       ...getDotStyle()
                     }}
                   />

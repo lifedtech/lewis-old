@@ -107,13 +107,13 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
             style={{
               position: 'relative',
-              background: '#ffffff',
+              background: 'var(--raised, #ffffff)',
               borderRadius: '24px',
               width: '100%',
               maxWidth: '430px',
               padding: '28px 24px',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
-              border: '1px solid rgba(0, 174, 157, 0.18)',
+              boxShadow: 'var(--shadow-soft, 0 20px 50px rgba(0, 0, 0, 0.15))',
+              border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.18))',
               boxSizing: 'border-box',
               zIndex: 1,
               fontFamily: "'Nunito', system-ui, sans-serif",
@@ -129,9 +129,9 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                 width: '32px',
                 height: '32px',
                 borderRadius: '50%',
-                border: '1px solid #eef2f1',
-                background: '#f8faf9',
-                color: '#657370',
+                border: '1px solid var(--border-color, #eef2f1)',
+                background: 'var(--panel, #f8faf9)',
+                color: 'var(--text-sub, #657370)',
                 fontSize: '14px',
                 display: 'flex',
                 alignItems: 'center',
@@ -141,12 +141,12 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                 transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#eef2f1'
-                e.currentTarget.style.color = '#414242'
+                e.currentTarget.style.background = 'var(--panel-hover, #eef2f1)'
+                e.currentTarget.style.color = 'var(--text-main, #414242)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#f8faf9'
-                e.currentTarget.style.color = '#657370'
+                e.currentTarget.style.background = 'var(--panel, #f8faf9)'
+                e.currentTarget.style.color = 'var(--text-sub, #657370)'
               }}
             >
               ✕
@@ -158,8 +158,8 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                 width: '32px',
                 height: '32px',
                 borderRadius: '10px',
-                background: 'rgba(0, 174, 157, 0.12)',
-                color: '#00ae9d',
+                background: 'var(--teal-tint, rgba(0, 174, 157, 0.12))',
+                color: 'var(--dawn, #00ae9d)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -174,7 +174,7 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                 margin: 0,
                 fontSize: '20px',
                 fontWeight: 800,
-                color: '#414242',
+                color: 'var(--text-main, #414242)',
                 letterSpacing: '-0.02em',
               }}>
                 Support
@@ -184,7 +184,7 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
             <p style={{
               margin: '0 0 18px 0',
               fontSize: '13px',
-              color: '#657370',
+              color: 'var(--text-sub, #657370)',
               lineHeight: 1.45,
             }}>
               Facing an issue or have a question? Leave a message and our team will assist you.
@@ -196,8 +196,8 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 style={{
-                  background: '#f0fdf4',
-                  border: '1.5px solid #86efac',
+                  background: 'var(--panel, #f0fdf4)',
+                  border: '1.5px solid var(--dawn, #86efac)',
                   borderRadius: '16px',
                   padding: '24px 16px',
                   textAlign: 'center',
@@ -208,8 +208,8 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                   width: '38px',
                   height: '38px',
                   borderRadius: '50%',
-                  background: '#22c55e',
-                  color: '#ffffff',
+                  background: 'var(--dawn, #22c55e)',
+                  color: 'var(--action-text, #ffffff)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -219,10 +219,10 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                 }}>
                   ✓
                 </div>
-                <h4 style={{ margin: '0 0 4px 0', color: '#166534', fontWeight: 800, fontSize: '15.5px' }}>
+                <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-main, #166534)', fontWeight: 800, fontSize: '15.5px' }}>
                   Query Sent Successfully!
                 </h4>
-                <p style={{ margin: 0, color: '#15803d', fontSize: '12.5px' }}>
+                <p style={{ margin: 0, color: 'var(--text-sub, #15803d)', fontSize: '12.5px' }}>
                   Our support team will reach out to you shortly.
                 </p>
               </motion.div>
@@ -230,7 +230,7 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {/* Name Input */}
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #414242)', marginBottom: '5px' }}>
                     Your Name
                   </label>
                   <input
@@ -242,21 +242,21 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                       width: '100%',
                       padding: '11px 14px',
                       borderRadius: '12px',
-                      border: '1.5px solid #dcdcdc',
-                      background: '#ffffff',
+                      border: '1.5px solid var(--border-color, #dcdcdc)',
+                      background: 'var(--bg-page, #ffffff)',
                       fontSize: '13.5px',
                       fontFamily: "'Nunito', sans-serif",
-                      color: '#414242',
+                      color: 'var(--text-main, #414242)',
                       boxSizing: 'border-box',
                       outline: 'none',
                       transition: 'all 0.2s ease',
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#00ae9d'
+                      e.target.style.borderColor = 'var(--dawn, #00ae9d)'
                       e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#dcdcdc'
+                      e.target.style.borderColor = 'var(--border-color, #dcdcdc)'
                       e.target.style.boxShadow = 'none'
                     }}
                   />
@@ -264,8 +264,8 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
 
                 {/* Email Input */}
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
-                    Your Email <span style={{ color: '#00ae9d' }}>*</span>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #414242)', marginBottom: '5px' }}>
+                    Your Email <span style={{ color: 'var(--dawn, #00ae9d)' }}>*</span>
                   </label>
                   <input
                     type="email"
@@ -277,21 +277,21 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                       width: '100%',
                       padding: '11px 14px',
                       borderRadius: '12px',
-                      border: '1.5px solid #dcdcdc',
-                      background: '#ffffff',
+                      border: '1.5px solid var(--border-color, #dcdcdc)',
+                      background: 'var(--bg-page, #ffffff)',
                       fontSize: '13.5px',
                       fontFamily: "'Nunito', sans-serif",
-                      color: '#414242',
+                      color: 'var(--text-main, #414242)',
                       boxSizing: 'border-box',
                       outline: 'none',
                       transition: 'all 0.2s ease',
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#00ae9d'
+                      e.target.style.borderColor = 'var(--dawn, #00ae9d)'
                       e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#dcdcdc'
+                      e.target.style.borderColor = 'var(--border-color, #dcdcdc)'
                       e.target.style.boxShadow = 'none'
                     }}
                   />
@@ -299,8 +299,8 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
 
                 {/* Query Textarea */}
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#414242', marginBottom: '5px' }}>
-                    How can we help? <span style={{ color: '#00ae9d' }}>*</span>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #414242)', marginBottom: '5px' }}>
+                    How can we help? <span style={{ color: 'var(--dawn, #00ae9d)' }}>*</span>
                   </label>
                   <textarea
                     required
@@ -312,22 +312,22 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                       width: '100%',
                       padding: '11px 14px',
                       borderRadius: '12px',
-                      border: '1.5px solid #dcdcdc',
-                      background: '#ffffff',
+                      border: '1.5px solid var(--border-color, #dcdcdc)',
+                      background: 'var(--bg-page, #ffffff)',
                       fontSize: '13px',
                       fontFamily: "'Nunito', sans-serif",
-                      color: '#414242',
+                      color: 'var(--text-main, #414242)',
                       boxSizing: 'border-box',
                       outline: 'none',
                       resize: 'none',
                       transition: 'all 0.2s ease',
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#00ae9d'
+                      e.target.style.borderColor = 'var(--dawn, #00ae9d)'
                       e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.12)'
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#dcdcdc'
+                      e.target.style.borderColor = 'var(--border-color, #dcdcdc)'
                       e.target.style.boxShadow = 'none'
                     }}
                   />
@@ -346,6 +346,7 @@ export function SupportModal({ isOpen, onClose, initialName = '', initialEmail =
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={status === 'sending'}
+                  className="btn-primary"
                   style={{
                     marginTop: '4px',
                     width: '100%',

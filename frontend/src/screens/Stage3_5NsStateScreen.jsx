@@ -117,7 +117,7 @@ export default function Stage3_5NsStateScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -131,7 +131,7 @@ export default function Stage3_5NsStateScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Nervous System State
             </h1>
@@ -139,7 +139,7 @@ export default function Stage3_5NsStateScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -170,9 +170,9 @@ export default function Stage3_5NsStateScreen() {
                     width: '100%',
                     padding: '14px 18px',
                     borderRadius: '16px',
-                    border: active ? '1.5px solid #00ae9d' : '1.5px solid #d2e7e0',
-                    background: active ? '#e4f4ee' : '#f2f9f6',
-                    color: active ? '#414242' : '#3a3a3a',
+                    border: active ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-color, #d2e7e0)',
+                    background: active ? 'var(--teal-tint, #e4f4ee)' : 'var(--raised, #f2f9f6)',
+                    color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #3a3a3a)',
                     cursor: 'pointer',
                     transition: 'all 0.25s ease',
                     boxShadow: active ? '0 4px 14px rgba(0,174,157,0.14)' : 'none',
@@ -184,8 +184,8 @@ export default function Stage3_5NsStateScreen() {
                     width: '18px',
                     height: '18px',
                     borderRadius: '50%',
-                    border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
-                    background: active ? '#00ae9d' : 'transparent',
+                    border: active ? '2px solid var(--dawn, #00ae9d)' : '2px solid var(--border-strong, #c2ceca)',
+                    background: active ? 'var(--dawn, #00ae9d)' : 'transparent',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -193,7 +193,7 @@ export default function Stage3_5NsStateScreen() {
                     marginTop: '2px',
                     transition: 'all 0.2s ease',
                   }}>
-                    {active && <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                    {active && <span style={{ color: 'var(--action-text, #ffffff)', fontSize: '11px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
@@ -202,7 +202,7 @@ export default function Stage3_5NsStateScreen() {
                         fontFamily: "'Nunito', sans-serif",
                         fontWeight: 700,
                         fontSize: '14.5px',
-                        color: active ? '#414242' : '#414242',
+                        color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #414242)',
                       }}>
                         {s.title}
                       </span>
@@ -211,7 +211,7 @@ export default function Stage3_5NsStateScreen() {
                       fontFamily: "'Nunito', sans-serif",
                       fontWeight: 400,
                       fontSize: '12.5px',
-                      color: active ? '#0a5d50' : '#414242',
+                      color: active ? 'var(--dawn, #0a5d50)' : 'var(--text-sub, #657370)',
                       lineHeight: 1.4,
                     }}>
                       {s.desc}

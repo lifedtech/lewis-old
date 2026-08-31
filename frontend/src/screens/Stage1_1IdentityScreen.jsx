@@ -52,7 +52,7 @@ export default function Stage1_1IdentityScreen() {
           fontSize: '6px',
           fontWeight: 700,
           letterSpacing: '0.16em',
-          color: '#00ae9d',
+          color: 'var(--dawn, #00ae9d)',
           textTransform: 'uppercase',
           margin: '0 0 10px 0',
         }}>
@@ -67,7 +67,7 @@ export default function Stage1_1IdentityScreen() {
           lineHeight: 1.02,
           letterSpacing: '-0.035em',
           margin: '0 0 8px 0',
-          color: '#414242',
+          color: 'var(--text-main, #414242)',
         }}>
           Identity &amp; Life Roles
         </h1>
@@ -77,7 +77,7 @@ export default function Stage1_1IdentityScreen() {
           margin: '0 0 32px 0',
           fontSize: '15px',
           fontWeight: 700,
-          color: '#414242',
+          color: 'var(--text-sub, #657370)',
           fontFamily: "'Nunito', sans-serif",
         }}>
           Which of these describes you right now? Select one.
@@ -104,9 +104,9 @@ export default function Stage1_1IdentityScreen() {
                   gap: '8px',
                   padding: '9px 22px',
                   borderRadius: '999px',
-                  border: active ? '1.5px solid #00ae9d' : '1px solid #c2ceca',
-                  background: active ? '#e4f4ee' : 'rgba(255,255,255,0.6)',
-                  color: active ? '#414242' : '#3a3a3a',
+                  border: active ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--border-color, #c2ceca)',
+                  background: active ? 'var(--teal-tint, #e4f4ee)' : 'var(--raised, rgba(255,255,255,0.6))',
+                  color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #3a3a3a)',
                   fontFamily: "'Nunito', sans-serif",
                   fontSize: '14px',
                   fontWeight: active ? 700 : 500,
@@ -120,15 +120,15 @@ export default function Stage1_1IdentityScreen() {
                   width: '16px',
                   height: '16px',
                   borderRadius: '50%',
-                  border: active ? '1.5px solid #00ae9d' : '1.5px solid #c2ceca',
-                  background: active ? '#00ae9d' : 'transparent',
+                  border: active ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-strong, #c2ceca)',
+                  background: active ? 'var(--dawn, #00ae9d)' : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
                   transition: 'all 0.2s ease',
                 }}>
-                  {active && <span style={{ color: '#ffffff', fontSize: '10px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                  {active && <span style={{ color: 'var(--action-text, #ffffff)', fontSize: '10px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
                 </div>
 
                 <span>{val}</span>

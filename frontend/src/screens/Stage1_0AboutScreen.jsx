@@ -61,7 +61,7 @@ export default function Stage1_0AboutScreen() {
           fontSize: '11px',
           fontWeight: 700,
           letterSpacing: '0.14em',
-          color: '#00ae9d',
+          color: 'var(--dawn, #00ae9d)',
           textTransform: 'uppercase',
           margin: '0 0 10px 0',
         }}>
@@ -76,7 +76,7 @@ export default function Stage1_0AboutScreen() {
           lineHeight: 1.02,
           letterSpacing: '-0.035em',
           margin: '0 0 8px 0',
-          color: '#414242',
+          color: 'var(--text-main, #414242)',
         }}>
           About You
         </h1>
@@ -85,7 +85,7 @@ export default function Stage1_0AboutScreen() {
         <p style={{
           margin: '0 0 32px 0',
           fontSize: 'clamp(13px, 1.6vw, 16px)',
-          color: '#414242',
+          color: 'var(--text-sub, #657370)',
           fontFamily: "'Nunito', sans-serif",
         }}>
           Let's set up your profile.
@@ -99,10 +99,11 @@ export default function Stage1_0AboutScreen() {
             <label style={{
               display: 'block',
               textAlign: 'center',
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               fontSize: 'clamp(13px, 1.6vw, 16px)',
               fontFamily: "'Nunito', sans-serif",
               marginBottom: '12px',
+              fontWeight: 600,
             }}>
               What would you like to be called?
             </label>
@@ -120,25 +121,25 @@ export default function Stage1_0AboutScreen() {
                 maxWidth: '420px',
                 textAlign: 'center',
                 padding: '13px 20px',
-                background: '#ffffff',
-                border: '1.5px solid #dcdcdc',
+                background: 'var(--raised, #ffffff)',
+                border: '1.5px solid var(--border-strong, #dcdcdc)',
                 borderRadius: '14px',
                 outline: 'none',
                 fontFamily: "'Nunito', sans-serif",
                 fontSize: 'clamp(15px, 1.8vw, 17px)',
                 fontWeight: 600,
-                color: '#414242',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.03)',
+                color: 'var(--text-main, #414242)',
+                boxShadow: 'var(--shadow-soft, 0 2px 8px rgba(0, 0, 0, 0.03))',
                 boxSizing: 'border-box',
                 transition: 'all 0.2s ease',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = '#00ae9d'
-                e.target.style.boxShadow = '0 0 0 3px rgba(0, 174, 157, 0.15)'
+                e.target.style.borderColor = 'var(--dawn, #00ae9d)'
+                e.target.style.boxShadow = '0 0 0 3px var(--teal-tint, rgba(0, 174, 157, 0.15))'
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = '#dcdcdc'
-                e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.03)'
+                e.target.style.borderColor = 'var(--border-strong, #dcdcdc)'
+                e.target.style.boxShadow = 'var(--shadow-soft, 0 2px 8px rgba(0, 0, 0, 0.03))'
               }}
             />
           </div>
@@ -148,10 +149,11 @@ export default function Stage1_0AboutScreen() {
             <label style={{
               display: 'block',
               textAlign: 'center',
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               fontSize: 'clamp(13px, 1.6vw, 16px)',
               fontFamily: "'Nunito', sans-serif",
               marginBottom: '14px',
+              fontWeight: 600,
             }}>
               Which age group are you in? (Optional)
             </label>
@@ -171,12 +173,12 @@ export default function Stage1_0AboutScreen() {
                     style={{
                       padding: '8px 22px',
                       borderRadius: '999px',
-                      border: active ? '1.5px solid #00ae9d' : '1px solid #c2ceca',
-                      background: active ? '#e4f4ee' : 'rgba(255,255,255,0.6)',
-                      color: active ? '#414242' : '#3a3a3a',
+                      border: active ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--border-color, #c2ceca)',
+                      background: active ? 'var(--teal-tint, #e4f4ee)' : 'var(--raised, rgba(255,255,255,0.6))',
+                      color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #3a3a3a)',
                       fontFamily: "'Nunito', sans-serif",
                       fontSize: '14px',
-                      fontWeight: active ? 700 : 500,
+                      fontWeight: active ? 700 : 600,
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       boxShadow: active ? '0 2px 8px rgba(0,174,157,0.15)' : 'none',
@@ -194,10 +196,11 @@ export default function Stage1_0AboutScreen() {
             <label style={{
               display: 'block',
               textAlign: 'center',
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               fontSize: 'clamp(13px, 1.6vw, 16px)',
               fontFamily: "'Nunito', sans-serif",
               marginBottom: '14px',
+              fontWeight: 600,
             }}>
               What is your sex? (Optional)
             </label>
@@ -217,12 +220,12 @@ export default function Stage1_0AboutScreen() {
                     style={{
                       padding: '8px 22px',
                       borderRadius: '999px',
-                      border: active ? '1.5px solid #00ae9d' : '1px solid #c2ceca',
-                      background: active ? '#e4f4ee' : 'rgba(255,255,255,0.6)',
-                      color: active ? '#414242' : '#3a3a3a',
+                      border: active ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--border-color, #c2ceca)',
+                      background: active ? 'var(--teal-tint, #e4f4ee)' : 'var(--raised, rgba(255,255,255,0.6))',
+                      color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #3a3a3a)',
                       fontFamily: "'Nunito', sans-serif",
                       fontSize: '14px',
-                      fontWeight: active ? 700 : 500,
+                      fontWeight: active ? 700 : 600,
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       boxShadow: active ? '0 2px 8px rgba(0,174,157,0.15)' : 'none',

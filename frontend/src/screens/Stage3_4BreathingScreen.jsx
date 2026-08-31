@@ -177,7 +177,7 @@ export default function Stage3_4BreathingScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -191,7 +191,7 @@ export default function Stage3_4BreathingScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
             }}>
               Mindful Breathing
             </h1>
@@ -199,7 +199,7 @@ export default function Stage3_4BreathingScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -217,9 +217,8 @@ export default function Stage3_4BreathingScreen() {
             fontSize: '11px',
             fontWeight: 700,
             letterSpacing: '0.14em',
-            color: '#414242',
+            color: 'var(--dawn, #00ae9d)',
             textTransform: 'uppercase',
-            
             margin: '0 0 14px 0',
             width: '100%'
           }}>
@@ -249,7 +248,7 @@ export default function Stage3_4BreathingScreen() {
                   fontSize: '22px',
                   fontWeight: 700,
                   fontStyle: 'italic',
-                  color: '#414242',
+                  color: 'var(--text-main, #414242)',
                   fontFamily: "'Nunito', sans-serif",
                 }}
               >
@@ -259,7 +258,7 @@ export default function Stage3_4BreathingScreen() {
                 margin: '6px 0 0 0',
                 fontSize: '12px',
                 fontWeight: 700,
-                color: '#414242',
+                color: 'var(--text-sub, #85918e)',
                 fontFamily: '"Nunito", sans-serif',
                 letterSpacing: '0.08em',
               }}>
@@ -278,9 +277,9 @@ export default function Stage3_4BreathingScreen() {
                 fontWeight: 700,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                border: isFinished ? 'none' : '1.5px solid #00ae9d',
-                color: isFinished ? '#fff' : '#00ae9d',
-                background: isFinished ? 'var(--dawn)' : '#ffffff',
+                border: isFinished ? 'none' : '1.5px solid var(--dawn, #00ae9d)',
+                color: isFinished ? 'var(--action-text, #fff)' : 'var(--dawn, #00ae9d)',
+                background: isFinished ? 'var(--action-fill, var(--dawn))' : 'var(--raised, #ffffff)',
                 cursor: 'pointer',
               }}
             >

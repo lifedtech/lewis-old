@@ -4,6 +4,7 @@ import { useLewisStore } from '../store/useLewisStore.js'
 import { INSTRUMENTS } from '../constants/instruments.js'
 import { SCREEN_ORDER } from '../shared/constants/screenOrder.js'
 import PageTransition from '../components/PageTransition.jsx'
+import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 
 // Mobile Components
 import MobileHeader from './components/MobileHeader.jsx'
@@ -129,7 +130,8 @@ const MOBILE_SCREENS = {
 }
 
 export default function MobileApp() {
-  const { currentScreen, setScreen } = useLewisStore()
+  const { currentScreen, setScreen, theme } = useLewisStore()
+  const isDark = theme === 'dark'
   const validScreen = MOBILE_SCREENS[currentScreen] ? currentScreen : 'landing'
   const ActiveScreen = MOBILE_SCREENS[validScreen]
   const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login', 'reportReview', 'review', 'report-review'].includes(validScreen)
@@ -152,7 +154,7 @@ export default function MobileApp() {
       style={{
         width: '100%',
         minHeight: '100dvh',
-        background: '#f6fbf9',
+        background: isDark ? 'var(--bg-page, #0C1514)' : '#f6fbf9',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
@@ -162,6 +164,11 @@ export default function MobileApp() {
         WebkitOverflowScrolling: 'touch',
       }}
     >
+      {/* Dark Mode Abstract Line Background from Landing Research section */}
+      {isDark && validScreen !== 'landing' && (
+        <AbstractLineBackground variant="nodes" opacity={0.15} color="#38C9B7" />
+      )}
+
       {/* Background Dot Grid */}
       <div className="bg-dot-grid" style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
 

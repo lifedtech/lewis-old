@@ -11,7 +11,7 @@ import AbstractLineBackground from '../../components/AbstractLineBackground.jsx'
 import { initiateCheckout } from '../../lib/payment.js'
 
 export default function MobileMirrorScreen() {
-  const { setScreen, email, name, isReportUnlocked, checkReportEntitlement, fetchPaymentConfig, paymentConfig } = useLewisStore()
+  const { setScreen, email, name, isReportUnlocked, checkReportEntitlement, fetchPaymentConfig, paymentConfig, theme } = useLewisStore()
   const storeAnalysis = useLewisStore((s) => s.analysisData)
   const storeError = useLewisStore((s) => s.analysisError)
 
@@ -185,7 +185,7 @@ export default function MobileMirrorScreen() {
       exit={{ opacity: 0, y: -12 }}
       transition={{ duration: 0.35 }}
     >
-      <AbstractLineBackground variant="contours" opacity={0.07} />
+      <AbstractLineBackground variant="nodes" opacity={theme === 'dark' ? 0.15 : 0.07} color={theme === 'dark' ? '#38C9B7' : '#00ae9d'} />
 
       {/* Header */}
       <div style={{
@@ -197,7 +197,22 @@ export default function MobileMirrorScreen() {
         borderBottom: '1px solid rgba(0, 174, 157, 0.12)',
         marginBottom: '16px',
       }}>
-        <LewisLogo size={26} showText={true} />
+        <div
+          onClick={() => setScreen('landing')}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          role="button"
+          tabIndex={0}
+          title="Go to Home"
+          aria-label="Go to Home"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setScreen('landing')
+            }
+          }}
+        >
+          <LewisLogo size={26} showText={true} />
+        </div>
       </div>
 
       {/* Main Column Layout for Mobile */}

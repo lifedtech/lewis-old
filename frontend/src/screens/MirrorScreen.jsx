@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
+import ThemeToggle from '../components/ThemeToggle.jsx'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
 import { buildClientFallbackAnalysis } from '../lib/scoring.js'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts'
@@ -13,7 +14,7 @@ import { initiateCheckout } from '../lib/payment.js'
 import './landing.css'
 
 export default function MirrorScreen() {
-  const { setScreen, email, name, isReportUnlocked, checkReportEntitlement, fetchPaymentConfig, paymentConfig } = useLewisStore()
+  const { setScreen, email, name, isReportUnlocked, checkReportEntitlement, fetchPaymentConfig, paymentConfig, theme } = useLewisStore()
   const storeAnalysis = useLewisStore((s) => s.analysisData)
   const storeError = useLewisStore((s) => s.analysisError)
 
@@ -156,19 +157,21 @@ export default function MirrorScreen() {
 
   return (
     <motion.div
+      data-theme={theme || 'light'}
+      className={`mirror-screen-main ${theme === 'dark' ? 'dark' : ''}`}
       style={{
         position: 'fixed',
         inset: 0,
         width: '100vw',
         height: '100vh',
-        background: '#ffffff',
+        overflow: 'hidden',
+        background: 'var(--lp-page-bg, #ffffff)',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden',
         boxSizing: 'border-box',
         padding: 'clamp(10px, 1.6vh, 20px) clamp(16px, 3.5vw, 48px)',
         fontFamily: "'Nunito', system-ui, sans-serif",
-        color: '#414242',
+        color: 'var(--lp-text-primary, #414242)',
         zIndex: 50,
       }}
       initial={{ opacity: 0 }}
@@ -176,19 +179,35 @@ export default function MirrorScreen() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <AbstractLineBackground variant="contours" opacity={0.08} />
+      <AbstractLineBackground variant="nodes" opacity={theme === 'dark' ? 0.15 : 0.08} color={theme === 'dark' ? '#38C9B7' : '#00ae9d'} />
 
-      {/* ── HEADER (Top-Left Corner) ── */}
+      {/* ── HEADER (Top Bar with Logo & Theme Toggle) ── */}
       <header style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         width: '100%',
         paddingBottom: 'clamp(6px, 1.2vh, 14px)',
         flexShrink: 0,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div
+          onClick={() => setScreen('landing')}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
+          role="button"
+          tabIndex={0}
+          title="Go to Home"
+          aria-label="Go to Home"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setScreen('landing')
+            }
+          }}
+        >
           <LewisLogo size={30} showText={true} />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -222,7 +241,7 @@ export default function MirrorScreen() {
               lineHeight: 1.15,
               fontWeight: 800,
               letterSpacing: '-0.025em',
-              color: '#414242',
+              color: 'var(--lp-text-primary, #414242)',
               fontFamily: "'Nunito', sans-serif",
             }}>
               Your reflection is ready.
@@ -231,7 +250,7 @@ export default function MirrorScreen() {
               margin: 0,
               fontSize: 'clamp(15px, 1.35vw, 17px)',
               lineHeight: 1.4,
-              color: '#657370',
+              color: 'var(--lp-text-secondary, #657370)',
               fontWeight: 500,
             }}>
               Nine areas of your life, read together. This is where you are right now.
@@ -240,7 +259,7 @@ export default function MirrorScreen() {
 
           {/* Graph Card from Image 1 */}
           <div style={{
-            background: '#ebf4f1',
+            background: 'var(--lp-card, #ebf4f1)',
             borderRadius: '20px',
             padding: 'clamp(12px, 1.8vh, 18px) clamp(14px, 2vw, 20px)',
             display: 'flex',
@@ -248,26 +267,27 @@ export default function MirrorScreen() {
             alignItems: 'center',
             justifyContent: 'center',
             boxSizing: 'border-box',
-            border: '1px solid rgba(0, 174, 157, 0.12)',
+            border: '1px solid var(--lp-card-border, rgba(0, 174, 157, 0.12))',
+            boxShadow: 'var(--lp-shadow, 0 4px 16px rgba(0,0,0,0.04))',
             position: 'relative',
           }}>
             {/* Resilience Radar Chart */}
             <div style={{ width: '100%', height: 'clamp(170px, 26vh, 230px)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="72%" data={chartData}>
-                  <PolarGrid stroke="rgba(0, 174, 157, 0.16)" />
+                  <PolarGrid stroke={theme === 'dark' ? 'rgba(56, 201, 183, 0.22)' : 'rgba(0, 174, 157, 0.16)'} />
                   <PolarAngleAxis
                     dataKey="subject"
-                    tick={{ fill: '#414242', fontSize: 11.5, fontWeight: 700, letterSpacing: '0.01em' }}
+                    tick={{ fill: theme === 'dark' ? '#E9F1EF' : '#414242', fontSize: 11.5, fontWeight: 700, letterSpacing: '0.01em' }}
                   />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                   <Radar
                     name="Reflection"
                     dataKey="A"
-                    stroke="#00ae9d"
+                    stroke="var(--lp-brand-text, #00ae9d)"
                     strokeWidth={2.4}
-                    fill="#00ae9d"
-                    fillOpacity={0.32}
+                    fill="var(--lp-brand-text, #00ae9d)"
+                    fillOpacity={theme === 'dark' ? 0.38 : 0.32}
                   />
                 </RadarChart>
               </ResponsiveContainer>
@@ -280,7 +300,7 @@ export default function MirrorScreen() {
               margin: '0 0 4px 0',
               fontSize: 'clamp(17px, 1.55vw, 20px)',
               fontWeight: 800,
-              color: '#414242',
+              color: 'var(--lp-text-primary, #414242)',
               fontFamily: "'Nunito', sans-serif",
             }}>
               Steady, but uneven.
@@ -289,7 +309,7 @@ export default function MirrorScreen() {
               margin: 0,
               fontSize: 'clamp(14.5px, 1.25vw, 16px)',
               lineHeight: 1.48,
-              color: '#657370',
+              color: 'var(--lp-text-secondary, #657370)',
             }}>
               Three areas are under pressure and one is running on empty, while your agency and work are holding you up. This describes the season you are in, not the kind of person you are.
             </p>
@@ -310,7 +330,7 @@ export default function MirrorScreen() {
             margin: '0 0 clamp(8px, 1.4vh, 12px) 0',
             fontSize: 'clamp(16px, 1.5vw, 19px)',
             fontWeight: 800,
-            color: '#414242',
+            color: 'var(--lp-text-primary, #414242)',
             lineHeight: 1.3,
             fontFamily: "'Nunito', sans-serif",
           }}>
@@ -328,24 +348,24 @@ export default function MirrorScreen() {
               <div
                 key={card.title}
                 style={{
-                  background: '#f8faf9',
+                  background: 'var(--lp-raised, #f8faf9)',
                   borderRadius: '12px',
                   padding: 'clamp(10px, 1.4vh, 14px) clamp(10px, 1.2vw, 14px)',
-                  border: '1px solid rgba(22, 36, 31, 0.06)',
+                  border: '1px solid var(--lp-border, rgba(22, 36, 31, 0.06))',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '3px',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-brand-text, #00ae9d)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                   </svg>
                   <span className="mirror-card-title" style={{
                     fontSize: 'clamp(14px, 1.2vw, 15.5px)',
                     fontWeight: 800,
-                    color: '#414242',
+                    color: 'var(--lp-text-primary, #414242)',
                     lineHeight: 1.2,
                   }}>
                     {card.title}
@@ -355,7 +375,7 @@ export default function MirrorScreen() {
                   margin: 0,
                   fontSize: 'clamp(12.5px, 1.05vw, 13.5px)',
                   lineHeight: 1.38,
-                  color: '#657370',
+                  color: 'var(--lp-text-secondary, #657370)',
                   fontWeight: 500,
                 }}>
                   {card.desc}
@@ -368,7 +388,7 @@ export default function MirrorScreen() {
           <p className="mirror-pages-desc" style={{
             margin: '0 0 clamp(8px, 1.4vh, 12px) 0',
             fontSize: 'clamp(13.5px, 1.1vw, 14.5px)',
-            color: '#85918e',
+            color: 'var(--lp-text-muted, #85918e)',
             fontWeight: 600,
           }}>
             Twenty-five pages, with every measure and study named in full. Yours to keep.
@@ -376,11 +396,11 @@ export default function MirrorScreen() {
 
           {/* Unlock Box */}
           <div style={{
-            background: '#ffffff',
+            background: 'var(--lp-card, #ffffff)',
             borderRadius: '16px',
-            border: isReportUnlocked ? '1.5px solid #00ae9d' : '1.5px solid rgba(0, 174, 157, 0.35)',
+            border: isReportUnlocked ? '1.5px solid var(--lp-brand-text, #00ae9d)' : '1.5px solid var(--lp-border-strong, rgba(0, 174, 157, 0.35))',
             padding: 'clamp(14px, 2vh, 20px) clamp(16px, 2vw, 24px)',
-            boxShadow: isReportUnlocked ? '0 6px 22px rgba(0, 174, 157, 0.12)' : '0 6px 20px rgba(0, 174, 157, 0.08)',
+            boxShadow: isReportUnlocked ? 'var(--lp-card-hover-shadow)' : 'var(--lp-shadow)',
             textAlign: 'center',
             boxSizing: 'border-box',
           }}>
@@ -432,7 +452,7 @@ export default function MirrorScreen() {
                   margin: 0,
                   fontSize: 'clamp(14px, 1.2vw, 15.5px)',
                   fontWeight: 700,
-                  color: '#414242',
+                  color: 'var(--lp-text-primary, #414242)',
                 }}>
                   ₹749, inclusive of all taxes. One-time payment, no subscription.
                 </p>
@@ -442,7 +462,7 @@ export default function MirrorScreen() {
                   whileTap={{ scale: 0.985 }}
                   onClick={handleGetReport}
                   disabled={isUnlocking}
-                  className="mirror-unlock-btn"
+                  className="mirror-unlock-btn btn-primary"
                   style={{
                     marginTop: 'clamp(8px, 1.2vh, 10px)',
                     width: '100%',
@@ -455,7 +475,7 @@ export default function MirrorScreen() {
                     border: 'none',
                     cursor: isUnlocking ? 'wait' : 'pointer',
                     boxShadow: '0 4px 16px rgba(0, 174, 157, 0.32)',
-                    transition: 'background 0.2s',
+                    transition: 'all 0.2s ease',
                     fontFamily: "'Nunito', sans-serif",
                     opacity: isUnlocking ? 0.85 : 1,
                   }}
@@ -468,7 +488,7 @@ export default function MirrorScreen() {
                 <p className="mirror-unlock-note" style={{
                   margin: 'clamp(6px, 1vh, 8px) 0 0 0',
                   fontSize: 'clamp(12px, 1vw, 13px)',
-                  color: '#85918e',
+                  color: 'var(--lp-text-muted, #85918e)',
                   lineHeight: 1.35,
                 }}>
                   Your personalised insight report is sent directly to your email. Pay via UPI, Card, or Netbanking.

@@ -24,13 +24,13 @@ export default function Stage3_2BodyMapScreen() {
   const getZoneFill = (id) => {
     if (isSelected(id)) return 'url(#somaticActiveGrad)'
     if (hoveredZone === id) return 'url(#somaticHoverGrad)'
-    return '#ffffff'
+    return 'var(--raised, #ffffff)'
   }
 
   const getZoneStroke = (id) => {
-    if (isSelected(id)) return '#00ae9d'
-    if (hoveredZone === id) return '#00ae9d'
-    return '#94a3b8'
+    if (isSelected(id)) return 'var(--dawn, #00ae9d)'
+    if (hoveredZone === id) return 'var(--dawn, #00ae9d)'
+    return 'var(--border-strong, #94a3b8)'
   }
 
   const getZoneStrokeWidth = (id) => {
@@ -66,7 +66,7 @@ export default function Stage3_2BodyMapScreen() {
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: '#414242',
+              color: 'var(--dawn, #00ae9d)',
               textTransform: 'uppercase',
               margin: '0 0 10px 0',
               lineHeight: 1.3,
@@ -80,7 +80,7 @@ export default function Stage3_2BodyMapScreen() {
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
-              color: '#414242',
+              color: 'var(--text-main, #414242)',
               textAlign: 'left',
             }}>
               Body Tension Map
@@ -89,7 +89,7 @@ export default function Stage3_2BodyMapScreen() {
               margin: '10px 0 0 0',
               fontSize: '15px',
               fontWeight: 700,
-              color: '#414242',
+              color: 'var(--text-sub, #657370)',
               fontFamily: "'Nunito', sans-serif",
               lineHeight: 1.5,
               maxWidth: '350px',
@@ -108,14 +108,14 @@ export default function Stage3_2BodyMapScreen() {
             marginTop: '12px',
           }}>
             <div style={{
-              background: '#f2f9f6',
+              background: 'var(--raised, #f2f9f6)',
               borderRadius: '24px',
-              border: '1.5px solid #d2e7e0',
+              border: '1.5px solid var(--border-color, #d2e7e0)',
               padding: '16px 28px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              boxShadow: '0 6px 24px rgba(0, 174, 157, 0.08)',
+              boxShadow: 'var(--shadow-soft, 0 6px 24px rgba(0, 174, 157, 0.08))',
               position: 'relative',
             }}>
               <svg
@@ -328,15 +328,15 @@ export default function Stage3_2BodyMapScreen() {
                     width: '100%',
                     padding: '14px 16px',
                     borderRadius: '14px',
-                    border: active ? '1.5px solid #00ae9d' : (hovered ? '1.5px solid #a7f3d0' : '1.5px solid #d2e7e0'),
-                    background: active ? '#e4f4ee' : (hovered ? '#f4faf7' : '#ffffff'),
-                    color: active ? '#1b4d43' : '#414242',
+                    border: active ? '1.5px solid var(--dawn, #00ae9d)' : (hovered ? '1.5px solid var(--dawn, #a7f3d0)' : '1.5px solid var(--border-color, #d2e7e0)'),
+                    background: active ? 'var(--teal-tint, #e4f4ee)' : (hovered ? 'var(--teal-tint, #f4faf7)' : 'var(--raised, #ffffff)'),
+                    color: active ? 'var(--dawn, #1b4d43)' : 'var(--text-main, #414242)',
                     fontFamily: "'Nunito', sans-serif",
                     fontSize: '14px',
                     fontWeight: active ? 700 : 600,
                     cursor: 'pointer',
                     transition: 'all 0.18s ease',
-                    boxShadow: active ? '0 3px 10px rgba(0,174,157,0.16)' : '0 1px 4px rgba(0,0,0,0.03)',
+                    boxShadow: active ? '0 3px 10px rgba(0,174,157,0.16)' : 'none',
                     boxSizing: 'border-box',
                     textAlign: 'left',
                   }}
@@ -345,19 +345,19 @@ export default function Stage3_2BodyMapScreen() {
                     width: '18px',
                     height: '18px',
                     borderRadius: '50%',
-                    border: active ? '2px solid #00ae9d' : '2px solid #c2ceca',
-                    background: active ? '#00ae9d' : '#ffffff',
+                    border: active ? '2px solid var(--dawn, #00ae9d)' : '2px solid var(--border-strong, #c2ceca)',
+                    background: active ? 'var(--dawn, #00ae9d)' : 'var(--card-bg, #ffffff)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                     transition: 'all 0.18s ease',
                   }}>
-                    {active && <span style={{ color: '#ffffff', fontSize: '10px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
+                    {active && <span style={{ color: 'var(--action-text, #ffffff)', fontSize: '10px', fontWeight: 800, lineHeight: 1 }}>✓</span>}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <span style={{ lineHeight: 1.25, fontWeight: active ? 800 : 700, fontSize: '13.5px' }}>{z.label}</span>
-                    <span style={{ fontSize: '11px', color: active ? '#017a6f' : '#64748b', fontWeight: 600 }}>{z.subtitle}</span>
+                    <span style={{ lineHeight: 1.25, fontWeight: active ? 800 : 700, fontSize: '13.5px', color: active ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #414242)' }}>{z.label}</span>
+                    <span style={{ fontSize: '11px', color: active ? 'var(--dawn, #017a6f)' : 'var(--text-sub, #64748b)', fontWeight: 600 }}>{z.subtitle}</span>
                   </div>
                 </button>
               )

@@ -22,9 +22,9 @@ export default function MobileQuestionOption({
         minHeight: '48px',
         padding: '12px 14px',
         borderRadius: '14px',
-        border: selected ? '1.5px solid #00ae9d' : '1.5px solid rgba(0, 174, 157, 0.18)',
-        background: selected ? '#e6f7f2' : '#ffffff',
-        color: '#414242',
+        border: selected ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-color, rgba(0, 174, 157, 0.18))',
+        background: selected ? 'var(--teal-tint, #e6f7f2)' : 'var(--raised, #ffffff)',
+        color: 'var(--text-main, #414242)',
         cursor: 'pointer',
         textAlign: 'left',
         boxSizing: 'border-box',
@@ -39,8 +39,8 @@ export default function MobileQuestionOption({
         width: '20px',
         height: '20px',
         borderRadius: multiSelect ? '6px' : '50%',
-        border: selected ? '2px solid #00ae9d' : '2px solid #cbd5e1',
-        background: selected ? '#00ae9d' : '#ffffff',
+        border: selected ? '2px solid var(--dawn, #00ae9d)' : '2px solid var(--border-strong, #cbd5e1)',
+        background: selected ? 'var(--dawn, #00ae9d)' : 'var(--card-bg, #ffffff)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -48,7 +48,7 @@ export default function MobileQuestionOption({
         transition: 'all 0.15s ease',
       }}>
         {selected && (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--action-text, #ffffff)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         )}
@@ -62,7 +62,7 @@ export default function MobileQuestionOption({
             fontWeight: selected ? 700 : 600,
             fontFamily: "'Nunito', sans-serif",
             lineHeight: 1.35,
-            color: selected ? '#1b4d43' : '#414242',
+            color: selected ? 'var(--dawn, #1b4d43)' : 'var(--text-main, #414242)',
             overflowWrap: 'break-word',
             wordBreak: 'break-word',
           }}>
@@ -72,7 +72,7 @@ export default function MobileQuestionOption({
         {subtitle && (
           <span style={{
             fontSize: '11.5px',
-            color: selected ? '#2d5a50' : '#85918e',
+            color: selected ? 'var(--dawn, #2d5a50)' : 'var(--text-sub, #85918e)',
             fontFamily: "'Nunito', sans-serif",
             marginTop: '2px',
             lineHeight: 1.35,

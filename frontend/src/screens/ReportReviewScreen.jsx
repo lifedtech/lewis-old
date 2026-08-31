@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import LewisLogo from '../components/LewisLogo.jsx'
+import ThemeToggle from '../components/ThemeToggle.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
 import AbstractLineBackground from '../components/AbstractLineBackground.jsx'
 
 const NUNITO = "'Nunito', system-ui, sans-serif"
-const TEAL = '#00ae9d'
-const INK = '#1e293b'
+const TEAL = 'var(--dawn, #00ae9d)'
+const INK = 'var(--text, #1e293b)'
 
 const RATING_LABELS = {
   1: 'Needs improvement',
@@ -44,7 +45,8 @@ export default function ReportReviewScreen() {
     email: storeEmail,
     name: storeName,
     latestPaymentOrder,
-    analysisData
+    analysisData,
+    theme
   } = useLewisStore()
 
   // Parse URL search params if present
@@ -140,7 +142,7 @@ export default function ReportReviewScreen() {
       boxSizing: 'border-box',
       position: 'relative',
     }}>
-      <AbstractLineBackground variant="contours" opacity={0.05} />
+      <AbstractLineBackground variant="nodes" opacity={theme === 'dark' ? 0.15 : 0.05} color={theme === 'dark' ? '#38C9B7' : '#00ae9d'} />
 
       {/* Header */}
       <header style={{
@@ -153,22 +155,40 @@ export default function ReportReviewScreen() {
         position: 'relative',
         zIndex: 10,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          onClick={() => setScreen('landing')}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          role="button"
+          tabIndex={0}
+          title="Go to Home"
+          aria-label="Go to Home"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setScreen('landing')
+            }
+          }}
+        >
           <LewisLogo size={32} showText={true} animated={false} />
         </div>
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <ThemeToggle />
           <button
             type="button"
+            className="landing-back-home-btn"
             onClick={() => setScreen('landing')}
             style={{
               background: 'transparent',
+              backgroundColor: 'transparent',
               border: 'none',
-              color: '#64748b',
+              color: 'var(--text-mute, #64748b)',
               fontSize: '13px',
               fontWeight: 700,
               cursor: 'pointer',
               padding: '6px 12px',
               fontFamily: NUNITO,
+              outline: 'none',
+              boxShadow: 'none',
             }}
           >
             ← Back to Home
@@ -195,10 +215,10 @@ export default function ReportReviewScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
           style={{
-            background: '#ffffff',
+            background: 'var(--panel, #ffffff)',
             borderRadius: '24px',
-            border: '1.5px solid rgba(0, 174, 157, 0.22)',
-            boxShadow: '0 16px 40px rgba(0, 174, 157, 0.08), 0 4px 16px rgba(0,0,0,0.02)',
+            border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.22))',
+            boxShadow: 'var(--shadow-soft, 0 16px 40px rgba(0, 174, 157, 0.08))',
             padding: 'clamp(24px, 4vw, 40px)',
             boxSizing: 'border-box',
             width: '100%',
