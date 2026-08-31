@@ -6,8 +6,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "routes": [
-    { "pattern": "lewiswellbeing.com/*", "custom_domain": true },
-    { "pattern": "www.lewiswellbeing.com/*", "custom_domain": true }
+    { "pattern": "lewiswellbeing.com", "custom_domain": true },
+    { "pattern": "www.lewiswellbeing.com", "custom_domain": true }
   ],
   "assets": {
     "directory": "./dist",
