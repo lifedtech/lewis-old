@@ -137,7 +137,8 @@ export default function Stage7_5PlannerScreen() {
 
           {/* 3 Stacked Option Cards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-            {options.map(opt => {
+            {(options || []).filter(Boolean).map(opt => {
+              if (!opt?.id) return null
               const selected = plannerReadiness === opt.id
               return (
                 <motion.button

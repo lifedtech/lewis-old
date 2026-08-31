@@ -309,51 +309,84 @@ export default function MobileMirrorScreen() {
           boxShadow: isReportUnlocked ? '0 6px 20px rgba(0, 174, 157, 0.12)' : '0 4px 16px rgba(0, 174, 157, 0.08)',
           textAlign: 'center',
         }}>
-          <p style={{ 
-            margin: '0 0 8px 0', 
-            fontSize: '12.5px', 
-            fontWeight: 700, 
-            color: isReportUnlocked ? '#007064' : '#414242' 
-          }}>
-            {isReportUnlocked 
-              ? '✓ Verified Entitlement · Personalised Insight Report Unlocked' 
-              : `₹749, inclusive of all taxes. One-time payment, no subscription.`}
-          </p>
+          {isReportUnlocked ? (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 0',
+            }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: '#00ae9d',
+                fontWeight: 800,
+                fontSize: '14.5px',
+              }}>
+                <span style={{ fontSize: '18px' }}>✓</span>
+                <span>Insight Report Delivered</span>
+              </div>
+              <p style={{ margin: '2px 0 12px 0', fontSize: '12.5px', color: '#52605d', lineHeight: 1.45, textAlign: 'center' }}>
+                Your complete 25-page Insight Report has been compiled and emailed directly with the PDF attached.
+              </p>
+              <button
+                onClick={() => setScreen('reportReview')}
+                style={{
+                  padding: '10px 22px',
+                  fontSize: '13.5px',
+                  fontWeight: 700,
+                  borderRadius: '999px',
+                  background: '#00ae9d',
+                  color: '#ffffff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: "'Nunito', sans-serif",
+                }}
+              >
+                Rate Your Experience ★
+              </button>
+            </div>
+          ) : (
+            <>
+              <p style={{ 
+                margin: '0 0 8px 0', 
+                fontSize: '12.5px', 
+                fontWeight: 700, 
+                color: '#414242' 
+              }}>
+                ₹749, inclusive of all taxes. One-time payment, no subscription.
+              </p>
 
-          <button
-            onClick={handleGetReport}
-            disabled={isDownloading || isUnlocking}
-            style={{
-              width: '100%',
-              padding: '13px 18px',
-              fontSize: '14.5px',
-              fontWeight: 700,
-              borderRadius: '999px',
-              background: isReportUnlocked ? 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)' : '#00ae9d',
-              color: '#ffffff',
-              border: 'none',
-              cursor: (isDownloading || isUnlocking) ? 'wait' : 'pointer',
-              boxShadow: '0 4px 16px rgba(0, 174, 157, 0.32)',
-              fontFamily: "'Nunito', sans-serif",
-              opacity: (isDownloading || isUnlocking) ? 0.85 : 1,
-            }}
-          >
-            {isUnlocking 
-              ? 'Preparing report & opening checkout...' 
-              : (isDownloading 
-                  ? '✓ Payment Verified! Downloading personalised report...' 
-                  : (downloadSuccess 
-                      ? '✓ Report Downloaded! (Click to re-download)' 
-                      : (isReportUnlocked 
-                          ? 'Download Personalised Report (PDF)' 
-                          : 'Unlock your insight report at ₹749')))}
-          </button>
+              <button
+                onClick={handleGetReport}
+                disabled={isUnlocking}
+                style={{
+                  width: '100%',
+                  padding: '13px 18px',
+                  fontSize: '14.5px',
+                  fontWeight: 700,
+                  borderRadius: '999px',
+                  background: '#00ae9d',
+                  color: '#ffffff',
+                  border: 'none',
+                  cursor: isUnlocking ? 'wait' : 'pointer',
+                  boxShadow: '0 4px 16px rgba(0, 174, 157, 0.32)',
+                  fontFamily: "'Nunito', sans-serif",
+                  opacity: isUnlocking ? 0.85 : 1,
+                }}
+              >
+                {isUnlocking 
+                  ? 'Preparing report & opening checkout...' 
+                  : 'Unlock your insight report at ₹749'}
+              </button>
 
-          <p style={{ margin: '6px 0 0 0', fontSize: '10.5px', color: '#85918e', lineHeight: 1.35 }}>
-            {isReportUnlocked 
-              ? 'High-resolution vector PDF generated from your validated biometric & psychological data.'
-              : 'Instant automatic PDF download upon payment. Pay via UPI, Card, Netbanking or Wallet.'}
-          </p>
+              <p style={{ margin: '6px 0 0 0', fontSize: '10.5px', color: '#85918e', lineHeight: 1.35 }}>
+                Your personalised report is sent directly to your email. Pay via UPI, Card, Netbanking or Wallet.
+              </p>
+            </>
+          )}
         </div>
 
         <p style={{ margin: '0', fontSize: '11px', color: '#85918e', textAlign: 'center' }}>

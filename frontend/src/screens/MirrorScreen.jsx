@@ -374,65 +374,107 @@ export default function MirrorScreen() {
             Twenty-five pages, with every measure and study named in full. Yours to keep.
           </p>
 
-          {/* Unlock Box from Image 2 */}
+          {/* Unlock Box */}
           <div style={{
-            background: isReportUnlocked ? 'linear-gradient(180deg, #ffffff 0%, #f2faf8 100%)' : '#ffffff',
+            background: '#ffffff',
             borderRadius: '16px',
             border: isReportUnlocked ? '1.5px solid #00ae9d' : '1.5px solid rgba(0, 174, 157, 0.35)',
-            padding: 'clamp(12px, 1.8vh, 18px) clamp(16px, 2vw, 22px)',
-            boxShadow: isReportUnlocked ? '0 6px 22px rgba(0, 174, 157, 0.14)' : '0 6px 20px rgba(0, 174, 157, 0.08)',
+            padding: 'clamp(14px, 2vh, 20px) clamp(16px, 2vw, 24px)',
+            boxShadow: isReportUnlocked ? '0 6px 22px rgba(0, 174, 157, 0.12)' : '0 6px 20px rgba(0, 174, 157, 0.08)',
             textAlign: 'center',
             boxSizing: 'border-box',
           }}>
-            <p className="mirror-unlock-title" style={{
-              margin: 0,
-              fontSize: 'clamp(14px, 1.2vw, 15.5px)',
-              fontWeight: 700,
-              color: isReportUnlocked ? '#007064' : '#414242',
-            }}>
-              {isReportUnlocked 
-                ? '✓ Payment Confirmed · Personalised Report Preparing' 
-                : `₹749, inclusive of all taxes. One-time payment, no subscription.`}
-            </p>
+            {isReportUnlocked ? (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '4px 0',
+              }}>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  color: '#00ae9d',
+                  fontWeight: 800,
+                  fontSize: 'clamp(15px, 1.25vw, 17px)',
+                }}>
+                  <span style={{ fontSize: '20px' }}>✓</span>
+                  <span>Insight Report Delivered</span>
+                </div>
+                <p style={{ margin: '2px 0 14px 0', fontSize: '13.5px', color: '#52605d', lineHeight: 1.5, textAlign: 'center' }}>
+                  Your complete 25-page Insight Report has been compiled and emailed directly with the PDF attached.
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setScreen('reportReview')}
+                  style={{
+                    padding: '11px 26px',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    borderRadius: '999px',
+                    background: '#00ae9d',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontFamily: "'Nunito', sans-serif",
+                    boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
+                  }}
+                >
+                  Rate Your Experience ★
+                </motion.button>
+              </div>
+            ) : (
+              <>
+                <p className="mirror-unlock-title" style={{
+                  margin: 0,
+                  fontSize: 'clamp(14px, 1.2vw, 15.5px)',
+                  fontWeight: 700,
+                  color: '#414242',
+                }}>
+                  ₹749, inclusive of all taxes. One-time payment, no subscription.
+                </p>
 
-            <motion.button
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
-              onClick={handleGetReport}
-              disabled={isDownloading || isUnlocking}
-              className="mirror-unlock-btn"
-              style={{
-                marginTop: 'clamp(8px, 1.2vh, 10px)',
-                width: '100%',
-                padding: 'clamp(12px, 1.6vh, 15px) 20px',
-                fontSize: 'clamp(16px, 1.35vw, 18px)',
-                fontWeight: 700,
-                borderRadius: '999px',
-                background: isReportUnlocked ? 'linear-gradient(135deg, #00ae9d 0%, #008f81 100%)' : '#00ae9d',
-                color: '#ffffff',
-                border: 'none',
-                cursor: (isDownloading || isUnlocking) ? 'wait' : 'pointer',
-                boxShadow: '0 4px 16px rgba(0, 174, 157, 0.32)',
-                transition: 'background 0.2s',
-                fontFamily: "'Nunito', sans-serif",
-                opacity: (isDownloading || isUnlocking) ? 0.85 : 1,
-              }}
-            >
-              {isReportUnlocked 
-                ? 'View Report Delivery Status' 
-                : 'Unlock your insight report at ₹749'}
-            </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  onClick={handleGetReport}
+                  disabled={isUnlocking}
+                  className="mirror-unlock-btn"
+                  style={{
+                    marginTop: 'clamp(8px, 1.2vh, 10px)',
+                    width: '100%',
+                    padding: 'clamp(12px, 1.6vh, 15px) 20px',
+                    fontSize: 'clamp(16px, 1.35vw, 18px)',
+                    fontWeight: 700,
+                    borderRadius: '999px',
+                    background: '#00ae9d',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: isUnlocking ? 'wait' : 'pointer',
+                    boxShadow: '0 4px 16px rgba(0, 174, 157, 0.32)',
+                    transition: 'background 0.2s',
+                    fontFamily: "'Nunito', sans-serif",
+                    opacity: isUnlocking ? 0.85 : 1,
+                  }}
+                >
+                  {isUnlocking 
+                    ? 'Preparing report & opening checkout...' 
+                    : 'Unlock your insight report at ₹749'}
+                </motion.button>
 
-            <p className="mirror-unlock-note" style={{
-              margin: 'clamp(6px, 1vh, 8px) 0 0 0',
-              fontSize: 'clamp(12px, 1vw, 13px)',
-              color: '#85918e',
-              lineHeight: 1.35,
-            }}>
-              {isReportUnlocked 
-                ? 'Your report is being verified and will be delivered directly to your email inbox within 5–10 minutes.'
-                : 'Your personalised insight report is sent to your email after manual verification. Pay via UPI, Card, or Netbanking.'}
-            </p>
+                <p className="mirror-unlock-note" style={{
+                  margin: 'clamp(6px, 1vh, 8px) 0 0 0',
+                  fontSize: 'clamp(12px, 1vw, 13px)',
+                  color: '#85918e',
+                  lineHeight: 1.35,
+                }}>
+                  Your personalised insight report is sent directly to your email. Pay via UPI, Card, or Netbanking.
+                </p>
+              </>
+            )}
           </div>
 
           {/* Footer note */}

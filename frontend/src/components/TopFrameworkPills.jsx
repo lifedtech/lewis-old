@@ -205,7 +205,7 @@ function PillIcon({ name, size = 14, color = 'currentColor' }) {
 
 export default function TopFrameworkPills({ onExploreMethodology }) {
   const [selectedId, setSelectedId] = useState(null)
-  const selectedItem = FRAMEWORKS.find((f) => f.id === selectedId)
+  const selectedItem = (FRAMEWORKS || []).find((f) => f && f.id === selectedId)
 
   const handleToggle = (id) => {
     setSelectedId((prev) => (prev === id ? null : id))
@@ -260,7 +260,8 @@ export default function TopFrameworkPills({ onExploreMethodology }) {
             Research Informed:
           </span>
 
-          {FRAMEWORKS.map((item) => {
+          {(FRAMEWORKS || []).filter(Boolean).map((item) => {
+            if (!item?.id) return null
             const isSelected = selectedId === item.id
             return (
               <motion.button

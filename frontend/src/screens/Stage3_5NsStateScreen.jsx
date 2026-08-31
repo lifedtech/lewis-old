@@ -156,8 +156,9 @@ export default function Stage3_5NsStateScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start', width: '100%' }}>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-            {states.map(s => {
-              const active = nervousSystemState === s.id
+            {(states || []).filter(Boolean).map(s => {
+              const active = s?.id ? nervousSystemState === s.id : false
+              if (!s?.id) return null
               return (
                 <button
                   key={s.id}

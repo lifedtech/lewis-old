@@ -34,8 +34,9 @@ export default function Stage6SharingScreen() {
     }, 240)
   }
 
-  const currentItem = questions[step]
-  const currentAnswer = everydaySharing?.[currentItem.id]
+  const safeStep = Math.max(0, Math.min(step, questions.length - 1))
+  const currentItem = questions[safeStep] || questions[0]
+  const currentAnswer = currentItem?.id ? everydaySharing?.[currentItem.id] : undefined
 
   return (
     <motion.div

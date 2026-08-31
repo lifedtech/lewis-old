@@ -10,14 +10,17 @@ export default function MobileInstrumentScreen({ id }) {
   const answers = useLewisStore((s) => (spec?.slice ? s[spec.slice] : undefined)) || {}
   const [step, setStep] = useState(0)
 
-  if (!spec) return null
+  if (!spec || !spec.items || spec.items.length === 0) return null
 
   const last = spec.items.length - 1
-  const item = spec.items[step]
-  const currentAnswer = answers?.[item?.id]
+  const safeStep = Math.max(0, Math.min(step, last))
+  const item = spec.items[safeStep] || spec.items[0] || {}
+  const currentAnswer = item.id ? answers?.[item.id] : undefined
 
   const handleSelect = (val) => {
-    setScaleAnswer(spec.slice, item.id, val)
+    if (item.id) {
+      setScaleAnswer(spec.slice, item.id, val)
+    }
     if (step < last) {
       setTimeout(() => setStep(step + 1), 220)
     } else {
@@ -25,9 +28,9 @@ export default function MobileInstrumentScreen({ id }) {
     }
   }
 
-  const pct = Math.round(((step + 1) / spec.items.length) * 100)
-  const activeScale = item.scale ?? spec.scale
-  const activeHint = item.hint ?? spec.hint
+  const pct = Math.round(((safeStep + 1) / spec.items.length) * 100)
+  const activeScale = item.scale ?? spec.scale ?? []
+  const activeHint = item.hint ?? spec.hint ?? ''
 
   const titleText = Array.isArray(spec.title) ? spec.title.join(' ') : (spec.title || 'Assessment')
 

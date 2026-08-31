@@ -311,7 +311,8 @@ export default function Stage3_2BodyMapScreen() {
             gap: '10px',
             width: '100%',
           }}>
-            {zones.map(z => {
+            {(zones || []).filter(Boolean).map(z => {
+              if (!z?.id) return null
               const active = isSelected(z.id)
               const hovered = hoveredZone === z.id
               return (

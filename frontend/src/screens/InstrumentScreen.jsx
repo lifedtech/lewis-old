@@ -20,16 +20,21 @@ const eyebrowStyle = {
 export default function InstrumentScreen({ id }) {
   const spec = INSTRUMENTS[id]
   const { setScreen, setScaleAnswer } = useLewisStore()
-  const answers = useLewisStore((s) => s[spec.slice])
+  const answers = useLewisStore((s) => (spec?.slice ? s[spec.slice] : undefined)) || {}
   const [step, setStep] = useState(0)
 
+  if (!spec || !spec.items || spec.items.length === 0) return null
+
   const last = spec.items.length - 1
-  const item = spec.items[step]
-  const scale = item.scale || spec.scale
-  const answer = answers?.[item.id]
+  const safeStep = Math.max(0, Math.min(step, last))
+  const item = spec.items[safeStep] || spec.items[0] || {}
+  const scale = item.scale || spec.scale || []
+  const answer = item.id ? answers?.[item.id] : undefined
 
   const handleSelect = (val) => {
-    setScaleAnswer(spec.slice, item.id, val)
+    if (item.id) {
+      setScaleAnswer(spec.slice, item.id, val)
+    }
     if (step < last) {
       setTimeout(() => setStep(step + 1), 220)
     } else {
@@ -37,7 +42,7 @@ export default function InstrumentScreen({ id }) {
     }
   }
 
-  const pct = Math.round(((step + 1) / spec.items.length) * 100)
+  const pct = Math.round(((safeStep + 1) / spec.items.length) * 100)
 
   return (
     <motion.div

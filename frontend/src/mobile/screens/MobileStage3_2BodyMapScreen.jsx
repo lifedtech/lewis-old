@@ -261,7 +261,8 @@ export default function MobileStage3_2BodyMapScreen() {
 
         {/* RIGHT — 6 Compact Option Chips */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', justifyContent: 'center' }}>
-          {zones.map((z) => {
+          {(zones || []).filter(Boolean).map((z) => {
+            if (!z?.id) return null
             const active = isSelected(z.id)
             return (
               <button

@@ -158,7 +158,8 @@ export default function Stage7_8FrictionScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '10px' }}>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-            {options.map(opt => {
+            {(options || []).filter(Boolean).map(opt => {
+              if (!opt?.id) return null
               const active = isSelected(opt.id)
               return (
                 <motion.button

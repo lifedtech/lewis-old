@@ -237,7 +237,8 @@ export default function Stage7_4SupportScreen() {
 
           {/* 4 Stacked Checkbox Options */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-            {options.map(opt => {
+            {(options || []).filter(Boolean).map(opt => {
+              if (!opt?.id) return null
               const active = isSelected(opt.id)
               return (
                 <motion.button

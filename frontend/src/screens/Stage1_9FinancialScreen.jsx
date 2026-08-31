@@ -62,8 +62,9 @@ export default function Stage1_9FinancialScreen() {
   const { setScreen, setProfileField, financialState = {} } = useLewisStore()
   const [step, setStep] = useState(0)
 
-  const currentQ = questions[step]
-  const currentAnswer = financialState[currentQ.id]
+  const safeStep = Math.max(0, Math.min(step, questions.length - 1))
+  const currentQ = questions[safeStep] || questions[0]
+  const currentAnswer = currentQ?.id ? financialState[currentQ.id] : undefined
 
   const handleSelect = (qId, val) => {
     setProfileField('financialState', { ...financialState, [qId]: val })

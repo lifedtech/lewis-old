@@ -199,7 +199,8 @@ export default function Stage3_3DayRhythmScreen() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'flex-start', width: '100%' }}>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto', paddingRight: '4px', width: '100%' }}>
-            {periods.map(p => {
+            {(periods || []).filter(Boolean).map(p => {
+              if (!p?.id) return null
               const active = isSelected(p.id)
               return (
                 <button
