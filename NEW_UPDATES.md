@@ -110,7 +110,7 @@ This release lands **Supabase PostgreSQL cloud database integration**, complete 
 - **Security Response Headers**: Injects `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection`, and `Content-Security-Policy`.
 
 ## 5. Cloud Deployment Configuration (Railway & Cloudflare)
-- **Frontend**: Deployed to Cloudflare Pages (`https://lewis.cold-forest-a8ec.workers.dev`).
+- **Frontend**: Deployed to Cloudflare Pages (`https://lewiswellbeing.com`).
 - **Backend**: Configured for Railway deployment via `backend/Procfile` & `backend/railway.json` (`uvicorn main:app --host 0.0.0.0 --port $PORT`).
 - **Dual-Mode Engine**: Automatically connects to Supabase Cloud when `DATABASE_URL` / `SUPABASE_URL` environment variables are present, with graceful fallback to local SQLite (`lewis_users.db`) / memory mode.
 

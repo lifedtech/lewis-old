@@ -535,7 +535,7 @@ SUPABASE_SERVICE_KEY=your_supabase_service_role_key
 
 # Security
 LEWIS_ANON_SALT=LEWIS_SECURE_ANON_SALT_2026_V1
-FRONTEND_URL=http://localhost:5173,https://lewis.cold-forest-a8ec.workers.dev
+FRONTEND_URL=http://localhost:5173,https://lewiswellbeing.com
 
 # Optional AI / corpus switches
 NVIDIA_API_KEY=your_nvidia_nim_key      # omit → Road A only

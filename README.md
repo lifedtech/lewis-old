@@ -10,7 +10,7 @@ LEWIS is a non-clinical wellbeing reflection system built with a FastAPI backend
 ┌─────────────────────────────────────────────────────────────┐
 │ 1. FRONTEND (React + Vite + Zustand + Framer Motion)        │
 │    Hosted on: Cloudflare Pages                              │
-│    URL: https://lewis.cold-forest-a8ec.workers.dev          │
+│    URL: https://lewiswellbeing.com          │
 └──────────────────────────────┬──────────────────────────────┘
                                │ HTTPS REST API
                                ▼
@@ -165,7 +165,7 @@ SUPABASE_SERVICE_KEY=your_supabase_service_role_key
 
 # Security & CORS
 LEWIS_ANON_SALT=LEWIS_SECURE_ANON_SALT_2026_V1
-FRONTEND_URL=http://localhost:5173,https://lewis.cold-forest-a8ec.workers.dev
+FRONTEND_URL=http://localhost:5173,https://lewiswellbeing.com
 
 # Optional: AI, Corpus, LLM tuning
 NVIDIA_API_KEY=your_nvidia_nim_key   # omit → Road A only
@@ -188,7 +188,7 @@ VITE_API_URL=http://localhost:8000
 
 | Layer | Service | URL |
 |---|---|---|
-| Frontend | Cloudflare Pages | `https://lewis.cold-forest-a8ec.workers.dev` |
+| Frontend | Cloudflare Pages | `https://lewiswellbeing.com` |
 | Backend API | Railway (`uvicorn main:app --host 0.0.0.0 --port $PORT`) | Railway dashboard |
 | Database | Supabase Cloud PostgreSQL (`lewis_` namespace) | Supabase dashboard |
 

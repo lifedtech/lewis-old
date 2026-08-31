@@ -97,7 +97,6 @@ app = FastAPI(
 _DEFAULT_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://lewis.cold-forest-a8ec.workers.dev",
     "https://lewiswellbeing.com",
     "https://www.lewiswellbeing.com",
     "http://lewiswellbeing.com",

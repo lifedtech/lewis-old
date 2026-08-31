@@ -2,6 +2,11 @@
   "$schema": "frontend/node_modules/wrangler/config-schema.json",
   "name": "lewis",
   "compatibility_date": "2026-07-25",
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "lewiswellbeing.com/*", "custom_domain": true },
+    { "pattern": "www.lewiswellbeing.com/*", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./frontend/dist"
   }
