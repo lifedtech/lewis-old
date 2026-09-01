@@ -18,7 +18,7 @@ import os
 import hmac
 import logging
 from contextlib import asynccontextmanager
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import Annotated, Any, Dict, List, Optional, Union
 
 from fastapi import FastAPI, HTTPException, Request, Response, Header, Depends
@@ -56,7 +56,7 @@ from auth import (
 )
 from payment import (
     get_public_payment_config, create_order, verify_payment,
-    verify_webhook_signature, process_webhook_event,
+    verify_webhook_signature, process_webhook_event, validate_coupon,
 )
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("lewis.api")
@@ -304,6 +304,12 @@ class CreatePaymentOrderInput(BaseModel):
     name: Optional[ShortText] = None
     phone: Optional[ShortText] = None
     coupon_code: Optional[str] = Field(default=None, max_length=50)
+
+
+class ValidateCouponInput(BaseModel):
+    code: str = Field(..., min_length=1, max_length=50)
+    plan: Optional[str] = Field(default="personal_report", max_length=50)
+    currency: Optional[str] = Field(default="INR", max_length=10)
 
 
 class VerifyPaymentInput(BaseModel):
@@ -1052,6 +1058,37 @@ def get_exchange_rates_endpoint():
         raise HTTPException(status_code=500, detail="Failed to fetch exchange rates")
 
 
+@app.post("/coupons/validate")
+@app.post("/payment/validate-coupon")
+def validate_coupon_endpoint(payload: ValidateCouponInput):
+    """
+    Validate a coupon code dynamically against database and return real-time discount details and pricing.
+    """
+    try:
+        from payment import calculate_plan_price, validate_coupon
+        plan_key = payload.plan or "personal_report"
+        validation = validate_coupon(payload.code, plan_key=plan_key, base_amount=749.0)
+        
+        if not validation.get("valid"):
+            return {
+                "status": "invalid",
+                "valid": False,
+                "error": validation.get("error", "Invalid coupon code.")
+            }
+
+        pricing = calculate_plan_price(plan_key, payload.currency or "INR", coupon_code=payload.code)
+
+        return {
+            "status": "success",
+            "valid": True,
+            "coupon": validation,
+            "pricing": pricing
+        }
+    except Exception as exc:
+        logger.error("Error validating coupon '%s': %s", payload.code, exc)
+        raise HTTPException(status_code=500, detail="Coupon validation failed")
+
+
 @app.post("/payment/verify")
 def verify_payment_endpoint(payload: VerifyPaymentInput):
     """
@@ -1249,5 +1286,86 @@ def resend_review_invitation(order_id: str, _: None = Depends(require_admin)):
     if not sent:
         raise HTTPException(status_code=502, detail="Send failed — check server logs")
     return {"status": "success", "order_id": order_id, "user_email": order["user_email"]}
+
+
+# --- Q&A Dataset & Lewis OS Tabular / CSV Export Endpoints --------------------
+
+@app.get("/dataset/matrix")
+@app.get("/api/dataset/matrix")
+def get_dataset_matrix_endpoint(limit: int = 500):
+    """
+    Get full tabular matrix of attendees and all Lewis questions and user answers.
+    Used by Lewis OS for Excel-style table view.
+    """
+    try:
+        from qa_dataset import get_dataset_matrix
+        matrix = get_dataset_matrix(limit=limit)
+        return matrix
+    except Exception as exc:
+        logger.error("Error generating dataset matrix: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to generate dataset matrix")
+
+
+@app.get("/dataset/export-csv")
+@app.get("/api/dataset/export-csv")
+def export_dataset_csv_endpoint(limit: int = 1000):
+    """
+    Downloadable CSV spreadsheet containing user submissions on rows and all Lewis questions in columns.
+    Includes UTF-8 BOM for Microsoft Excel compatibility.
+    """
+    try:
+        from qa_dataset import generate_dataset_csv
+        csv_content = generate_dataset_csv(limit=limit)
+        timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        filename = f"lewis_user_qa_dataset_{timestamp_str}.csv"
+
+        return Response(
+            content=csv_content,
+            media_type="text/csv; charset=utf-8",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"',
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+            }
+        )
+    except Exception as exc:
+        logger.error("Error exporting dataset CSV: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to export dataset CSV")
+
+
+@app.get("/dataset/questions")
+@app.get("/api/dataset/questions")
+def get_dataset_questions_catalog():
+    """
+    Return the full canonical catalog of all Lewis questions across Stages 0 to 9.
+    """
+    try:
+        from qa_dataset import QUESTIONS_CATALOG
+        return {
+            "status": "success",
+            "count": len(QUESTIONS_CATALOG),
+            "questions": QUESTIONS_CATALOG
+        }
+    except Exception as exc:
+        logger.error("Error retrieving question catalog: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to retrieve question catalog")
+
+
+@app.post("/dataset/sync-retroactive")
+@app.post("/api/dataset/sync-retroactive")
+def sync_retroactive_dataset_endpoint():
+    """
+    Populate any past assessment submissions into the normalized lewis_user_stage_answers table.
+    """
+    try:
+        from qa_dataset import retroactive_sync_existing_records
+        synced = retroactive_sync_existing_records()
+        return {
+            "status": "success",
+            "message": f"Successfully synced {synced} historical assessment submissions to QA dataset",
+            "synced_records": synced
+        }
+    except Exception as exc:
+        logger.error("Error during retroactive sync: %s", exc)
+        raise HTTPException(status_code=500, detail="Retroactive sync failed")
 
 

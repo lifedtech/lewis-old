@@ -104,20 +104,51 @@ export async function detectCountryByIp() {
 }
 
 /**
- * Calculate formatted price for a given currency code
+ * Calculate formatted price for a given currency code, with dynamic coupon discount support.
  */
-export function formatCurrencyPrice(currCode = 'INR', liveRates = null, couponCode = null) {
+export function formatCurrencyPrice(currCode = 'INR', liveRates = null, coupon = null) {
   const code = (currCode || 'INR').toUpperCase()
   const meta = CURRENCY_METADATA[code] || CURRENCY_METADATA.INR
   const rate = (liveRates && liveRates[code]?.rate) ? liveRates[code].rate : meta.defaultRate
 
-  const isLWSR100 = couponCode && couponCode.trim().toUpperCase() === 'LWSR100'
-  const isLWSR97 = couponCode && couponCode.trim().toUpperCase() === 'LWSR97'
-  const discountMultiplier = isLWSR100 ? 0.0 : (isLWSR97 ? (1 - 0.973) : 1.0)
+  let isFree = false
+  let baseInr = BASE_INR_PRICE
+
+  if (coupon) {
+    if (typeof coupon === 'object' && coupon.valid) {
+      if (coupon.is_free || coupon.final_amount === 0) {
+        isFree = true
+        baseInr = 0
+      } else if (typeof coupon.final_amount === 'number') {
+        baseInr = coupon.final_amount
+      } else if (coupon.discount_type === 'flat') {
+        baseInr = Math.max(0, BASE_INR_PRICE - (coupon.discount_value || 0))
+      } else if (coupon.discount_type === 'percentage') {
+        baseInr = Math.max(0, BASE_INR_PRICE * (1 - (coupon.discount_value || 0) / 100))
+      }
+    } else if (typeof coupon === 'string') {
+      const codeStr = coupon.trim().toUpperCase()
+      if (codeStr === 'LWSR100') {
+        isFree = true
+        baseInr = 0
+      } else if (codeStr === 'LWSR97') {
+        baseInr = 20
+      }
+    }
+  }
+
+  if (isFree || baseInr === 0) {
+    return {
+      code,
+      symbol: meta.symbol,
+      amount: 0,
+      formatted: `${meta.symbol}0`,
+      meta,
+    }
+  }
 
   if (code === 'INR') {
-    const rawVal = BASE_INR_PRICE * discountMultiplier
-    const finalAmount = isLWSR100 ? 0 : (isLWSR97 ? Math.round(rawVal) : BASE_INR_PRICE)
+    const finalAmount = Math.round(baseInr)
     return {
       code: 'INR',
       symbol: '₹',
@@ -127,13 +158,13 @@ export function formatCurrencyPrice(currCode = 'INR', liveRates = null, couponCo
     }
   }
 
-  const rawAmount = BASE_INR_PRICE * rate * discountMultiplier
-  const amount = isLWSR100 ? 0 : Number(rawAmount.toFixed(meta.precision))
+  const rawAmount = baseInr * rate
+  const amount = Number(rawAmount.toFixed(meta.precision))
   return {
     code,
     symbol: meta.symbol,
     amount,
-    formatted: isLWSR100 ? `${meta.symbol}0` : `${meta.symbol}${amount.toFixed(meta.precision)}`,
+    formatted: `${meta.symbol}${amount.toFixed(meta.precision)}`,
     meta,
   }
 }

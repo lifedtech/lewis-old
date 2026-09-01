@@ -190,3 +190,66 @@ def test_webhook_signature_and_reconciliation(monkeypatch):
     good_wh = client.post("/payment/webhook", content=payload_bytes, headers={"X-Razorpay-Signature": valid_wh_sig})
     assert good_wh.status_code == 200
     assert is_report_unlocked(rep_uuid) is True
+
+
+def test_coupon_validation_endpoint():
+    # Test invalid code
+    bad_res = client.post("/coupons/validate", json={"code": "NON_EXISTENT_999"})
+    assert bad_res.status_code == 200
+    assert bad_res.json()["valid"] is False
+
+    # Test LWSR100 (100% Free)
+    free_res = client.post("/coupons/validate", json={"code": "LWSR100"})
+    assert free_res.status_code == 200
+    free_data = free_res.json()
+    assert free_data["valid"] is True
+    assert free_data["coupon"]["is_free"] is True
+    assert free_data["coupon"]["final_amount"] == 0
+
+    # Test LWSR97 (Flat ₹729 off -> ₹20)
+    flat_res = client.post("/coupons/validate", json={"code": "LWSR97"})
+    assert flat_res.status_code == 200
+    flat_data = flat_res.json()
+    assert flat_data["valid"] is True
+    assert flat_data["coupon"]["discount_type"] == "flat"
+    assert flat_data["coupon"]["final_amount"] == 20
+
+
+def test_create_order_with_coupons():
+    rep_uuid = save_encrypted_assessment_record(
+        user_name="Coupon Tester",
+        user_email="coupon@example.com",
+        report_data={"dimensions": {}}
+    )
+
+    # 1. 100% Free Coupon (LWSR100)
+    free_order_resp = client.post("/payment/create-order", json={
+        "plan": "personal_report",
+        "report_id": rep_uuid,
+        "email": "coupon@example.com",
+        "coupon_code": "LWSR100"
+    })
+    assert free_order_resp.status_code == 200
+    free_order = free_order_resp.json()["order"]
+    assert free_order["amount"] == 0
+    assert free_order["status"] == "paid"
+    assert free_order["coupon_code"] == "LWSR100"
+    assert is_report_unlocked(rep_uuid) is True
+
+    # 2. Discounted Coupon (LWSR97 -> ₹20 / 2000 paise)
+    rep2_uuid = save_encrypted_assessment_record(
+        user_name="Coupon Tester 2",
+        user_email="coupon2@example.com",
+        report_data={"dimensions": {}}
+    )
+    disc_order_resp = client.post("/payment/create-order", json={
+        "plan": "personal_report",
+        "report_id": rep2_uuid,
+        "email": "coupon2@example.com",
+        "coupon_code": "LWSR97"
+    })
+    assert disc_order_resp.status_code == 200
+    disc_order = disc_order_resp.json()["order"]
+    assert disc_order["amount"] == 2000
+    assert disc_order["coupon_code"] == "LWSR97"
+

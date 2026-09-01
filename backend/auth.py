@@ -307,6 +307,9 @@ def init_db():
                                 ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent BOOLEAN DEFAULT FALSE;
                                 ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent_at TIMESTAMP WITH TIME ZONE;
                             END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='coupon_code') THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN coupon_code TEXT;
+                            END IF;
 
                             -- Age & Gender columns for journey sessions & assessment records
                             IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_journey_sessions' AND column_name='age_category') THEN
@@ -556,6 +559,26 @@ def init_db():
             )
         """)
 
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_coupons (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                code TEXT UNIQUE NOT NULL,
+                discount_type TEXT NOT NULL DEFAULT 'percentage',
+                discount_value REAL NOT NULL,
+                min_order_amount REAL DEFAULT 0,
+                max_discount_amount REAL,
+                usage_limit INTEGER,
+                usage_count INTEGER DEFAULT 0,
+                applicable_plans TEXT DEFAULT '["ALL"]',
+                status TEXT NOT NULL DEFAULT 'active',
+                description TEXT,
+                expires_at TIMESTAMP,
+                created_by TEXT DEFAULT 'Admin',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
         for col_stmt in (
             "ALTER TABLE lewis_payment_orders ADD COLUMN user_name TEXT",
             "ALTER TABLE lewis_payment_orders ADD COLUMN user_phone TEXT",
@@ -568,6 +591,7 @@ def init_db():
             "ALTER TABLE lewis_payment_orders ADD COLUMN report_mail_sent_at TIMESTAMP",
             "ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent INTEGER DEFAULT 0",
             "ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent_at TIMESTAMP",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN coupon_code TEXT",
         ):
             try:
                 cursor.execute(col_stmt)
@@ -578,6 +602,13 @@ def init_db():
         conn.close()
     except Exception as e:
         logger.warning("Local SQLite DB initialization bypassed (%s).", e)
+
+    try:
+        from qa_dataset import init_qa_schema, retroactive_sync_existing_records
+        init_qa_schema()
+        retroactive_sync_existing_records()
+    except Exception as e:
+        logger.warning("QA Schema initialization bypassed (%s).", e)
 
 init_db()
 
@@ -1555,6 +1586,7 @@ def save_encrypted_assessment_record(
     report_json_str = json.dumps(report_data, default=str)
     answers_json_str = json.dumps(answers, default=str) if answers is not None else None
 
+    saved_to_pg = False
     if has_pg and DATABASE_URL:
         try:
             conn = get_pg_conn()
@@ -1567,24 +1599,38 @@ def save_encrypted_assessment_record(
                     """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, started_at_iso, duration_seconds))
                     conn.commit()
                 conn.close()
+                saved_to_pg = True
                 logger.info("Saved encrypted assessment record %s to PostgreSQL", report_uuid)
-                return report_uuid
         except Exception as e:
             logger.error("PostgreSQL error saving encrypted assessment record: %s", e)
 
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT INTO lewis_assessment_records
-            (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, started_at, duration_seconds)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, started_at_iso, duration_seconds))
-        conn.commit()
-        conn.close()
-        logger.info("Saved encrypted assessment record %s to SQLite", report_uuid)
-    except Exception as e:
-        logger.warning("SQLite error saving encrypted assessment record: %s", e)
+    if not saved_to_pg:
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cur = conn.cursor()
+            cur.execute("""
+                INSERT INTO lewis_assessment_records
+                (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, started_at, duration_seconds)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, started_at_iso, duration_seconds))
+            conn.commit()
+            conn.close()
+            logger.info("Saved encrypted assessment record %s to SQLite", report_uuid)
+        except Exception as e:
+            logger.warning("SQLite error saving encrypted assessment record: %s", e)
+
+    # Ingest granular question-and-answer responses for dataset creation
+    if answers:
+        try:
+            from qa_dataset import extract_and_store_user_answers
+            extract_and_store_user_answers(
+                report_uuid=report_uuid,
+                session_id=answers.get("session_id"),
+                user_email=user_email,
+                answers_payload=answers
+            )
+        except Exception as e:
+            logger.warning("Could not ingest granular Q&A dataset answers for %s: %s", report_uuid, e)
 
     return report_uuid
 
@@ -1988,11 +2034,13 @@ def save_payment_order(
     user_name: Optional[str] = None,
     user_phone: Optional[str] = None,
     billing_details: Optional[Dict[str, Any]] = None,
-    razorpay_order_id: Optional[str] = None
+    razorpay_order_id: Optional[str] = None,
+    coupon_code: Optional[str] = None
 ) -> Dict[str, Any]:
     """
-    Save or initialize a pending payment order record with full customer billing details and Razorpay Order ID.
+    Save or initialize a pending payment order record with full customer billing details, coupon code, and Razorpay Order ID.
     """
+    normalized_coupon = coupon_code.strip().upper() if coupon_code else None
     billing_json = json.dumps(billing_details) if billing_details else None
 
     IN_MEMORY_ORDERS[order_id] = {
@@ -2006,6 +2054,7 @@ def save_payment_order(
         "user_email": user_email,
         "user_name": user_name,
         "user_phone": user_phone,
+        "coupon_code": normalized_coupon,
         "billing_details_json": billing_json,
         "payment_id": None,
         "signature": None,
@@ -2021,8 +2070,8 @@ def save_payment_order(
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO lewis_payment_orders
-                        (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, created_at, updated_at)
-                        VALUES (%s, %s, %s, %s, %s, %s, 'created', %s, %s, %s, %s, NOW(), NOW())
+                        (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, coupon_code, created_at, updated_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, 'created', %s, %s, %s, %s, %s, NOW(), NOW())
                         ON CONFLICT (order_id) DO UPDATE SET
                             razorpay_order_id = COALESCE(EXCLUDED.razorpay_order_id, lewis_payment_orders.razorpay_order_id),
                             report_uuid = EXCLUDED.report_uuid,
@@ -2033,8 +2082,9 @@ def save_payment_order(
                             user_name = COALESCE(EXCLUDED.user_name, lewis_payment_orders.user_name),
                             user_phone = COALESCE(EXCLUDED.user_phone, lewis_payment_orders.user_phone),
                             billing_details_json = COALESCE(EXCLUDED.billing_details_json, lewis_payment_orders.billing_details_json),
+                            coupon_code = COALESCE(EXCLUDED.coupon_code, lewis_payment_orders.coupon_code),
                             updated_at = NOW();
-                    """, (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json))
+                    """, (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json, normalized_coupon))
                     conn.commit()
                 conn.close()
                 return IN_MEMORY_ORDERS[order_id]
@@ -2046,8 +2096,8 @@ def save_payment_order(
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO lewis_payment_orders
-            (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, 'created', ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, status, user_email, user_name, user_phone, billing_details_json, coupon_code, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, 'created', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ON CONFLICT (order_id) DO UPDATE SET
                 razorpay_order_id = COALESCE(excluded.razorpay_order_id, lewis_payment_orders.razorpay_order_id),
                 report_uuid = excluded.report_uuid,
@@ -2058,8 +2108,9 @@ def save_payment_order(
                 user_name = COALESCE(excluded.user_name, lewis_payment_orders.user_name),
                 user_phone = COALESCE(excluded.user_phone, lewis_payment_orders.user_phone),
                 billing_details_json = COALESCE(excluded.billing_details_json, lewis_payment_orders.billing_details_json),
+                coupon_code = COALESCE(excluded.coupon_code, lewis_payment_orders.coupon_code),
                 updated_at = CURRENT_TIMESTAMP
-        """, (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json))
+        """, (order_id, razorpay_order_id, report_uuid, plan_id, amount, currency, user_email, user_name, user_phone, billing_json, normalized_coupon))
         conn.commit()
         conn.close()
     except Exception as e:
@@ -2098,6 +2149,118 @@ def get_payment_order(order_id: str) -> Optional[Dict[str, Any]]:
     return IN_MEMORY_ORDERS.get(order_id)
 
 
+def fetch_coupon_by_code(code: str) -> Optional[Dict[str, Any]]:
+    """Retrieve coupon details from lewis_coupons by coupon code (case-insensitive)."""
+    if not code:
+        return None
+    normalized_code = code.strip().upper()
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT * FROM lewis_coupons WHERE UPPER(code) = %s LIMIT 1", (normalized_code,))
+                    row = cur.fetchone()
+                conn.close()
+                if row:
+                    return dict(row)
+        except Exception as e:
+            logger.error("PostgreSQL error fetching coupon %s: %s", normalized_code, e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM lewis_coupons WHERE UPPER(code) = ? LIMIT 1", (normalized_code,))
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            res = dict(row)
+            # Parse applicable_plans if json string in sqlite
+            if isinstance(res.get("applicable_plans"), str):
+                try:
+                    res["applicable_plans"] = json.loads(res["applicable_plans"])
+                except Exception:
+                    res["applicable_plans"] = [res["applicable_plans"]]
+            return res
+    except Exception as e:
+        logger.warning("SQLite error fetching coupon %s: %s", normalized_code, e)
+
+    # In-memory hardcoded fallback for development
+    if normalized_code == "LWSR100":
+        return {
+            "code": "LWSR100",
+            "discount_type": "percentage",
+            "discount_value": 100.0,
+            "min_order_amount": 0,
+            "max_discount_amount": None,
+            "usage_limit": None,
+            "usage_count": 0,
+            "applicable_plans": ["ALL"],
+            "status": "active",
+            "description": "100% OFF Free assessment unlock"
+        }
+    elif normalized_code == "LWSR97":
+        return {
+            "code": "LWSR97",
+            "discount_type": "flat",
+            "discount_value": 729.0,
+            "min_order_amount": 749.0,
+            "max_discount_amount": None,
+            "usage_limit": None,
+            "usage_count": 0,
+            "applicable_plans": ["ALL"],
+            "status": "active",
+            "description": "Special Live Promo: Pay ₹20 (₹729 flat discount)"
+        }
+
+    return None
+
+
+def increment_coupon_usage(code: str) -> bool:
+    """Increment coupon redemption usage_count in lewis_coupons."""
+    if not code:
+        return False
+    normalized_code = code.strip().upper()
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE lewis_coupons
+                        SET usage_count = COALESCE(usage_count, 0) + 1,
+                            updated_at = NOW()
+                        WHERE UPPER(code) = %s;
+                    """, (normalized_code,))
+                    conn.commit()
+                conn.close()
+                logger.info("Incremented usage_count for coupon %s in PostgreSQL", normalized_code)
+                return True
+        except Exception as e:
+            logger.error("PostgreSQL error incrementing coupon usage: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE lewis_coupons
+            SET usage_count = COALESCE(usage_count, 0) + 1,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE UPPER(code) = ?;
+        """, (normalized_code,))
+        conn.commit()
+        conn.close()
+        logger.info("Incremented usage_count for coupon %s in SQLite", normalized_code)
+        return True
+    except Exception as e:
+        logger.warning("SQLite error incrementing coupon usage: %s", e)
+
+    return False
+
+
 def record_successful_payment(
     order_id: str,
     payment_id: str,
@@ -2109,11 +2272,16 @@ def record_successful_payment(
 ) -> Dict[str, Any]:
     """
     Idempotently record a successful payment, update order status to 'paid',
-    save transaction ID (payment_id), and unlock the corresponding assessment report.
+    save transaction ID (payment_id), increment coupon usage if used, and unlock the report.
     """
     existing = get_payment_order(order_id)
     target_report_uuid = report_uuid or (existing.get("report_uuid") if existing else None)
     plan_id = existing.get("plan_id") if existing else "personal_report"
+    coupon_code = existing.get("coupon_code") if existing else None
+
+    # Increment coupon usage if not already paid
+    if coupon_code and (not existing or existing.get("status") != "paid"):
+        increment_coupon_usage(coupon_code)
 
     # Update in-memory cache
     if order_id in IN_MEMORY_ORDERS:

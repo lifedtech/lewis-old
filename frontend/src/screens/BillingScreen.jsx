@@ -87,17 +87,51 @@ export default function BillingScreen() {
   const currentPriceObj = formatCurrencyPrice(currency, liveRates, appliedCoupon)
   const reportPrice = currentPriceObj.formatted
 
-  const handleApplyCoupon = () => {
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false)
+
+  const handleApplyCoupon = async () => {
     const code = (couponInput || '').trim().toUpperCase()
     if (!code) {
       setCouponError('Please enter a coupon code.')
       return
     }
-    if (code === 'LWSR100' || code === 'LWSR97') {
-      setAppliedCoupon(code)
-      setCouponError('')
-    } else {
-      setCouponError('Invalid coupon code.')
+
+    setIsValidatingCoupon(true)
+    setCouponError('')
+
+    try {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+      const res = await fetch(`${API_BASE}/coupons/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: code,
+          plan: 'personal_report',
+          currency: currency,
+        }),
+      })
+
+      const data = await res.json()
+      if (res.ok && data.valid && data.coupon) {
+        setAppliedCoupon(data.coupon)
+        setCouponError('')
+      } else {
+        setAppliedCoupon(null)
+        setCouponError(data.error || 'Invalid or expired coupon code.')
+      }
+    } catch (err) {
+      // Fallback check if backend unreachable
+      if (code === 'LWSR100') {
+        setAppliedCoupon({ code: 'LWSR100', discount_type: 'percentage', discount_value: 100, is_free: true, valid: true })
+        setCouponError('')
+      } else if (code === 'LWSR97') {
+        setAppliedCoupon({ code: 'LWSR97', discount_type: 'flat', discount_value: 729, final_amount: 20, valid: true })
+        setCouponError('')
+      } else {
+        setCouponError('Could not validate coupon. Please check your connection.')
+      }
+    } finally {
+      setIsValidatingCoupon(false)
     }
   }
 
@@ -151,7 +185,7 @@ export default function BillingScreen() {
         userEmail: trimmedEmail,
         userName: trimmedName,
         userPhone: '',
-        couponCode: appliedCoupon,
+        couponCode: appliedCoupon?.code || (typeof appliedCoupon === 'string' ? appliedCoupon : null),
         onSuccess: (verifyData) => {
           setIsSubmitting(false)
           setPaymentSuccess({
@@ -701,6 +735,7 @@ export default function BillingScreen() {
                 <button
                   type="button"
                   onClick={handleApplyCoupon}
+                  disabled={isValidatingCoupon}
                   className="btn-primary"
                   style={{
                     padding: '10px 18px',
@@ -711,7 +746,8 @@ export default function BillingScreen() {
                     fontSize: '13.5px',
                     fontWeight: 700,
                     fontFamily: NUNITO,
-                    cursor: 'pointer',
+                    cursor: isValidatingCoupon ? 'wait' : 'pointer',
+                    opacity: isValidatingCoupon ? 0.7 : 1,
                     whiteSpace: 'nowrap',
                     transition: 'all 0.2s ease',
                     boxShadow: '0 2px 8px rgba(0, 174, 157, 0.25)',
@@ -720,7 +756,7 @@ export default function BillingScreen() {
                     minHeight: 'auto',
                   }}
                 >
-                  Apply
+                  {isValidatingCoupon ? 'Checking...' : 'Apply'}
                 </button>
               </div>
             ) : (
@@ -734,16 +770,35 @@ export default function BillingScreen() {
                 border: '1px solid rgba(0, 174, 157, 0.25)',
                 marginTop: '2px',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{
-                    fontSize: '13.5px',
-                    fontWeight: 800,
-                    color: 'var(--dawn, #007064)',
-                    fontFamily: 'monospace',
-                    letterSpacing: '0.08em',
-                  }}>
-                    {appliedCoupon}
-                  </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{
+                      fontSize: '13.5px',
+                      fontWeight: 800,
+                      color: 'var(--dawn, #007064)',
+                      fontFamily: 'monospace',
+                      letterSpacing: '0.08em',
+                    }}>
+                      {appliedCoupon?.code || (typeof appliedCoupon === 'string' ? appliedCoupon : 'COUPON')}
+                    </span>
+                    {appliedCoupon?.savings_formatted && (
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        color: '#007064',
+                        background: 'rgba(0, 174, 157, 0.15)',
+                        padding: '1px 6px',
+                        borderRadius: '6px'
+                      }}>
+                        Save {appliedCoupon.savings_formatted}
+                      </span>
+                    )}
+                  </div>
+                  {appliedCoupon?.description && (
+                    <span style={{ fontSize: '11.5px', color: 'var(--text-sub, #64748b)', fontWeight: 600 }}>
+                      {appliedCoupon.description}
+                    </span>
+                  )}
                 </div>
                 <button
                   type="button"

@@ -171,6 +171,98 @@ def get_inr_exchange_rates() -> Dict[str, float]:
     return _rates_cache["rates"]
 
 
+def validate_coupon(
+    coupon_code: Optional[str],
+    plan_key: str = "personal_report",
+    base_amount: float = 749.0
+) -> Dict[str, Any]:
+    """
+    Validate a coupon code dynamically against the database (lewis_coupons).
+    Supports percentage, flat discount, expiry, usage limit, and plan applicability.
+    """
+    if not coupon_code:
+        return {"valid": False, "error": "No coupon code provided"}
+
+    normalized_code = coupon_code.strip().upper()
+    from auth import fetch_coupon_by_code
+
+    coupon = fetch_coupon_by_code(normalized_code)
+    if not coupon:
+        return {"valid": False, "error": f"Invalid coupon code '{normalized_code}'."}
+
+    # Check active status
+    status = str(coupon.get("status") or "active").strip().lower()
+    if status != "active":
+        return {"valid": False, "error": "This coupon is currently inactive or disabled."}
+
+    # Check expiration date
+    expires_at = coupon.get("expires_at")
+    if expires_at:
+        try:
+            if isinstance(expires_at, str):
+                exp_dt = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+            else:
+                exp_dt = expires_at
+            
+            # Ensure timezone awareness
+            if exp_dt.tzinfo is None:
+                exp_dt = exp_dt.replace(tzinfo=timezone.utc)
+            now_dt = datetime.now(timezone.utc)
+
+            if now_dt > exp_dt:
+                return {"valid": False, "error": f"Coupon '{normalized_code}' expired on {exp_dt.strftime('%d %b %Y')}."}
+        except Exception as e:
+            logger.warning("Could not parse expiry timestamp (%s): %s", expires_at, e)
+
+    # Check usage limit
+    usage_limit = coupon.get("usage_limit")
+    usage_count = int(coupon.get("usage_count") or 0)
+    if usage_limit is not None and int(usage_limit) > 0:
+        if usage_count >= int(usage_limit):
+            return {"valid": False, "error": f"Coupon '{normalized_code}' redemption limit has been reached."}
+
+    # Check applicable plans
+    applicable_plans = coupon.get("applicable_plans") or ["ALL"]
+    normalized_plan = plan_key.strip().lower()
+    if isinstance(applicable_plans, list):
+        plans_upper = [str(p).strip().upper() for p in applicable_plans]
+        if not ("ALL" in plans_upper or "*" in plans_upper or normalized_plan.upper() in plans_upper):
+            return {"valid": False, "error": f"Coupon is not applicable to the {plan_key} plan."}
+
+    # Check min order amount
+    min_order = float(coupon.get("min_order_amount") or 0)
+    if base_amount < min_order:
+        return {"valid": False, "error": f"Minimum order value of ₹{int(min_order)} required to apply this coupon."}
+
+    # Calculate discount
+    discount_type = str(coupon.get("discount_type") or "percentage").strip().lower()
+    discount_val = float(coupon.get("discount_value") or 0)
+    max_discount = coupon.get("max_discount_amount")
+
+    if discount_type == "flat":
+        discount_amount = discount_val
+    else:  # percentage
+        discount_amount = (base_amount * discount_val) / 100.0
+        if max_discount is not None and float(max_discount) > 0:
+            discount_amount = min(discount_amount, float(max_discount))
+
+    discount_amount = min(discount_amount, base_amount)
+    final_amount = max(0.0, base_amount - discount_amount)
+    is_free = (final_amount == 0.0 or discount_val >= 100.0 and discount_type == "percentage")
+
+    return {
+        "valid": True,
+        "code": normalized_code,
+        "discount_type": discount_type,
+        "discount_value": discount_val,
+        "discount_amount": round(discount_amount, 2),
+        "final_amount": 0.0 if is_free else round(final_amount, 2),
+        "is_free": is_free,
+        "description": coupon.get("description") or f"Applied {normalized_code} coupon",
+        "savings_formatted": f"₹{int(discount_amount)}" if discount_amount.is_integer() else f"₹{discount_amount:.2f}"
+    }
+
+
 def calculate_plan_price(
     plan_key: str = "personal_report", 
     target_currency: str = "INR", 
@@ -178,7 +270,7 @@ def calculate_plan_price(
 ) -> Dict[str, Any]:
     """
     Calculate price in target currency dynamically converted from base INR price (₹749),
-    with optional coupon code discounting (e.g. LWSR97 -> 97.3% off).
+    with dynamic database-backed coupon code discounting.
     """
     curr = (target_currency or "INR").strip().upper()
     if curr not in DEFAULT_INR_EXCHANGE_RATES:
@@ -188,26 +280,30 @@ def calculate_plan_price(
     rate = rates.get(curr, DEFAULT_INR_EXCHANGE_RATES[curr]["rate"])
     meta = DEFAULT_INR_EXCHANGE_RATES[curr]
 
-    is_lwsr100 = bool(coupon_code and coupon_code.strip().upper() == "LWSR100")
-    is_lwsr97 = bool(coupon_code and coupon_code.strip().upper() == "LWSR97")
+    base_inr_full = PERSONAL_REPORT_PRICE_PAISE / 100.0  # 749.0
+    applied_coupon_info = None
 
-    if is_lwsr100:
-        discount_multiplier = 0.0  # 100% off
-    elif is_lwsr97:
-        discount_multiplier = (1.0 - 0.973)  # 97.3% off
+    if coupon_code:
+        coupon_res = validate_coupon(coupon_code, plan_key=plan_key, base_amount=base_inr_full)
+        if coupon_res["valid"]:
+            applied_coupon_info = coupon_res
+            base_inr = coupon_res["final_amount"]
+        else:
+            base_inr = base_inr_full
     else:
-        discount_multiplier = 1.0
+        base_inr = base_inr_full
 
-    base_inr = (PERSONAL_REPORT_PRICE_PAISE / 100.0) * discount_multiplier
+    is_free = bool(applied_coupon_info and applied_coupon_info.get("is_free"))
+
     if curr == "INR":
-        amount_units = 0.0 if is_lwsr100 else (round(base_inr) if is_lwsr97 else 749.0)
+        amount_units = 0.0 if is_free else round(base_inr)
         amount_subunits = int(amount_units * 100)
-        formatted = f"₹{int(amount_units)}"
+        formatted = "₹0" if is_free else f"₹{int(amount_units)}"
     else:
         raw_val = base_inr * rate
-        amount_units = 0.0 if is_lwsr100 else round(raw_val, 2)
+        amount_units = 0.0 if is_free else round(raw_val, 2)
         amount_subunits = int(round(amount_units * 100))
-        formatted = f"{meta['symbol']}{amount_units:.2f}"
+        formatted = f"{meta['symbol']}0" if is_free else f"{meta['symbol']}{amount_units:.2f}"
 
     return {
         "currency": curr,
@@ -218,6 +314,7 @@ def calculate_plan_price(
         "amount_subunits": amount_subunits,
         "formatted": formatted,
         "exchange_rate": rate,
+        "coupon": applied_coupon_info
     }
 
 
@@ -260,6 +357,7 @@ def create_order(
 ) -> Dict[str, Any]:
     """
     Create a payment order starting from LS20260100 in user's selected currency converted from base ₹749.
+    Tracks applied coupon code in database for Lewis OS analytics and real-time usage counting.
     """
     from auth import save_payment_order, record_successful_payment, get_next_order_id
 
@@ -272,14 +370,15 @@ def create_order(
     pricing = calculate_plan_price(normalized_plan, target_curr, coupon_code=coupon_code)
     amount = pricing["amount_subunits"]
     curr_code = pricing["currency"]
+    applied_coupon = pricing.get("coupon")
+    coupon_str = applied_coupon["code"] if applied_coupon else (coupon_code.strip().upper() if coupon_code else None)
 
     lewis_order_id = get_next_order_id()
     mode = get_payment_mode()
     key_id, key_secret = get_razorpay_credentials()
 
-    # 1. Handle 100% Free Discount Order (e.g. LWSR100)
-    is_lwsr100 = bool(coupon_code and coupon_code.strip().upper() == "LWSR100")
-    if amount == 0 or is_lwsr100:
+    # 1. Handle 100% Free Discount Order
+    if amount == 0 or (applied_coupon and applied_coupon.get("is_free")):
         free_payment_id = f"pay_free_{lewis_order_id}"
         save_payment_order(
             order_id=lewis_order_id,
@@ -291,12 +390,13 @@ def create_order(
             user_name=user_name,
             user_phone=user_phone,
             billing_details=billing_details,
-            razorpay_order_id=lewis_order_id
+            razorpay_order_id=lewis_order_id,
+            coupon_code=coupon_str
         )
         record_successful_payment(
             order_id=lewis_order_id,
             payment_id=free_payment_id,
-            signature="lwsr100_100_percent_discount",
+            signature=f"coupon_{coupon_str.lower() if coupon_str else 'free'}_100_percent_discount",
             report_uuid=report_uuid,
             user_email=user_email,
             user_name=user_name,
@@ -314,7 +414,7 @@ def create_order(
                         "user_name": user_name or "",
                         "order_id": lewis_order_id,
                         "payment_id": free_payment_id,
-                        "amount_formatted": "₹0 (100% Promo)",
+                        "amount_formatted": f"₹0 (100% Promo - {coupon_str})",
                         "currency": curr_code,
                         "report_uuid": report_uuid
                     }
@@ -328,7 +428,7 @@ def create_order(
             except Exception as mail_err:
                 logger.warning("Could not dispatch free promo emails: %s", mail_err)
 
-        logger.info("Processed 100%% Free Discount Order %s for %s", lewis_order_id, user_email)
+        logger.info("Processed 100%% Free Discount Order %s for %s with coupon %s", lewis_order_id, user_email, coupon_str)
         return {
             "order_id": lewis_order_id,
             "razorpay_order_id": lewis_order_id,
@@ -341,7 +441,8 @@ def create_order(
             "payment_mode": "free_discount",
             "status": "paid",
             "payment_id": free_payment_id,
-            "key_id": "free_coupon_lwsr100"
+            "coupon_code": coupon_str,
+            "key_id": f"free_coupon_{coupon_str.lower() if coupon_str else 'promo'}"
         }
 
     if mode == "mock" or not (key_id and key_secret):
@@ -354,9 +455,10 @@ def create_order(
             user_email=user_email,
             user_name=user_name,
             user_phone=user_phone,
-            billing_details=billing_details
+            billing_details=billing_details,
+            coupon_code=coupon_str
         )
-        logger.info("Created MOCK payment order %s for report %s (%s %s)", lewis_order_id, report_uuid, curr_code, pricing["formatted"])
+        logger.info("Created MOCK payment order %s for report %s (%s %s, coupon: %s)", lewis_order_id, report_uuid, curr_code, pricing["formatted"], coupon_str)
         return {
             "order_id": lewis_order_id,
             "razorpay_order_id": lewis_order_id,
@@ -367,6 +469,7 @@ def create_order(
             "plan_name": plan_info["name"],
             "report_uuid": report_uuid,
             "payment_mode": "mock",
+            "coupon_code": coupon_str,
             "key_id": "rzp_mock_lewis_test"
         }
 
@@ -379,6 +482,7 @@ def create_order(
         "user_name": user_name or "",
         "user_phone": user_phone or "",
         "currency": curr_code,
+        "coupon_code": coupon_str or ""
     }
 
     try:
@@ -418,10 +522,11 @@ def create_order(
             user_name=user_name,
             user_phone=user_phone,
             billing_details=billing_details,
-            razorpay_order_id=rp_order_id
+            razorpay_order_id=rp_order_id,
+            coupon_code=coupon_str
         )
 
-        logger.info("Created Live Razorpay order %s (Internal LEWIS ID: %s) for report %s (%s %s)", rp_order_id, lewis_order_id, report_uuid, curr_code, pricing["formatted"])
+        logger.info("Created Live Razorpay order %s (Internal LEWIS ID: %s) for report %s (%s %s, coupon: %s)", rp_order_id, lewis_order_id, report_uuid, curr_code, pricing["formatted"], coupon_str)
 
         return {
             "order_id": lewis_order_id,
@@ -433,6 +538,7 @@ def create_order(
             "plan_name": plan_info["name"],
             "report_uuid": report_uuid,
             "payment_mode": "razorpay",
+            "coupon_code": coupon_str,
             "key_id": key_id
         }
     except Exception as exc:
