@@ -246,6 +246,12 @@ class FullAssessmentInput(BaseModel):
     started_at: Optional[ShortText] = None
     duration_seconds: Optional[int] = None
 
+    # Human-readable Q&A snapshot for the 9 scored instruments (question
+    # text + the label the user picked), built client-side from the same
+    # instruments.js catalog the screens render from. Stored as-is for
+    # LEWIS OS / support use — never read for scoring.
+    scored_instrument_answers: Optional[Dict[str, Any]] = None
+
 
 class JourneyPingInput(BaseModel):
     session_id: str = Field(..., min_length=1, max_length=128)
@@ -741,6 +747,7 @@ def calculate_full_assessment(payload: FullAssessmentInput, request: Request = N
             duration_seconds=payload.duration_seconds,
             age_category=payload.ageCategory,
             gender=payload.gender,
+            answers=payload.model_dump(),
         )
         full_response["report_uuid"] = saved_rec_uuid
         logger.info("Encrypted assessment record %s saved successfully", saved_rec_uuid)

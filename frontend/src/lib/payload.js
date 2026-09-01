@@ -11,6 +11,17 @@ import {
   WHO5_SCALE, PSS10_SCALE, UCLA3_SCALE, GSE_SCALE, PROMIS_SCALE,
   CFPB5_1_SCALE, CFPB5_2_SCALE,
 } from '../constants/scales.js'
+import { INSTRUMENTS as QUESTION_BANK } from '../constants/instruments.js'
+
+// Flat "slice::itemId" -> question text, built once from the question bank
+// screens already render from. Lets the Q&A snapshot below reuse the same
+// copy instead of redeclaring it here.
+const QUESTION_TEXT = {}
+for (const bank of Object.values(QUESTION_BANK)) {
+  for (const item of bank.items) {
+    QUESTION_TEXT[`${bank.slice}::${item.id}`] = item.text
+  }
+}
 
 // Diener/SWLS are administered on a 5-point agreement scale but published
 // on 1-7 anchors; this expansion preserves the endpoints and midpoint.
@@ -45,31 +56,28 @@ const INSTRUMENTS = [
   },
 ]
 
-function mapInstrument(stateObj, items) {
+function mapInstrument(stateObj, items, slice) {
   const values = []
+  const qa = []
   for (const { id, scale } of items) {
     const answer = stateObj?.[id]
     const idx = scale.indexOf(answer)
-    if (idx === -1) {
-      values.push(Math.floor(scale.length / 2))
-    } else {
-      values.push(idx)
-    }
+    values.push(idx === -1 ? Math.floor(scale.length / 2) : idx)
+    qa.push({ question: QUESTION_TEXT[`${slice}::${id}`] || id, answer: answer ?? null })
   }
-  return { values, complete: true }
+  return { values, qa, complete: true }
 }
 
-function mapAgreement(stateObj, itemIds) {
+function mapAgreement(stateObj, itemIds, slice) {
   const values = []
+  const qa = []
   for (const id of itemIds) {
-    const mapped = AGREEMENT_TO_7[stateObj?.[id]]
-    if (mapped === undefined) {
-      values.push(4)
-    } else {
-      values.push(mapped)
-    }
+    const answer = stateObj?.[id]
+    const mapped = AGREEMENT_TO_7[answer]
+    values.push(mapped === undefined ? 4 : mapped)
+    qa.push({ question: QUESTION_TEXT[`${slice}::${id}`] || id, answer: answer ?? null })
   }
-  return { values, complete: true }
+  return { values, qa, complete: true }
 }
 
 /**
@@ -80,23 +88,31 @@ export function buildFullAssessmentPayload(store) {
   const payload = {
     is_over_18: store.isOver18 !== false,
   }
+  // Human-readable Q&A snapshot for the scored instruments — question text
+  // + the label the user picked, for LEWIS OS / support use. Never used
+  // for scoring; the numeric arrays above payload[apiKey] remain that.
+  const scoredQA = {}
 
   for (const inst of INSTRUMENTS) {
-    const { values } = mapInstrument(store[inst.store], inst.items)
+    const { values, qa } = mapInstrument(store[inst.store], inst.items, inst.store)
     payload[inst.apiKey] = inst.offset ? values.map(v => v + inst.offset) : values
+    scoredQA[inst.apiKey] = qa
   }
 
-  const diener = mapAgreement(store.diener, ids('q', 8))
+  const diener = mapAgreement(store.diener, ids('q', 8), 'diener')
   payload.diener = diener.values
+  scoredQA.diener = diener.qa
 
-  const swls = mapAgreement(store.swls, ids('q', 5))
+  const swls = mapAgreement(store.swls, ids('q', 5), 'swls')
   payload.swls = swls.values
+  scoredQA.swls = swls.qa
 
   if (Number.isInteger(store.ins) && store.ins >= 1 && store.ins <= 7) {
     payload.ins = store.ins
   } else {
     payload.ins = 4
   }
+  scoredQA.ins = [{ question: 'Connection to Nature (Inclusion of Nature in Self)', answer: payload.ins }]
 
   Object.assign(payload, {
     name: store.name || store.authUser?.name || (store.authUser?.email ? store.authUser.email.split('@')[0] : '') || 'User',
@@ -157,6 +173,8 @@ export function buildFullAssessmentPayload(store) {
     started_at: store.journeyStartTime ? new Date(store.journeyStartTime).toISOString() : null,
     duration_seconds: store.getJourneyDurationSeconds ? store.getJourneyDurationSeconds() : 0,
   })
+
+  payload.scored_instrument_answers = scoredQA
 
   return { payload, missing: [] }
 }

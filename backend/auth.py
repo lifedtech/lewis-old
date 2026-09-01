@@ -203,6 +203,7 @@ def init_db():
                             wellbeing_band TEXT,
                             overall_score REAL,
                             report_json TEXT NOT NULL,
+                            answers_json TEXT,
                             started_at TIMESTAMP WITH TIME ZONE,
                             completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                             duration_seconds INTEGER
@@ -333,6 +334,12 @@ def init_db():
                                 ALTER TABLE lewis_assessment_records ADD COLUMN unlocked_at TIMESTAMP WITH TIME ZONE;
                                 ALTER TABLE lewis_assessment_records ADD COLUMN paid_plan TEXT;
                             END IF;
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns
+                                WHERE table_name='lewis_assessment_records' AND column_name='answers_json'
+                            ) THEN
+                                ALTER TABLE lewis_assessment_records ADD COLUMN answers_json TEXT;
+                            END IF;
                         END $$;
 
                         CREATE TABLE IF NOT EXISTS lewis_report_reviews (
@@ -446,6 +453,7 @@ def init_db():
                 wellbeing_band TEXT,
                 overall_score REAL,
                 report_json TEXT NOT NULL,
+                answers_json TEXT,
                 started_at TIMESTAMP,
                 completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 duration_seconds INTEGER,
@@ -461,6 +469,7 @@ def init_db():
             "ALTER TABLE lewis_assessment_records ADD COLUMN paid_plan TEXT",
             "ALTER TABLE lewis_assessment_records ADD COLUMN age_category TEXT",
             "ALTER TABLE lewis_assessment_records ADD COLUMN gender TEXT",
+            "ALTER TABLE lewis_assessment_records ADD COLUMN answers_json TEXT",
             "ALTER TABLE lewis_journey_sessions ADD COLUMN age_category TEXT",
             "ALTER TABLE lewis_journey_sessions ADD COLUMN gender TEXT",
         ):
@@ -1527,11 +1536,13 @@ def save_encrypted_assessment_record(
     started_at_iso: Optional[str] = None,
     duration_seconds: Optional[int] = None,
     age_category: Optional[str] = None,
-    gender: Optional[str] = None
+    gender: Optional[str] = None,
+    answers: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
-    Store the user's name, email, age group, gender, and full generated report in the database.
-    User name and email ID are encrypted at rest using AES-Fernet.
+    Store the user's name, email, age group, gender, raw assessment answers,
+    and full generated report in the database. User name and email ID are
+    encrypted at rest using AES-Fernet.
     """
     report_uuid = generate_report_uuid()
     name_enc = encrypt_pii(user_name) if user_name else None
@@ -1542,6 +1553,7 @@ def save_encrypted_assessment_record(
     wellbeing_band = scores.get("who5", {}).get("wellbeing_band") or "Moderate"
     overall_score = scores.get("who5", {}).get("scaled_score", 0.0)
     report_json_str = json.dumps(report_data, default=str)
+    answers_json_str = json.dumps(answers, default=str) if answers is not None else None
 
     if has_pg and DATABASE_URL:
         try:
@@ -1550,9 +1562,9 @@ def save_encrypted_assessment_record(
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO lewis_assessment_records
-                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, started_at, duration_seconds)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, started_at_iso, duration_seconds))
+                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, started_at, duration_seconds)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, started_at_iso, duration_seconds))
                     conn.commit()
                 conn.close()
                 logger.info("Saved encrypted assessment record %s to PostgreSQL", report_uuid)
@@ -1565,9 +1577,9 @@ def save_encrypted_assessment_record(
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO lewis_assessment_records
-            (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, started_at, duration_seconds)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, started_at_iso, duration_seconds))
+            (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, started_at, duration_seconds)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, started_at_iso, duration_seconds))
         conn.commit()
         conn.close()
         logger.info("Saved encrypted assessment record %s to SQLite", report_uuid)
@@ -2479,6 +2491,8 @@ def get_report_by_uuid(report_uuid: str) -> Optional[Dict[str, Any]]:
                     res = dict(row)
                     if isinstance(res.get("report_json"), str):
                         res["report_json"] = json.loads(res["report_json"])
+                    if isinstance(res.get("answers_json"), str):
+                        res["answers_json"] = json.loads(res["answers_json"])
                     return res
         except Exception as e:
             logger.error("PostgreSQL error fetching report by UUID: %s", e)
@@ -2494,6 +2508,8 @@ def get_report_by_uuid(report_uuid: str) -> Optional[Dict[str, Any]]:
             res = dict(row)
             if isinstance(res.get("report_json"), str):
                 res["report_json"] = json.loads(res["report_json"])
+            if isinstance(res.get("answers_json"), str):
+                res["answers_json"] = json.loads(res["answers_json"])
             return res
     except Exception as e:
         logger.warning("SQLite error fetching report by UUID: %s", e)
