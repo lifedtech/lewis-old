@@ -8,7 +8,14 @@
 # frontend/dist-report/render-report.mjs exists in the built image). If
 # Railway's build context doesn't reach ../frontend from this root, fall
 # back to a two-stage Dockerfile instead of fighting Nixpacks further.
-providers = ["python", "node"]
+#
+# providers stays python-only: adding "node" here makes nixpacks' node
+# provider contribute its own default nodejs (18.x) to phases.setup
+# *in addition to* the nodejs_20 below, and two nodejs builds in one
+# profile conflict on shared files (e.g. include/node/v8-promise.h).
+# There's no package.json in backend/ for a node provider to detect
+# anyway — nodejs_20 in nixPkgs is enough to run the frontend build cmd.
+providers = ["python"]
 
 [phases.setup]
 nixPkgs = ["...", "nodejs_20"]
