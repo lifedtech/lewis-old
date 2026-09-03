@@ -20,26 +20,53 @@ export default function PaymentConfirmScreen() {
     name: storeName,
     latestPaymentOrder,
     analysisData,
-    theme
+    theme,
+    selectedPlan,
+    planPrice,
+    transitionToFullVersion
   } = useLewisStore()
-
-  const [isSupportOpen, setIsSupportOpen] = useState(false)
-  const [isReviewOpen, setIsReviewOpen] = useState(false)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsReviewOpen(true)
-    }, 750)
-    return () => clearTimeout(timer)
-  }, [])
 
   const customerEmail = latestPaymentOrder?.email || storeEmail || 'your email'
   const customerPhone = latestPaymentOrder?.phone || storePhone || ''
   const customerName = latestPaymentOrder?.name || storeName || ''
   const orderId = latestPaymentOrder?.orderId || latestPaymentOrder?.order_id || `ORD-${Date.now().toString(36).toUpperCase()}`
-  const formattedAmount = latestPaymentOrder?.amount
-    ? (latestPaymentOrder?.currency === 'INR' || !latestPaymentOrder?.currency ? `₹${latestPaymentOrder.amount}` : `${latestPaymentOrder.currency} ${latestPaymentOrder.amount}`)
-    : '₹749 (All Taxes Included)'
+
+  const isStreamlined = selectedPlan === 'streamlined_report' || planPrice === 349 || latestPaymentOrder?.plan === 'streamlined_report'
+
+  const planName = isStreamlined
+    ? 'Complete Insight Report (11-Section PDF)'
+    : 'Personal Insight Report (25-Page PDF)'
+
+  const formattedAmount = (() => {
+    if (latestPaymentOrder && typeof latestPaymentOrder.amount === 'number') {
+      const sym = (!latestPaymentOrder.currency || latestPaymentOrder.currency === 'INR') ? '₹' : `${latestPaymentOrder.currency} `
+      if (latestPaymentOrder.amount === 0) return `${sym}0 (100% Coupon Applied)`
+      return `${sym}${latestPaymentOrder.amount}`
+    }
+    return isStreamlined ? '₹349 (All Taxes Included)' : '₹749 (All Taxes Included)'
+  })()
+
+  const [isSupportOpen, setIsSupportOpen] = useState(false)
+  const [isReviewOpen, setIsReviewOpen] = useState(false)
+  const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(() => {
+    try {
+      return (
+        localStorage.getItem(`lewis_review_submitted_${orderId}`) === 'true' ||
+        localStorage.getItem('lewis_review_submitted_default') === 'true' ||
+        localStorage.getItem('lewis_feedback_completed') === 'true'
+      )
+    } catch {
+      return false
+    }
+  })
+
+  useEffect(() => {
+    if (hasSubmittedFeedback) return
+    const timer = setTimeout(() => {
+      setIsReviewOpen(true)
+    }, 750)
+    return () => clearTimeout(timer)
+  }, [hasSubmittedFeedback])
 
   return (
     <div style={{
@@ -84,38 +111,40 @@ export default function PaymentConfirmScreen() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <ThemeToggle />
-          <motion.button
-            type="button"
-            onClick={() => setIsReviewOpen(true)}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              height: '34px',
-              padding: '0 14px',
-              borderRadius: '999px',
-              background: 'var(--raised, #ffffff)',
-              border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.45))',
-              color: 'var(--dawn, #00ae9d)',
-              fontFamily: NUNITO,
-              fontSize: '13px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: 'var(--shadow-soft, 0 2px 10px rgba(0, 174, 157, 0.1))',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--panel-border, rgba(0, 174, 157, 0.45))'
-            }}
-          >
-            <span style={{ fontSize: '15px', color: 'var(--dawn, #00ae9d)' }}>★</span>
-            <span>Rate Experience</span>
-          </motion.button>
+          {!hasSubmittedFeedback && (
+            <motion.button
+              type="button"
+              onClick={() => setIsReviewOpen(true)}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                height: '34px',
+                padding: '0 14px',
+                borderRadius: '999px',
+                background: 'var(--raised, #ffffff)',
+                border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.45))',
+                color: 'var(--dawn, #00ae9d)',
+                fontFamily: NUNITO,
+                fontSize: '13px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: 'var(--shadow-soft, 0 2px 10px rgba(0, 174, 157, 0.1))',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--panel-border, rgba(0, 174, 157, 0.45))'
+              }}
+            >
+              <span style={{ fontSize: '15px', color: 'var(--dawn, #00ae9d)' }}>★</span>
+              <span>Rate Experience</span>
+            </motion.button>
+          )}
 
           <motion.button
             type="button"
@@ -243,16 +272,16 @@ export default function PaymentConfirmScreen() {
                     display: 'block',
                     marginBottom: '2px',
                   }}>
-                    Payment Successful · Order Confirmed
+                    Order Confirmed
                   </span>
                   <h1 style={{
                     margin: 0,
-                    fontSize: 'clamp(20px, 2.2vw, 25px)',
+                    fontSize: 'clamp(22px, 2.4vw, 28px)',
                     fontWeight: 800,
                     color: 'var(--text-main, #1e293b)',
                     lineHeight: 1.2,
                   }}>
-                    Preparing your personalised report
+                    Payment Confirmed
                   </h1>
                 </div>
               </div>
@@ -314,15 +343,21 @@ export default function PaymentConfirmScreen() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '6px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
               <motion.button
                 whileHover={{ scale: 1.015 }}
                 whileTap={{ scale: 0.985 }}
-                onClick={() => setScreen('mirror')}
+                onClick={() => {
+                  if (typeof transitionToFullVersion === 'function') {
+                    transitionToFullVersion()
+                  } else {
+                    setScreen('stage1_0About')
+                  }
+                }}
                 className="btn-primary"
                 style={{
                   width: '100%',
-                  padding: '13px 22px',
+                  padding: '14px 24px',
                   fontSize: '15px',
                   fontWeight: 700,
                   borderRadius: '999px',
@@ -332,27 +367,41 @@ export default function PaymentConfirmScreen() {
                   cursor: 'pointer',
                   boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
                   fontFamily: NUNITO,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
                 }}
               >
-                View My Reflection Summary →
+                <span>Would you like to try LEWIS Extended Version? →</span>
               </motion.button>
 
               <button
+                type="button"
                 onClick={() => setScreen('landing')}
                 style={{
+                  width: '100%',
+                  padding: '12px 20px',
+                  borderRadius: '999px',
+                  border: '1.5px solid var(--border-color, #cbd5e1)',
                   background: 'transparent',
-                  border: 'none',
-                  color: 'var(--text-sub, #64748b)',
-                  fontSize: '13px',
-                  fontWeight: 600,
+                  color: 'var(--text-main, #414242)',
+                  fontSize: '14px',
+                  fontWeight: 700,
                   cursor: 'pointer',
-                  padding: '4px 8px',
-                  transition: 'color 0.2s',
+                  fontFamily: NUNITO,
+                  transition: 'all 0.2s',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-main, #414242)'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-sub, #64748b)'}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
+                  e.currentTarget.style.color = 'var(--dawn, #00ae9d)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-color, #cbd5e1)'
+                  e.currentTarget.style.color = 'var(--text-main, #414242)'
+                }}
               >
-                Back to Home
+                Back to Home Page
               </button>
 
               <p style={{
@@ -411,7 +460,7 @@ export default function PaymentConfirmScreen() {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
                   <span>Plan Purchased</span>
-                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>Personal Insight Report (PDF)</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>{planName}</span>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
@@ -450,11 +499,15 @@ export default function PaymentConfirmScreen() {
               flexDirection: 'column',
               gap: '8px',
             }}>
-              {[
+              {(isStreamlined ? [
+                'Full 11-Section Insight Report & Petals Diagram',
+                'Link Graph & Root Driver Leverage Analysis',
+                'Encrypted & dispatched exclusively to your verified address',
+              ] : [
                 'Validated against 9 psychological baseline dimensions',
                 'Peer-reviewed self-report literature citations embedded',
                 'Encrypted & dispatched exclusively to your verified address',
-              ].map((item, idx) => (
+              ]).map((item, idx) => (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-sub, #475569)' }}>
                   <span style={{ color: 'var(--dawn, #00ae9d)', fontWeight: 800 }}>✓</span>
                   <span>{item}</span>
@@ -471,8 +524,12 @@ export default function PaymentConfirmScreen() {
 
       {/* Review / Experience Feedback Modal */}
       <ReviewModal
-        isOpen={isReviewOpen}
+        isOpen={isReviewOpen && !hasSubmittedFeedback}
         onClose={() => setIsReviewOpen(false)}
+        onSubmitted={() => {
+          setHasSubmittedFeedback(true)
+          setIsReviewOpen(false)
+        }}
         customerName={customerName}
         customerEmail={customerEmail}
         orderId={orderId}

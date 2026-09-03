@@ -63,6 +63,46 @@ import PaymentConfirmScreen from '../screens/PaymentConfirmScreen.jsx'
 import LoginScreen from '../screens/LoginScreen.jsx'
 import ReportReviewScreen from '../screens/ReportReviewScreen.jsx'
 
+// Streamlined Screens
+import StreamlinedGateScreen from '../screens/streamlined/StreamlinedGateScreen.jsx'
+import StreamlinedGateStopScreen from '../screens/streamlined/StreamlinedGateStopScreen.jsx'
+import StreamlinedWelcomeScreen from '../screens/streamlined/StreamlinedWelcomeScreen.jsx'
+import StreamlinedAboutScreen from '../screens/streamlined/StreamlinedAboutScreen.jsx'
+import StreamlinedIdentityScreen from '../screens/streamlined/StreamlinedIdentityScreen.jsx'
+import StreamlinedStabilityScreen from '../screens/streamlined/StreamlinedStabilityScreen.jsx'
+import StreamlinedPressuresScreen from '../screens/streamlined/StreamlinedPressuresScreen.jsx'
+import StreamlinedArrivalScreen from '../screens/streamlined/StreamlinedArrivalScreen.jsx'
+import StreamlinedWho5Screen from '../screens/streamlined/StreamlinedWho5Screen.jsx'
+import StreamlinedAffectScreen from '../screens/streamlined/StreamlinedAffectScreen.jsx'
+import StreamlinedBodyMapScreen from '../screens/streamlined/StreamlinedBodyMapScreen.jsx'
+import StreamlinedNsStateScreen from '../screens/streamlined/StreamlinedNsStateScreen.jsx'
+import StreamlinedBodyAwarenessScreen from '../screens/streamlined/StreamlinedBodyAwarenessScreen.jsx'
+import StreamlinedBodyScreen from '../screens/streamlined/StreamlinedBodyScreen.jsx'
+import StreamlinedPss10Screen from '../screens/streamlined/StreamlinedPss10Screen.jsx'
+import StreamlinedRelationalScreen from '../screens/streamlined/StreamlinedRelationalScreen.jsx'
+import StreamlinedGseScreen from '../screens/streamlined/StreamlinedGseScreen.jsx'
+import StreamlinedMeaningScreen from '../screens/streamlined/StreamlinedMeaningScreen.jsx'
+import StreamlinedMoneyScreen from '../screens/streamlined/StreamlinedMoneyScreen.jsx'
+import StreamlinedSurroundingsScreen from '../screens/streamlined/StreamlinedSurroundingsScreen.jsx'
+import StreamlinedGrowthScreen from '../screens/streamlined/StreamlinedGrowthScreen.jsx'
+import StreamlinedLandscapeScreen from '../screens/streamlined/StreamlinedLandscapeScreen.jsx'
+import StreamlinedPriorityScreen from '../screens/streamlined/StreamlinedPriorityScreen.jsx'
+import StreamlinedPriorityTensionScreen from '../screens/streamlined/StreamlinedPriorityTensionScreen.jsx'
+import StreamlinedBrightSpotScreen from '../screens/streamlined/StreamlinedBrightSpotScreen.jsx'
+import StreamlinedEmailScreen from '../screens/streamlined/StreamlinedEmailScreen.jsx'
+import StreamlinedDeepDivesScreen from '../screens/streamlined/StreamlinedDeepDivesScreen.jsx'
+import StreamlinedSupportScreen from '../screens/streamlined/StreamlinedSupportScreen.jsx'
+import StreamlinedPriorScreen from '../screens/streamlined/StreamlinedPriorScreen.jsx'
+import StreamlinedPlannerScreen from '../screens/streamlined/StreamlinedPlannerScreen.jsx'
+import StreamlinedRhythmScreen from '../screens/streamlined/StreamlinedRhythmScreen.jsx'
+import StreamlinedRecoveryScreen from '../screens/streamlined/StreamlinedRecoveryScreen.jsx'
+import StreamlinedStressPatternScreen from '../screens/streamlined/StreamlinedStressPatternScreen.jsx'
+import StreamlinedCumulativeScreen from '../screens/streamlined/StreamlinedCumulativeScreen.jsx'
+import StreamlinedBreathingScreen from '../screens/streamlined/StreamlinedBreathingScreen.jsx'
+import StreamlinedGeneratingScreen from '../screens/streamlined/StreamlinedGeneratingScreen.jsx'
+import StreamlinedMirrorScreen from '../screens/streamlined/StreamlinedMirrorScreen.jsx'
+import StreamlinedInsightReport from '../report/StreamlinedInsightReport.jsx'
+
 // Stepped questionnaire instruments rendered via MobileInstrumentScreen
 const MOBILE_INSTRUMENT_SCREENS = Object.fromEntries(
   Object.keys(INSTRUMENTS).map((id) => {
@@ -127,6 +167,46 @@ const MOBILE_SCREENS = {
   reportReview: ReportReviewScreen,
   review: ReportReviewScreen,
   'report-review': ReportReviewScreen,
+
+  // Streamlined Route Keys
+  sl_gate: StreamlinedGateScreen,
+  sl_gate_stop: StreamlinedGateStopScreen,
+  sl_welcome: StreamlinedWelcomeScreen,
+  sl_1_0About: StreamlinedAboutScreen,
+  sl_1_1Identity: StreamlinedIdentityScreen,
+  sl_1_2Stability: StreamlinedStabilityScreen,
+  sl_1_3Pressures: StreamlinedPressuresScreen,
+  sl_1_8Arrival: StreamlinedArrivalScreen,
+  sl_1_5Who5: StreamlinedWho5Screen,
+  sl_3_1Affect: StreamlinedAffectScreen,
+  sl_3_2BodyMap: StreamlinedBodyMapScreen,
+  sl_3_5NsState: StreamlinedNsStateScreen,
+  sl_3_6BodyAwareness: StreamlinedBodyAwarenessScreen,
+  sl_1_4Body: StreamlinedBodyScreen,
+  sl_5_2Pss10: StreamlinedPss10Screen,
+  sl_5_2Ucla3: StreamlinedRelationalScreen,
+  sl_5_2Gse: StreamlinedGseScreen,
+  sl_5_2Promis: StreamlinedMeaningScreen,
+  sl_5_2Cfpb5: StreamlinedMoneyScreen,
+  sl_5_2Ins: StreamlinedSurroundingsScreen,
+  sl_5_2Growth: StreamlinedGrowthScreen,
+  sl_5_1Landscape: StreamlinedLandscapeScreen,
+  sl_5_1Priority: StreamlinedPriorityScreen,
+  sl_5_5PriorityTension: StreamlinedPriorityTensionScreen,
+  sl_5_4BrightSpot: StreamlinedBrightSpotScreen,
+  sl_5_0Email: StreamlinedEmailScreen,
+  sl_5_3DeepDives: StreamlinedDeepDivesScreen,
+  sl_7_4Support: StreamlinedSupportScreen,
+  sl_7_2Prior: StreamlinedPriorScreen,
+  sl_7_5Planner: StreamlinedPlannerScreen,
+  sl_8_1EnergyArc: StreamlinedRhythmScreen,
+  sl_8_3Recovery: StreamlinedRecoveryScreen,
+  sl_8_2StressPattern: StreamlinedStressPatternScreen,
+  sl_8_4Cumulative: StreamlinedCumulativeScreen,
+  sl_3_4Breathing: StreamlinedBreathingScreen,
+  sl_10Generating: StreamlinedGeneratingScreen,
+  sl_mirror: StreamlinedMirrorScreen,
+  sl_report: StreamlinedInsightReport
 }
 
 export default function MobileApp() {
@@ -134,7 +214,11 @@ export default function MobileApp() {
   const isDark = theme === 'dark'
   const validScreen = MOBILE_SCREENS[currentScreen] ? currentScreen : 'landing'
   const ActiveScreen = MOBILE_SCREENS[validScreen]
-  const isFullPage = ['landing', 'mirror', 'billing', 'payment', 'paymentConfirm', 'stage10Generating', 'login', 'reportReview', 'review', 'report-review'].includes(validScreen)
+  const isFullPage = [
+    'landing', 'mirror', 'billing', 'payment', 'paymentConfirm',
+    'stage10Generating', 'login', 'reportReview', 'review', 'report-review',
+    'sl_10Generating', 'sl_mirror', 'sl_report'
+  ].includes(validScreen)
   const containerRef = useRef(null)
 
   // Scroll to top cleanly on screen change without locking native gestures

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<script src="./doc-page.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Nunito',system-ui,sans-serif;color:#414242;-webkit-font-smoothing:antialiased}
+a{color:#00786d;text-decoration:none}
+a:hover{color:#00ae9d;text-decoration:underline;text-underline-offset:3px}
+doc-page:not(:defined){visibility:hidden}
+@media print {
+  .no-print { display: none !important; }
+  body { background: #ffffff !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+</style>
+</helmet>
+<doc-page size="{{ paper }}" margin="{{ margin }}">
+
+<section data-screen-label="Cover" style="padding-top:6px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:22px;border-bottom:1px solid #ededed">
+    <img src="assets/logo-lewis.svg" alt="Lewis" style="height:34px;width:auto;display:block">
+    <span style="font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#00ae9d">Wellbeing intelligence</span>
+  </div>
+
+  <div style="display:grid;gap:18px;padding:46px 0 0">
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#a8a8a8">Insight report</span>
+    <h1 style="margin:0;font:800 58px/1.02 'Nunito',sans-serif;letter-spacing:-.025em;color:#414242">Your reflection.</h1>
+    <p style="margin:0;font:400 18px/1.6 'Nunito',sans-serif;color:#5f6060;max-width:46ch;text-wrap:pretty">Nine areas of your life, read back to you from your own answers. Where things sit, how they connect, and the one place a small change reaches furthest.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;padding-top:4px">
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:8px;background:#d6edea;font:600 12px 'Nunito',sans-serif;color:#00786d">Devaraj</span>
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:8px;background:#f4f4f4;font:600 12px 'Nunito',sans-serif;color:#5f6060">23 August 2026</span>
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:8px;background:#f4f4f4;font:600 12px 'Nunito',sans-serif;color:#5f6060">39 answers · 11 sections</span>
+    </div>
+  </div>
+
+  <div style="display:grid;place-items:center;padding:26px 0 10px">
+    <svg viewBox="-190 -190 380 380" width="100%" style="max-width:420px;display:block" aria-label="Your nine areas, drawn as petals">
+      <g fill="none" stroke="#ededed" stroke-width="1">
+        <circle cx="0" cy="0" r="57"></circle><circle cx="0" cy="0" r="88"></circle><circle cx="0" cy="0" r="119"></circle><circle cx="0" cy="0" r="150"></circle>
+      </g>
+      <g stroke="#ffffff" stroke-width="1.25">
+        <path d="M0,0 C10.1,-13.6 9,-39.3 0,-54.5 C-9,-39.3 -10.1,-13.6 0,0" fill="#cf7f5e" fill-opacity=".78"></path>
+        <path d="M0,0 C18,-4.3 35,-26.5 38.2,-45.6 C20,-39.1 1.1,-18.5 0,0" fill="#cf7f5e" fill-opacity=".78"></path>
+        <path d="M0,0 C24.5,12.3 64.9,3.3 86.7,-15.3 C59.9,-25.3 18.8,-19.9 0,0" fill="#d9a44a" fill-opacity=".78"></path>
+        <path d="M0,0 C13.5,31.2 59,54.9 94.5,54.5 C77,23.7 33.8,-3.9 0,0" fill="#00ae9d" fill-opacity=".82"></path>
+        <path d="M0,0 C-9.5,31.8 9.7,78.1 36.5,100.2 C42.8,66.1 27.7,18.3 0,0" fill="#00ae9d" fill-opacity=".82"></path>
+        <path d="M0,0 C-24.8,16.3 -38.3,59.2 -32.6,89.7 C-8.7,70 8.5,28.5 0,0" fill="#00ae9d" fill-opacity=".82"></path>
+        <path d="M0,0 C-17.6,-2.1 -40.2,12.4 -49.4,28.5 C-30.8,28.7 -7,16.3 0,0" fill="#cf7f5e" fill-opacity=".78"></path>
+        <path d="M0,0 C-15.4,-16.3 -48.9,-20.7 -70.8,-12.5 C-53,2.7 -20,10 0,0" fill="#cf7f5e" fill-opacity=".78"></path>
+        <path d="M0,0 C-1.5,-25.1 -27.1,-53 -51.8,-61.7 C-47.5,-35.9 -24.4,-5.8 0,0" fill="#d9a44a" fill-opacity=".78"></path>
+      </g>
+      <circle cx="0" cy="0" r="3.5" fill="#ffffff"></circle>
+    </svg>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;gap:16px;padding-top:18px;border-top:1px solid #ededed">
+    <span style="font:400 11px/1.5 'Nunito',sans-serif;color:#a8a8a8">A reflection, not a verdict. LEWIS is non clinical.</span>
+    <span style="font:400 11px/1.5 'Nunito',sans-serif;color:#a8a8a8">Lewis · lewiswellbeing.com</span>
+  </div>
+</section>
+
+<section data-screen-label="01 Where this starts" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">01</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">Where this starts</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <p style="margin:0 0 26px;font:400 26px/1.4 'Nunito',sans-serif;color:#414242;max-width:30ch;text-wrap:pretty">You arrived here describing yourself as <strong style="font-weight:800;color:#00786d">stretched</strong>.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;break-inside:avoid">
+    <p style="margin:0;font:400 15px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Some of what follows is hard, and none of it is a verdict on you.</p>
+    <div style="padding:18px 20px;border-radius:16px;background:#d6edea">
+      <p style="margin:0;font:700 15px/1.55 'Nunito',sans-serif;color:#00786d;text-wrap:pretty">This describes the season you are in, not the kind of person you are.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:30px;padding:24px;border:1px solid #ededed;border-radius:20px;break-inside:avoid">
+    <span style="font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">What matters most to you right now</span>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px">
+      <div style="padding:16px;border-radius:14px;background:#f7e8e0">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#cf7f5e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M3.5 8.6h9.2a3 3 0 1 0-3-3M3.5 15.4h12.7a3 3 0 1 1-3 3M3.5 12h6.5"></path></svg>
+        <p style="margin:12px 0 0;font:700 14px/1.35 'Nunito',sans-serif;color:#414242">Emotional calm</p>
+      </div>
+      <div style="padding:16px;border-radius:14px;background:#f7e8e0">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#cf7f5e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:block"><circle cx="12" cy="5" r="2.4"></circle><path d="M12 7.6v4.6M12 12.2c-2 0-3.7 1-4.8 2.6M12 12.2c2 0 3.7 1 4.8 2.6M4.8 19.9h14.4M7 19.9c0-2.8 2.2-4.9 5-4.9s5 2.1 5 4.9"></path></svg>
+        <p style="margin:12px 0 0;font:700 14px/1.35 'Nunito',sans-serif;color:#414242">Your body</p>
+      </div>
+      <div style="padding:16px;border-radius:14px;background:#f7e8e0">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#cf7f5e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M3.5 8.5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"></path><path d="M3.5 8.4V6.5a2 2 0 0 1 2-2h10.5"></path><circle cx="16.8" cy="13" r="1.4"></circle></svg>
+        <p style="margin:12px 0 0;font:700 14px/1.35 'Nunito',sans-serif;color:#414242">Money</p>
+      </div>
+    </div>
+    <p style="margin:20px 0 0;font:400 15px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Your answers point to your body as the one that is furthest from where you want it. We asked whether that felt right, and you said yes.</p>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:18px;padding-top:18px;border-top:1px dashed #ededed">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#00ae9d;flex:none">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"></path></svg>
+      </span>
+      <p style="margin:0;font:600 14px/1.55 'Nunito',sans-serif;color:#00786d">So that is where this report begins. Not because it is the loudest thing, but because you told us it is both what you care about and what is thinnest.</p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="02 The shape" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">02</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">The shape of your wellbeing</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="display:grid;place-items:center;break-inside:avoid">
+    <svg viewBox="-260 -200 520 400" width="100%" style="max-width:560px;display:block" aria-label="Nine petal diagram of your nine areas">
+      <g fill="none" stroke="#ededed" stroke-width="1" stroke-dasharray="2 4">
+        <circle cx="0" cy="0" r="57"></circle><circle cx="0" cy="0" r="88"></circle><circle cx="0" cy="0" r="119"></circle>
+      </g>
+      <circle cx="0" cy="0" r="150" fill="none" stroke="#e0e0e0" stroke-width="1"></circle>
+      <g stroke="#ffffff" stroke-width="1.5">
+        <path d="M0,0 C10.1,-13.6 9,-39.3 0,-54.5 C-9,-39.3 -10.1,-13.6 0,0" fill="#cf7f5e" fill-opacity=".85"></path>
+        <path d="M0,0 C18,-4.3 35,-26.5 38.2,-45.6 C20,-39.1 1.1,-18.5 0,0" fill="#cf7f5e" fill-opacity=".85"></path>
+        <path d="M0,0 C24.5,12.3 64.9,3.3 86.7,-15.3 C59.9,-25.3 18.8,-19.9 0,0" fill="#d9a44a" fill-opacity=".85"></path>
+        <path d="M0,0 C13.5,31.2 59,54.9 94.5,54.5 C77,23.7 33.8,-3.9 0,0" fill="#00ae9d" fill-opacity=".88"></path>
+        <path d="M0,0 C-9.5,31.8 9.7,78.1 36.5,100.2 C42.8,66.1 27.7,18.3 0,0" fill="#00ae9d" fill-opacity=".88"></path>
+        <path d="M0,0 C-24.8,16.3 -38.3,59.2 -32.6,89.7 C-8.7,70 8.5,28.5 0,0" fill="#00ae9d" fill-opacity=".88"></path>
+        <path d="M0,0 C-17.6,-2.1 -40.2,12.4 -49.4,28.5 C-30.8,28.7 -7,16.3 0,0" fill="#cf7f5e" fill-opacity=".85"></path>
+        <path d="M0,0 C-15.4,-16.3 -48.9,-20.7 -70.8,-12.5 C-53,2.7 -20,10 0,0" fill="#cf7f5e" fill-opacity=".85"></path>
+        <path d="M0,0 C-1.5,-25.1 -27.1,-53 -51.8,-61.7 C-47.5,-35.9 -24.4,-5.8 0,0" fill="#d9a44a" fill-opacity=".85"></path>
+      </g>
+      <circle cx="0" cy="0" r="4" fill="#ffffff"></circle>
+      <g font-family="Nunito, sans-serif" font-size="11.5" font-weight="700">
+        <text x="0" y="-160" text-anchor="middle" fill="#5f6060">Body <tspan fill="#cf7f5e">23</tspan></text>
+        <text x="101.6" y="-117" text-anchor="start" fill="#5f6060">Emotional calm <tspan fill="#cf7f5e">27</tspan></text>
+        <text x="155.6" y="-23" text-anchor="start" fill="#5f6060">Energy <tspan fill="#d9a44a">50</tspan></text>
+        <text x="136.8" y="83" text-anchor="start" fill="#5f6060">Relationships <tspan fill="#00ae9d">67</tspan></text>
+        <text x="54" y="160" text-anchor="start" fill="#5f6060">Meaning <tspan fill="#00ae9d">65</tspan></text>
+        <text x="-54" y="160" text-anchor="end" fill="#5f6060">Progress <tspan fill="#00ae9d">56</tspan></text>
+        <text x="-136.8" y="83" text-anchor="end" fill="#5f6060">Money <tspan fill="#cf7f5e">25</tspan></text>
+        <text x="-155.6" y="-23" text-anchor="end" fill="#5f6060">Curiosity <tspan fill="#cf7f5e">37</tspan></text>
+        <text x="-101.6" y="-117" text-anchor="end" fill="#5f6060">Surroundings <tspan fill="#d9a44a">44</tspan></text>
+      </g>
+    </svg>
+  </div>
+
+  <p style="margin:6px 0 26px;font:400 13px/1.65 'Nunito',sans-serif;color:#808080;max-width:70ch;text-wrap:pretty">This shows how the nine areas sit relative to each other <strong style="font-weight:700;color:#5f6060">in your own answers</strong>. It is not a league table, and a 60 in one area does not mean the same thing as a 60 in another.</p>
+
+  <div style="display:grid;gap:8px;break-inside:avoid">
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;padding:14px 18px;border-radius:14px;background:#e6f4d0;opacity:.55">
+      <div style="display:flex;align-items:center;gap:9px"><span style="width:9px;height:9px;border-radius:50%;background:#5fbb46;flex:none"></span><span style="font:700 13px/1.2 'Nunito',sans-serif;color:#414242">A real strength</span></div>
+      <span style="font:400 13px 'Nunito',sans-serif;color:#808080">None right now</span>
+    </div>
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;padding:14px 18px;border-radius:14px;background:#d6edea">
+      <div style="display:flex;align-items:center;gap:9px"><span style="width:9px;height:9px;border-radius:50%;background:#00ae9d;flex:none"></span><span style="font:700 13px/1.2 'Nunito',sans-serif;color:#414242">Holding</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Relationships <b style="color:#00786d">67</b></span>
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Meaning and purpose <b style="color:#00786d">65</b></span>
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Progress and agency <b style="color:#00786d">56</b></span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;padding:14px 18px;border-radius:14px;background:#faf0dc">
+      <div style="display:flex;align-items:center;gap:9px"><span style="width:9px;height:9px;border-radius:50%;background:#d9a44a;flex:none"></span><span style="font:700 13px/1.2 'Nunito',sans-serif;color:#414242">Stretched</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Energy and drive <b style="color:#b07c22">50</b></span>
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Surroundings and belonging <b style="color:#b07c22">44</b></span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;padding:14px 18px;border-radius:14px;background:#f7e8e0">
+      <div style="display:flex;align-items:center;gap:9px"><span style="width:9px;height:9px;border-radius:50%;background:#cf7f5e;flex:none"></span><span style="font:700 13px/1.2 'Nunito',sans-serif;color:#414242">Running on empty</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Curiosity and learning <b style="color:#b45f38">37</b></span>
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Emotional calm <b style="color:#b45f38">27</b></span>
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Money and security <b style="color:#b45f38">25</b></span>
+        <span style="display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:8px;background:#ffffff;font:600 12.5px 'Nunito',sans-serif;color:#414242">Body and recovery <b style="color:#b45f38">23</b></span>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin:22px 0 0;font:400 15px/1.7 'Nunito',sans-serif;color:#5f6060;max-width:72ch;orphans:3;widows:3;text-wrap:pretty">Four areas in the lowest band is a lot to be carrying at once. Three areas standing in the highest band, at the same time, is also true and also worth saying.</p>
+</section>
+
+<section data-screen-label="03 What each area asks" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">03</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">What each area asks of you</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="display:flex;align-items:baseline;gap:12px;padding:0 0 10px">
+    <span style="font:800 15px/1.2 'Nunito',sans-serif;color:#b45f38">Running on empty</span>
+    <span style="font:400 13px/1.5 'Nunito',sans-serif;color:#808080">This area needs the gentlest care right now. Reserve is thin, and effort here costs more than it should.</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px">
+    <div style="padding:18px 20px;border-radius:16px;background:#f7e8e0;break-inside:avoid">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+        <span style="font:800 15px/1.25 'Nunito',sans-serif;color:#414242">Body and recovery</span>
+        <span style="font:800 20px/1 'Nunito',sans-serif;color:#cf7f5e">23</span>
+      </div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:12px 0 14px"><span style="display:block;width:23%;height:5px;border-radius:3px;background:#cf7f5e"></span></div>
+      <p style="margin:0;font:400 13.5px/1.65 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">You told us sleep is not restoring you and that there is no time to rest or recover, and that this is getting worse rather than holding steady.</p>
+      <span style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;height:26px;padding:0 11px;border-radius:8px;background:#ffffff;font:700 11px 'Nunito',sans-serif;color:#b45f38">↓ Getting worse</span>
+    </div>
+    <div style="padding:18px 20px;border-radius:16px;background:#f7e8e0;break-inside:avoid">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+        <span style="font:800 15px/1.25 'Nunito',sans-serif;color:#414242">Emotional calm</span>
+        <span style="font:800 20px/1 'Nunito',sans-serif;color:#cf7f5e">27</span>
+      </div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:12px 0 14px"><span style="display:block;width:27%;height:5px;border-radius:3px;background:#cf7f5e"></span></div>
+      <p style="margin:0;font:400 13.5px/1.65 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">You described a mind that is constantly busy, and difficulty settling. This is also moving in the wrong direction.</p>
+      <span style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;height:26px;padding:0 11px;border-radius:8px;background:#ffffff;font:700 11px 'Nunito',sans-serif;color:#b45f38">↓ Getting worse</span>
+    </div>
+    <div style="padding:18px 20px;border-radius:16px;background:#f7e8e0;break-inside:avoid">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+        <span style="font:800 15px/1.25 'Nunito',sans-serif;color:#414242">Money and security</span>
+        <span style="font:800 20px/1 'Nunito',sans-serif;color:#cf7f5e">25</span>
+      </div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:12px 0 14px"><span style="display:block;width:25%;height:5px;border-radius:3px;background:#cf7f5e"></span></div>
+      <p style="margin:0;font:400 13.5px/1.65 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Money worry sits with you most days and there is not much of a buffer. Unlike the two above, this one is not getting worse. It is holding at a difficult level.</p>
+      <span style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;height:26px;padding:0 11px;border-radius:8px;background:#ffffff;font:700 11px 'Nunito',sans-serif;color:#5f6060">→ Holding, at a difficult level</span>
+    </div>
+    <div style="padding:18px 20px;border-radius:16px;background:#f7e8e0;break-inside:avoid">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+        <span style="font:800 15px/1.25 'Nunito',sans-serif;color:#414242">Curiosity and learning</span>
+        <span style="font:800 20px/1 'Nunito',sans-serif;color:#cf7f5e">37</span>
+      </div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:12px 0 14px"><span style="display:block;width:37%;height:5px;border-radius:3px;background:#cf7f5e"></span></div>
+      <p style="margin:0;font:400 13.5px/1.65 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">The last thing that genuinely stretched you was a few months ago. This area is measured with our own questions rather than a published questionnaire, so we hold it more loosely than the others.</p>
+      <span style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;height:26px;padding:0 11px;border-radius:8px;background:#ffffff;font:700 11px 'Nunito',sans-serif;color:#5f6060">Held loosely</span>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:baseline;gap:12px;padding:0 0 10px">
+    <span style="font:800 15px/1.2 'Nunito',sans-serif;color:#b07c22">Stretched</span>
+    <span style="font:400 13px/1.5 'Nunito',sans-serif;color:#808080">Stretched, and asking for attention. Still functioning, but with less give than it used to have.</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px">
+    <div style="padding:18px 20px;border-radius:16px;background:#faf0dc;break-inside:avoid">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+        <span style="font:800 15px/1.25 'Nunito',sans-serif;color:#414242">Energy and drive</span>
+        <span style="font:800 20px/1 'Nunito',sans-serif;color:#d9a44a">50</span>
+      </div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:12px 0 0"><span style="display:block;width:50%;height:5px;border-radius:3px;background:#d9a44a"></span></div>
+    </div>
+    <div style="padding:18px 20px;border-radius:16px;background:#faf0dc;break-inside:avoid">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+        <span style="font:800 15px/1.25 'Nunito',sans-serif;color:#414242">Surroundings and belonging</span>
+        <span style="font:800 20px/1 'Nunito',sans-serif;color:#d9a44a">44</span>
+      </div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:12px 0 14px"><span style="display:block;width:44%;height:5px;border-radius:3px;background:#d9a44a"></span></div>
+      <p style="margin:0;font:400 13.5px/1.65 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">You rarely get out into nature, and you feel more separate from the natural world than most people describing themselves as stretched.</p>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:baseline;gap:12px;padding:0 0 10px">
+    <span style="font:800 15px/1.2 'Nunito',sans-serif;color:#00786d">Holding</span>
+    <span style="font:400 13px/1.5 'Nunito',sans-serif;color:#808080">Holding reliably, without strain. Not remarkable, and not asking anything of you this month.</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:20px;border-radius:18px;background:#d6edea;break-inside:avoid">
+    <div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><span style="font:800 14.5px/1.25 'Nunito',sans-serif;color:#414242">Relationships</span><span style="font:800 19px/1 'Nunito',sans-serif;color:#00786d">67</span></div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:11px 0 12px"><span style="display:block;width:67%;height:5px;border-radius:3px;background:#00ae9d"></span></div>
+      <p style="margin:0;font:400 13px/1.6 'Nunito',sans-serif;color:#00786d;orphans:3;widows:3">See section 08, because there is something here worth looking at.</p>
+    </div>
+    <div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><span style="font:800 14.5px/1.25 'Nunito',sans-serif;color:#414242">Meaning and purpose</span><span style="font:800 19px/1 'Nunito',sans-serif;color:#00786d">65</span></div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:11px 0 12px"><span style="display:block;width:65%;height:5px;border-radius:3px;background:#00ae9d"></span></div>
+      <p style="margin:0;font:400 13px/1.6 'Nunito',sans-serif;color:#00786d;orphans:3;widows:3">Your sense of direction is intact even while other things are not.</p>
+    </div>
+    <div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><span style="font:800 14.5px/1.25 'Nunito',sans-serif;color:#414242">Progress and agency</span><span style="font:800 19px/1 'Nunito',sans-serif;color:#00786d">56</span></div>
+      <div style="height:5px;border-radius:3px;background:#ffffff;margin:11px 0 12px"><span style="display:block;width:56%;height:5px;border-radius:3px;background:#00ae9d"></span></div>
+      <p style="margin:0;font:400 13px/1.6 'Nunito',sans-serif;color:#00786d;orphans:3;widows:3">In a season this hard, that is not nothing.</p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="04 Where tension settles" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">04</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">Where tension settles in your body</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;break-inside:avoid">
+    <svg viewBox="0 0 520 400" width="100%" style="max-width:100%;display:block" aria-label="Four places you marked tension">
+      <g fill="#cf7f5e" fill-opacity=".16" stroke="#cf7f5e" stroke-opacity=".45" stroke-width="1" stroke-dasharray="3 4">
+        <ellipse cx="120" cy="56" rx="34" ry="42"></ellipse>
+        <ellipse cx="120" cy="112" rx="62" ry="22"></ellipse>
+        <ellipse cx="120" cy="150" rx="40" ry="26"></ellipse>
+        <ellipse cx="120" cy="198" rx="34" ry="24"></ellipse>
+      </g>
+      <g fill="none" stroke="#414242" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="120" cy="48" r="27"></circle>
+        <path d="M120,75 L120,92"></path>
+        <path d="M68,110 Q120,90 172,110"></path>
+        <path d="M72,112 C74,160 78,196 84,222"></path>
+        <path d="M168,112 C166,160 162,196 156,222"></path>
+        <path d="M84,222 Q120,234 156,222"></path>
+        <path d="M68,112 C48,150 44,186 48,220 L46,238"></path>
+        <path d="M172,112 C192,150 196,186 192,220 L194,238"></path>
+        <path d="M92,230 C88,280 86,320 88,356 L76,362"></path>
+        <path d="M148,230 C152,280 154,320 152,356 L164,362"></path>
+      </g>
+      <g stroke="#cf7f5e" stroke-width="1" stroke-dasharray="2 3">
+        <path d="M154,56 L258,56"></path>
+        <path d="M182,112 L258,112"></path>
+        <path d="M160,150 L258,150"></path>
+        <path d="M154,198 L258,198"></path>
+      </g>
+      <g font-family="Nunito, sans-serif">
+        <circle cx="270" cy="56" r="11" fill="#cf7f5e"></circle><text x="270" y="60" text-anchor="middle" font-size="11.5" font-weight="800" fill="#ffffff">1</text>
+        <text x="290" y="61" font-size="14" font-weight="700" fill="#414242">Head and neck</text>
+        <circle cx="270" cy="112" r="11" fill="#cf7f5e"></circle><text x="270" y="116" text-anchor="middle" font-size="11.5" font-weight="800" fill="#ffffff">2</text>
+        <text x="290" y="117" font-size="14" font-weight="700" fill="#414242">Shoulders and back</text>
+        <circle cx="270" cy="150" r="11" fill="#cf7f5e"></circle><text x="270" y="154" text-anchor="middle" font-size="11.5" font-weight="800" fill="#ffffff">3</text>
+        <text x="290" y="155" font-size="14" font-weight="700" fill="#414242">Chest</text>
+        <circle cx="270" cy="198" r="11" fill="#cf7f5e"></circle><text x="270" y="202" text-anchor="middle" font-size="11.5" font-weight="800" fill="#ffffff">4</text>
+        <text x="290" y="203" font-size="14" font-weight="700" fill="#414242">Stomach</text>
+      </g>
+    </svg>
+
+    <div style="display:grid;gap:16px">
+      <p style="margin:0;font:400 15px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">You marked four places: head and neck, chest, shoulders and back, and stomach.</p>
+      <div style="padding:18px 20px;border-radius:16px;border:1px solid #ededed">
+        <span style="font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">Your inner state</span>
+        <p style="margin:12px 0 0;font:800 22px/1.2 'Nunito',sans-serif;color:#cf7f5e">Activated</p>
+        <p style="margin:8px 0 0;font:400 14px/1.6 'Nunito',sans-serif;color:#5f6060">Wired, alert, on edge.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:16px">
+          <span style="display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:8px;background:#f4f4f4;font:600 12px 'Nunito',sans-serif;color:#5f6060">Pattern: the Surge</span>
+          <span style="display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:8px;background:#f4f4f4;font:600 12px 'Nunito',sans-serif;color:#5f6060">Activated, not flat</span>
+          <span style="display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:8px;background:#f4f4f4;font:600 12px 'Nunito',sans-serif;color:#5f6060">Still tired after rest</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin:22px 0 0;font:400 15px/1.7 'Nunito',sans-serif;color:#5f6060;max-width:80ch;orphans:3;widows:3;text-wrap:pretty">That combination, tension held in four places, a wired inner state, and rest that does not restore, is consistent. It is not a medical finding and this report cannot tell you what is happening physiologically. What it can say is that everything you reported points the same direction, and that direction is a body that is not getting the chance to come down.</p>
+
+  <div style="margin-top:26px;padding:24px;border-radius:20px;background:#d6edea;break-inside:avoid">
+    <span style="font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#00786d">One minute of breathing</span>
+    <svg viewBox="0 0 700 130" width="100%" style="max-width:700px;display:block;margin:14px 0 4px" aria-label="Tension before and after one minute of breathing">
+      <g font-family="Nunito, sans-serif">
+        <path d="M60,96 H640" stroke="#ffffff" stroke-width="3" stroke-linecap="round"></path>
+        <g stroke="#ffffff" stroke-width="2" stroke-linecap="round">
+          <path d="M60,90 v12"></path><path d="M118,93 v6"></path><path d="M176,93 v6"></path><path d="M234,93 v6"></path><path d="M292,93 v6"></path><path d="M350,90 v12"></path><path d="M408,93 v6"></path><path d="M466,93 v6"></path><path d="M524,93 v6"></path><path d="M582,93 v6"></path><path d="M640,90 v12"></path>
+        </g>
+        <text x="60" y="122" text-anchor="middle" font-size="11" font-weight="700" fill="#00786d">0</text>
+        <text x="640" y="122" text-anchor="middle" font-size="11" font-weight="700" fill="#00786d">10</text>
+        <path d="M524,62 C500,20 384,20 350,58" fill="none" stroke="#00786d" stroke-width="1.5" stroke-dasharray="4 4"></path>
+        <path d="M350,58 L358,44 L342,46 Z" fill="#00786d"></path>
+        <circle cx="524" cy="96" r="17" fill="#ffffff" stroke="#00786d" stroke-width="1.5"></circle>
+        <text x="524" y="102" text-anchor="middle" font-size="15" font-weight="800" fill="#00786d">8</text>
+        <text x="524" y="76" text-anchor="middle" font-size="11.5" font-weight="700" fill="#00786d">Before</text>
+        <circle cx="350" cy="96" r="21" fill="#00ae9d"></circle>
+        <text x="350" y="103" text-anchor="middle" font-size="17" font-weight="800" fill="#ffffff">5</text>
+        <text x="350" y="70" text-anchor="middle" font-size="11.5" font-weight="700" fill="#00786d">After</text>
+      </g>
+    </svg>
+    <p style="margin:10px 0 0;font:400 14.5px/1.7 'Nunito',sans-serif;color:#00786d;max-width:78ch;orphans:3;widows:3">Before this report, you rated your tension at 8 out of 10. After sixty seconds of breathing, you rated it at 5. This is about how your body settled with the breath. A small experiment, not a medical reading. But it is evidence, from you, that your body can come down when given a chance to.</p>
+  </div>
+</section>
+
+<section data-screen-label="05 Your day" style="padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">05</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">Your day, as you described it</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="break-inside:avoid">
+    <svg viewBox="0 0 800 250" width="100%" style="max-width:800px;display:block" aria-label="Your energy across the day">
+      <g font-family="Nunito, sans-serif" font-size="9.5" font-weight="700" fill="#a8a8a8" letter-spacing="1.4">
+        <text x="8" y="70">HIGH</text><text x="8" y="140">MEDIUM</text><text x="8" y="210">LOW</text>
+      </g>
+      <g transform="translate(70,25)">
+        <g stroke="#ededed" stroke-width="1" stroke-dasharray="2 5">
+          <path d="M0,42 H710"></path><path d="M0,112 H710"></path><path d="M0,182 H710"></path>
+        </g>
+        <path d="M80,42 C115,65.3 220,170.3 290,182 C360,193.7 431.7,112 500,112 C568.3,112 666.7,170.3 700,182 L700,205 L80,205 Z" fill="#d6edea" fill-opacity=".7"></path>
+        <path d="M80,42 C115,65.3 220,170.3 290,182 C360,193.7 431.7,112 500,112 C568.3,112 666.7,170.3 700,182" fill="none" stroke="#00ae9d" stroke-width="2.75" stroke-linecap="round"></path>
+        <g fill="#ffffff" stroke="#00ae9d" stroke-width="2.5">
+          <circle cx="80" cy="42" r="6.5"></circle><circle cx="290" cy="182" r="6.5"></circle><circle cx="500" cy="112" r="6.5"></circle><circle cx="700" cy="182" r="6.5"></circle>
+        </g>
+        <g font-family="Nunito, sans-serif" font-size="13" font-weight="800" fill="#00786d">
+          <text x="80" y="24" text-anchor="middle">High</text>
+          <text x="290" y="205" text-anchor="middle">Low</text>
+          <text x="500" y="94" text-anchor="middle">Medium</text>
+          <text x="700" y="164" text-anchor="end">Low</text>
+        </g>
+        <g font-family="Nunito, sans-serif" font-size="11.5" font-weight="700" fill="#808080" letter-spacing="1.2">
+          <text x="80" y="228" text-anchor="middle">MORNING</text>
+          <text x="290" y="228" text-anchor="middle">AFTERNOON</text>
+          <text x="500" y="228" text-anchor="middle">EVENING</text>
+          <text x="700" y="228" text-anchor="end">NIGHT</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:18px;align-items:start;break-inside:avoid">
+    <p style="margin:0;font:400 15px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">You fall asleep slowly. Your energy has a real morning, and then it does not come back in the same way.</p>
+    <div style="padding:18px 20px;border-radius:16px;background:#f4f4f4">
+      <p style="margin:0;font:700 15px/1.6 'Nunito',sans-serif;color:#414242;text-wrap:pretty">Most people try to fix the afternoon. Your report does not, because your afternoon is not where the problem starts.</p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="06 How strain travels" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">06</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">How strain in one area is arriving in the next</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="break-inside:avoid">
+    <svg viewBox="0 -45 780 490" width="100%" style="max-width:780px;display:block" aria-label="Connection map, four links scaled by weight">
+      <path d="M184.7,38.6 Q400,-60 617.9,136.7" fill="none" stroke="#a8a8a8" stroke-width="1.6" stroke-linecap="round"></path>
+      <path d="M600.5,181.9 L457.5,202" fill="none" stroke="#a8a8a8" stroke-width="1.6" stroke-linecap="round"></path>
+      <path d="M185.4,309 L347.3,234.3" fill="none" stroke="#d9a44a" stroke-width="5" stroke-linecap="round"></path>
+      <path d="M197.9,104.9 L336,177" fill="none" stroke="#00ae9d" stroke-width="10" stroke-linecap="round"></path>
+      <path d="M349,183.3 L332.2,183.1 L339.2,169.8 Z" fill="#00ae9d"></path>
+
+      <g font-family="Nunito, sans-serif">
+        <circle cx="150" cy="80" r="54" fill="#f7e8e0" stroke="#cf7f5e" stroke-width="1.5"></circle>
+        <text x="150" y="90" text-anchor="middle" font-size="27" font-weight="800" fill="#cf7f5e">23</text>
+        <text x="150" y="-14" text-anchor="middle" font-size="13.5" font-weight="800" fill="#414242">Body and</text>
+        <text x="150" y="2" text-anchor="middle" font-size="13.5" font-weight="800" fill="#414242">recovery</text>
+
+        <circle cx="400" cy="210" r="58" fill="#f7e8e0" stroke="#cf7f5e" stroke-width="1.5"></circle>
+        <text x="400" y="221" text-anchor="middle" font-size="29" font-weight="800" fill="#cf7f5e">27</text>
+        <text x="400" y="290" text-anchor="middle" font-size="13.5" font-weight="800" fill="#414242">Emotional calm</text>
+
+        <circle cx="140" cy="330" r="50" fill="#f7e8e0" stroke="#cf7f5e" stroke-width="1.5"></circle>
+        <text x="140" y="340" text-anchor="middle" font-size="25" font-weight="800" fill="#cf7f5e">25</text>
+        <text x="140" y="404" text-anchor="middle" font-size="13.5" font-weight="800" fill="#414242">Money and</text>
+        <text x="140" y="420" text-anchor="middle" font-size="13.5" font-weight="800" fill="#414242">security</text>
+
+        <circle cx="650" cy="175" r="50" fill="#faf0dc" stroke="#d9a44a" stroke-width="1.5"></circle>
+        <text x="650" y="185" text-anchor="middle" font-size="25" font-weight="800" fill="#b07c22">44</text>
+        <text x="650" y="249" text-anchor="middle" font-size="13.5" font-weight="800" fill="#414242">Surroundings</text>
+        <text x="650" y="265" text-anchor="middle" font-size="13.5" font-weight="800" fill="#414242">and belonging</text>
+
+        <text x="252" y="128" font-size="10.5" font-weight="700" fill="#00786d" letter-spacing=".8">STRONGEST LINK</text>
+        <text x="222" y="290" font-size="10.5" font-weight="700" fill="#b07c22" letter-spacing=".8">SECOND</text>
+        <text x="500" y="180" font-size="10.5" font-weight="700" fill="#a8a8a8" letter-spacing=".8">FAINT</text>
+        <text x="400" y="-24" text-anchor="middle" font-size="10.5" font-weight="700" fill="#a8a8a8" letter-spacing=".8">FAINT</text>
+      </g>
+    </svg>
+    <p style="margin:4px 0 0;font:400 12px/1.6 'Nunito',sans-serif;color:#a8a8a8">Line thickness follows how strongly the link is evidenced. The arrow marks the one link that has a direction.</p>
+  </div>
+
+  <div style="display:grid;gap:12px;margin-top:24px">
+    <div style="padding:20px 22px;border-radius:16px;background:#d6edea;break-inside:avoid">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font:800 16px/1.3 'Nunito',sans-serif;color:#414242">Your sleep and your emotional load</span>
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:7px;background:#00ae9d;font:700 10.5px 'Nunito',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#ffffff">Strongest, directional</span>
+      </div>
+      <p style="margin:12px 0 0;font:400 14.5px/1.7 'Nunito',sans-serif;color:#00786d;orphans:3;widows:3">Your sleep and your emotional load are showing up together. In research, short or broken sleep reliably makes it harder to regulate mood the next day. You also told us your movement has been minimal, and across randomised trials regular activity has a consistent effect on low mood and distress.</p>
+      <p style="margin:10px 0 0;font:400 14.5px/1.7 'Nunito',sans-serif;color:#00786d;orphans:3;widows:3">That does not mean sleep and movement are the whole story here, but they are the thread worth pulling first.</p>
+      <p style="margin:12px 0 0;font:700 11.5px/1 'Nunito',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#00ae9d">Evidence: established</p>
+    </div>
+
+    <div style="padding:20px 22px;border-radius:16px;border:1px solid #ededed;break-inside:avoid">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font:800 16px/1.3 'Nunito',sans-serif;color:#414242">Money and emotional load</span>
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:7px;background:#faf0dc;font:700 10.5px 'Nunito',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#b07c22">Second, no direction</span>
+      </div>
+      <p style="margin:12px 0 0;font:400 14.5px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Money and emotional load are sitting together in your answers. Research finds these two travel together consistently, and that each can feed the other. Which came first is not something this reflection can tell you, and it may not be the useful question.</p>
+      <p style="margin:12px 0 0;font:700 11.5px/1 'Nunito',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#a8a8a8">Evidence: supported</p>
+    </div>
+
+    <div style="padding:20px 22px;border-radius:16px;border:1px solid #ededed;break-inside:avoid">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font:800 16px/1.3 'Nunito',sans-serif;color:#414242">Surroundings, and both your body and your mood</span>
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:7px;background:#f4f4f4;font:700 10.5px 'Nunito',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#808080">Two faint links</span>
+      </div>
+      <p style="margin:12px 0 0;font:400 14.5px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">You rarely get outdoors. The clearest finding in this area is small and practical: short, repeated time outside, even ten minutes, even in a city, moves fatigue and vitality measurably. The wider link between environment and wellbeing is real but much messier.</p>
+      <p style="margin:12px 0 0;font:700 11.5px/1 'Nunito',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#a8a8a8">Evidence: supported</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;padding:20px 22px;border-radius:16px;background:#f4f4f4;break-inside:avoid">
+      <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#a8a8a8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none">
+        <circle cx="18" cy="5.5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="18.5" r="2.5"></circle><path d="M15.8 6.8 8.2 10.7M8.2 13.3l7.6 3.9" stroke-dasharray="2.5 3"></path>
+      </svg>
+      <div>
+        <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">What we did not draw</p>
+        <p style="margin:8px 0 0;font:400 14px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Your relationships and your sense of meaning are both holding, so no link was drawn between them even though the research connects them. Links are only drawn where both areas are low and where something in your own answers named the connection.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="07 Where one change reaches furthest" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">07</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">Where one change reaches furthest</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="display:grid;gap:6px;margin-bottom:26px">
+    <p style="margin:0;font:800 40px/1.1 'Nunito',sans-serif;letter-spacing:-.02em;color:#00786d">Body and recovery.</p>
+    <p style="margin:0;font:400 18px/1.5 'Nunito',sans-serif;color:#5f6060">Not the one that hurts most. The one most connected to the rest.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;break-inside:avoid">
+    <div style="padding:18px 20px;border-radius:16px;border:1px solid #ededed">
+      <span style="font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a8a8a8">Sharpest reading</span>
+      <p style="margin:10px 0 0;font:800 16px/1.3 'Nunito',sans-serif;color:#414242">Emotional calm</p>
+      <p style="margin:10px 0 0;font:400 13.5px/1.65 'Nunito',sans-serif;color:#5f6060">Sits downstream of two things you told us about directly: sleep that is not restoring you, and movement that has dropped away.</p>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#a8a8a8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M3.5 12h17M14 5.5 20.5 12 14 18.5"></path></svg>
+        <span style="font:700 11.5px 'Nunito',sans-serif;color:#808080">Downstream</span>
+      </div>
+    </div>
+    <div style="padding:18px 20px;border-radius:16px;border:1px solid #ededed">
+      <span style="font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a8a8a8">Runner up</span>
+      <p style="margin:10px 0 0;font:800 16px/1.3 'Nunito',sans-serif;color:#414242">Money and security</p>
+      <p style="margin:10px 0 0;font:400 13.5px/1.65 'Nunito',sans-serif;color:#5f6060">Sits alongside your emotional load rather than upstream of it, and the barrier you named there was money itself.</p>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#a8a8a8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M3.8 12a8.2 8.2 0 0 1 14-5.8M20.2 4.5V10h-5.5M20.2 12a8.2 8.2 0 0 1-14 5.8M3.8 19.5V14h5.5"></path></svg>
+        <span style="font:700 11.5px 'Nunito',sans-serif;color:#808080">Alongside</span>
+      </div>
+    </div>
+    <div style="padding:18px 20px;border-radius:16px;background:#d6edea">
+      <span style="font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#00786d">Where we point</span>
+      <p style="margin:10px 0 0;font:800 16px/1.3 'Nunito',sans-serif;color:#414242">Body and recovery</p>
+      <p style="margin:10px 0 0;font:400 13.5px/1.65 'Nunito',sans-serif;color:#00786d">The one place where the barrier you named was time. Time is the barrier a small enough action can get underneath.</p>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#00ae9d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5.3l3.6 2.3"></path></svg>
+        <span style="font:700 11.5px 'Nunito',sans-serif;color:#00786d">Barrier: time</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;margin-top:22px;padding:20px 22px;border-radius:16px;background:#f4f4f4;break-inside:avoid">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#808080" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none">
+      <circle cx="12" cy="12" r="9"></circle><path d="M12 11v5.5M12 7.6h.01"></path>
+    </svg>
+    <div>
+      <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">One honesty note</p>
+      <p style="margin:8px 0 0;font:400 14px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Your body reading is one we hold more loosely than the others, because there is no single well tested questionnaire for it and we built this reading from several inputs. We are pointing here anyway, because the link between sleep, movement and mood is one of the better evidenced things in this whole report, and because three separate answers of yours pointed at it.</p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="08 Ground you can rely on" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">08</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">Ground you can rely on</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="break-inside:avoid">
+    <svg viewBox="0 0 700 230" width="100%" style="max-width:700px;display:block" aria-label="Three steady areas standing on the ground">
+      <g font-family="Nunito, sans-serif">
+        <rect x="110" y="43" width="96" height="127" rx="14" fill="#d6edea" stroke="#00ae9d" stroke-width="1.5"></rect>
+        <rect x="302" y="46" width="96" height="124" rx="14" fill="#d6edea" stroke="#00ae9d" stroke-width="1.5"></rect>
+        <rect x="494" y="64" width="96" height="106" rx="14" fill="#d6edea" stroke="#00ae9d" stroke-width="1.5"></rect>
+        <path d="M40,171 H660" stroke="#414242" stroke-width="2" stroke-linecap="round"></path>
+        <g stroke="#ededed" stroke-width="1.5" stroke-linecap="round">
+          <path d="M60,180 l-8,10"></path><path d="M100,180 l-8,10"></path><path d="M140,180 l-8,10"></path><path d="M180,180 l-8,10"></path><path d="M220,180 l-8,10"></path><path d="M260,180 l-8,10"></path><path d="M300,180 l-8,10"></path><path d="M340,180 l-8,10"></path><path d="M380,180 l-8,10"></path><path d="M420,180 l-8,10"></path><path d="M460,180 l-8,10"></path><path d="M500,180 l-8,10"></path><path d="M540,180 l-8,10"></path><path d="M580,180 l-8,10"></path><path d="M620,180 l-8,10"></path><path d="M660,180 l-8,10"></path>
+        </g>
+        <g font-size="26" font-weight="800" fill="#00786d" text-anchor="middle">
+          <text x="158" y="80">67</text><text x="350" y="83">65</text><text x="542" y="101">56</text>
+        </g>
+        <g font-size="13" font-weight="800" fill="#414242" text-anchor="middle">
+          <text x="158" y="212">Relationships</text>
+          <text x="350" y="212">Meaning and purpose</text>
+          <text x="542" y="212">Progress and agency</text>
+        </g>
+        <g font-size="11" font-weight="700" fill="#00ae9d" text-anchor="middle" letter-spacing=".6">
+          <text x="158" y="30">BRIGHT SPOT</text>
+          <text x="350" y="30">HOLDING</text>
+          <text x="542" y="48">HOLDING</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div style="margin-top:22px;padding:26px 28px;border-radius:20px;background:#d6edea;break-inside:avoid">
+    <p style="margin:0;font:400 15px/1.7 'Nunito',sans-serif;color:#00786d;orphans:3;widows:3">Of everything we looked at, <strong style="font-weight:800">your relationships stand out as a real strength right now</strong>. You told us what is working:</p>
+    <p style="margin:18px 0 0;font:700 italic 26px/1.35 'Nunito',sans-serif;color:#00786d;text-wrap:pretty">&ldquo;My daughter still tells me everything.&rdquo;</p>
+  </div>
+
+  <p style="margin:22px 0 0;font:400 15px/1.7 'Nunito',sans-serif;color:#5f6060;max-width:76ch;orphans:3;widows:3">Two other areas are holding steady while much else is not. Your sense of direction is intact. Your sense that you can handle what is in front of you is intact. In a season with four areas running on empty, those three are not incidental. They are the ground the rest of this stands on.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px">
+    <div style="padding:20px 22px;border-radius:16px;border:1px solid #ededed;break-inside:avoid">
+      <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">One thing worth sitting with</p>
+      <p style="margin:10px 0 0;font:400 14px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">By the questions, connection is not scarce for you. By your own description, you have people around you but do not feel truly seen. Those two things sit together more often than people expect. It is not a contradiction in your answers. It may be the more accurate reading of both.</p>
+    </div>
+    <div style="padding:20px 22px;border-radius:16px;border:1px solid #ededed;break-inside:avoid">
+      <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">And one where your instinct and your answers differ</p>
+      <div style="display:flex;align-items:center;gap:10px;margin:14px 0">
+        <span style="font:700 11px 'Nunito',sans-serif;color:#a8a8a8;width:62px;flex:none">You said</span>
+        <div style="flex:1;height:6px;border-radius:3px;background:#f4f4f4"><span style="display:block;width:25%;height:6px;border-radius:3px;background:#cf7f5e"></span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin:0 0 14px">
+        <span style="font:700 11px 'Nunito',sans-serif;color:#a8a8a8;width:62px;flex:none">Questions</span>
+        <div style="flex:1;height:6px;border-radius:3px;background:#f4f4f4"><span style="display:block;width:50%;height:6px;border-radius:3px;background:#d9a44a"></span></div>
+      </div>
+      <p style="margin:0;font:400 14px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">You placed energy and drive in the depleted zone. The questions put it somewhat steadier than that. Sometimes an area is doing better than it feels, especially when everything around it is thin. Both readings are yours. The gap is worth noticing.</p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="09 The one thing" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">09</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">The one thing</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <p style="margin:0 0 20px;font:400 15px/1.7 'Nunito',sans-serif;color:#5f6060;max-width:70ch">You told us you want one thing to focus on, not a plan. So this is one thing.</p>
+
+  <div style="padding:30px;border-radius:24px;background:#00ae9d;break-inside:avoid">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:18px">
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 13px;border-radius:8px;background:rgba(255,255,255,.22);font:700 11px 'Nunito',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#ffffff">Cue</span>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M3.5 12h17M14 5.5 20.5 12 14 18.5"></path></svg>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 13px;border-radius:8px;background:rgba(255,255,255,.22);font:700 11px 'Nunito',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#ffffff">Action</span>
+    </div>
+    <p style="margin:0;font:800 32px/1.28 'Nunito',sans-serif;letter-spacing:-.015em;color:#ffffff;text-wrap:pretty">Tonight, after you put your phone on charge, step outside for five minutes before you sit back down.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+    <div style="padding:20px 22px;border-radius:16px;border:1px solid #ededed;break-inside:avoid">
+      <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">Why this one</p>
+      <p style="margin:10px 0 0;font:400 14px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Your body is where one change reaches furthest. The barrier you named there was time, so this is five minutes. You told us you have tried before and it did not stick, so this is smaller than what you probably tried last time, and it is attached to something you already do every night rather than to an intention to remember.</p>
+    </div>
+    <div style="padding:20px 22px;border-radius:16px;background:#f4f4f4;break-inside:avoid">
+      <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">What the evidence says, and where it does not</p>
+      <svg viewBox="0 0 320 92" width="100%" style="max-width:320px;display:block;margin:14px 0 6px" aria-label="Five minutes given against ten minutes researched">
+        <g font-family="Nunito, sans-serif">
+          <rect x="0" y="34" width="300" height="16" rx="8" fill="#ffffff"></rect>
+          <rect x="0" y="34" width="150" height="16" rx="8" fill="#00ae9d"></rect>
+          <path d="M300,26 v32" stroke="#808080" stroke-width="1.5" stroke-dasharray="3 3"></path>
+          <text x="0" y="24" font-size="11.5" font-weight="800" fill="#00786d">5 min, yours</text>
+          <text x="300" y="24" font-size="11.5" font-weight="800" fill="#808080" text-anchor="end">10 min, researched</text>
+          <text x="0" y="76" font-size="11" font-weight="600" fill="#a8a8a8">Deliberately below the researched dose</text>
+        </g>
+      </svg>
+      <p style="margin:8px 0 0;font:400 14px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Regular physical activity has a consistent, well replicated effect on low mood and distress across randomised trials. Doing it outdoors has additional support, though the studies that found it typically used around ten minutes rather than five. We are starting you below the researched dose on purpose, because a five minute thing you actually do beats a ten minute thing you do not. If it holds for a week, ten is the next step.</p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+    <div style="padding:20px 22px;border-radius:16px;border:1px solid #ededed;break-inside:avoid">
+      <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">Why it is shaped this way</p>
+      <p style="margin:10px 0 0;font:400 14px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">The specific form, &ldquo;after X, I will do Y&rdquo;, is not a stylistic choice. Attaching a new action to an existing cue has meta analytic support in its own right, independent of what the action is.</p>
+    </div>
+    <div style="padding:20px 22px;border-radius:16px;background:#f7e8e0;break-inside:avoid">
+      <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">What this report is not asking of you</p>
+      <p style="margin:10px 0 0;font:400 14px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">Nothing about money this month. Your money reading is one of the hardest in this report and you named money itself as the barrier, which no next step can move in a week. It is in the report because it is true, not because it is this month&rsquo;s work.</p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="10 Confidence" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">10</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">How confident this report is, area by area</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:20px;margin-bottom:18px">
+    <div style="display:flex;align-items:center;gap:8px"><span style="display:flex;gap:3px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span></span><span style="font:600 12px 'Nunito',sans-serif;color:#5f6060">Well supported</span></div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="display:flex;gap:3px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span><span style="font:600 12px 'Nunito',sans-serif;color:#5f6060">Reasonably supported</span></div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="display:flex;gap:3px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span><span style="font:600 12px 'Nunito',sans-serif;color:#5f6060">Held loosely</span></div>
+  </div>
+
+  <table style="width:100%;border-collapse:collapse;break-inside:auto">
+    <thead>
+      <tr>
+        <th style="text-align:left;padding:0 10px 9px 0;border-bottom:1px solid #414242;font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#414242">Area</th>
+        <th style="text-align:left;padding:0 10px 9px;border-bottom:1px solid #414242;font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#414242;width:74px">Level</th>
+        <th style="text-align:left;padding:0 0 9px 10px;border-bottom:1px solid #414242;font:700 10.5px/1 'Nunito',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#414242">Why</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Emotional calm</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">Ten item published stress questionnaire, plus mood items</td>
+      </tr>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Progress and agency</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">Six item published self efficacy questionnaire</td>
+      </tr>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Relationships</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">Three item published loneliness questionnaire. Short, so we read it as a band rather than a number</td>
+      </tr>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Meaning and purpose</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">Four published items, plus one of ours</td>
+      </tr>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Money and security</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">Five published items, rescaled by us rather than using US scoring tables</td>
+      </tr>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Energy and drive</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">Two items only, and your own sorting put this area lower than the questions did</td>
+      </tr>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Body and recovery</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">Built from several inputs, because no short, well tested questionnaire exists for this</td>
+      </tr>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Curiosity and learning</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">Our own questions, not a published questionnaire</td>
+      </tr>
+      <tr>
+        <td style="padding:13px 10px 13px 0;border-bottom:1px solid #ededed;font:800 14px/1.4 'Nunito',sans-serif;color:#414242;vertical-align:top">Surroundings and belonging</td>
+        <td style="padding:13px 10px;border-bottom:1px solid #ededed;vertical-align:top"><span style="display:flex;gap:3px;padding-top:5px"><span style="width:7px;height:7px;border-radius:50%;background:#00ae9d"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span><span style="width:7px;height:7px;border-radius:50%;background:#ededed"></span></span></td>
+        <td style="padding:13px 0 13px 10px;border-bottom:1px solid #ededed;font:400 13.5px/1.6 'Nunito',sans-serif;color:#5f6060;vertical-align:top">One published item plus two of ours</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin:20px 0 0;font:700 15px/1.65 'Nunito',sans-serif;color:#414242;max-width:70ch">Where we are less confident, we have said so rather than making the report feel stronger than it is.</p>
+</section>
+
+<section data-screen-label="11 What we used" style="break-before:page;padding-top:58px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span style="font:800 11px/1 'Nunito',sans-serif;letter-spacing:.2em;color:#00ae9d">11</span>
+    <span style="font:700 11px/1 'Nunito',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a8a8a8">What we used</span>
+    <span style="flex:1;height:1px;background:#ededed"></span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;break-inside:avoid">
+    <div>
+      <p style="margin:0 0 12px;font:800 13.5px/1.4 'Nunito',sans-serif;color:#414242">Questionnaires, used with their original wording unchanged</p>
+      <ul style="margin:0;padding:0;list-style:none;display:grid;gap:8px">
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">WHO-5 Well-Being Index, World Health Organization</li>
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">Perceived Stress Scale, 10 item, Cohen et al.</li>
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">UCLA Loneliness Scale, 3 item version, Hughes et al.</li>
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">General Self-Efficacy Scale, 6 item short form, Romppel et al. (2013)</li>
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">Financial Well-Being Scale, 5 item, US Consumer Financial Protection Bureau</li>
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">Inclusion of Nature in Self, Schultz</li>
+      </ul>
+      <p style="margin:20px 0 8px;font:800 13.5px/1.4 'Nunito',sans-serif;color:#414242">LEWIS&rsquo;s own questions</p>
+      <p style="margin:0;font:400 13px/1.65 'Nunito',sans-serif;color:#5f6060">Not from published research, and scored conservatively: the curiosity and growth items, the cultural belonging items, and parts of the body and recovery reading.</p>
+    </div>
+    <div>
+      <p style="margin:0 0 12px;font:800 13.5px/1.4 'Nunito',sans-serif;color:#414242">Research behind the connections in section 06</p>
+      <ul style="margin:0;padding:0;list-style:none;display:grid;gap:8px">
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">Sleep and emotion: Palmer et al. (2024), <i>Psychological Bulletin</i>, 154 experimental studies</li>
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">Physical activity and mood: Singh et al. (2023), <i>British Journal of Sports Medicine</i>, umbrella review</li>
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">Money and mental health: Guan et al. (2022), <i>PLOS ONE</i>; Richardson et al. (2013), <i>Clinical Psychology Review</i></li>
+        <li style="font:400 13px/1.55 'Nunito',sans-serif;color:#5f6060;padding-left:16px;border-left:1px solid #ededed">Outdoor time and restoration: Song et al. (2022), randomised trial meta analysis</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:26px">
+    <div style="padding:20px 22px;border-radius:16px;background:#f4f4f4;break-inside:avoid">
+      <p style="margin:0;font:800 14px/1.4 'Nunito',sans-serif;color:#414242">What this is not</p>
+      <p style="margin:10px 0 0;font:400 13.5px/1.7 'Nunito',sans-serif;color:#5f6060;orphans:3;widows:3">LEWIS is a reflection tool. It does not diagnose anything, it makes no claim about hormones, brain states or heart rhythms, and it is not a substitute for talking to a doctor or a therapist. The research behind it describes what tends to be true across many people. It cannot tell you what is true for you, only what is worth looking at.</p>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:34px;padding-top:20px;border-top:1px solid #ededed">
+    <img src="assets/logo-lewis.svg" alt="Lewis" style="height:28px;width:auto;display:block">
+    <span style="font:400 11px/1.5 'Nunito',sans-serif;color:#a8a8a8">Devaraj · 23 August 2026 · LEWIS Insight Report</span>
+  </div>
+</section>
+
+</doc-page>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;paper&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;a4&quot;, &quot;letter&quot;, &quot;legal&quot;], &quot;default&quot;: &quot;a4&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Print&quot;},
+  &quot;margin&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;0.55in&quot;, &quot;0.7in&quot;, &quot;0.9in&quot;], &quot;default&quot;: &quot;0.7in&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Print&quot;}
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      paper: this.props.paper ?? 'a4',
+      margin: this.props.margin ?? '0.7in'
+    };
+  }
+}
+
+</script>
+</body>
+</html>

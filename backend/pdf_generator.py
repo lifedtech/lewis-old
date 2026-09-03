@@ -1,194 +1,240 @@
 # pdf_generator.py — Authoritative Lewis Insight Report PDF Service
-import io
+#
+# Two distinct reports, two distinct renderers — they must never alias
+# each other again (that was the bug: every "full report" download used
+# to silently serve the 12-page streamlined HTML):
+#   - build_insight_report_pdf()    -> the 24/25-page full report, server-
+#                                       rendered from the same React
+#                                       component (report_full_html.py)
+#                                       the app shows on-screen.
+#   - build_streamlined_report_pdf() -> the 12-page streamlined report
+#                                       (report_streamlined_html.py).
+import json
 import os
 import logging
 from typing import Dict, Any, Optional
 from datetime import datetime, timezone
 
-import pypdf
-from reportlab.lib import colors
-from reportlab.pdfgen import canvas
+from report_streamlined_html import render_streamlined_report_html
+from report_full_html import render_full_report_html
 
 logger = logging.getLogger("lewis.pdf_generator")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSET_PDF_PATHS = [
     os.path.join(BASE_DIR, "assets", "Lewis-Insight-Report.pdf"),
-    os.path.join(BASE_DIR, "..", "frontend", "Lewis-Insight-Report.pdf"),
     os.path.join(BASE_DIR, "..", "frontend", "public", "Lewis-Insight-Report.pdf"),
-    os.path.join(os.getcwd(), "assets", "Lewis-Insight-Report.pdf"),
-    os.path.join(os.getcwd(), "backend", "assets", "Lewis-Insight-Report.pdf"),
-    os.path.join(os.getcwd(), "frontend", "Lewis-Insight-Report.pdf"),
-    os.path.join(os.getcwd(), "frontend", "public", "Lewis-Insight-Report.pdf"),
+    os.path.join(BASE_DIR, "..", "frontend", "Lewis-Insight-Report.pdf"),
 ]
+SAMPLE_FULL_REPORT_PATH = os.path.join(BASE_DIR, "tests", "fixtures", "sample_insight_report_25page.json")
+
+_sample_full_report_cache: Optional[Dict[str, Any]] = None
 
 
-def get_template_pdf_path() -> Optional[str]:
-    """Find the authentic original Lewis Insight Report PDF."""
-    for path in ASSET_PDF_PATHS:
-        if os.path.exists(path) and os.path.getsize(path) > 100000:
-            return path
-    return None
+def _load_sample_full_report() -> Dict[str, Any]:
+    """The public/no-data 24-page report: a real, complete generated
+    report kept as a fixture, not a hand-authored stub."""
+    global _sample_full_report_cache
+    if _sample_full_report_cache is None:
+        with open(SAMPLE_FULL_REPORT_PATH, "r", encoding="utf-8") as f:
+            _sample_full_report_cache = json.load(f)
+    return _sample_full_report_cache
 
 
-def create_cover_overlay(
-    user_name: str,
-    report_uuid: str,
-    date_str: str,
-    order_id: Optional[str],
-    page_width: float,
-    page_height: float,
-    report_data: Optional[Dict[str, Any]] = None
-) -> bytes:
+def _generate_pdf_sync(html_content: str) -> bytes:
     """
-    Creates a clean vector personalization overlay for Cover Page (Page 1).
+    Synchronously renders HTML with Playwright Headless Chromium to A4 PDF.
     """
-    packet = io.BytesIO()
-    can = canvas.Canvas(packet, pagesize=(page_width, page_height))
-    can.saveState()
+    from playwright.sync_api import sync_playwright
 
-    # Cover Page: Personalization Card in lower third
-    card_x = 70
-    card_y = 110
-    card_w = page_width - 140
-    card_h = 160
-
-    # Clean Dark Emerald background with subtle teal border
-    can.setFillColor(colors.HexColor("#0D2E24"))
-    can.setStrokeColor(colors.HexColor("#00AE9D"))
-    can.setLineWidth(2)
-    can.roundRect(card_x, card_y, card_w, card_h, 16, fill=True, stroke=True)
-
-    # Title label
-    can.setFont("Helvetica-Bold", 13)
-    can.setFillColor(colors.HexColor("#00AE9D"))
-    can.drawString(card_x + 30, card_y + card_h - 35, "CONFIDENTIAL PSYCHOMETRIC EVALUATION REPORT")
-
-    # Prepared For: User Name
-    can.setFont("Helvetica-Bold", 26)
-    can.setFillColor(colors.white)
-    display_name = user_name.strip() if user_name else "Lewis Client"
-    can.drawString(card_x + 30, card_y + card_h - 75, f"Prepared for {display_name}")
-
-    # Metadata Row
-    can.setFont("Helvetica", 13)
-    can.setFillColor(colors.HexColor("#94A3B8"))
-    meta_text = f"Report ID: {report_uuid}   ·   Evaluation Date: {date_str}"
-    if order_id:
-        meta_text += f"   ·   Order: {order_id}"
-    can.drawString(card_x + 30, card_y + 35, meta_text)
-
-    # Status Tag
-    can.setFont("Helvetica-Bold", 12)
-    can.setFillColor(colors.HexColor("#5FBB46"))
-    can.drawRightString(card_x + card_w - 30, card_y + 35, "✓ Verified 10-Dimension Analysis")
-
-    can.restoreState()
-    can.save()
-    packet.seek(0)
-    return packet.getvalue()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.set_content(html_content, wait_until="load", timeout=15000)
+        page.wait_for_timeout(300)
+        page.emulate_media(media="print")
+        pdf_bytes = page.pdf(
+            format="A4",
+            print_background=True,
+            prefer_css_page_size=True
+        )
+        browser.close()
+        return pdf_bytes
 
 
-def create_page_footer_overlay(
-    user_name: str,
-    report_uuid: str,
-    page_num: int,
-    total_pages: int,
-    page_width: float,
-    page_height: float
-) -> bytes:
+def _generate_single_page_pdf_sync(html_content: str) -> bytes:
     """
-    Creates subtle running header & footer for interior report pages.
+    Renders HTML to Playwright/Chromium as ONE continuous PDF page sized
+    to the content's real height — no A4 pagination, no page breaks
+    (both render-report.jsx and report_streamlined_html.py already drop
+    break-after rules for this reason). Used for both the full report
+    (25 sections) and the streamlined report (12 sections): each reads
+    top-to-bottom as one long page instead of paginated sheets.
     """
-    packet = io.BytesIO()
-    can = canvas.Canvas(packet, pagesize=(page_width, page_height))
-    can.saveState()
+    from playwright.sync_api import sync_playwright
 
-    display_name = user_name.strip() if user_name else "Lewis Client"
-
-    # Running footer
-    can.setFont("Helvetica", 10)
-    can.setFillColor(colors.HexColor("#64748B"))
-    can.drawString(50, 24, "LEWIS Wellbeing Intelligence · Confidential Personal Evaluation")
-
-    can.setFont("Helvetica-Bold", 10)
-    can.setFillColor(colors.HexColor("#00AE9D"))
-    can.drawRightString(page_width - 50, 24, f"{display_name} · {report_uuid} · Page {page_num} of {total_pages}")
-
-    can.restoreState()
-    can.save()
-    packet.seek(0)
-    return packet.getvalue()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.set_content(html_content, wait_until="load", timeout=15000)
+        # Wait for web fonts to actually finish loading before measuring
+        # height — Nunito swaps in after `load` fires, reflows the text,
+        # and can change scrollHeight. Measuring too early under-counts
+        # it, which used to spill a couple of lines onto a silent second
+        # page. document.fonts.ready is the real signal, not a timeout.
+        page.evaluate("document.fonts.ready")
+        page.wait_for_timeout(300)
+        page.emulate_media(media="print")
+        content_height_px = page.evaluate("document.documentElement.scrollHeight")
+        pdf_bytes = page.pdf(
+            width="210mm",
+            height=f"{content_height_px}px",
+            print_background=True,
+            margin={"top": "0", "bottom": "0", "left": "0", "right": "0"},
+        )
+        browser.close()
+        return pdf_bytes
 
 
 def build_insight_report_pdf(
     report_data: Optional[Dict[str, Any]] = None,
     report_uuid: Optional[str] = None,
     user_name: Optional[str] = None,
+    order_id: Optional[str] = None,
+    allow_generic_fallback: bool = True
+) -> bytes:
+    """
+    Generates the authoritative 24/25-page full Insight Report PDF,
+    server-rendering the exact same React report the app shows on-screen
+    (frontend/src/report/InsightReport.jsx + report.css).
+
+    `report_data` may be the raw `insight_report` dict itself (has a
+    "pages" list), or the wider assessment record that nests it under an
+    "insight_report" key (both shapes are stored in different tables —
+    accept both rather than guess which call site has which).
+
+    `allow_generic_fallback` controls what happens when there is no real,
+    answer-derived report to render (missing data, or the SSR render
+    itself fails): True substitutes the generic no-data sample report —
+    correct for the public unauthenticated /download sample. A real
+    customer's report must NEVER go out generic or stale, so any caller
+    sending a specific person their report (email delivery, their
+    logged-in download) must pass False, which raises instead of quietly
+    substituting sample/static content.
+    """
+    insight_report: Optional[Dict[str, Any]] = None
+    if isinstance(report_data, dict):
+        candidate = report_data.get("insight_report", report_data)
+        if isinstance(candidate, dict) and candidate.get("pages"):
+            insight_report = candidate
+
+    if not insight_report:
+        if not allow_generic_fallback:
+            raise RuntimeError(
+                f"No answer-derived report data available for report_uuid={report_uuid} "
+                f"order_id={order_id} — refusing to substitute the generic sample report."
+            )
+        insight_report = _load_sample_full_report()
+
+    name = insight_report.get("meta", {}).get("name") or user_name or "Client"
+    rep_id = report_uuid or "LSR2026"
+
+    try:
+        html_content = render_full_report_html(insight_report)
+        pdf_bytes = _generate_single_page_pdf_sync(html_content)
+        logger.info(
+            "Generated full Insight Report PDF for '%s' (ID: %s, Order: %s, Size: %d bytes)",
+            name, rep_id, order_id or "-", len(pdf_bytes)
+        )
+        return pdf_bytes
+    except Exception as e:
+        logger.error("Error generating full Insight Report PDF: %s", e, exc_info=True)
+        if not allow_generic_fallback:
+            raise
+        tpl_path = get_template_pdf_path()
+        if tpl_path and os.path.exists(tpl_path):
+            with open(tpl_path, "rb") as f:
+                return f.read()
+        raise
+
+
+def build_report_pdf_for_plan(
+    plan_id: Optional[str],
+    report_data: Optional[Dict[str, Any]] = None,
+    report_uuid: Optional[str] = None,
+    user_name: Optional[str] = None,
     order_id: Optional[str] = None
 ) -> bytes:
     """
-    Generates and returns the complete, dynamically personalized Lewis Insight Report PDF
-    stamped with the recipient's name, evaluation date, report ID, and order details.
+    Single dispatch point: which of the two renderers a paying customer's
+    report goes through must always be decided the same way, whether the
+    caller is the delivery email, the in-app download, or Lewis OS —
+    'streamlined_report' (₹349) gets the 12-page report, everything else
+    ('personal_report', 'bundle', unknown) gets the 25-page one. Never
+    falls back to generic/sample content — a real customer only ever
+    receives a report built from their own submitted answers.
     """
-    template_path = get_template_pdf_path()
-    if not template_path:
-        logger.error("Original Lewis-Insight-Report.pdf not found in assets or frontend!")
-        raise FileNotFoundError("Authentic Lewis-Insight-Report.pdf template could not be located.")
-
-    rep_id = report_uuid or "LSR20260200"
-    name = (user_name or "Lewis Client").strip()
-    date_str = datetime.now(timezone.utc).strftime("%d %B %Y")
-
-    try:
-        reader = pypdf.PdfReader(template_path)
-        writer = pypdf.PdfWriter()
-        total_pages = len(reader.pages)
-
-        for idx, page in enumerate(reader.pages):
-            w = float(page.mediabox.width)
-            h = float(page.mediabox.height)
-
-            if idx == 0:
-                # Cover page personalization
-                overlay_bytes = create_cover_overlay(
-                    user_name=name,
-                    report_uuid=rep_id,
-                    date_str=date_str,
-                    order_id=order_id,
-                    page_width=w,
-                    page_height=h,
-                    report_data=report_data
-                )
-                overlay_reader = pypdf.PdfReader(io.BytesIO(overlay_bytes))
-                page.merge_page(overlay_reader.pages[0])
-            else:
-                # Running interior page footer overlay
-                overlay_bytes = create_page_footer_overlay(
-                    user_name=name,
-                    report_uuid=rep_id,
-                    page_num=idx + 1,
-                    total_pages=total_pages,
-                    page_width=w,
-                    page_height=h
-                )
-                overlay_reader = pypdf.PdfReader(io.BytesIO(overlay_bytes))
-                page.merge_page(overlay_reader.pages[0])
-
-            writer.add_page(page)
-
-        out_buffer = io.BytesIO()
-        writer.write(out_buffer)
-        pdf_bytes = out_buffer.getvalue()
-
-        logger.info(
-            "Successfully generated personalized Insight Report PDF for '%s' (ID: %s, Pages: %d, Size: %d bytes)",
-            name, rep_id, total_pages, len(pdf_bytes)
+    if plan_id == "streamlined_report":
+        return build_streamlined_report_pdf(
+            rro=report_data, report_uuid=report_uuid, user_name=user_name,
+            order_id=order_id, allow_generic_fallback=False
         )
-        return pdf_bytes
+    return build_insight_report_pdf(
+        report_data=report_data, report_uuid=report_uuid, user_name=user_name,
+        order_id=order_id, allow_generic_fallback=False
+    )
 
-    except Exception as e:
-        logger.error("Error during PDF dynamic personalization overlay: %s — falling back to authentic template", e)
-        with open(template_path, "rb") as f:
-            return f.read()
 
+def build_streamlined_report_pdf(
+    rro: Optional[Dict[str, Any]] = None,
+    report_uuid: Optional[str] = None,
+    user_name: Optional[str] = None,
+    order_id: Optional[str] = None,
+    allow_generic_fallback: bool = True
+) -> bytes:
+    """
+    Generates the 12-page Streamlined Insight Report PDF, matching
+    "LEWIS Insight Report.dc.html" section-for-section.
+
+    `allow_generic_fallback` mirrors build_insight_report_pdf: False (what
+    the plan dispatcher above always passes) raises instead of silently
+    rendering a name/date shell with no real scored content when `rro`
+    wasn't actually found/generated — the exact gap that let a customer's
+    report email go out built from nothing but placeholder defaults.
+    """
+    if not (isinstance(rro, dict) and rro.get("dimensions")):
+        if not allow_generic_fallback:
+            raise RuntimeError(
+                f"No answer-derived streamlined report data available for report_uuid={report_uuid} "
+                f"order_id={order_id} — refusing to substitute a generic/placeholder report."
+            )
+
+    rep_id = report_uuid or "LSR2026"
+    name = (user_name or (rro or {}).get("meta", {}).get("name") or "Client").strip()
+    if not name or name == "Friend":
+        name = "Client"
+
+    rro = dict(rro or {})
+    meta = dict(rro.get("meta") or {})
+    meta.setdefault("name", name)
+    meta.setdefault("rro_id", rep_id)
+    meta.setdefault("date_display", datetime.now(timezone.utc).strftime("%d %B %Y"))
+    meta.setdefault("order_id", order_id)
+    rro["meta"] = meta
+
+    html_content = render_streamlined_report_html(rro)
+    pdf_bytes = _generate_single_page_pdf_sync(html_content)
+    logger.info(
+        "Generated streamlined Insight Report PDF for '%s' (ID: %s, Size: %d bytes)",
+        name, rep_id, len(pdf_bytes)
+    )
+    return pdf_bytes
+
+
+def get_template_pdf_path() -> Optional[str]:
+    """Find the authentic 24-page Lewis Insight Report PDF (last-resort
+    fallback if live rendering fails)."""
+    for path in ASSET_PDF_PATHS:
+        if os.path.exists(path) and os.path.getsize(path) > 10000:
+            return path
+    return None

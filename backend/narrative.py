@@ -302,6 +302,32 @@ def _sit_with_section(leverage: dict | None, gentle: bool) -> str:
     return "## To sit with\n\n" + f"A question to carry into the week: {question}\n"
 
 
+def extract_section(markdown_text: str | None, heading: str) -> str | None:
+    """Pulls one `## Heading` section's body out of a Road A/B report
+    (both roads share the same heading skeleton by construction — see the
+    STRUCTURE list in llm.py's REPORT_SYSTEM_PROMPT and the `## ...`
+    section builders above). Used to weave a specific validated section
+    into a specific report page without dropping the whole multi-section
+    narrative into one block. Returns None if the heading isn't present.
+    """
+    if not markdown_text:
+        return None
+    lines = markdown_text.splitlines()
+    heading_lower = heading.strip().lower()
+    body: list[str] = []
+    capturing = False
+    for line in lines:
+        if line.startswith("## "):
+            if capturing:
+                break
+            capturing = line[3:].strip().lower() == heading_lower
+            continue
+        if capturing:
+            body.append(line)
+    text = "\n".join(body).strip()
+    return text or None
+
+
 def build_road_a(dimensions: dict, leverage: dict | None, bright_key: str | None,
                  safety: dict, context: dict, habit: dict,
                  patterns: list | None = None, portrait: dict | None = None) -> str:

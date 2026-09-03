@@ -2,12 +2,14 @@ import React from 'react'
 import LewisLogo from '../../components/LewisLogo.jsx'
 import ThemeToggle from '../../components/ThemeToggle.jsx'
 import { useLewisStore } from '../../store/useLewisStore.js'
-import { SCREEN_ORDER, getStageInfo } from '../../shared/constants/screenOrder.js'
+import { SCREEN_ORDER, STREAMLINED_SCREEN_ORDER, getStageInfo } from '../../shared/constants/screenOrder.js'
 
 export default function MobileHeader({ currentScreen, onBack }) {
   const { isAuthenticated, authUser, logout, setScreen } = useLewisStore()
-  const currentIndex = SCREEN_ORDER.indexOf(currentScreen)
-  const percent = currentIndex > 0 ? Math.round((currentIndex / (SCREEN_ORDER.length - 1)) * 100) : 0
+  const isStreamlined = currentScreen && currentScreen.startsWith('sl_')
+  const order = isStreamlined ? STREAMLINED_SCREEN_ORDER : SCREEN_ORDER
+  const currentIndex = order.indexOf(currentScreen)
+  const percent = currentIndex > 0 ? Math.round((currentIndex / (order.length - 1)) * 100) : 0
 
   return (
     <header className="mobile-app-header" style={{
@@ -46,9 +48,9 @@ export default function MobileHeader({ currentScreen, onBack }) {
                 setScreen('mirror')
                 return
               }
-              const idx = SCREEN_ORDER.indexOf(currentScreen)
-              if (idx > 0 && SCREEN_ORDER[idx - 1]) {
-                setScreen(SCREEN_ORDER[idx - 1])
+              const idx = order.indexOf(currentScreen)
+              if (idx > 0 && order[idx - 1]) {
+                setScreen(order[idx - 1])
               } else {
                 setScreen('landing')
               }

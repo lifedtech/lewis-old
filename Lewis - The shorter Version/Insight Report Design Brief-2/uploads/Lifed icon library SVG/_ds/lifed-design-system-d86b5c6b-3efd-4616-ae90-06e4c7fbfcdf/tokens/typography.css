@@ -1,0 +1,56 @@
+/* ============================================================
+   LIFED · TYPOGRAPHY TOKENS
+   Manrope — headings, titles, callouts, key UI (Regular/Medium/Bold).
+   Nunito — body, buttons, captions, labels, long-form.
+   Type hierarchy per brand kit.
+   ============================================================ */
+:root {
+  /* ---- Families ---- */
+  --font-display: 'Manrope', system-ui, -apple-system, sans-serif;  /* headings */
+  --font-body: 'Nunito', system-ui, -apple-system, sans-serif;      /* body & UI */
+
+  /* ---- Weights ---- */
+  --fw-regular: 400;      /* @kind font */
+  --fw-medium: 500;       /* @kind font */
+  --fw-semibold: 600;     /* @kind font */
+  --fw-bold: 700;         /* @kind font */
+  --fw-extrabold: 800;    /* @kind font */
+
+  /* ---- Fluid-ish type scale (px) ---- */
+  --fs-display: 64px;   /* H1 / hero — Manrope Bold */
+  --fs-h1: 48px;        /* Manrope Bold */
+  --fs-h2: 36px;        /* section heading — Manrope Bold */
+  --fs-h3: 28px;        /* subheading — Manrope Medium */
+  --fs-h4: 22px;        /* supporting heading — Manrope Medium */
+  --fs-body-lg: 20px;   /* intro / featured — Nunito Regular */
+  --fs-body: 16px;      /* default paragraph — Nunito Regular */
+  --fs-body-sm: 14px;
+  --fs-caption: 13px;   /* captions, metadata — Nunito Regular */
+  --fs-label: 15px;     /* buttons/labels — Nunito Semibold */
+  --fs-overline: 13px;  /* uppercase eyebrow — Manrope Medium */
+
+  /* ---- Line heights ---- */
+  --lh-tight: 1.1;      /* @kind font */
+  --lh-heading: 1.2;    /* @kind font */
+  --lh-snug: 1.35;      /* @kind font */
+  --lh-body: 1.6;       /* @kind font */
+
+  /* ---- Letter spacing ---- */
+  --ls-display: -0.02em;   /* Manrope Bold, tracking -20 @kind font */
+  --ls-heading: -0.01em;   /* @kind font */
+  --ls-normal: 0;          /* @kind font */
+  --ls-overline: 0.14em;   /* uppercase eyebrows @kind font */
+  --ls-label: 0.01em;      /* @kind font */
+}
+
+/* ---- Optional utility classes (usable in specimens / kits) ---- */
+.lf-display { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--ls-display); color: var(--text-primary); }
+.lf-h1 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h1); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); color: var(--text-primary); }
+.lf-h2 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); color: var(--text-primary); }
+.lf-h3 { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h3); line-height: var(--lh-heading); color: var(--text-primary); }
+.lf-h4 { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h4); line-height: var(--lh-snug); color: var(--text-primary); }
+.lf-body-lg { font-family: var(--font-body); font-weight: var(--fw-regular); font-size: var(--fs-body-lg); line-height: var(--lh-body); color: var(--text-primary); }
+.lf-body { font-family: var(--font-body); font-weight: var(--fw-regular); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-primary); }
+.lf-caption { font-family: var(--font-body); font-weight: var(--fw-regular); font-size: var(--fs-caption); line-height: var(--lh-snug); color: var(--text-secondary); }
+.lf-label { font-family: var(--font-body); font-weight: var(--fw-semibold); font-size: var(--fs-label); letter-spacing: var(--ls-label); }
+.lf-overline { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-overline); letter-spacing: var(--ls-overline); text-transform: uppercase; color: var(--text-brand); }

@@ -1,0 +1,100 @@
+/* ============================================================
+   LIFED · COLOR TOKENS
+   Source of truth: Lifed Brand Kit (Mini) — Primary Colors.
+   Base palette (exact brand hex) + tint/shade ramps for
+   interaction states, plus semantic aliases.
+   ============================================================ */
+:root {
+  /* ---- Brand primaries (exact, from brand kit) ---- */
+  --lifed-teal: #00ae9d;          /* LIFED Teal — primary brand color */
+  --lifed-green: #5fbb46;         /* Green of Life — secondary/accent */
+  --lifed-aqua: #d6edea;          /* Healing Aqua — soft teal surface */
+  --lifed-aqua-green: #e6f4d0;    /* Healing Aqua (green) — soft green surface */
+  --lifed-grey-light: #f4f4f4;    /* Grey of Light — neutral surface */
+  --lifed-grey-dark: #414242;     /* Grey of Dark — primary ink */
+  --lifed-white: #ffffff;         /* Pure White */
+
+  /* ---- Teal ramp (derived via oklch, hue-locked to brand teal) ---- */
+  --teal-50:  #e8f7f5;
+  --teal-100: #c8ede8;
+  --teal-200: #93ddd4;
+  --teal-300: #55c8bb;
+  --teal-400: #1fb8a8;
+  --teal-500: #00ae9d;   /* = --lifed-teal */
+  --teal-600: #009486;   /* hover */
+  --teal-700: #00786d;   /* pressed / deep */
+  --teal-800: #045c54;
+  --teal-900: #0a4842;
+
+  /* ---- Green ramp ---- */
+  --green-50:  #f0f8ea;
+  --green-100: #dcefce;
+  --green-200: #bce29e;
+  --green-300: #96d26e;
+  --green-400: #77c554;
+  --green-500: #5fbb46;  /* = --lifed-green */
+  --green-600: #4ea238;  /* hover */
+  --green-700: #3d842c;  /* pressed */
+  --green-800: #326b25;
+  --green-900: #2a5620;
+
+  /* ---- Neutral ramp (warm-cool balanced greys around brand darks) ---- */
+  --grey-0:   #ffffff;
+  --grey-25:  #fafafa;
+  --grey-50:  #f4f4f4;   /* = --lifed-grey-light */
+  --grey-100: #ededed;
+  --grey-200: #e0e0e0;
+  --grey-300: #cfcfcf;
+  --grey-400: #a8a8a8;
+  --grey-500: #808080;
+  --grey-600: #5f6060;
+  --grey-700: #414242;   /* = --lifed-grey-dark */
+  --grey-800: #2c2d2d;
+  --grey-900: #1a1b1b;
+
+  /* ---- Semantic status ---- */
+  --success: #5fbb46;
+  --success-surface: #e6f4d0;
+  --warning: #e8a838;
+  --warning-surface: #fbf0d8;
+  --error:   #d64545;
+  --error-surface: #fbe4e4;
+  --info:    #00ae9d;
+  --info-surface: #d6edea;
+
+  /* ============================================================
+     SEMANTIC ALIASES — reference these in product UI
+     ============================================================ */
+  /* Brand */
+  --color-brand: var(--teal-500);
+  --color-brand-hover: var(--teal-600);
+  --color-brand-pressed: var(--teal-700);
+  --color-accent: var(--green-500);
+  --color-accent-hover: var(--green-600);
+  --color-accent-pressed: var(--green-700);
+
+  /* Text */
+  --text-primary: var(--grey-700);      /* body & headings default ink */
+  --text-secondary: var(--grey-600);
+  --text-muted: var(--grey-500);
+  --text-on-brand: var(--lifed-white);
+  --text-brand: var(--teal-600);
+  --text-link: var(--teal-600);
+  --text-link-hover: var(--teal-700);
+
+  /* Surfaces */
+  --surface-page: var(--lifed-white);
+  --surface-card: var(--lifed-white);
+  --surface-subtle: var(--grey-50);
+  --surface-brand-soft: var(--lifed-aqua);
+  --surface-accent-soft: var(--lifed-aqua-green);
+  --surface-brand: var(--teal-500);
+  --surface-inverse: var(--grey-800);
+
+  /* Borders */
+  --border-subtle: var(--grey-200);
+  --border-default: var(--grey-300);
+  --border-strong: var(--grey-400);
+  --border-brand: var(--teal-500);
+  --border-focus: var(--teal-500);
+}

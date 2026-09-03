@@ -106,13 +106,14 @@ export async function detectCountryByIp() {
 /**
  * Calculate formatted price for a given currency code, with dynamic coupon discount support.
  */
-export function formatCurrencyPrice(currCode = 'INR', liveRates = null, coupon = null) {
+export function formatCurrencyPrice(currCode = 'INR', liveRates = null, coupon = null, customBaseInr = null) {
   const code = (currCode || 'INR').toUpperCase()
   const meta = CURRENCY_METADATA[code] || CURRENCY_METADATA.INR
   const rate = (liveRates && liveRates[code]?.rate) ? liveRates[code].rate : meta.defaultRate
 
   let isFree = false
-  let baseInr = BASE_INR_PRICE
+  const activeBasePrice = typeof customBaseInr === 'number' && customBaseInr > 0 ? customBaseInr : BASE_INR_PRICE
+  let baseInr = activeBasePrice
 
   if (coupon) {
     if (typeof coupon === 'object' && coupon.valid) {
@@ -122,9 +123,9 @@ export function formatCurrencyPrice(currCode = 'INR', liveRates = null, coupon =
       } else if (typeof coupon.final_amount === 'number') {
         baseInr = coupon.final_amount
       } else if (coupon.discount_type === 'flat') {
-        baseInr = Math.max(0, BASE_INR_PRICE - (coupon.discount_value || 0))
+        baseInr = Math.max(0, activeBasePrice - (coupon.discount_value || 0))
       } else if (coupon.discount_type === 'percentage') {
-        baseInr = Math.max(0, BASE_INR_PRICE * (1 - (coupon.discount_value || 0) / 100))
+        baseInr = Math.max(0, activeBasePrice * (1 - (coupon.discount_value || 0) / 100))
       }
     } else if (typeof coupon === 'string') {
       const codeStr = coupon.trim().toUpperCase()

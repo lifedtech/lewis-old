@@ -2,11 +2,13 @@ import React from 'react'
 import LewisLogo from '../../components/LewisLogo.jsx'
 import ThemeToggle from '../../components/ThemeToggle.jsx'
 import { useLewisStore } from '../../store/useLewisStore.js'
-import { SCREEN_ORDER } from '../../shared/constants/screenOrder.js'
+import { SCREEN_ORDER, STREAMLINED_SCREEN_ORDER } from '../../shared/constants/screenOrder.js'
 
 export default function DesktopHeader({ currentScreen, onBack }) {
   const { isAuthenticated, authUser, logout, setScreen } = useLewisStore()
-  const currentIndex = SCREEN_ORDER.indexOf(currentScreen)
+  const isStreamlined = currentScreen && currentScreen.startsWith('sl_')
+  const order = isStreamlined ? STREAMLINED_SCREEN_ORDER : SCREEN_ORDER
+  const currentIndex = order.indexOf(currentScreen)
 
   return (
     <header className="app-header" style={{
@@ -36,9 +38,9 @@ export default function DesktopHeader({ currentScreen, onBack }) {
                 setScreen('mirror')
                 return
               }
-              const idx = SCREEN_ORDER.indexOf(currentScreen)
-              if (idx > 0 && SCREEN_ORDER[idx - 1]) {
-                setScreen(SCREEN_ORDER[idx - 1])
+              const idx = order.indexOf(currentScreen)
+              if (idx > 0 && order[idx - 1]) {
+                setScreen(order[idx - 1])
               } else {
                 setScreen('landing')
               }

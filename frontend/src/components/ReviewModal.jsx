@@ -32,6 +32,7 @@ const ACCURACY_OPTIONS = [
 export default function ReviewModal({
   isOpen,
   onClose,
+  onSubmitted,
   customerName = '',
   customerEmail = '',
   orderId = '',
@@ -88,10 +89,12 @@ export default function ReviewModal({
       setStatus('submitted')
       try {
         localStorage.setItem(`lewis_review_submitted_${orderId || 'default'}`, 'true')
+        localStorage.setItem('lewis_feedback_completed', 'true')
       } catch (_) {}
+      onSubmitted?.()
       setTimeout(() => {
         onClose?.()
-      }, 2200)
+      }, 1600)
     }
   }
 

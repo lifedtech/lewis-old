@@ -1,0 +1,4 @@
+/* Lifed brand webfonts — Manrope (primary) + Nunito (secondary).
+   Both are the actual brand typefaces, served from Google Fonts.
+   Consumers who embed cards/components also link these families directly. */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap');

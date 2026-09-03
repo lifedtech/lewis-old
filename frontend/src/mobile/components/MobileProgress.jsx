@@ -1,13 +1,15 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { SCREEN_ORDER, getStageInfo } from '../../shared/constants/screenOrder.js'
+import { SCREEN_ORDER, STREAMLINED_SCREEN_ORDER, getStageInfo } from '../../shared/constants/screenOrder.js'
 
 export default function MobileProgress({ currentScreen }) {
-  const currentIndex = SCREEN_ORDER.indexOf(currentScreen)
+  const isStreamlined = currentScreen && currentScreen.startsWith('sl_')
+  const order = isStreamlined ? STREAMLINED_SCREEN_ORDER : SCREEN_ORDER
+  const currentIndex = order.indexOf(currentScreen)
   if (currentIndex <= 0) return null
 
   const stageInfo = getStageInfo(currentScreen)
-  const percent = Math.round((currentIndex / (SCREEN_ORDER.length - 1)) * 100)
+  const percent = Math.round((currentIndex / (order.length - 1)) * 100)
 
   return (
     <div className="mobile-progress-bar-wrap" style={{
@@ -30,7 +32,7 @@ export default function MobileProgress({ currentScreen }) {
           textTransform: 'uppercase',
           fontFamily: "'Nunito', sans-serif",
         }}>
-          Stage {stageInfo.num} · {stageInfo.name}
+          {isStreamlined ? `Act ${stageInfo.num} · ${stageInfo.name}` : `Stage ${stageInfo.num} · ${stageInfo.name}`}
         </span>
       </div>
 

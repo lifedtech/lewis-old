@@ -61,6 +61,29 @@ def test_create_order_server_side_pricing():
     assert order_data["order_id"].startswith("LS") or order_data["order_id"].startswith("order_")
 
 
+def test_create_order_prices_each_plan_independently():
+    """The bug: calculate_plan_price() always priced against
+    PERSONAL_REPORT_PRICE_PAISE regardless of plan_key, so a customer shown
+    ₹349 (streamlined_report) was actually charged ₹749 — Razorpay's own
+    checkout modal would show the real (wrong) amount. Every plan must be
+    charged its own catalog price."""
+    rep_uuid = save_encrypted_assessment_record(
+        user_name="Test User",
+        user_email="test@example.com",
+        report_data={"dimensions": {"who5": {"scaled_score": 75}}}
+    )
+
+    resp = client.post("/payment/create-order", json={
+        "plan": "streamlined_report",
+        "report_id": rep_uuid,
+        "email": "test@example.com"
+    })
+    assert resp.status_code == 200
+    order_data = resp.json()["order"]
+    assert order_data["amount"] == 34900, "streamlined_report must charge ₹349, not fall back to ₹749"
+    assert order_data["plan"] == "streamlined_report"
+
+
 def test_create_order_invalid_plan():
     resp = client.post("/payment/create-order", json={
         "plan": "non_existent_plan",

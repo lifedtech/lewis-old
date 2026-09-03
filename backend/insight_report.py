@@ -23,6 +23,20 @@
 # API returns the document (§17 self-check gate, §24 design gate).
 
 from enrich import AREA_CODE_TO_NAME, BAND_STEP
+from narrative import extract_section
+
+# Pages whose deterministic line is replaced by the matching Road A/B
+# section when the narration validated as Road B (see enrich.py's
+# `narration` field). Road A stays the wording on every other page and
+# whenever Road B didn't validate — this only ever swaps in AI narration
+# that already passed the same safety/register validator the rest of the
+# app trusts, never raw model output.
+def _voiced(enriched, heading, fallback):
+    narration = enriched.get("narration") or {}
+    if narration.get("source") != "road_b":
+        return fallback
+    section = extract_section(narration.get("text"), heading)
+    return section or fallback
 
 FOOTER = "Private to you · a non-clinical wellbeing reflection"
 NON_CLINICAL_LINE = (
@@ -1073,6 +1087,7 @@ def _p05_where_you_are(enriched):
         opening = 'You arrived with one word: "' + str(arrival) + '." ' + refine
     else:
         opening = "However you arrived today, you are here, and that counts. " + refine
+    opening = _voiced(enriched, "Where you are right now", opening)
 
     primary = _area_name(enriched, enriched["leverage"]["primary"])
     downstream_codes = enriched["leverage"]["downstream"]
@@ -1507,6 +1522,7 @@ def _p11_how_stress_shows_up(enriched):
     if not blocks:
         blocks.append(_para("You chose to skip the short exercises behind this page, so it stays honest and short. Nothing about your rhythm or your body is guessed in their absence."))
 
+    reading = _voiced(enriched, "How stress is showing up", reading)
     blocks.append(_callout("WHAT YOUR RHYTHM AND YOUR PRESSURE TOGETHER ARE SAYING", reading, icon="waves"))
 
     return _page(11, PART_THREE, "Your rhythm", "How stress is showing up",

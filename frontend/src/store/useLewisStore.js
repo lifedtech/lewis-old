@@ -34,6 +34,9 @@ const initialState = () => ({
   authToken: savedToken || null,
   authPendingDownload: false,
 
+  // Flow Mode ('streamlined' | 'full')
+  flowMode: 'streamlined',
+
   // Pre-Stage & Stage 0
   isOver18: null,
   sensoryCalibrationDone: false,
@@ -48,10 +51,11 @@ const initialState = () => ({
   subscribeNewsletter: true,
   latestPaymentOrder: null,
 
-  // Stage 1 Context
+  // Common Context (Shared Across Flows)
   name: '',
   ageCategory: '',
   gender: '',
+  sexAtBirth: '',
   identityRoles: [],
   lifeStability: 50, // 0-100 slider
   activePressures: [],
@@ -72,14 +76,48 @@ const initialState = () => ({
     'Environment & belonging'
   ],
   arrivalState: '',
+  arrivalWord: '',
+  arrivalMood: 50,
   financialPulse: {},
   environmentalPulse: {},
   intellectualPulse: '',
   culturalBelonging: {},
+  culturalBelonging_1: '',
+  culturalBelonging_2: null,
+  transcendentConnection: '',
+  financialStress: '',
+  incomeRegularity: '',
+  natureAccess: '',
   bodyRhythm: {},
   sensoryPauseDone: false,
 
-  // Stage 2 Attention
+  // Streamlined Spine & Instruments
+  pss10: {},
+  ucla3: {},
+  gse: {},
+  gse6: {},
+  promis: {},
+  purpose: {},
+  cfpb5: {},
+  diener: {},
+  ins: null,
+  growth: {},
+  growthRecency: '',
+  swls: {},
+
+  // Gestalt & Selection
+  lifeLandscape: { depleted: [], okay: [], strength: [] },
+  domainSort: { depleted: [], okay: [], strength: [] },
+  priorityTop3: [],
+  tensionConfirmed: null,
+  brightSpotTier: 1,
+  brightSpotText: '',
+  adaptiveDeepDives: {},
+  deepdiveFlags: {},
+  deepdiveTrajectories: {},
+  deepdiveFrictions: {},
+
+  // Stage 2 Attention (Full Flow)
   attentionDriftDone: false,
 
   // Stage 3 Nervous System
@@ -89,51 +127,52 @@ const initialState = () => ({
   breathingBefore: '',
   breathingAfter: '',
   nervousSystemState: '',
+  nsPortrait: 'Grounded',
   bodyAwareness: '',
 
-  // Stage 4 Maze
+  // Stage 4 Maze (Full Flow)
   mazeCompletionTime: null,
 
-  // Stage 5 Domains
-  lifeLandscape: { depleted: [], okay: [], strength: [] },
-  pss10: {},
-  ucla3: {},
-  gse: {},
-  promis: {},
-  cfpb5: {},
-  diener: {},
-  ins: null,
-  swls: {},
-  adaptiveDeepDives: {},
-  brightSpotCheck: '',
-  priorityTensionCheck: '',
-
-  // Stage 6 Sharing
+  // Stage 6 Sharing (Full Flow)
   everydaySharing: {},
 
-  // Stage 7 Context
+  // Stage 7 Support & Planning
   externalConditions: {},
   priorAttempts: '',
+  priorEffectiveness: '',
   aspirationLandscape: '',
   supportPreferences: [],
+  supportPreference: '',
+  contentPreference: '',
   plannerReadiness: '',
   valuesCheck: [],
   financialAspiration: '',
 
-  // Stage 8 Stress
+  // Stage 8 Stress & Load
   energyArc: { morning: '', afternoon: '', evening: '', night: '' },
-  stressPatternClusters: [],
+  energyArcPattern: [{ k: 'Morning', v: 2 }, { k: 'Afternoon', v: 2 }, { k: 'Evening', v: 2 }, { k: 'Night', v: 1 }],
+  sleepOnset: '',
+  stressResponseStyle: '',
   recoveryResponsiveness: '',
+  stressPatternClusters: [],
+  stressCluster: 'The Surge',
   cumulativeLoad: {},
+  cumulativeLoad5: {},
+
+  // One Minute Breathing
+  tensionBefore: 50,
+  tensionAfter: 30,
 
   // Stage 9 Sensory
   soundPreference: '',
   quickChoices: {},
 
-  // Assessment Analysis Cache
+  // Assessment Analysis Cache & Streamlined RRO
   analysisData: null,
   analysisMissing: null,
   analysisError: null,
+  streamlinedRRO: null,
+  streamlinedReportId: null,
 
   // Payment & Report Entitlement State
   isReportUnlocked: false,
@@ -304,6 +343,25 @@ export const useLewisStore = create(persist((set, get) => ({
       }
     }
     set({ theme: newTheme })
+  },
+
+  setStreamlinedRRO: (rro) => {
+    set({
+      streamlinedRRO: rro,
+      streamlinedReportId: rro?.meta?.rro_id || null
+    })
+  },
+
+  transitionToFullVersion: () => {
+    // Preserve all shared profile data (name, age, sex, roles, stability, pressures)
+    // and move smoothly into the extended flow without asking common questions again
+    set((state) => ({
+      flowMode: 'full',
+      currentScreen: 'stage2Attention'
+    }))
+    if (typeof window !== 'undefined') {
+      window.location.hash = '#stage2Attention'
+    }
   },
 
   toggleTheme: () => {

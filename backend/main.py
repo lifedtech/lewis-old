@@ -35,6 +35,7 @@ from scoring import (
     calculate_swls, calculate_ph, calculate_en, build_dimensions, bright_spot, calculate_leverage,
     band_for, KEY_TO_SPEC_CODE, SPEC_CODE_TO_KEY,
 )
+from scoring_streamlined import generate_streamlined_rro
 from corpus import map_to_corpus
 from pattern import run_pattern_engine
 from safety import evaluate_safety
@@ -686,7 +687,7 @@ def calculate_full_assessment(payload: FullAssessmentInput, request: Request = N
     }
     enriched = build_enriched_object(
         dimensions, leverage, bright_key, safety, patterns, portrait, habit,
-        report_context,
+        report_context, narration={"text": narrative_text, "source": source},
     )
     insight_report = build_insight_report(enriched)
     gate_issues = check_report(insight_report)
@@ -1175,18 +1176,129 @@ def get_report_pdf_endpoint(report_id: str, format: Optional[str] = None):
             "report_data": report_rec.get("report_json")
         }
 
-    from pdf_generator import build_insight_report_pdf
-    pdf_bytes = build_insight_report_pdf(
-        report_data=report_rec.get("report_json"),
-        report_uuid=report_id,
-        user_name=report_rec.get("user_name") or "Personal Client"
-    )
+    if format == "html":
+        html_content = report_rec.get("report_html")
+        if not html_content:
+            from report_streamlined_html import render_streamlined_report_html
+            rro = {
+                "meta": {
+                    "name": report_rec.get("user_name") or "Lewis Client",
+                    "rro_id": report_id,
+                    "date_display": datetime.now(timezone.utc).strftime("%d %B %Y")
+                }
+            }
+            if report_rec.get("report_json") and isinstance(report_rec["report_json"], dict):
+                rro.update(report_rec["report_json"])
+            html_content = render_streamlined_report_html(rro)
+        return Response(content=html_content, media_type="text/html")
+
+    plan_id = report_rec.get("paid_plan")
+    from auth import get_report_pdf, save_report_pdf
+    pdf_bytes = get_report_pdf(report_id, plan_id)
+    if not pdf_bytes:
+        from pdf_generator import build_report_pdf_for_plan
+        pdf_bytes = build_report_pdf_for_plan(
+            plan_id=plan_id,
+            report_data=report_rec.get("report_json"),
+            report_uuid=report_id,
+            user_name=report_rec.get("user_name") or "Personal Client"
+        )
+        try:
+            save_report_pdf(report_id, plan_id, pdf_bytes)
+        except Exception:
+            pass
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
         headers={
             "Content-Disposition": f"inline; filename=LEWIS-Insight-Report-{report_id}.pdf"
         }
+    )
+
+
+@app.get("/api/reports/{report_id}/html")
+@app.get("/reports/{report_id}/html")
+def get_report_html_endpoint(report_id: str):
+    """
+    Direct HTML delivery for Lewis OS and browser integration.
+    """
+    from auth import get_report_by_uuid, get_order_by_id
+    record = get_report_by_uuid(report_id)
+    if not record and (report_id.startswith("LS") or "LS" in report_id):
+        order = get_order_by_id(report_id)
+        if order and order.get("report_uuid"):
+            record = get_report_by_uuid(order["report_uuid"])
+            
+    if not record:
+        raise HTTPException(status_code=404, detail="Report not found")
+        
+    html_content = record.get("report_html")
+    if not html_content:
+        from report_streamlined_html import render_streamlined_report_html
+        rro = {
+            "meta": {
+                "name": record.get("user_name") or "Lewis Client",
+                "rro_id": record.get("report_uuid") or report_id,
+                "date_display": datetime.now(timezone.utc).strftime("%d %B %Y")
+            }
+        }
+        if record.get("report_json") and isinstance(record["report_json"], dict):
+            rro.update(record["report_json"])
+        html_content = render_streamlined_report_html(rro)
+        
+    return Response(content=html_content, media_type="text/html")
+
+
+@app.get("/api/reports/order/{order_id}/html")
+def get_report_by_order_html_endpoint(order_id: str):
+    """
+    Direct HTML delivery queried by Order ID (e.g. LS20260177).
+    """
+    clean_id = order_id.replace("USR-", "")
+    return get_report_html_endpoint(clean_id)
+
+
+@app.get("/api/reports/{report_id}/pdf-file")
+@app.get("/api/reports/order/{order_id}/pdf-file")
+def get_report_pdf_file_endpoint(report_id: Optional[str] = None, order_id: Optional[str] = None):
+    """
+    Direct PDF delivery for Lewis OS — same access pattern as the /html
+    endpoints above. Serves each user's saved 12-page streamlined or
+    25-page full report (whichever they paid for), generating and
+    persisting it once if it hasn't been saved yet.
+    """
+    from auth import get_report_by_uuid, get_order_by_id, get_report_pdf, save_report_pdf
+    lookup_id = report_id or (order_id.replace("USR-", "") if order_id else None)
+    record = get_report_by_uuid(lookup_id) if lookup_id else None
+    if not record and lookup_id:
+        order = get_order_by_id(lookup_id)
+        if order and order.get("report_uuid"):
+            record = get_report_by_uuid(order["report_uuid"])
+
+    if not record:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    rep_uuid = record.get("report_uuid") or lookup_id
+    plan_id = record.get("paid_plan")
+
+    pdf_bytes = get_report_pdf(rep_uuid, plan_id)
+    if not pdf_bytes:
+        from pdf_generator import build_report_pdf_for_plan
+        pdf_bytes = build_report_pdf_for_plan(
+            plan_id=plan_id,
+            report_data=record.get("report_json"),
+            report_uuid=rep_uuid,
+            user_name=record.get("user_name")
+        )
+        try:
+            save_report_pdf(rep_uuid, plan_id, pdf_bytes)
+        except Exception:
+            pass
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"inline; filename=LEWIS-Insight-Report-{rep_uuid}.pdf"}
     )
 
 
@@ -1367,5 +1479,133 @@ def sync_retroactive_dataset_endpoint():
     except Exception as exc:
         logger.error("Error during retroactive sync: %s", exc)
         raise HTTPException(status_code=500, detail="Retroactive sync failed")
+
+
+@app.post("/assessment/streamlined")
+@app.post("/api/report/streamlined-generate")
+async def generate_streamlined_report_endpoint(request: Request):
+    """
+    Pure deterministic scoring and Report Render Object (RRO) generator for the LEWIS Reflection flow.
+    """
+    try:
+        body = await request.json()
+        session_id = body.get("session_id") or body.get("journeySessionId") or f"sess_{int(datetime.now(timezone.utc).timestamp())}"
+        person_name = body.get("name") or body.get("userName") or "Friend"
+        person_email = body.get("email") or body.get("userEmail")
+
+        rro = generate_streamlined_rro(body, session_id, person_name)
+
+        # Persist so the report is findable by report_uuid at delivery time
+        # (the bug this fixes: nothing ever saved the streamlined RRO, so
+        # get_report_by_uuid() always came back empty and the frontend's
+        # client-side fallback ID at checkout pointed at no real record).
+        try:
+            from auth import save_encrypted_assessment_record
+            saved_uuid = save_encrypted_assessment_record(
+                user_name=person_name,
+                user_email=person_email,
+                report_data=rro,
+                answers=body,
+            )
+            rro["meta"]["rro_id"] = saved_uuid
+        except Exception as save_err:
+            logger.error("Could not persist streamlined RRO (session %s): %s", session_id, save_err, exc_info=True)
+
+        return {
+            "status": "success",
+            "rro": rro,
+            "report_id": rro["meta"]["rro_id"],
+            "session_id": session_id,
+            "amount_inr": 349,
+            "plan_id": "streamlined_report"
+        }
+    except Exception as exc:
+        logger.error("Error generating streamlined report RRO: %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to generate report: {str(exc)}")
+
+
+@app.post("/api/reports/streamlined/pdf")
+@app.get("/api/reports/streamlined/{report_id}/pdf")
+@app.get("/reports/{report_id}/streamlined/pdf")
+async def get_streamlined_report_pdf_endpoint(
+    request: Request,
+    report_id: Optional[str] = None
+):
+    """
+    Generate and stream personalized PDF for the Streamlined Insight Report.
+    """
+    try:
+        rro = None
+        user_name = "Friend"
+        
+        if request.method == "POST":
+            try:
+                body = await request.json()
+                if isinstance(body, dict):
+                    rro = body.get("rro")
+                    user_name = body.get("name") or (rro.get("meta", {}).get("name") if rro else "Friend")
+                    report_id = body.get("report_id") or (rro.get("meta", {}).get("rro_id") if rro else report_id)
+            except Exception:
+                pass
+                
+        if not rro:
+            # Fallback default rich RRO
+            rro = {
+                "meta": {
+                    "name": user_name or "Friend",
+                    "date_display": datetime.now(timezone.utc).strftime("%d %B %Y"),
+                    "rro_id": report_id or "LEWIS_REPORT"
+                }
+            }
+            
+        from pdf_generator import build_streamlined_report_pdf
+        pdf_bytes = build_streamlined_report_pdf(
+            rro=rro,
+            report_uuid=report_id or "LSR2026",
+            user_name=user_name
+        )
+
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename=LEWIS-Insight-Report-{report_id or 'Reflection'}.pdf"
+            }
+        )
+    except Exception as exc:
+        logger.error("Error building streamlined PDF: %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {str(exc)}")
+
+
+@app.get("/api/reports/streamlined/{report_id}/html")
+async def get_streamlined_report_html_endpoint(report_id: str):
+    """
+    Renders standalone 11-section HTML Insight Report.
+    """
+    try:
+        from report_streamlined_html import render_streamlined_report_html
+        # Mock / default RRO if not stored in db
+        sample_rro = {
+            "meta": {"name": "Lewis Client", "rro_id": report_id, "date_display": datetime.now(timezone.utc).strftime("%d %B %Y")},
+            "dimensions": [
+                {"key": "PH", "label": "Body & recovery", "score": 45, "band": 2},
+                {"key": "EM", "label": "Emotional calm", "score": 35, "band": 2},
+                {"key": "EN", "label": "Energy & drive", "score": 52, "band": 3},
+                {"key": "RS", "label": "Relationships", "score": 68, "band": 3},
+                {"key": "MS", "label": "Meaning & purpose", "score": 70, "band": 3},
+                {"key": "AC", "label": "Progress & agency", "score": 58, "band": 3},
+                {"key": "FW", "label": "Money & security", "score": 38, "band": 2},
+                {"key": "IG", "label": "Curiosity & learning", "score": 62, "band": 3},
+                {"key": "EC", "label": "Surroundings & belonging", "score": 55, "band": 3},
+            ],
+            "root_driver": {"label": "Body & recovery", "why_this": "Physical rest creates ripple effects across your other areas."},
+            "suggestion": {"cue": "Tonight before sleep", "action": "take three slow breaths before stepping away from the screen", "dose_honesty": "Under 60 seconds."}
+        }
+        html_content = render_streamlined_report_html(sample_rro)
+        return HTMLResponse(content=html_content)
+    except Exception as exc:
+        logger.error("Error rendering streamlined HTML report: %s", exc, exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to render HTML report")
+
 
 

@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.544.0/dist/umd/lucide.min.js"></script>
+<style>
+html,body{margin:0;padding:0;background:#f4f4f4;font-family:"Nunito",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;color:#414242}
+*{box-sizing:border-box}
+a{color:#00ae9d;text-decoration:none}
+a:hover{color:#00857a}
+button,input{font-family:inherit;color:inherit}
+button{border:0;background:none;padding:0;cursor:pointer}
+@keyframes lw-draw{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+@keyframes lw-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes lw-fade{from{opacity:0}to{opacity:1}}
+@keyframes lw-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes lw-drift{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(5%,-4%,0) scale(1.12)}100%{transform:translate3d(0,0,0) scale(1)}}
+@keyframes lw-drift2{0%{transform:translate3d(0,0,0) scale(1.05)}50%{transform:translate3d(-6%,5%,0) scale(1)}100%{transform:translate3d(0,0,0) scale(1.05)}}
+@keyframes lw-halo{0%{transform:scale(.85);opacity:.55}100%{transform:scale(1.7);opacity:0}}
+@keyframes lw-spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:0;height:0}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#f4f4f4">
+
+  <div style="position:absolute;inset:-15%;pointer-events:none;opacity:.85">
+    <div style="position:absolute;left:4%;top:6%;width:52vw;height:52vw;border-radius:50%;background:radial-gradient(circle,#d6edea 0%,rgba(214,237,234,0) 68%);animation:lw-drift 26s ease-in-out infinite"></div>
+    <div style="position:absolute;right:2%;bottom:0%;width:46vw;height:46vw;border-radius:50%;background:radial-gradient(circle,#e4f3f0 0%,rgba(228,243,240,0) 70%);animation:lw-drift2 34s ease-in-out infinite"></div>
+  </div>
+
+  <sc-if value="{{ devTools }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed;right:14px;top:14px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <button onClick="{{ onDevToggle }}" aria-label="Demo controls" style="width:34px;height:34px;border-radius:50%;background:#ffffff;box-shadow:0 4px 14px rgba(65,66,66,.14);display:flex;align-items:center;justify-content:center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"></path></svg>
+      </button>
+      <sc-if value="{{ dev }}" hint-placeholder-val="{{ false }}">
+        <div style="width:250px;max-height:74vh;overflow-y:auto;background:#ffffff;border-radius:16px;box-shadow:0 18px 44px rgba(65,66,66,.18);padding:14px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a4a5a5;margin-bottom:10px">Demo controls</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+            <button onClick="{{ onAutofill }}" style="padding:9px 12px;border-radius:10px;background:#00ae9d;color:#fff;font-size:13px;font-weight:700;text-align:left">Fill plausible answers</button>
+            <button onClick="{{ onReset }}" style="padding:9px 12px;border-radius:10px;background:#f4f4f4;color:#414242;font-size:13px;font-weight:700;text-align:left">Reset session</button>
+          </div>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a4a5a5;margin-bottom:8px">Jump to screen</div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <sc-for list="{{ devScreens }}" as="ds" hint-placeholder-count="6">
+              <button onClick="{{ ds.go }}" style="display:flex;gap:8px;align-items:baseline;padding:6px 8px;border-radius:8px;background:{{ ds.bg }};text-align:left">
+                <span style="font-size:10px;font-weight:800;color:#a4a5a5;min-width:26px;font-variant-numeric:tabular-nums">{{ ds.no }}</span>
+                <span style="font-size:12px;font-weight:600;color:#414242;line-height:1.3">{{ ds.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <div style="position:relative;width:{{ fw }};height:{{ fh }};max-width:100%;border-radius:{{ fr }};background:#ffffff;box-shadow:{{ fsh }};overflow:hidden;display:flex;flex-direction:column">
+
+    <sc-if value="{{ showChrome }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:0 0 auto;padding:16px 20px 6px;display:flex;align-items:center;gap:14px">
+        <button onClick="{{ onBack }}" aria-label="Go back to previous question" style="width:34px;height:34px;border-radius:50%;background:#f4f4f4;display:flex;align-items:center;justify-content:center;flex:0 0 auto;opacity:{{ backOpacity }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#414242" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+        </button>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#757676;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ actLabel }}</div>
+            <sc-if value="{{ hasStep }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:0 0 auto;font-size:10.5px;font-weight:700;color:#a4a5a5;letter-spacing:.02em">{{ stepLabel }}</div>
+            </sc-if>
+          </div>
+          <div style="display:flex;gap:5px;margin-top:6px">
+            <sc-for list="{{ dots }}" as="dot" hint-placeholder-count="6">
+              <span style="width:{{ dot.w }};height:5px;border-radius:999px;background:{{ dot.bg }};transition:all 420ms cubic-bezier(.2,.7,.2,1)"></span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div key="{{ screenId }}" style="flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto;animation:lw-in 420ms cubic-bezier(.2,.75,.2,1) both">
+
+      <sc-if value="{{ isQ }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;display:flex;flex-direction:column;padding:{{ qPad }}">
+
+          <sc-if value="{{ hasIllo }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:0 0 auto;display:flex;justify-content:center;margin:2px 0 14px">
+              <svg width="200" height="82" viewBox="{{ illoBox }}" fill="none" stroke="#00ae9d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <sc-for list="{{ illoPaths }}" as="ip" hint-placeholder-count="3">
+                  <path d="{{ ip.d }}" pathLength="100" opacity="{{ ip.o }}" style="stroke-dasharray:100;animation:lw-draw 1100ms cubic-bezier(.3,.7,.2,1) both;animation-delay:{{ ip.delay }}ms"></path>
+                </sc-for>
+              </svg>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasPreamble }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:0 0 auto;background:#f4f4f4;border-radius:16px;padding:14px 16px;margin-bottom:18px">
+              <p style="margin:0;font-size:13.5px;line-height:1.6;color:#5c5d5d">{{ preamble }}</p>
+            </div>
+          </sc-if>
+
+          <sc-for list="{{ parts }}" as="part" hint-placeholder-count="1">
+            <div style="flex:0 0 auto;margin-bottom:{{ part.gap }};animation:lw-rise 380ms cubic-bezier(.2,.75,.2,1) both">
+
+              <sc-if value="{{ part.hasPrompt }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-bottom:{{ part.headGap }}">
+                  <sc-if value="{{ part.hasEyebrow }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#00ae9d;margin-bottom:8px">{{ part.eyebrow }}</div>
+                  </sc-if>
+                  <h1 style="margin:0;font-size:{{ part.promptSize }};font-weight:800;line-height:1.28;letter-spacing:-.01em;color:#414242;text-wrap:pretty">{{ part.prompt }}</h1>
+                  <sc-if value="{{ part.hasHint }}" hint-placeholder-val="{{ false }}">
+                    <p style="margin:7px 0 0;font-size:13.5px;line-height:1.5;color:#757676;text-wrap:pretty">{{ part.hint }}</p>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isOptions }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:{{ part.optGap }}">
+                  <sc-for list="{{ part.options }}" as="opt" hint-placeholder-count="4">
+                    <button onClick="{{ opt.tap }}" aria-pressed="{{ opt.sel }}" style="display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:{{ part.pad }};border-radius:14px;background:{{ opt.bg }};border:1.5px solid {{ opt.bd }};box-shadow:{{ opt.sh }};transition:background 180ms ease,border-color 180ms ease,transform 120ms ease" style-active="transform:scale(.985)" style-hover="border-color:#a7dcd4">
+                      <span style="flex:0 0 auto;width:20px;height:20px;border-radius:{{ opt.markR }};border:1.5px solid {{ opt.markBd }};background:{{ opt.markBg }};display:flex;align-items:center;justify-content:center;transition:all 180ms ease">
+                        <sc-if value="{{ opt.sel }}" hint-placeholder-val="{{ false }}">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"></path></svg>
+                        </sc-if>
+                      </span>
+                      <span style="flex:1;min-width:0">
+                        <span style="display:block;font-size:{{ opt.size }};font-weight:{{ opt.fw }};line-height:1.4;color:#414242">{{ opt.label }}</span>
+                        <sc-if value="{{ opt.hasDesc }}" hint-placeholder-val="{{ false }}">
+                          <span style="display:block;margin-top:4px;font-size:12.5px;line-height:1.45;color:#757676">{{ opt.desc }}</span>
+                        </sc-if>
+                      </span>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isTiles }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                  <sc-for list="{{ part.options }}" as="tile" hint-placeholder-count="6">
+                    <button onClick="{{ tile.tap }}" aria-pressed="{{ tile.sel }}" style="position:relative;display:flex;flex-direction:column;gap:6px;padding:10px 11px 9px;border-radius:12px;background:{{ tile.bg }};border:1.5px solid {{ tile.bd }};text-align:left;min-height:58px;transition:all 180ms ease" style-active="transform:scale(.98)">
+                      <sc-if value="{{ tile.hasIcon }}" hint-placeholder-val="{{ true }}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ tile.ic }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                          <sc-for list="{{ tile.paths }}" as="tp" hint-placeholder-count="1">
+                            <path d="{{ tp.d }}"></path>
+                          </sc-for>
+                        </svg>
+                      </sc-if>
+                      <span style="font-size:12.5px;font-weight:{{ tile.fw }};line-height:1.32;color:#414242;padding-right:{{ tile.textPad }}">{{ tile.label }}</span>
+                      <sc-if value="{{ tile.sel }}" hint-placeholder-val="{{ false }}">
+                        <span style="position:absolute;top:9px;right:9px;width:16px;height:16px;border-radius:50%;background:#00ae9d;display:flex;align-items:center;justify-content:center">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"></path></svg>
+                        </span>
+                      </sc-if>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isGroups }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:9px">
+                  <sc-for list="{{ part.groups }}" as="grp" hint-placeholder-count="3">
+                    <div style="background:{{ grp.bg }};border:1.5px solid {{ grp.bd }};border-radius:14px;padding:10px 11px;transition:all 200ms ease">
+                      <div style="display:flex;align-items:baseline;gap:7px;margin-bottom:7px">
+                        <span style="font-size:13px;font-weight:800;color:#414242">{{ grp.title }}</span>
+                        <span style="font-size:11px;color:#757676">{{ grp.sub }}</span>
+                      </div>
+                      <div style="display:flex;flex-wrap:wrap;gap:5px">
+                        <sc-for list="{{ grp.chips }}" as="chip" hint-placeholder-count="4">
+                          <button onClick="{{ chip.tap }}" aria-pressed="{{ chip.sel }}" style="display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;background:{{ chip.bg }};border:1.5px solid {{ chip.bd }};font-size:11.5px;font-weight:{{ chip.fw }};color:#414242;transition:all 160ms ease" style-active="transform:scale(.97)">
+                            <sc-if value="{{ chip.sel }}" hint-placeholder-val="{{ false }}">
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"></path></svg>
+                            </sc-if>
+                            {{ chip.label }}
+                          </button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isText }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <input value="{{ part.value }}" onChange="{{ part.onInput }}" maxLength="{{ part.maxLength }}" placeholder="{{ part.placeholder }}" aria-label="{{ part.prompt }}" style="width:100%;padding:15px 18px;border-radius:999px;border:1.5px solid #e8e8e8;background:#ffffff;font-size:15px;font-weight:600;outline:none;transition:border-color 180ms ease" style-focus="border-color:#00ae9d" />
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isEmail }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:14px">
+                  <input value="{{ part.value }}" onChange="{{ part.onInput }}" type="email" placeholder="you@example.com" aria-label="Your email address" style="width:100%;padding:15px 18px;border-radius:999px;border:1.5px solid #e8e8e8;background:#ffffff;font-size:15px;font-weight:600;outline:none;transition:border-color 180ms ease" style-focus="border-color:#00ae9d" />
+                  <button onClick="{{ part.onOptin }}" aria-pressed="{{ part.optin }}" style="display:flex;gap:11px;align-items:flex-start;text-align:left">
+                    <span style="flex:0 0 auto;width:20px;height:20px;border-radius:6px;border:1.5px solid {{ part.optinBd }};background:{{ part.optinBg }};display:flex;align-items:center;justify-content:center;margin-top:1px">
+                      <sc-if value="{{ part.optin }}" hint-placeholder-val="{{ false }}">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"></path></svg>
+                      </sc-if>
+                    </span>
+                    <span style="font-size:12.5px;line-height:1.5;color:#5c5d5d">Send me occasional wellbeing research from LEWIS. About once a month, unsubscribe any time.</span>
+                  </button>
+                  <div style="display:flex;gap:9px;align-items:flex-start;background:#f4f4f4;border-radius:12px;padding:11px 13px">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00ae9d" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto;margin-top:1px"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6z"></path></svg>
+                    <span style="font-size:12px;line-height:1.5;color:#757676">Your data is encrypted and private. LEWIS never sells or shares your reflections.</span>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isStops }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <svg width="100%" height="96" viewBox="0 0 300 96" fill="none" style="display:block;margin-bottom:6px" aria-hidden="true">
+                    <path d="{{ part.landD }}" stroke="#a7dcd4" stroke-width="1.6" stroke-linecap="round" style="transition:d 420ms ease"></path>
+                    <path d="{{ part.landD2 }}" stroke="#00ae9d" stroke-width="1.8" stroke-linecap="round"></path>
+                    <path d="M0 88h300" stroke="#ededed" stroke-width="1.4"></path>
+                  </svg>
+                  <div onPointerDown="{{ part.onTrackDown }}" style="position:relative;height:44px;display:flex;align-items:center;touch-action:none;cursor:pointer">
+                    <div style="position:absolute;left:0;right:0;height:6px;border-radius:999px;background:#f0f0f0"></div>
+                    <div style="position:absolute;left:0;width:{{ part.fillPct }};height:6px;border-radius:999px;background:#00ae9d;transition:width 260ms cubic-bezier(.2,.7,.2,1)"></div>
+                    <sc-for list="{{ part.stops }}" as="st" hint-placeholder-count="5">
+                      <span style="position:absolute;left:{{ st.left }};transform:translateX(-50%);width:{{ st.size }};height:{{ st.size }};border-radius:50%;background:{{ st.bg }};border:2px solid {{ st.bd }};box-shadow:{{ st.sh }};transition:all 260ms cubic-bezier(.2,.7,.2,1)"></span>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;margin-top:2px">
+                    <span style="font-size:11.5px;font-weight:700;color:#a4a5a5">{{ part.leftLabel }}</span>
+                    <span style="font-size:11.5px;font-weight:700;color:#a4a5a5">{{ part.rightLabel }}</span>
+                  </div>
+                  <div style="text-align:center;margin-top:14px;min-height:26px">
+                    <span style="display:inline-block;padding:6px 16px;border-radius:999px;background:{{ part.chipBg }};font-size:14px;font-weight:800;color:{{ part.chipFg }};transition:all 240ms ease">{{ part.valueLabel }}</span>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px">
+                    <sc-for list="{{ part.stopBtns }}" as="sb" hint-placeholder-count="5">
+                      <button onClick="{{ sb.tap }}" aria-pressed="{{ sb.sel }}" style="padding:7px 11px;border-radius:999px;border:1.5px solid {{ sb.bd }};background:{{ sb.bg }};font-size:11.5px;font-weight:{{ sb.fw }};color:#5c5d5d">{{ sb.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isMood }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="border-radius:18px;overflow:hidden;background:{{ part.skyBg }};transition:background 500ms ease">
+                    <svg width="100%" height="128" viewBox="0 0 300 128" fill="none" style="display:block" aria-hidden="true">
+                      <circle cx="{{ part.sunX }}" cy="38" r="13" stroke="#ffffff" stroke-width="1.7" opacity="{{ part.sunO }}"></circle>
+                      <path d="{{ part.moodD }}" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity=".9"></path>
+                      <path d="{{ part.moodD2 }}" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" opacity=".55"></path>
+                    </svg>
+                  </div>
+                  <div onPointerDown="{{ part.onTrackDown }}" style="position:relative;height:44px;display:flex;align-items:center;touch-action:none;cursor:pointer;margin-top:6px">
+                    <div style="position:absolute;left:0;right:0;height:6px;border-radius:999px;background:#f0f0f0"></div>
+                    <div style="position:absolute;left:0;width:{{ part.fillPct }};height:6px;border-radius:999px;background:#00ae9d"></div>
+                    <span style="position:absolute;left:{{ part.fillPct }};transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:#ffffff;border:2.5px solid #00ae9d;box-shadow:0 3px 10px rgba(0,174,157,.3)"></span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between">
+                    <span style="font-size:11.5px;font-weight:700;color:#a4a5a5">Stormy</span>
+                    <span style="font-size:11.5px;font-weight:700;color:#a4a5a5">Clear</span>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isCanvas }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="display:flex;gap:8px;align-items:stretch">
+                    <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:2px 0">
+                      <span style="font-size:10.5px;font-weight:800;color:#757676;writing-mode:vertical-rl;transform:rotate(180deg)">Activated</span>
+                      <span style="font-size:10.5px;font-weight:800;color:#757676;writing-mode:vertical-rl;transform:rotate(180deg)">Calm</span>
+                    </div>
+                    <div onPointerDown="{{ part.onPadDown }}" style="position:relative;flex:1;aspect-ratio:1;border-radius:18px;background:radial-gradient(circle at 50% 50%,#eaf7f5 0%,#f8fbfa 70%);border:1.5px solid #e4efed;touch-action:none;cursor:crosshair;overflow:hidden">
+                      <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" preserveAspectRatio="none" style="position:absolute;inset:0" aria-hidden="true">
+                        <path d="M50 0v100M0 50h100" stroke="#d6edea" stroke-width=".5"></path>
+                        <circle cx="50" cy="50" r="30" stroke="#e4efed" stroke-width=".5"></circle>
+                        <circle cx="50" cy="50" r="15" stroke="#e4efed" stroke-width=".5"></circle>
+                      </svg>
+                      <sc-if value="{{ part.placed }}" hint-placeholder-val="{{ false }}">
+                        <span style="position:absolute;left:{{ part.dotX }};top:{{ part.dotY }};transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:#00ae9d;box-shadow:0 4px 14px rgba(0,174,157,.4);transition:left 200ms ease,top 200ms ease"></span>
+                      </sc-if>
+                      <sc-if value="{{ part.placed }}" hint-placeholder-val="{{ false }}">
+                        <span style="position:absolute;left:{{ part.dotX }};top:{{ part.dotY }};transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;border:2px solid #00ae9d;animation:lw-halo 2.4s ease-out infinite"></span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding-left:26px;margin-top:7px">
+                    <span style="font-size:10.5px;font-weight:800;color:#757676">Unpleasant</span>
+                    <span style="font-size:10.5px;font-weight:800;color:#757676">Pleasant</span>
+                  </div>
+                  <div style="margin-top:12px">
+                    <button onClick="{{ part.onToggleSliders }}" style="font-size:12px;font-weight:700;color:#00ae9d">{{ part.sliderToggleLabel }}</button>
+                  </div>
+                  <sc-if value="{{ part.showSliders }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+                      <div>
+                        <label style="display:block;font-size:12px;font-weight:700;color:#5c5d5d;margin-bottom:4px">Unpleasant to pleasant</label>
+                        <input type="range" min="0" max="100" value="{{ part.vx }}" onChange="{{ part.onVx }}" style="width:100%;accent-color:#00ae9d" />
+                      </div>
+                      <div>
+                        <label style="display:block;font-size:12px;font-weight:700;color:#5c5d5d;margin-bottom:4px">Calm to activated</label>
+                        <input type="range" min="0" max="100" value="{{ part.vy }}" onChange="{{ part.onVy }}" style="width:100%;accent-color:#00ae9d" />
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isBody }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="position:relative;display:flex;justify-content:center;padding:4px 0 8px">
+                    <svg width="128" height="252" viewBox="0 0 128 252" fill="none" stroke="#c9dedb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="64" cy="26" r="18"></circle>
+                      <path d="M56 44c-1 6-3 8-8 10l-18 8c-7 3-11 9-11 17v34c0 6 1 10 3 15l5 12"></path>
+                      <path d="M72 44c1 6 3 8 8 10l18 8c7 3 11 9 11 17v34c0 6-1 10-3 15l-5 12"></path>
+                      <path d="M27 128h74"></path>
+                      <path d="M31 128l6 52 4 62h14l3-56 6-30 6 30 3 56h14l4-62 6-52"></path>
+                    </svg>
+                    <sc-for list="{{ part.zones }}" as="z" hint-placeholder-count="5">
+                      <button onClick="{{ z.tap }}" aria-label="{{ z.aria }}" aria-pressed="{{ z.sel }}" style="position:absolute;left:{{ z.left }};top:{{ z.top }};transform:translate(-50%,-50%);width:{{ z.size }};height:{{ z.size }};border-radius:50%;background:{{ z.bg }};border:1.5px dashed {{ z.bd }};display:flex;align-items:center;justify-content:center;transition:all 200ms ease" style-active="transform:translate(-50%,-50%) scale(.94)">
+                        <sc-if value="{{ z.sel }}" hint-placeholder-val="{{ false }}">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"></path></svg>
+                        </sc-if>
+                      </button>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center">
+                    <sc-for list="{{ part.zones }}" as="zl" hint-placeholder-count="5">
+                      <button onClick="{{ zl.tap }}" aria-pressed="{{ zl.sel }}" style="padding:8px 13px;border-radius:999px;background:{{ zl.chipBg }};border:1.5px solid {{ zl.chipBd }};font-size:12px;font-weight:{{ zl.fw }};color:#414242">{{ zl.label }}</button>
+                    </sc-for>
+                  </div>
+                  <div style="text-align:center;margin-top:16px">
+                    <button onClick="{{ part.onNone }}" aria-pressed="{{ part.noneSel }}" style="font-size:13px;font-weight:700;color:{{ part.noneFg }};padding:8px 14px;border-radius:999px;background:{{ part.noneBg }}">Nothing feels tense right now</button>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isIns }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                  <sc-for list="{{ part.options }}" as="io" hint-placeholder-count="7">
+                    <button onClick="{{ io.tap }}" aria-label="{{ io.alt }}" aria-pressed="{{ io.sel }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 6px 9px;border-radius:14px;background:{{ io.bg }};border:1.5px solid {{ io.bd }};transition:all 180ms ease" style-active="transform:scale(.98)">
+                      <svg width="76" height="40" viewBox="0 0 76 40" fill="none" stroke="{{ io.stroke }}" stroke-width="1.7" aria-hidden="true">
+                        <circle cx="{{ io.c1 }}" cy="20" r="13"></circle>
+                        <circle cx="{{ io.c2 }}" cy="20" r="13"></circle>
+                      </svg>
+                      <span style="font-size:10.5px;font-weight:{{ io.fw }};color:#757676;text-align:center;line-height:1.25">{{ io.label }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isSort }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+                    <span style="font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#a4a5a5">{{ part.deckLabel }}</span>
+                    <span style="font-size:11.5px;font-weight:800;color:#00ae9d">{{ part.counter }}</span>
+                  </div>
+                  <sc-if value="{{ part.hasDeck }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;gap:7px;overflow-x:auto;padding:2px 2px 10px;min-height:{{ part.deckH }}">
+                    <sc-for list="{{ part.deck }}" as="c" hint-placeholder-count="4">
+                      <button onClick="{{ c.tap }}" aria-pressed="{{ c.sel }}" style="flex:0 0 auto;width:104px;display:flex;flex-direction:column;gap:7px;padding:11px 11px 10px;border-radius:14px;background:{{ c.bg }};border:1.5px solid {{ c.bd }};box-shadow:{{ c.sh }};text-align:left;transition:all 180ms ease" style-active="transform:scale(.97)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{ c.ic }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                          <sc-for list="{{ c.paths }}" as="cp" hint-placeholder-count="1">
+                            <path d="{{ cp.d }}"></path>
+                          </sc-for>
+                        </svg>
+                        <span style="font-size:11.5px;font-weight:700;line-height:1.25;color:#414242">{{ c.label }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                  </sc-if>
+                  <div style="display:flex;flex-direction:column;gap:8px;margin-top:2px">
+                    <sc-for list="{{ part.zones }}" as="zz" hint-placeholder-count="3">
+                      <button onClick="{{ zz.tap }}" style="width:100%;text-align:left;padding:11px 13px;border-radius:14px;background:{{ zz.bg }};border:1.5px {{ zz.bs }} {{ zz.bd }};transition:all 180ms ease">
+                        <span style="display:flex;align-items:center;gap:7px">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#757676" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ zz.icon }}"></path></svg>
+                          <span style="font-size:12.5px;font-weight:800;color:#414242">{{ zz.label }}</span>
+                          <span style="font-size:11px;font-weight:700;color:#a4a5a5">{{ zz.count }}</span>
+                        </span>
+                        <sc-if value="{{ zz.hasItems }}" hint-placeholder-val="{{ false }}">
+                          <span style="display:flex;flex-wrap:wrap;gap:5px;margin-top:9px">
+                            <sc-for list="{{ zz.items }}" as="pc" hint-placeholder-count="2">
+                              <span onClick="{{ pc.remove }}" style="display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;background:#ffffff;border:1px solid #d6edea;font-size:11px;font-weight:700;color:#414242;cursor:pointer">
+                                {{ pc.label }}
+                                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#a4a5a5" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                              </span>
+                            </sc-for>
+                          </span>
+                        </sc-if>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isPick3 }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="text-align:center;margin-bottom:11px">
+                    <span style="display:inline-block;padding:5px 14px;border-radius:999px;background:#d6edea;font-size:12px;font-weight:800;color:#00857a">{{ part.counter }}</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+                    <sc-for list="{{ part.options }}" as="p3" hint-placeholder-count="9">
+                      <button onClick="{{ p3.tap }}" aria-pressed="{{ p3.sel }}" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 6px 10px;border-radius:14px;background:{{ p3.bg }};border:1.5px solid {{ p3.bd }};transition:all 180ms ease" style-active="transform:scale(.97)">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{ p3.ic }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                          <sc-for list="{{ p3.paths }}" as="pp" hint-placeholder-count="1">
+                            <path d="{{ pp.d }}"></path>
+                          </sc-for>
+                        </svg>
+                        <span style="font-size:10.5px;font-weight:{{ p3.fw }};line-height:1.25;text-align:center;color:#414242">{{ p3.label }}</span>
+                        <sc-if value="{{ p3.sel }}" hint-placeholder-val="{{ false }}">
+                          <span style="position:absolute;top:6px;right:6px;width:15px;height:15px;border-radius:50%;background:#00ae9d;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ p3.rank }}</span>
+                        </sc-if>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isEnergy }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <svg width="100%" height="66" viewBox="0 0 300 66" fill="none" style="display:block;margin-bottom:12px" aria-hidden="true">
+                    <path d="M0 62h300" stroke="#ededed" stroke-width="1.4"></path>
+                    <path d="{{ part.arcD }}" stroke="#00ae9d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="{{ part.arcFill }}" fill="#d6edea" opacity=".55" stroke="none"></path>
+                  </svg>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <sc-for list="{{ part.rows }}" as="row" hint-placeholder-count="4">
+                      <div style="display:flex;align-items:center;gap:9px">
+                        <span style="flex:0 0 66px;font-size:12.5px;font-weight:700;color:#5c5d5d">{{ row.label }}</span>
+                        <span style="flex:1;display:flex;gap:5px">
+                          <sc-for list="{{ row.options }}" as="ro" hint-placeholder-count="3">
+                            <button onClick="{{ ro.tap }}" aria-pressed="{{ ro.sel }}" style="flex:1;padding:9px 4px;border-radius:11px;background:{{ ro.bg }};border:1.5px solid {{ ro.bd }};font-size:11.5px;font-weight:{{ ro.fw }};color:#414242;transition:all 160ms ease" style-active="transform:scale(.97)">{{ ro.label }}</button>
+                          </sc-for>
+                        </span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ part.isSkip }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px">
+                  <button onClick="{{ part.onSkip }}" style="font-size:12.5px;font-weight:700;color:#757676;padding:6px 2px">Skip this</button>
+                </div>
+              </sc-if>
+
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:26px 26px 10px">
+          <div style="display:flex;justify-content:center;margin-bottom:26px">
+            <svg width="132" height="132" viewBox="0 0 132 132" fill="none" aria-hidden="true">
+              <circle cx="66" cy="66" r="52" stroke="#d6edea" stroke-width="1.6" pathLength="100" style="stroke-dasharray:100;animation:lw-draw 1600ms cubic-bezier(.3,.7,.2,1) both"></circle>
+              <circle cx="66" cy="66" r="36" stroke="#a7dcd4" stroke-width="1.6" pathLength="100" style="stroke-dasharray:100;animation:lw-draw 1600ms cubic-bezier(.3,.7,.2,1) 200ms both"></circle>
+              <circle cx="66" cy="66" r="20" stroke="#00ae9d" stroke-width="1.8" pathLength="100" style="stroke-dasharray:100;animation:lw-draw 1600ms cubic-bezier(.3,.7,.2,1) 400ms both"></circle>
+              <circle cx="66" cy="66" r="6" fill="#00ae9d"></circle>
+            </svg>
+          </div>
+          <h1 style="margin:0;font-size:25px;font-weight:800;line-height:1.26;letter-spacing:-.015em;color:#414242;text-wrap:pretty">{{ wTitle }}</h1>
+          <p style="margin:11px 0 0;font-size:15px;line-height:1.55;color:#757676;font-style:italic;text-wrap:pretty">{{ wSub }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin:22px 0 0">
+            <sc-for list="{{ wPills }}" as="pill" hint-placeholder-count="4">
+              <span style="padding:6px 12px;border-radius:999px;background:#f4f4f4;font-size:11.5px;font-weight:700;color:#5c5d5d">{{ pill.label }}</span>
+            </sc-for>
+          </div>
+          <p style="margin:24px 0 0;font-size:12.5px;line-height:1.6;color:#a4a5a5;text-wrap:pretty">This takes about 12 minutes. It is longer than a quiz because it is not one. Give it the time and you get something worth reading.</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAct }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ onActTap }}" style="flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;background:#00ae9d;cursor:pointer">
+          <span style="font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.7)">{{ actNum }}</span>
+          <span style="display:block;margin:14px 0 0;font-size:32px;font-weight:800;letter-spacing:-.015em;color:#ffffff;line-height:1.15">{{ actName }}</span>
+          <span style="display:block;margin:14px 0 0;font-size:15px;font-style:italic;color:rgba(255,255,255,.9);line-height:1.5;max-width:250px">{{ actLine }}</span>
+          <span style="display:block;margin-top:34px;width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);animation:lw-halo 2.6s ease-out infinite"></span>
+        </button>
+      </sc-if>
+
+      <sc-if value="{{ isBreath }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;padding:16px 26px 10px">
+          <sc-if value="{{ bIsRate }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+              <p style="margin:0 0 20px;font-size:15px;font-weight:600;line-height:1.55;color:#00ae9d;text-wrap:pretty">{{ bEyebrow }}</p>
+              <h1 style="margin:0;font-size:23px;font-weight:800;line-height:1.28;color:#414242">{{ bPrompt }}</h1>
+              <div onPointerDown="{{ bOnTrack }}" style="position:relative;height:48px;display:flex;align-items:center;touch-action:none;cursor:pointer;margin-top:36px">
+                <div style="position:absolute;left:0;right:0;height:6px;border-radius:999px;background:#f0f0f0"></div>
+                <div style="position:absolute;left:0;width:{{ bFill }};height:6px;border-radius:999px;background:#00ae9d"></div>
+                <span style="position:absolute;left:{{ bFill }};transform:translateX(-50%);width:28px;height:28px;border-radius:50%;background:#ffffff;border:2.5px solid #00ae9d;box-shadow:0 3px 10px rgba(0,174,157,.3)"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="font-size:11.5px;font-weight:700;color:#a4a5a5">None at all</span>
+                <span style="font-size:11.5px;font-weight:700;color:#a4a5a5">A great deal</span>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ bIsBreathing }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+              <div style="position:relative;width:210px;height:210px;display:flex;align-items:center;justify-content:center">
+                <span style="position:absolute;width:{{ bOrbW }};height:{{ bOrbW }};border-radius:50%;background:radial-gradient(circle,#00ae9d 0%,#7fd4c9 55%,rgba(214,237,234,0) 78%);transition:width 900ms cubic-bezier(.4,0,.5,1),height 900ms cubic-bezier(.4,0,.5,1);opacity:.9"></span>
+                <span style="position:absolute;width:200px;height:200px;border-radius:50%;border:1.5px solid #d6edea"></span>
+                <span style="position:relative;font-size:16px;font-weight:800;color:#414242">{{ bPhase }}</span>
+              </div>
+              <p style="margin:30px 0 0;font-size:14px;line-height:1.55;color:#757676;max-width:240px">Follow the light as it expands and contracts. Breathe with it.</p>
+              <p style="margin:14px 0 0;font-size:26px;font-weight:800;color:#00ae9d;font-variant-numeric:tabular-nums">{{ bClock }}</p>
+              <sc-if value="{{ bCanSkip }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ bOnSkip }}" style="margin-top:20px;font-size:13px;font-weight:700;color:#757676;padding:8px 16px;border-radius:999px;background:#f4f4f4">Skip</button>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isGenerating }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:30px 28px;background:#414242">
+          <div style="display:flex;justify-content:center;margin-bottom:34px">
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none" style="animation:lw-spin 3.4s linear infinite" aria-hidden="true">
+              <circle cx="26" cy="26" r="22" stroke="rgba(255,255,255,.14)" stroke-width="2"></circle>
+              <path d="M26 4a22 22 0 0 1 22 22" stroke="#00ae9d" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <sc-for list="{{ genLines }}" as="gl" hint-placeholder-count="7">
+              <div style="display:flex;gap:10px;align-items:baseline;opacity:{{ gl.o }};transition:opacity 600ms ease">
+                <span style="flex:0 0 auto;width:6px;height:6px;border-radius:50%;background:{{ gl.dot }};margin-top:6px"></span>
+                <span style="font-size:14.5px;line-height:1.5;font-weight:{{ gl.fw }};color:{{ gl.fg }}">{{ gl.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTerminal }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:30px 26px">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#00ae9d" stroke-width="1.7" stroke-linecap="round" style="margin-bottom:24px" aria-hidden="true">
+            <path d="M30 52c11-7 18-15 18-26V13L30 7 12 13v13c0 11 7 19 18 26z" pathLength="100" style="stroke-dasharray:100;animation:lw-draw 1400ms ease both"></path>
+            <path d="M22 29l6 6 12-13" pathLength="100" style="stroke-dasharray:100;animation:lw-draw 900ms ease 700ms both"></path>
+          </svg>
+          <h1 style="margin:0;font-size:22px;font-weight:800;line-height:1.3;color:#414242">Thank you for your honesty</h1>
+          <h2 style="margin:10px 0 0;font-size:17px;font-weight:700;line-height:1.35;color:#00ae9d">LEWIS is designed for adults</h2>
+          <p style="margin:18px 0 0;font-size:14px;line-height:1.65;color:#5c5d5d;text-wrap:pretty">The reflections here are built and tested for people 18 and older, so the journey stops here for now. Nothing you have entered has been saved. You will be very welcome back when you are 18.</p>
+          <p style="margin:14px 0 0;font-size:14px;line-height:1.65;color:#5c5d5d;text-wrap:pretty">Caring about your own wellbeing at your age is a genuine strength. If things ever feel heavy, please talk to someone you trust: a parent, a teacher, a school counsellor, or another adult in your corner. You deserve support from people around you, not just from a screen.</p>
+          <div style="margin-top:26px">
+            <a href="#" style="font-size:13.5px;font-weight:800;color:#00ae9d">Go to the LEWIS homepage</a>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:30px 26px">
+          <div style="display:flex;justify-content:center;margin-bottom:22px">
+            <svg width="112" height="112" viewBox="0 0 112 112" fill="none" aria-hidden="true">
+              <circle cx="56" cy="56" r="44" stroke="#d6edea" stroke-width="1.6" pathLength="100" style="stroke-dasharray:100;animation:lw-draw 1500ms ease both"></circle>
+              <path d="M34 58l14 14 30-32" stroke="#00ae9d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" pathLength="100" style="stroke-dasharray:100;animation:lw-draw 900ms ease 600ms both"></path>
+            </svg>
+          </div>
+          <h1 style="margin:0;font-size:24px;font-weight:800;line-height:1.26;color:#414242;text-align:center">{{ doneTitle }}</h1>
+          <p style="margin:12px 0 0;font-size:14.5px;line-height:1.6;color:#757676;text-align:center;text-wrap:pretty">{{ doneSub }}</p>
+          <div style="margin-top:26px;background:#f4f4f4;border-radius:16px;padding:16px">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#a4a5a5;margin-bottom:12px">What the flow produced</div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ doneRows }}" as="dr" hint-placeholder-count="4">
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+                  <span style="font-size:12.5px;font-weight:600;color:#5c5d5d">{{ dr.label }}</span>
+                  <span style="font-size:12.5px;font-weight:800;color:#414242;text-align:right">{{ dr.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <p style="margin:18px 0 0;font-size:12px;line-height:1.55;color:#a4a5a5;text-align:center">The full reading is the next build phase. Nothing here is a diagnosis.</p>
+          <div style="margin-top:18px;text-align:center">
+            <button onClick="{{ onReset }}" style="font-size:13px;font-weight:800;color:#00ae9d;padding:9px 18px;border-radius:999px;background:#d6edea">Walk it again</button>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <sc-if value="{{ showCta }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:0 0 auto;padding:12px 22px 20px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#ffffff 42%)">
+        <button onClick="{{ onCta }}" disabled="{{ ctaOff }}" style="width:100%;padding:16px;border-radius:999px;background:{{ ctaBg }};color:{{ ctaFg }};font-size:15px;font-weight:800;letter-spacing:.01em;box-shadow:{{ ctaSh }};transition:all 200ms ease;cursor:{{ ctaCursor }}" style-active="transform:scale(.985)">{{ ctaLabel }}</button>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00ae9d&quot;,&quot;options&quot;:[&quot;#00ae9d&quot;,&quot;#019386&quot;,&quot;#5fba46&quot;,&quot;#414242&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;frameMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;phone&quot;,&quot;fullbleed&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;devTools&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
+class Component extends DCLogic {
+  state = {
+    id: 'gate', hist: [], a: {}, dev: false, gen: 0, bstep: 0, bt: 60,
+    bphase: 'Breathe in', bopen: false, sortSel: null, canvasSliders: false,
+    w: 1200, h: 900, loaded: false, wv: 0, editIdx: null
+  };
+
+  T = '#00ae9d'; TS = '#d6edea'; INK = '#414242'; MUT = '#757676'; BD = '#e8e8e8';
+
+  NINE = [
+    { k: 'PH', label: 'Body & recovery', icon: 'heart-pulse' },
+    { k: 'EM', label: 'Emotional calm', icon: 'waves' },
+    { k: 'EN', label: 'Energy & drive', icon: 'gauge' },
+    { k: 'RS', label: 'Relationships', icon: 'heart-handshake' },
+    { k: 'MS', label: 'Meaning & purpose', icon: 'sparkles' },
+    { k: 'AC', label: 'Progress & agency', icon: 'badge-check' },
+    { k: 'FW', label: 'Money & security', icon: 'wallet' },
+    { k: 'IG', label: 'Curiosity & learning', icon: 'book-open' },
+    { k: 'EC', label: 'Surroundings & belonging', icon: 'mountain-snow' }
+  ];
+
+  ROLE_ICONS = {
+    'Student': 'graduation-cap', 'Professional': 'building-2', 'Entrepreneur or self-employed': 'rocket',
+    'Primary caregiver': 'heart-handshake', 'Homemaker': 'house', 'Retired': 'armchair',
+    'Between jobs or job-seeking': 'map', 'In transition': 'arrow-right-left', 'Taking time out': 'moon',
+    'Living with a health condition': 'heart-pulse', 'Wearing many hats': 'layers'
+  };
+
+  // Design-system icon standard: Lucide 0.544.0 line icons, 24px box, 1.7px stroke, round caps.
+  // Every node type is normalised to path data so one <path> loop can render any icon.
+  lucidePaths(name) {
+    if (!name) return [];
+    this._iconCache = this._iconCache || {};
+    if (this._iconCache[name]) return this._iconCache[name];
+    const lib = (window.lucide && (window.lucide.icons || window.lucide)) || {};
+    const pascal = s => s.replace(/(^|-)([a-z0-9])/g, (_, __, c) => c.toUpperCase());
+    const node = lib[pascal(name)];
+    if (!node || !node.map) return [];
+    const out = node.map(n => {
+      const t = n[0], a = n[1] || {};
+      if (t === 'path') return { d: a.d };
+      if (t === 'circle') { const cx = +a.cx, cy = +a.cy, r = +a.r; return { d: 'M' + (cx - r) + ' ' + cy + 'a' + r + ' ' + r + ' 0 1 0 ' + (2 * r) + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0' }; }
+      if (t === 'rect') { const x = +a.x, y = +a.y, w = +a.width, h = +a.height; return { d: 'M' + x + ' ' + y + 'h' + w + 'v' + h + 'h' + (-w) + 'z' }; }
+      if (t === 'line') return { d: 'M' + a.x1 + ' ' + a.y1 + 'L' + a.x2 + ' ' + a.y2 };
+      if (t === 'polyline') return { d: 'M' + a.points };
+      if (t === 'polygon') return { d: 'M' + a.points + 'z' };
+      return null;
+    }).filter(Boolean);
+    if (out.length) this._iconCache[name] = out;
+    return out;
+  }
+
+  MOTIFS = {
+    ripple: ['M20 80a80 80 0 0 1 160 0', 'M50 80a50 50 0 0 1 100 0', 'M78 80a22 22 0 0 1 44 0', 'M14 80h172'],
+    wave: ['M15 34q28-20 56 0t56 0 56 0', 'M15 52q28-20 56 0t56 0 56 0', 'M15 70q28-20 56 0t56 0 56 0'],
+    horizon: ['M18 74h184', 'M46 74 88 32l30 42', 'M104 74 138 44l34 30', 'M158 26a12 12 0 1 0 0 1'],
+    orbit: ['M100 16a34 34 0 1 0 0 68 34 34 0 0 0 0-68', 'M30 50q70-30 140 0', 'M30 50q70 30 140 0', 'M100 8a4 4 0 1 0 0 1'],
+    sprout: ['M100 84V32', 'M100 56c-20 0-30-12-30-26 16 0 30 8 30 26z', 'M100 62c20 0 30-12 30-26-16 0-30 8-30 26z', 'M60 84h80'],
+    peaks: ['M20 74l38-32 26 20 30-40 34 30 32-16', 'M20 84h164'],
+    link: ['M56 50a20 20 0 1 0 0-1', 'M144 50a20 20 0 1 0 0-1', 'M76 50h48'],
+    coin: ['M100 14a34 34 0 1 0 0 68 34 34 0 0 0 0-68', 'M86 40h28', 'M86 56h28', 'M100 30v36'],
+    window: ['M52 20h96v58H52z', 'M100 20v58', 'M52 44h96', 'M40 86h120'],
+    arc: ['M18 80q82-64 164 0', 'M100 80V44', 'M100 40a5 5 0 1 0 0 1'],
+    lattice: ['M30 26h140', 'M30 50h140', 'M30 74h140', 'M66 18v64', 'M134 18v64'],
+    spiral: ['M100 50a10 10 0 1 0 4 8', 'M100 28a24 24 0 1 0 18 40', 'M100 12a40 40 0 1 0 30 66']
+  };
+
+  ACTS = [
+    { n: 'Act 1 of 6', name: 'Arrival', line: 'A little about you, so the rest fits.', label: 'Act 1 of 6 · Arrival' },
+    { n: 'Act 2 of 6', name: 'How life feels', line: 'Some of this is words. Some of it is not.', label: 'Act 2 of 6 · How life feels' },
+    { n: 'Act 3 of 6', name: 'The measured core', line: 'The most researched part of LEWIS. Plainer on purpose.', label: 'Act 3 of 6 · The measured core' },
+    { n: 'Act 4 of 6', name: 'The shape of your life', line: 'Now the part that is yours to arrange.', label: 'Act 4 of 6 · The shape of your life' },
+    { n: 'Act 5 of 6', name: "What's in the way", line: 'A few short questions about the areas that felt hardest.', label: "Act 5 of 6 · What's in the way" },
+    { n: 'Act 6 of 6', name: 'How to help you', line: 'Last few. Then one small thing, just for you.', label: 'Act 6 of 6 · How to help you' }
+  ];
+
+  WELCOME = [
+    { t: "Let's take an honest look at how life feels for you right now.", s: 'No right answers. Just your reflection, gently guided.' },
+    { t: 'However you\u2019re arriving today is okay. Let\u2019s begin where you are.', s: 'A few honest minutes, just for you.' },
+    { t: "Before anything else, let's notice how things really feel underneath.", s: 'Answer just for yourself. Nothing here is judged.' },
+    { t: "Take a breath. There's nothing to get right here, only what's true for you.", s: 'A quiet space to see how you really are.' }
+  ];
+
+  WHO5_SCALE = ['At no time', 'Some of the time', 'Less than half the time', 'More than half the time', 'Most of the time', 'All of the time'];
+  WHO5_ITEMS = ['I have felt cheerful and in good spirits', 'I have felt calm and relaxed', 'I have felt active and vigorous', 'I woke up feeling fresh and rested', 'My daily life has been filled with things that interest me'];
+  PSS_SCALE = ['Never', 'Almost never', 'Sometimes', 'Fairly often', 'Very often'];
+  PSS_ITEMS = ['Been upset because of something that happened unexpectedly?', 'Felt that you were unable to control the important things in your life?', 'Felt nervous and stressed?', 'Felt confident about your ability to handle your personal problems?', 'Felt that things were going your way?', 'Found that you could not cope with all the things that you had to do?', 'Been able to control irritations in your life?', 'Felt that you were on top of things?', 'Been angered because of things that were outside of your control?', 'Felt difficulties were piling up so high that you could not overcome them?'];
+  UCLA_SCALE = ['Hardly ever', 'Some of the time', 'Often'];
+  UCLA_ITEMS = ['That you lack companionship?', 'Left out?', 'Isolated from others?'];
+  GSE_SCALE = ['Not at all true', 'Hardly true', 'Moderately true', 'Exactly true'];
+  PROMIS_SCALE = ['Not at all', 'A little bit', 'Somewhat', 'Quite a bit', 'Very much'];
+  PURPOSE_ITEMS = ['My life has meaning', 'I have a sense of direction in my life', 'My life has purpose', 'The things I do in my life are worthwhile'];
+  CFPB_A = ['Describes me completely', 'Very well', 'Somewhat', 'Very little', 'Not at all'];
+  CFPB_B = ['Always', 'Often', 'Sometimes', 'Rarely', 'Never'];
+  GROWTH_SCALE = ['Strongly disagree', 'Disagree', 'Neither', 'Agree', 'Strongly agree'];
+  CUM_SCALE = ['Not at all', 'Occasionally', 'Often', 'Almost always'];
+  L5 = ['Not at all', 'A little', 'Moderately', 'Quite a lot', 'Very much'];
+
+  FLAGS = {
+    PH: ["Sleep isn't restoring me", 'There\u2019s no time to rest or recover', 'Movement feels like a chore right now', 'I\u2019m not eating in a way that nourishes me', 'My body holds a lot of tension or pain', 'I\u2019m running on empty whatever I do'],
+    EM: ['My mind feels constantly busy or racing', 'I\u2019m carrying more stress than I can hold', 'I feel low or flat more often than not', 'Small things overwhelm me easily', 'It\u2019s hard to switch off or settle', 'I\u2019ve been hard on myself'],
+    EN: ['Most days feel like going through the motions', 'I\u2019ve lost interest in things I used to enjoy', 'My energy runs out long before the day does', 'Nothing feels genuinely exciting right now', 'I\u2019m doing a lot, but none of it lights me up', 'It\u2019s hard to get started on anything'],
+    RS: ['I feel more alone than I\u2019d like', 'I have people around, but don\u2019t feel truly seen', 'My relationships feel like hard work right now', 'I find it hard to reach out or open up', 'I don\u2019t have time for the people who matter', 'A relationship is causing me real strain'],
+    MS: ['I\u2019m not sure what really matters to me right now', 'Day-to-day life feels a bit empty or aimless', 'I\u2019ve drifted from what gives me purpose', 'I\u2019m questioning my direction', 'I feel disconnected from something larger than myself', 'I\u2019ve lost touch with practices that grounded me'],
+    AC: ['I don\u2019t feel in control of how things are going', 'I\u2019m not making progress on what matters to me', 'I doubt my ability to handle what\u2019s ahead', 'I start things but struggle to follow through', 'I feel stuck, like nothing I do shifts things', 'I rarely get that "I did it" feeling'],
+    FW: ['Money worry sits with me most days', 'I\u2019m living without much of a buffer', 'I tend to avoid looking at my finances', 'My income feels unpredictable', 'I feel behind where I want to be', 'Money is a source of tension at home'],
+    IG: ['I haven\u2019t learned anything new in a long while', 'My days don\u2019t really stretch my mind', 'I\u2019m too drained to feel curious', 'I miss feeling challenged in a good way', 'I\u2019ve stopped making time for growth', 'I feel like I\u2019m standing still'],
+    EC: ['My space drains me more than it restores me', 'I rarely get out into nature', 'I have little control over my surroundings', 'I don\u2019t feel a strong sense of belonging anywhere', 'I feel out of place in my community or culture', 'My environment feels cluttered or chaotic']
+  };
+  FLAG_PROMPT = {
+    PH: "What's been hardest for your body lately?", EM: 'What does the strain feel like most?',
+    EN: 'What fits how your energy feels?', RS: "What's true about your connections right now?",
+    MS: "What's closest to how meaning feels right now?", AC: "What's getting in the way of feeling capable?",
+    FW: "What's weighing on you about money?", IG: 'What fits how your mind feels lately?',
+    EC: "What's true about your space and sense of belonging?"
+  };
+
+  GEN_LINES = ['Reading your reflections...', 'Mapping your nine areas of wellbeing...', 'Reading how you described your inner state...', 'Noticing your stress and recovery pattern...', 'Cross-checking what you said with what you showed...', 'Seeing how your areas connect...', 'Building your reading...'];
+
+  // ---------- lifecycle ----------
+  componentDidMount() {
+    this._onResize = () => this.setState({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener('resize', this._onResize);
+    if (!window.lucide) {
+      let tries = 0;
+      this._iconT = setInterval(() => {
+        tries += 1;
+        if (window.lucide) { clearInterval(this._iconT); this.forceUpdate(); }
+        else if (tries > 60) clearInterval(this._iconT);
+      }, 120);
+    }
+    let wv = 0;
+    try {
+      const last = localStorage.getItem('lewis.v5.lastVariant');
+      if (last !== null) { const l = parseInt(last, 10); do { wv = Math.floor(Math.random() * 4); } while (wv === l); }
+      localStorage.setItem('lewis.v5.lastVariant', String(wv));
+    } catch (e) { }
+    let restored = null;
+    try {
+      const raw = localStorage.getItem('lewis.v5.session');
+      if (raw) restored = JSON.parse(raw);
+    } catch (e) { }
+    this.setState({
+      w: window.innerWidth, h: window.innerHeight, wv, loaded: true,
+      id: restored && restored.id ? restored.id : 'gate',
+      a: restored && restored.a ? restored.a : {},
+      hist: restored && restored.hist ? restored.hist : []
+    });
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+    clearInterval(this._genT); clearInterval(this._brT); clearTimeout(this._actT); clearInterval(this._iconT);
+    window.removeEventListener('pointermove', this._pm); window.removeEventListener('pointerup', this._pu);
+  }
+
+  // ---------- storage ----------
+  save() {
+    if (!this.state.a['context.email']) return;
+    try { localStorage.setItem('lewis.v5.session', JSON.stringify({ id: this.state.id, a: this.state.a, hist: this.state.hist })); } catch (e) { }
+  }
+  reset = () => {
+    try { localStorage.removeItem('lewis.v5.session'); } catch (e) { }
+    clearInterval(this._genT); clearInterval(this._brT); clearTimeout(this._actT);
+    this.setState({ id: 'gate', a: {}, hist: [], gen: 0, bstep: 0, bt: 60, dev: false });
+  };
+
+  // ---------- answers ----------
+  g(k, d) { const v = this.state.a[k]; return v === undefined ? d : v; }
+  set(k, v) { this.pin(); this.setState(s => ({ a: Object.assign({}, s.a, { [k]: v }) }), () => this.save()); }
+  // Pin the step cursor so answering the current question never shifts the view by itself.
+  pin() { if (this._multi && (this.state.editIdx === null || this.state.editIdx === undefined)) this.setState({ editIdx: this._pi }); }
+  toggle(k, v, opts) {
+    const cur = this.g(k, []).slice();
+    const ex = opts && opts.exclusive;
+    let out;
+    if (ex && v === ex) out = cur.indexOf(v) >= 0 ? [] : [v];
+    else {
+      const i = cur.indexOf(v);
+      out = i >= 0 ? cur.filter(x => x !== v) : cur.concat([v]);
+      if (ex) out = out.filter(x => x !== ex);
+    }
+    if (opts && opts.max && out.length > opts.max) out = out.slice(out.length - opts.max);
+    this.set(k, out);
+  }
+
+  // ---------- flow ----------
+  flow() {
+    if (this._flow) return this._flow;
+    const S = [];
+    const push = o => { S.push(o); return o; };
+    const inst = (prefix, scale, items, act, intro, illo) => items.forEach((it, i) => push({
+      id: prefix + (i + 1), act, illo: i === 0 ? illo : null, preamble: i === 0 ? intro : null,
+      parts: [{ kind: 'options', key: prefix + '.' + (i + 1), prompt: it, options: scale, size: 'md', auto: true, pad: '13px 15px' }]
+    }));
+
+    push({
+      id: 'gate', act: -1, chrome: false, illo: 'arc',
+      parts: [{ kind: 'options', key: 'gate.age_confirmed', prompt: 'Before we begin, are you 18 or older?', hint: 'LEWIS is built and tested for adults.', options: ['Yes, I am 18 or older', 'No, I am under 18'], auto: true }]
+    });
+    push({ id: 'welcome', act: -1, chrome: false, kind: 'welcome' });
+    push({ id: 'actA', act: 0, kind: 'act' });
+    push({
+      id: 'about', act: 0, illo: 'sprout',
+      preamble: 'Just a couple of quick details, so this feels made for you. Your answers stay private, and you can skip any of them.',
+      parts: [
+        { kind: 'text', key: 'context.name', prompt: 'What would you like to be called?', hint: 'A first name or nickname is perfect, whatever feels right to you.', placeholder: 'Your name', max: 40, optional: true },
+        { kind: 'options', key: 'context.age_band', prompt: 'Which age group are you in?', hint: 'This shapes your reflections. Wellbeing support works differently at different stages of life.', options: ['18 to 24', '25 to 34', '35 to 44', '45 to 54', '55 to 64', '65 or older', 'Prefer not to say'], optional: true, pad: '12px 15px' },
+        { kind: 'options', key: 'context.sex_at_birth', prompt: 'Was your sex recorded as female or male at birth?', hint: 'Some wellbeing patterns, like sleep, hormones and recovery rhythm, differ. This only shapes those parts.', options: ['Female', 'Male', 'Another answer', 'Prefer not to say'], optional: true, pad: '12px 15px' }
+      ]
+    });
+    push({
+      id: 'identity', act: 0,
+      parts: [{ kind: 'tiles', key: 'context.roles', iconMap: this.ROLE_ICONS, prompt: 'Which of these describes you right now?', hint: 'Select as many as fit.', options: ['Student', 'Professional', 'Entrepreneur or self-employed', 'Primary caregiver', 'Homemaker', 'Retired', 'Between jobs or job-seeking', 'In transition', 'Taking time out', 'Living with a health condition', 'Wearing many hats'] }]
+    });
+    push({
+      id: 'stability', act: 0,
+      parts: [{ kind: 'stops', key: 'context.life_stability', prompt: 'How would you describe where life feels right now?', hint: 'One drag. There is no better or worse end of this.', stops: ['Very turbulent', 'Unsettled', 'Mixed', 'Mostly steady', 'Very steady'] }]
+    });
+    push({
+      id: 'pressures', act: 0,
+      parts: [{ kind: 'options', key: 'context.pressures', prompt: "What's pressing on you most right now?", hint: 'Select all that apply.', multi: true, exclusive: 'Nothing major right now', pad: '11px 14px', optGap: '6px', options: ['Workload', 'Financial pressure', 'Relationship strain', 'Health concerns', 'Life change or transition', 'Mental load', 'Digital overwhelm', 'Feeling lost or without direction', 'Sleep depletion', 'Nothing major right now'] }]
+    });
+    push({ id: 'actB', act: 1, kind: 'act' });
+    push({
+      id: 'arrival', act: 1,
+      parts: [
+        { kind: 'mood', key: 'context.arrival_mood', prompt: 'Before we go deeper, how would you describe arriving here today?', hint: 'Drag to wherever today sits.' },
+        { kind: 'text', key: 'context.arrival_word', prompt: 'If one word came to mind for today, what was it?', hint: 'Optional, and nobody else reads it.', placeholder: 'One word', max: 20, optional: true }
+      ]
+    });
+    inst('spine.who5.', this.WHO5_SCALE, this.WHO5_ITEMS, 1, 'Over the last two weeks... Choose how often each has been true.', 'ripple');
+    push({
+      id: 'affect', act: 1,
+      parts: [{ kind: 'canvas', key: 'affect', prompt: 'Place a dot where you feel right now.', hint: "One tap. Move it if it isn't quite right." }]
+    });
+    push({
+      id: 'bodymap', act: 1,
+      parts: [{ kind: 'body', key: 'somatic.tension_map', prompt: 'Tap anywhere in your body that feels tense, heavy, or uncomfortable right now.', hint: 'Tap as many places as you need. Tap again to clear one.' }]
+    });
+    push({
+      id: 'inner', act: 1,
+      parts: [{
+        kind: 'options', key: 'ans.portrait', prompt: 'Which of these feels closest to your inner state right now?', hint: 'There is no better card here.', auto: true, pad: '14px 16px',
+        options: [
+          { label: 'Grounded.', desc: 'Present, connected, and open to what is around you.' },
+          { label: 'Activated.', desc: 'Wired, alert, on edge. Mind racing, body tense.' },
+          { label: 'Collapsed.', desc: 'Flat, withdrawn, checked out. Moving feels like pulling weights.' }
+        ]
+      }]
+    });
+    push({
+      id: 'awareness', act: 1, illo: 'spiral',
+      parts: [{ kind: 'options', key: 'enrich.body_awareness_confidence', prompt: 'How tuned in to your body do you feel right now?', hint: 'Its tension, hunger, tiredness, comfort.', auto: true, options: ['Very tuned in', 'Somewhat', 'Not very', 'I rarely notice these signals'] }]
+    });
+    push({ id: 'actC', act: 2, kind: 'act' });
+    push({
+      id: 'body', act: 2,
+      preamble: 'These next few minutes are the most researched part of LEWIS. The questions are plainer and more repetitive than what came before, and that is deliberate. They come from questionnaires used in published wellbeing research, worded exactly as they were validated. Answer for the last two weeks, not for your best week.',
+      parts: [
+        { kind: 'options', key: 'context.activity_level', prompt: 'How active has your body been lately?', pad: '12px 15px', options: ['Very active, daily movement', 'Moderately active, a few times a week', 'Mostly sedentary, desk or screen most of the day', 'My movement has dropped recently'] },
+        { kind: 'options', key: 'context.sleep_quality', prompt: 'How has your sleep been?', pad: '12px 15px', options: ['Consistently good', 'Variable, some good and some bad', 'Generally poor, difficulty falling or staying asleep', "I haven't been tracking it"] }
+      ]
+    });
+    inst('spine.pss10.', this.PSS_SCALE, this.PSS_ITEMS, 2, 'In the last month, how often have you...', 'wave');
+    push({
+      id: 'ucla', act: 2,
+      parts: [
+        { kind: 'options', key: 'context.relational_context', prompt: 'How does your social world feel right now?', pad: '12px 15px', options: ['Genuinely connected, I feel seen and supported', 'I have people around me, but feel unseen', "Quite isolated, more alone than I'd like", 'My relationships are a source of tension', 'My life is closely woven with family, mostly a source of support', 'My life is closely woven with family, mostly a source of pressure', 'My connections are growing', "It's complicated"] },
+        { kind: 'options', key: 'spine.ucla3.1', eyebrow: 'How often do you feel...', prompt: 'That you lack companionship?', options: this.UCLA_SCALE, pad: '13px 15px' },
+        { kind: 'options', key: 'spine.ucla3.2', prompt: 'Left out?', options: this.UCLA_SCALE, pad: '13px 15px' },
+        { kind: 'options', key: 'spine.ucla3.3', prompt: 'Isolated from others?', options: this.UCLA_SCALE, pad: '13px 15px' }
+      ]
+    });
+    inst('spine.gse6.', this.GSE_SCALE, [1, 2, 3, 4, 5, 6].map(n => 'Placeholder item ' + n + ' \u2014 awaiting licensed GSE-6 wording'), 2, 'How true is each of these for you? These six items are placeholders. The validated GSE-6 wording is a licensing gate and will be transcribed verbatim from Romppel et al. (2013) before launch.', 'lattice');
+    push({
+      id: 'purpose', act: 2, illo: 'orbit',
+      preamble: 'Thinking about the past 7 days, how much do you agree with each? Scored as the LEWIS Purpose module, on a LEWIS rescale with lower stated confidence.',
+      parts: this.PURPOSE_ITEMS.map((it, i) => ({ kind: 'options', key: 'spine.purpose.' + (i + 1), prompt: it, options: this.PROMIS_SCALE, pad: '13px 15px' })).concat([
+        { kind: 'options', key: 'context.transcendent_connection', prompt: 'How connected do you feel to something larger than yourself?', hint: 'Community, nature, beliefs, or purpose. Whichever of those fits.', pad: '12px 15px', options: ['Deeply connected', 'Somewhat', 'A little', 'Not at all', 'This feels painful right now'] }
+      ])
+    });
+    push({
+      id: 'money', act: 2, illo: 'coin',
+      preamble: 'Money and finances affect wellbeing significantly, for almost everyone. A few brief, private questions.',
+      parts: [
+        { kind: 'options', key: 'context.financial_stress', prompt: 'How does thinking about your finances feel right now?', pad: '12px 15px', options: ['Calm and in control', 'Some pressure, but manageable', "High anxiety, it's affecting my daily life", "I've been avoiding thinking about it", 'Not relevant to me right now'] },
+        { kind: 'options', key: 'context.income_regularity', prompt: 'How steady is your income, month to month?', pad: '12px 15px', options: ['Very steady', 'Mostly steady', 'It varies a lot', 'Irregular or seasonal', 'No personal income right now'] },
+        { kind: 'options', key: 'spine.cfpb5.1', prompt: 'Because of my money situation, I feel like I will never have the things I want in life.', options: this.CFPB_A, pad: '13px 15px' },
+        { kind: 'options', key: 'spine.cfpb5.2', prompt: 'I am just getting by financially.', options: this.CFPB_A, pad: '13px 15px' },
+        { kind: 'options', key: 'spine.cfpb5.3', prompt: "I am concerned that the money I have or will save won't last.", options: this.CFPB_A, pad: '13px 15px' },
+        { kind: 'options', key: 'spine.cfpb5.4', prompt: 'I have money left over at the end of the month.', options: this.CFPB_B, pad: '13px 15px' },
+        { kind: 'options', key: 'spine.cfpb5.5', prompt: 'My finances control my life.', options: this.CFPB_B, pad: '13px 15px' }
+      ]
+    });
+    push({
+      id: 'ins', act: 2,
+      preamble: 'Sense of belonging and cultural identity matter to wellbeing in ways that are rarely talked about.',
+      parts: [
+        { kind: 'ins', key: 'spine.ins', prompt: 'Choose the picture that best describes your relationship with the natural environment right now.' },
+        { kind: 'options', key: 'context.nature_access', prompt: 'Do you have regular access to nature or green spaces?', options: ['Yes, regularly', 'Sometimes', 'Rarely', 'No'], pad: '13px 15px' },
+        { kind: 'options', key: 'context.cultural_belonging.1', prompt: 'How much do you feel you belong to a community or culture that feels like home?', pad: '12px 15px', options: ['Strongly, I feel deeply at home', 'Somewhat, it mostly fits', 'Partially, parts of it feel right', 'Not much, I feel like an outsider', 'This is an area of real pain for me'] },
+        { kind: 'options', key: 'context.cultural_belonging.2', prompt: 'There are traditions, practices, or shared ways of living that I feel part of.', options: this.L5, pad: '13px 15px' }
+      ]
+    });
+    push({
+      id: 'growth', act: 2, illo: 'arc',
+      preamble: 'How much do you agree with each, thinking about recent weeks? This is a bespoke LEWIS module, scored conservatively.',
+      parts: [
+        { kind: 'options', key: 'lewis.growth.1', prompt: 'Lately I have had the chance to learn or get better at something.', options: this.GROWTH_SCALE, pad: '13px 15px' },
+        { kind: 'options', key: 'lewis.growth.2', prompt: 'My days give me something that stretches me in a good way.', options: this.GROWTH_SCALE, pad: '13px 15px' },
+        { kind: 'options', key: 'lewis.growth.3', prompt: 'I have the space and appetite to be curious right now.', options: this.GROWTH_SCALE, pad: '13px 15px' },
+        { kind: 'options', key: 'context.intellectual_last_engagement', prompt: 'When did you last do something that genuinely stretched your mind or sparked your curiosity?', pad: '12px 15px', options: ['This week', 'In the past month', 'A few months ago', "I honestly can't remember", "I don't have space for that right now"] }
+      ]
+    });
+    push({ id: 'actD', act: 3, kind: 'act' });
+    push({
+      id: 'sort', act: 3,
+      parts: [{ kind: 'sort', key: 'gestalt.domain_sort', prompt: 'Sort each card into the zone that fits your life right now.', hint: "There's no right arrangement. Go with your gut." }]
+    });
+    push({
+      id: 'priority', act: 3,
+      parts: [{ kind: 'pick3', key: 'context.priority_top3', prompt: 'Of these nine, which three matter most to you right now?', hint: 'Not which are going well. Which you care about most.' }]
+    });
+    push({ id: 'tension', act: 3, cond: 'tension', parts: [{ kind: 'options', key: 'context.tension_confirmed', prompt: '', options: ['Yes', 'Partly', 'Not quite'], auto: true, promptSize: '20px' }] });
+    push({ id: 'bright', act: 3, illo: 'sprout', parts: [] });
+    push({
+      id: 'email', act: 3,
+      parts: [{ kind: 'email', key: 'context.email', prompt: 'Save what you have built so far.', hint: 'Add your email and this is held safely, so you can step away and come back to exactly this point. Your reading will be sent here when you finish.' }]
+    });
+    push({ id: 'actE', act: 4, kind: 'act' });
+    push({ id: 'dd', act: 4, expand: true });
+    push({ id: 'actF', act: 5, kind: 'act' });
+    push({
+      id: 'support', act: 5,
+      parts: [
+        { kind: 'options', key: 'context.support_preference', prompt: 'When it comes to support and guidance, what works best for you?', pad: '12px 15px', options: ['I prefer to work through things alone', 'I like structure and clear steps', 'I learn best through stories and ideas', "I need something gentle, I'm fragile right now", 'I want to be challenged'] },
+        { kind: 'options', key: 'context.content_preference', prompt: 'And how do you prefer to take things in?', pad: '12px 15px', options: ['Reading', 'Watching short video', 'Listening', 'A mix'] }
+      ]
+    });
+    push({ id: 'prior', act: 5, illo: 'spiral', parts: [{ kind: 'options', key: 'context.prior_attempts', prompt: 'Have you tried to improve your wellbeing recently?', auto: true, options: ['Yes, and it helped', "Yes, but it didn't stick", "Yes, but I'm not sure", 'No, not yet'] }] });
+    push({ id: 'planner', act: 5, illo: 'window', parts: [{ kind: 'options', key: 'context.planner_readiness', prompt: 'How do you feel about planning right now?', auto: true, options: ["I'd love a clear 7-day plan", 'Give me one thing to focus on', "I'm too overwhelmed for a plan right now"] }] });
+    push({
+      id: 'energy', act: 5,
+      parts: [
+        { kind: 'energy', key: 'enrich.energy_arc_pattern', prompt: "Where's your energy, typically?", hint: 'Four quick taps.' },
+        { kind: 'options', key: 'enrich.sleep_onset', prompt: 'How easily do you fall asleep?', options: ['Easily', 'It takes time', 'Difficult', 'Very disrupted'], pad: '12px 15px' },
+        { kind: 'options', key: 'enrich.stress_response_style', prompt: 'When stress hits, what happens?', pad: '12px 15px', options: ['I get activated and wired', 'I go flat and exhausted', 'A mix of both', 'I shut down'] }
+      ]
+    });
+    push({ id: 'recovery', act: 5, illo: 'ripple', parts: [{ kind: 'options', key: 'enrich.recovery_responsiveness', prompt: 'When you rest or take time out, how do you feel?', auto: true, pad: '12px 15px', options: ['Genuinely recovered, I come back refreshed', 'Somewhat better, but not fully recharged', 'Still tired even after rest', "More anxious when I stop, I can't switch off"] }] });
+    push({
+      id: 'stress', act: 5,
+      parts: [{
+        kind: 'groups', key: 'enrich.stress_cluster', prompt: 'Select any that feel true for you lately.', hint: 'These are patterns in how stress can show up. A reflection to help you notice what\u2019s happening, not a test of anything.',
+        groups: [
+          { title: 'The Surge', sub: 'wired and hard to switch off', chips: ['racing thoughts', 'difficulty switching off', 'jaw tension', 'wired but exhausted', 'light sleep'] },
+          { title: 'The Flatline', sub: 'depleted and flat', chips: ['persistent fatigue', 'low motivation', 'flat affect', 'long recovery times', 'reduced appetite'] },
+          { title: 'The Fog', sub: 'foggy and scattered', chips: ['brain fog', 'poor short-term memory', 'midday crashes', 'difficulty concentrating', 'feeling disconnected'] },
+          { title: 'The Cycle', sub: 'rhythm linked, opt-in', chips: ['mood tied to cycle', 'energy fluctuations', 'cycle-related symptoms', 'sleep shifts around cycle'] }
+        ]
+      }]
+    });
+    push({
+      id: 'cumulative', act: 5,
+      preamble: 'One last gentle look back. Over the past few months, life leaves marks on the body and mind. This is just a way to notice what yours might be carrying. Not a health check, just a reflection.',
+      parts: [
+        'Feeling tired even after a full night\u2019s sleep', 'Finding it hard to wind down or switch off', 'Tension showing up in your body, in your jaw, shoulders, neck or gut', 'Getting sick more easily, or taking longer to bounce back', 'A sense of running on empty, even on quieter days'
+      ].map((it, i) => ({ kind: 'options', key: 'enrich.cumulative.' + (i + 1), eyebrow: i === 0 ? 'Over the past three months, how often have you noticed each of these?' : null, prompt: it, options: this.CUM_SCALE, pad: '13px 15px' }))
+    });
+    push({ id: 'breath', act: 5, kind: 'breath', chrome: false });
+    push({ id: 'generating', act: 5, kind: 'generating', chrome: false });
+    push({ id: 'done', act: 5, kind: 'done', chrome: false });
+    this._flow = S;
+    return S;
+  }
+
+  ddScreen(dim) {
+    const n = this.NINE.find(x => x.k === dim);
+    return {
+      id: 'dd_' + dim, act: 4, dd: true,
+      parts: [
+        { kind: 'tiles', key: 'deepdive.' + dim + '.flags', eyebrow: n.label, prompt: this.FLAG_PROMPT[dim], options: this.FLAGS[dim], icons: false },
+        { kind: 'options', key: 'deepdive.' + dim + '.trajectory', prompt: 'Is this getting better, worse, the same, or does it vary?', options: ['Getting better', 'Getting worse', 'About the same', 'It varies a lot'], pad: '12px 15px' },
+        { kind: 'options', key: 'deepdive.' + dim + '.friction', prompt: "What's most in the way right now?", pad: '12px 15px', options: ['Time', 'Energy', 'My surroundings', 'How I am thinking about it', 'Competing priorities', 'Money', 'Access to what I need', 'Honestly, nothing obvious'] }
+      ]
+    };
+  }
+
+  visible() {
+    const out = [];
+    for (const s of this.flow()) {
+      if (s.expand) { this.deepDims().forEach(d => out.push(this.ddScreen(d))); continue; }
+      if (s.cond === 'tension' && !this.tensionDim()) continue;
+      out.push(s);
+    }
+    return out;
+  }
+  screenById(id) {
+    if (id === 'gate_stop') return { id: 'gate_stop', kind: 'terminal', chrome: false, act: -1 };
+    const v = this.visible().find(s => s.id === id);
+    if (v) return v;
+    const f = this.flow().find(s => s.id === id);
+    return f || this.visible()[0];
+  }
+
+  goto(id) {
+    clearTimeout(this._actT); clearInterval(this._genT); clearInterval(this._brT);
+    this.setState(s => ({ id, hist: s.hist.concat([s.id]), sortSel: null, editIdx: null }), () => { this.save(); this.onEnter(id); });
+  }
+  next = () => {
+    const v = this.visible(); const i = v.findIndex(s => s.id === this.state.id);
+    if (i < 0 || i + 1 >= v.length) return;
+    this.goto(v[i + 1].id);
+  };
+  back = () => {
+    if (!this.state.hist.length) return;
+    clearTimeout(this._actT); clearInterval(this._genT); clearInterval(this._brT);
+    this.setState(s => ({ id: s.hist[s.hist.length - 1], hist: s.hist.slice(0, -1), editIdx: null }), () => this.onEnter(this.state.id));
+  };
+
+  onEnter(id) {
+    const sc = this.screenById(id);
+    if (sc.kind === 'act') this._actT = setTimeout(() => { if (this.state.id === id) this.next(); }, 2600);
+    if (sc.kind === 'generating') {
+      this.setState({ gen: 0 });
+      this._genT = setInterval(() => {
+        this.setState(s => {
+          const n = s.gen + 1;
+          if (n > this.GEN_LINES.length) { clearInterval(this._genT); setTimeout(() => this.goto('done'), 500); return { gen: s.gen }; }
+          return { gen: n };
+        });
+      }, 950);
+    }
+    if (sc.kind === 'breath') this.setState({ bstep: 0, bt: 60 });
+  }
+
+  startBreath = () => {
+    this.setState({ bstep: 1, bt: 60, bphase: 'Breathe in' });
+    let t = 60, c = 0;
+    this._brT = setInterval(() => {
+      t -= 1; c += 1;
+      const ph = c % 10 < 4 ? 'Breathe in' : (c % 10 < 5 ? 'Hold' : 'Breathe out');
+      if (t <= 0) { clearInterval(this._brT); this.setState({ bt: 0, bstep: 2 }); return; }
+      this.setState({ bt: t, bphase: ph });
+    }, 1000);
+  };
+
+  // ---------- scoring ----------
+  idxOf(scale, v) { const i = scale.indexOf(v); return i < 0 ? null : i; }
+  meanOf(list) { const d = list.filter(x => x !== null && x !== undefined); return d.length ? d.reduce((a, b) => a + b, 0) / d.length : null; }
+  mapV(map, v, d) { return v !== undefined && map[v] !== undefined ? map[v] : d; }
+
+  scores() {
+    const g = (k) => this.state.a[k];
+    const who = [1, 2, 3, 4, 5].map(n => this.idxOf(this.WHO5_SCALE, g('spine.who5.' + n)));
+    const whoN = who.map(v => v === null ? null : v / 5);
+    const pss = this.PSS_ITEMS.map((_, i) => {
+      const v = this.idxOf(this.PSS_SCALE, g('spine.pss10.' + (i + 1)));
+      if (v === null) return null;
+      const rev = [3, 4, 6, 7].indexOf(i) >= 0;
+      return (rev ? v : 4 - v) / 4;
+    });
+    const ucla = [1, 2, 3].map(n => { const v = this.idxOf(this.UCLA_SCALE, g('spine.ucla3.' + n)); return v === null ? null : 1 - v / 2; });
+    const gse = [1, 2, 3, 4, 5, 6].map(n => { const v = this.idxOf(this.GSE_SCALE, g('spine.gse6.' + n)); return v === null ? null : v / 3; });
+    const pur = [1, 2, 3, 4].map(n => { const v = this.idxOf(this.PROMIS_SCALE, g('spine.purpose.' + n)); return v === null ? null : v / 4; });
+    const grow = [1, 2, 3].map(n => { const v = this.idxOf(this.GROWTH_SCALE, g('lewis.growth.' + n)); return v === null ? null : v / 4; });
+    const cfpb = [1, 2, 3].map(n => { const v = this.idxOf(this.CFPB_A, g('spine.cfpb5.' + n)); return v === null ? null : v / 4; })
+      .concat([(() => { const v = this.idxOf(this.CFPB_B, g('spine.cfpb5.4')); return v === null ? null : 1 - v / 4; })(),
+      (() => { const v = this.idxOf(this.CFPB_B, g('spine.cfpb5.5')); return v === null ? null : v / 4; })()]);
+    const cum = [1, 2, 3, 4, 5].map(n => { const v = this.idxOf(this.CUM_SCALE, g('enrich.cumulative.' + n)); return v === null ? null : 1 - v / 3; });
+
+    const zones = g('somatic.tension_map') || [];
+    const bodyLoad = zones.indexOf('__none') >= 0 ? 1 : (zones.length ? 1 - Math.min(zones.length, 5) / 5 * 0.85 : null);
+    const arcVals = ['Morning', 'Afternoon', 'Evening', 'Night'].map(p => this.mapV({ High: 1, Medium: 0.55, Low: 0.15 }, g('enrich.energy_arc.' + p), null));
+
+    const blend = (parts) => {
+      const vals = parts.filter(p => p[0] !== null && p[0] !== undefined);
+      if (!vals.length) return 50;
+      const wsum = vals.reduce((a, b) => a + b[1], 0);
+      return Math.max(2, Math.min(98, Math.round(vals.reduce((a, b) => a + b[0] * b[1], 0) / wsum * 100)));
+    };
+    const raw = {
+      PH: blend([[this.mapV({ 'Consistently good': 1, 'Variable, some good and some bad': .58, 'Generally poor, difficulty falling or staying asleep': .2, "I haven't been tracking it": null }, g('context.sleep_quality'), null), 3],
+      [this.mapV({ 'Very active, daily movement': 1, 'Moderately active, a few times a week': .72, 'Mostly sedentary, desk or screen most of the day': .34, 'My movement has dropped recently': .26 }, g('context.activity_level'), null), 2],
+      [bodyLoad, 2], [this.meanOf(cum), 2], [whoN[3], 1]]),
+      EM: blend([[this.meanOf(pss), 4], [this.meanOf([whoN[0], whoN[1]]), 2]]),
+      EN: blend([[this.meanOf([whoN[2], whoN[3], whoN[4]]), 3], [this.meanOf(arcVals), 2]]),
+      RS: blend([[this.meanOf(ucla), 3], [this.mapV({ 'Genuinely connected, I feel seen and supported': 1, 'I have people around me, but feel unseen': .45, "Quite isolated, more alone than I'd like": .18, 'My relationships are a source of tension': .25, 'My life is closely woven with family, mostly a source of support': .85, 'My life is closely woven with family, mostly a source of pressure': .4, 'My connections are growing': .75, "It's complicated": .45 }, g('context.relational_context'), null), 2]]),
+      MS: blend([[this.meanOf(pur), 3], [this.mapV({ 'Deeply connected': 1, Somewhat: .7, 'A little': .42, 'Not at all': .18, 'This feels painful right now': .1 }, g('context.transcendent_connection'), null), 2]]),
+      AC: blend([[this.meanOf(gse), 3], [this.mapV({ 'Yes, and it helped': .85, "Yes, but it didn't stick": .35, "Yes, but I'm not sure": .5, 'No, not yet': .45 }, g('context.prior_attempts'), null), 1]]),
+      FW: blend([[this.meanOf(cfpb), 3], [this.mapV({ 'Calm and in control': 1, 'Some pressure, but manageable': .62, "High anxiety, it's affecting my daily life": .15, "I've been avoiding thinking about it": .25, 'Not relevant to me right now': .7 }, g('context.financial_stress'), null), 2],
+      [this.mapV({ 'Very steady': 1, 'Mostly steady': .78, 'It varies a lot': .4, 'Irregular or seasonal': .3, 'No personal income right now': .2 }, g('context.income_regularity'), null), 1]]),
+      IG: blend([[this.meanOf(grow), 3], [this.mapV({ 'This week': 1, 'In the past month': .7, 'A few months ago': .4, "I honestly can't remember": .18, "I don't have space for that right now": .22 }, g('context.intellectual_last_engagement'), null), 2]]),
+      EC: blend([[(() => { const v = g('spine.ins'); return v === undefined ? null : (v - 1) / 6; })(), 2],
+      [this.mapV({ 'Yes, regularly': 1, Sometimes: .62, Rarely: .3, No: .12 }, g('context.nature_access'), null), 2],
+      [this.mapV({ 'Strongly, I feel deeply at home': 1, 'Somewhat, it mostly fits': .72, 'Partially, parts of it feel right': .5, 'Not much, I feel like an outsider': .22, 'This is an area of real pain for me': .1 }, g('context.cultural_belonging.1'), null), 2],
+      [(() => { const v = this.idxOf(this.L5, g('context.cultural_belonging.2')); return v === null ? null : v / 4; })(), 1]])
+    };
+    const sort = g('gestalt.domain_sort') || {};
+    Object.keys(raw).forEach(k => {
+      const z = sort[k];
+      if (z === 'Depleted right now') raw[k] = Math.max(2, raw[k] - 13);
+      if (z === 'A real strength') raw[k] = Math.min(98, raw[k] + 13);
+    });
+    return raw;
+  }
+  ranked() { const s = this.scores(); return this.NINE.map(n => ({ k: n.k, label: n.label, v: s[n.k] })).sort((a, b) => a.v - b.v); }
+  deepDims() { return this.ranked().filter(d => d.v < 55).slice(0, 3).map(d => d.k); }
+  tensionDim() {
+    const top3 = this.g('context.priority_top3', []);
+    if (!top3.length) return null;
+    const low = this.ranked().slice(0, 3).map(d => d.k);
+    const hit = top3.find(k => low.indexOf(k) >= 0);
+    return hit || null;
+  }
+  brightSpot() {
+    const r = this.ranked(); const top = r[r.length - 1];
+    const tier = top.v >= 55 ? 1 : (top.v >= 40 ? 2 : 3);
+    return { dim: top.label, v: top.v, tier };
+  }
+  gentle() {
+    return this.g('context.support_preference') === "I need something gentle, I'm fragile right now"
+      || this.g('context.transcendent_connection') === 'This feels painful right now'
+      || this.g('context.cultural_belonging.1') === 'This is an area of real pain for me'
+      || this.brightSpot().tier === 3;
+  }
+
+  // ---------- drag helpers ----------
+  trackDrag(el, cb) {
+    const r = el.getBoundingClientRect();
+    const move = e => { cb(Math.max(0, Math.min(1, (e.clientX - r.left) / r.width))); };
+    const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+    this._pm = move; this._pu = up;
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    return move;
+  }
+
+  // ---------- autofill ----------
+  autofill = () => {
+    const a = {};
+    const pick = (arr, f) => arr[Math.min(arr.length - 1, Math.floor(arr.length * f))];
+    a['gate.age_confirmed'] = 'Yes, I am 18 or older';
+    a['context.name'] = 'Meera';
+    a['context.age_band'] = '35 to 44';
+    a['context.sex_at_birth'] = 'Female';
+    a['context.roles'] = ['Professional', 'Primary caregiver', 'Wearing many hats'];
+    a['context.life_stability'] = 1;
+    a['context.pressures'] = ['Workload', 'Mental load', 'Sleep depletion'];
+    a['context.arrival_mood'] = 34;
+    a['context.arrival_word'] = 'stretched';
+    [1, 2, 3, 4, 5].forEach(n => { a['spine.who5.' + n] = pick(this.WHO5_SCALE, n === 3 ? .2 : .35); });
+    a['affect.valence'] = 42; a['affect.arousal'] = 68;
+    a['somatic.tension_map'] = ['Shoulders and back', 'Head and neck'];
+    a['ans.portrait'] = 'Activated.';
+    a['enrich.body_awareness_confidence'] = 'Somewhat';
+    a['context.activity_level'] = 'Mostly sedentary, desk or screen most of the day';
+    a['context.sleep_quality'] = 'Variable, some good and some bad';
+    this.PSS_ITEMS.forEach((_, i) => { a['spine.pss10.' + (i + 1)] = pick(this.PSS_SCALE, [3, 4, 6, 7].indexOf(i) >= 0 ? .3 : .72); });
+    a['context.relational_context'] = 'I have people around me, but feel unseen';
+    [1, 2, 3].forEach(n => { a['spine.ucla3.' + n] = this.UCLA_SCALE[1]; });
+    [1, 2, 3, 4, 5, 6].forEach(n => { a['spine.gse6.' + n] = this.GSE_SCALE[2]; });
+    [1, 2, 3, 4].forEach(n => { a['spine.purpose.' + n] = this.PROMIS_SCALE[2]; });
+    a['context.transcendent_connection'] = 'A little';
+    a['context.financial_stress'] = "High anxiety, it's affecting my daily life";
+    a['context.income_regularity'] = 'It varies a lot';
+    [1, 2, 3].forEach(n => { a['spine.cfpb5.' + n] = this.CFPB_A[1]; });
+    a['spine.cfpb5.4'] = this.CFPB_B[3]; a['spine.cfpb5.5'] = this.CFPB_B[1];
+    a['spine.ins'] = 3;
+    a['context.nature_access'] = 'Sometimes';
+    a['context.cultural_belonging.1'] = 'Somewhat, it mostly fits';
+    a['context.cultural_belonging.2'] = this.L5[2];
+    [1, 2, 3].forEach(n => { a['lewis.growth.' + n] = this.GROWTH_SCALE[1]; });
+    a['context.intellectual_last_engagement'] = 'A few months ago';
+    a['gestalt.domain_sort'] = { PH: 'Depleted right now', EM: 'Depleted right now', EN: 'Doing okay', RS: 'Doing okay', MS: 'Doing okay', AC: 'A real strength', FW: 'Depleted right now', IG: 'Doing okay', EC: 'A real strength' };
+    a['context.priority_top3'] = ['EM', 'RS', 'MS'];
+    a['context.tension_confirmed'] = 'Yes';
+    a['context.email'] = 'meera@example.com';
+    a['context.marketing_optin'] = true;
+    ['EM', 'PH', 'FW'].forEach(k => {
+      a['deepdive.' + k + '.flags'] = this.FLAGS[k].slice(0, 2);
+      a['deepdive.' + k + '.trajectory'] = 'About the same';
+      a['deepdive.' + k + '.friction'] = 'Energy';
+    });
+    a['context.support_preference'] = 'I like structure and clear steps';
+    a['context.content_preference'] = 'A mix';
+    a['context.prior_attempts'] = "Yes, but it didn't stick";
+    a['context.planner_readiness'] = 'Give me one thing to focus on';
+    a['enrich.energy_arc.Morning'] = 'Medium'; a['enrich.energy_arc.Afternoon'] = 'Low';
+    a['enrich.energy_arc.Evening'] = 'Medium'; a['enrich.energy_arc.Night'] = 'Low';
+    a['enrich.sleep_onset'] = 'It takes time';
+    a['enrich.stress_response_style'] = 'A mix of both';
+    a['enrich.recovery_responsiveness'] = 'Somewhat better, but not fully recharged';
+    a['enrich.stress_cluster'] = ['The Surge:racing thoughts', 'The Surge:difficulty switching off', 'The Fog:midday crashes'];
+    [1, 2, 3, 4, 5].forEach(n => { a['enrich.cumulative.' + n] = this.CUM_SCALE[2]; });
+    a['breath.tension_before'] = 68; a['breath.tension_after'] = 41;
+    this.setState({ a, dev: false }, () => this.save());
+  };
+
+  shortLabel(p) {
+    const s = p.eyebrow || p.prompt || '';
+    return s.length > 40 ? s.slice(0, 38).trim() + '\u2026' : s;
+  }
+  summary(p) {
+    const v = this.state.a[p.key];
+    if (p.kind === 'canvas') return 'Placed';
+    if (p.kind === 'energy') return 'Four taps';
+    if (p.kind === 'stops') return (p.stops && p.stops[v]) || '\u2014';
+    if (p.kind === 'mood') return v >= 66 ? 'Clear' : (v >= 33 ? 'In between' : 'Stormy');
+    if (p.kind === 'ins') return 'Picture ' + v + ' of 7';
+    if (p.kind === 'email') return v || '\u2014';
+    if (v === '__skipped' || v === undefined || v === '') return 'Skipped';
+    if (Array.isArray(v)) {
+      const clean = v.map(x => x === '__none' ? 'Nothing tense' : String(x).split(':').pop());
+      return clean.length > 2 ? clean.slice(0, 2).join(', ') + ' +' + (clean.length - 2) : clean.join(', ');
+    }
+    return String(v);
+  }
+
+  // ---------- part answered ----------
+  answered(p) {
+    const v = this.state.a[p.key];
+    if (p.kind === 'canvas') return this.state.a['affect.valence'] !== undefined;
+    if (p.kind === 'energy') return ['Morning', 'Afternoon', 'Evening', 'Night'].every(x => this.state.a['enrich.energy_arc.' + x] !== undefined);
+    if (p.kind === 'sort') return v && Object.keys(v).length === 9;
+    if (p.kind === 'pick3') return v && v.length === 3;
+    if (p.kind === 'body') return v && v.length > 0;
+    if (p.kind === 'groups') return v && v.length > 0;
+    if (p.kind === 'email') return typeof v === 'string' && /.+@.+\..+/.test(v);
+    if (p.kind === 'tiles' || p.multi) return v && v.length > 0;
+    if (p.kind === 'text') return typeof v === 'string' && v.length > 0;
+    return v !== undefined && v !== null;
+  }
+
+  // ---------- render ----------
+  optStyle(sel) {
+    return sel
+      ? { bg: '#d6edea', bd: this.T, sh: '0 2px 10px rgba(0,174,157,.14)', fw: 700, markBg: this.T, markBd: this.T }
+      : { bg: '#ffffff', bd: this.BD, sh: 'none', fw: 500, markBg: '#ffffff', markBd: '#d8d8d8' };
+  }
+
+  renderVals() {
+    const st = this.state;
+    const sc = this.screenById(st.id);
+    const acc = this.props.accent || this.T;
+    const desktop = st.w >= 720 && (this.props.frameMode || 'auto') !== 'fullbleed';
+    const phone = desktop || (this.props.frameMode === 'phone');
+    const isQ = !sc.kind || sc.kind === 'q';
+    const kind = sc.kind || 'q';
+    const chrome = sc.chrome !== false && kind !== 'act' && kind !== 'generating' && kind !== 'terminal' && kind !== 'done' && kind !== 'breath' && kind !== 'welcome';
+    const act = this.ACTS[sc.act] || null;
+
+    // ---- parts ----
+    let rawParts = sc.parts || [];
+    if (sc.id === 'bright') {
+      const b = this.brightSpot();
+      if (b.tier === 1) rawParts = [{ kind: 'text', key: 'context.bright_spot', eyebrow: 'A bright spot', prompt: 'Of everything we looked at, your ' + b.dim + ' stands out as a real strength right now. What\u2019s working here?', placeholder: 'Optional, a line is plenty', max: 140, optional: true }];
+      else if (b.tier === 2) rawParts = [{ kind: 'none', key: 'context.bright_spot', eyebrow: 'Honest ground', prompt: 'Nothing is sitting in the bright zone right now, and that\u2019s worth being honest about. But your ' + b.dim + ' is the steadiest ground you have at the moment, and it\u2019s a place we can start from.' }];
+      else rawParts = [{ kind: 'none', key: 'context.bright_spot', eyebrow: 'Starting gently', prompt: 'Right now, things feel depleted across the board. That\u2019s genuinely hard, and naming it honestly is the first real step. We\u2019ll start gently, with the smallest possible next move.' }];
+    }
+    if (sc.id === 'tension') {
+      const k = this.tensionDim();
+      const n = this.NINE.find(x => x.k === k);
+      rawParts = [Object.assign({}, sc.parts[0], { prompt: 'You said ' + (n ? n.label : 'this') + ' is one of the things that matters most to you right now. Your answers suggest it\u2019s also where you feel most depleted. Does that feel right?' })];
+    }
+
+    // Strictly one question at a time: a multi-part screen mounts only the active part,
+    // and nothing already answered is shown back to the user.
+    let activeIdx = rawParts.length - 1;
+    for (let i = 0; i < rawParts.length; i++) { if (!this.answered(rawParts[i]) && rawParts[i].kind !== 'none') { activeIdx = i; break; } }
+    if (st.editIdx !== null && st.editIdx !== undefined && st.editIdx < rawParts.length) activeIdx = st.editIdx;
+    const oneAtATime = rawParts.length > 1;
+    const lastIdx = rawParts.length - 1;
+    this._multi = oneAtATime; this._pi = activeIdx;
+    const shown = oneAtATime ? [rawParts[activeIdx]].filter(Boolean) : rawParts;
+    const advance = () => { if (oneAtATime && activeIdx < lastIdx) this.setState({ editIdx: activeIdx + 1 }); else this.next(); };
+
+    const parts = shown.map((p, pi) => {
+      const v = st.a[p.key];
+      const o = {
+        key: p.key, kind: p.kind, prompt: p.prompt || '', hint: p.hint || '', eyebrow: p.eyebrow || '',
+        hasPrompt: !!(p.prompt || p.eyebrow), hasHint: !!p.hint, hasEyebrow: !!p.eyebrow,
+        promptSize: p.promptSize || (p.kind === 'options' && p.options && p.options.length > 6 ? '20px' : '23px'),
+        headGap: p.kind === 'none' ? '0' : '16px', gap: pi === shown.length - 1 ? '10px' : '30px',
+        pad: p.pad || '14px 16px',
+        isOptions: false, isTiles: false, isGroups: false, isText: false, isEmail: false,
+        isStops: false, isMood: false, isCanvas: false, isBody: false, isIns: false, isSort: false, isPick3: false, isEnergy: false,
+        isSkip: !!p.optional && p.kind !== 'none', onSkip: () => { this.set(p.key, p.kind === 'text' ? '' : '__skipped'); setTimeout(advance, 140); }
+      };
+      if (p.kind === 'options') {
+        o.isOptions = true;
+        o.optGap = p.optGap || '8px';
+        o.options = (p.options || []).map(raw => {
+          const label = typeof raw === 'string' ? raw : raw.label;
+          const desc = typeof raw === 'string' ? '' : raw.desc;
+          const sel = p.multi ? (v || []).indexOf(label) >= 0 : v === label;
+          const s = this.optStyle(sel);
+          return Object.assign({}, s, {
+            label, desc, hasDesc: !!desc, sel, size: desc ? '15px' : '14.5px',
+            markR: p.multi ? '6px' : '999px',
+            tap: () => {
+              if (p.multi) this.toggle(p.key, label, { exclusive: p.exclusive });
+              else {
+                this.set(p.key, label);
+                setTimeout(() => {
+                  if (p.auto && label === 'No, I am under 18') this.goto('gate_stop');
+                  else advance();
+                }, 210);
+              }
+            }
+          });
+        });
+      } else if (p.kind === 'tiles') {
+        o.isTiles = true;
+        o.tileIcons = p.icons !== false;
+        o.options = (p.options || []).map((label, i) => {
+          const sel = (v || []).indexOf(label) >= 0; const s = this.optStyle(sel);
+          const nm = p.iconMap ? p.iconMap[label] : null;
+          const hasIcon = p.icons !== false && !!nm;
+          return { label, sel, bg: s.bg, bd: s.bd, fw: sel ? 700 : 600, ic: sel ? acc : '#9fa0a0', paths: this.lucidePaths(nm), hasIcon, textPad: hasIcon ? '0' : '24px', tap: () => this.toggle(p.key, label) };
+        });
+      } else if (p.kind === 'groups') {
+        o.isGroups = true;
+        o.groups = p.groups.map(gr => {
+          const any = gr.chips.some(c => (v || []).indexOf(gr.title + ':' + c) >= 0);
+          return {
+            title: gr.title, sub: gr.sub, bg: any ? '#f7fcfb' : '#ffffff', bd: any ? '#a7dcd4' : this.BD,
+            chips: gr.chips.map(c => {
+              const sel = (v || []).indexOf(gr.title + ':' + c) >= 0; const s = this.optStyle(sel);
+              return { label: c, sel, bg: s.bg, bd: s.bd, fw: sel ? 700 : 600, tap: () => this.toggle(p.key, gr.title + ':' + c) };
+            })
+          };
+        });
+      } else if (p.kind === 'text') {
+        o.isText = true; o.value = typeof v === 'string' && v !== '__skipped' ? v : '';
+        o.placeholder = p.placeholder || ''; o.maxLength = p.max || 60;
+        o.onInput = e => this.set(p.key, e.target.value);
+      } else if (p.kind === 'email') {
+        o.isEmail = true; o.value = typeof v === 'string' ? v : '';
+        o.onInput = e => this.set(p.key, e.target.value);
+        o.optin = !!st.a['context.marketing_optin'];
+        o.optinBg = o.optin ? acc : '#ffffff'; o.optinBd = o.optin ? acc : '#d8d8d8';
+        o.onOptin = () => this.set('context.marketing_optin', !st.a['context.marketing_optin']);
+      } else if (p.kind === 'stops') {
+        o.isStops = true;
+        const n = p.stops.length; const idx = v === undefined ? -1 : v;
+        const f = idx < 0 ? 0.5 : idx / (n - 1);
+        const amp = 22 - f * 19;
+        const wob = idx < 0 ? 12 : amp;
+        o.landD = 'M0 ' + (60 - wob) + ' q30 ' + (-wob * 2) + ' 60 0 t60 0 60 0 60 0 60 0';
+        o.landD2 = 'M0 74 q30 ' + (-wob * 1.4) + ' 60 0 t60 0 60 0 60 0 60 0';
+        o.fillPct = (idx < 0 ? 0 : f * 100) + '%';
+        o.stops = p.stops.map((_, i) => {
+          const s = i === idx;
+          return { left: (i / (n - 1)) * 100 + '%', size: s ? '26px' : '12px', bg: s ? '#ffffff' : (i <= idx ? acc : '#ffffff'), bd: i <= idx && idx >= 0 ? acc : '#e0e0e0', sh: s ? '0 3px 10px rgba(0,174,157,.3)' : 'none' };
+        });
+        o.stopBtns = p.stops.map((label, i) => { const s = i === idx; const ss = this.optStyle(s); return { label, sel: s, bg: ss.bg, bd: ss.bd, fw: s ? 800 : 600, tap: () => this.set(p.key, i) }; });
+        o.leftLabel = p.stops[0]; o.rightLabel = p.stops[n - 1];
+        o.valueLabel = idx < 0 ? 'Move the handle to answer' : p.stops[idx];
+        o.chipBg = idx < 0 ? '#f4f4f4' : '#d6edea'; o.chipFg = idx < 0 ? '#a4a5a5' : '#00857a';
+        o.onTrackDown = e => {
+          const el = e.currentTarget;
+          const move = this.trackDrag(el, fr => this.set(p.key, Math.round(fr * (n - 1))));
+          move(e);
+        };
+      } else if (p.kind === 'mood') {
+        o.isMood = true;
+        const val = v === undefined ? 50 : v; const f = val / 100;
+        o.fillPct = val + '%';
+        const wob = 20 - f * 16;
+        o.skyBg = 'linear-gradient(160deg, ' + (f < .4 ? '#6e8b8b' : (f < .7 ? '#3fb8ab' : '#00ae9d')) + ' 0%, ' + (f < .4 ? '#93a9a9' : '#7fd4c9') + ' 100%)';
+        o.sunX = 40 + f * 210; o.sunO = (0.25 + f * 0.75).toFixed(2);
+        o.moodD = 'M0 ' + (84 - f * 6) + ' q30 ' + (-wob * 2) + ' 60 0 t60 0 60 0 60 0 60 0';
+        o.moodD2 = 'M0 104 q30 ' + (-wob) + ' 60 0 t60 0 60 0 60 0 60 0';
+        o.onTrackDown = e => { const el = e.currentTarget; const move = this.trackDrag(el, fr => this.set(p.key, Math.round(fr * 100))); move(e); };
+      } else if (p.kind === 'canvas') {
+        o.isCanvas = true;
+        const vx = st.a['affect.valence'], vy = st.a['affect.arousal'];
+        o.placed = vx !== undefined;
+        o.dotX = (vx === undefined ? 50 : vx) + '%';
+        o.dotY = (100 - (vy === undefined ? 50 : vy)) + '%';
+        o.vx = vx === undefined ? 50 : vx; o.vy = vy === undefined ? 50 : vy;
+        o.showSliders = st.canvasSliders;
+        o.sliderToggleLabel = st.canvasSliders ? 'Hide sliders' : 'Use sliders instead';
+        o.onToggleSliders = () => this.setState({ canvasSliders: !st.canvasSliders });
+        o.onVx = e => this.set('affect.valence', parseInt(e.target.value, 10));
+        o.onVy = e => this.set('affect.arousal', parseInt(e.target.value, 10));
+        o.onPadDown = e => {
+          const el = e.currentTarget; const r = el.getBoundingClientRect();
+          const place = ev => {
+            const x = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width));
+            const y = Math.max(0, Math.min(1, (ev.clientY - r.top) / r.height));
+            this.setState(s => ({ a: Object.assign({}, s.a, { 'affect.valence': Math.round(x * 100), 'affect.arousal': Math.round((1 - y) * 100) }) }));
+          };
+          const up = () => { window.removeEventListener('pointermove', place); window.removeEventListener('pointerup', up); };
+          window.addEventListener('pointermove', place); window.addEventListener('pointerup', up);
+          place(e);
+        };
+      } else if (p.kind === 'body') {
+        o.isBody = true;
+        const zs = [
+          { label: 'Head and neck', left: '50%', top: '13%', size: '46px' },
+          { label: 'Shoulders and back', left: '50%', top: '31%', size: '62px' },
+          { label: 'Chest', left: '50%', top: '43%', size: '46px' },
+          { label: 'Stomach', left: '50%', top: '55%', size: '46px' },
+          { label: 'Limbs', left: '50%', top: '80%', size: '72px' }
+        ];
+        const cur = v || [];
+        o.zones = zs.map(z => {
+          const sel = cur.indexOf(z.label) >= 0; const s = this.optStyle(sel);
+          return {
+            label: z.label, aria: 'Tension in ' + z.label, sel, left: z.left, top: z.top, size: z.size,
+            bg: sel ? 'rgba(0,174,157,.75)' : 'rgba(0,174,157,.06)', bd: sel ? acc : '#bcd8d4',
+            chipBg: s.bg, chipBd: s.bd, fw: sel ? 700 : 600,
+            tap: () => this.toggle(p.key, z.label, { exclusive: null })
+          };
+        });
+        o.noneSel = cur.indexOf('__none') >= 0;
+        o.noneBg = o.noneSel ? '#d6edea' : '#f4f4f4'; o.noneFg = o.noneSel ? '#00857a' : this.MUT;
+        o.onNone = () => this.set(p.key, o.noneSel ? [] : ['__none']);
+      } else if (p.kind === 'ins') {
+        o.isIns = true;
+        const labels = ['Completely separate', 'Barely touching', 'Slight overlap', 'Some overlap', 'Half overlapping', 'Mostly overlapping', 'Almost one'];
+        o.options = labels.map((label, i) => {
+          const n = i + 1; const sel = v === n; const s = this.optStyle(sel);
+          const gap = 34 - i * 5;
+          return {
+            label, sel, bg: s.bg, bd: s.bd, fw: sel ? 800 : 600, stroke: sel ? acc : '#a9b5b3',
+            c1: (38 - gap / 2).toFixed(1), c2: (38 + gap / 2).toFixed(1),
+            alt: 'Two circles labelled Self and Nature, ' + label.toLowerCase() + ', option ' + n + ' of 7',
+            tap: () => this.set(p.key, n)
+          };
+        });
+      } else if (p.kind === 'sort') {
+        o.isSort = true;
+        const placed = v || {};
+        const deck = this.NINE.filter(n => !placed[n.k]);
+        o.hasDeck = deck.length > 0; o.deckH = '78px';
+        o.deckLabel = deck.length ? 'Tap a card, then a zone' : 'All nine placed';
+        o.counter = (9 - deck.length) + ' of 9 placed';
+        o.deck = deck.map(n => {
+          const sel = st.sortSel === n.k;
+          return { label: n.label, paths: this.lucidePaths(n.icon), sel, bg: sel ? '#d6edea' : '#ffffff', bd: sel ? acc : this.BD, sh: sel ? '0 4px 14px rgba(0,174,157,.18)' : '0 1px 3px rgba(65,66,66,.06)', ic: sel ? acc : '#9fa0a0', tap: () => this.setState({ sortSel: sel ? null : n.k }) };
+        });
+        const zoneDefs = [
+          { label: 'Depleted right now', icon: 'M12 5v14M6 13l6 6 6-6' },
+          { label: 'Doing okay', icon: 'M5 12h14' },
+          { label: 'A real strength', icon: 'M12 19V5M6 11l6-6 6 6' }
+        ];
+        o.zones = zoneDefs.map(z => {
+          const items = this.NINE.filter(n => placed[n.k] === z.label);
+          const armed = !!st.sortSel;
+          return {
+            label: z.label, icon: z.icon, count: items.length ? String(items.length) : '',
+            bg: armed ? '#f7fcfb' : '#fbfbfb', bd: armed ? acc : '#e4e4e4', bs: armed ? 'solid' : 'dashed',
+            hasItems: items.length > 0,
+            items: items.map(n => ({ label: n.label, remove: e => { e.stopPropagation(); const nx = Object.assign({}, placed); delete nx[n.k]; this.set(p.key, nx); } })),
+            tap: () => { if (!st.sortSel) return; this.set(p.key, Object.assign({}, placed, { [st.sortSel]: z.label })); this.setState({ sortSel: null }); }
+          };
+        });
+      } else if (p.kind === 'pick3') {
+        o.isPick3 = true;
+        const cur = v || [];
+        o.counter = cur.length + ' of 3 chosen';
+        o.options = this.NINE.map(n => {
+          const i = cur.indexOf(n.k); const sel = i >= 0; const s = this.optStyle(sel);
+          return {
+            label: n.label, paths: this.lucidePaths(n.icon), sel, rank: String(i + 1), bg: s.bg, bd: s.bd, fw: sel ? 800 : 600, ic: sel ? acc : '#9fa0a0',
+            tap: () => { if (sel) this.set(p.key, cur.filter(x => x !== n.k)); else if (cur.length < 3) this.set(p.key, cur.concat([n.k])); }
+          };
+        });
+      } else if (p.kind === 'energy') {
+        o.isEnergy = true;
+        const slots = ['Morning', 'Afternoon', 'Evening', 'Night'];
+        const lv = { High: 12, Medium: 34, Low: 54 };
+        const pts = slots.map((s2, i) => { const val = st.a['enrich.energy_arc.' + s2]; return { x: 30 + i * 80, y: val ? lv[val] : 58, set: !!val }; });
+        o.arcD = 'M' + pts.map(pt => pt.x + ' ' + pt.y).join(' L');
+        o.arcFill = 'M' + pts[0].x + ' 62 L' + pts.map(pt => pt.x + ' ' + pt.y).join(' L') + ' L' + pts[3].x + ' 62 Z';
+        o.rows = slots.map(s2 => ({
+          label: s2,
+          options: ['High', 'Medium', 'Low'].map(lb => {
+            const sel = st.a['enrich.energy_arc.' + s2] === lb; const s3 = this.optStyle(sel);
+            return { label: lb, sel, bg: s3.bg, bd: s3.bd, fw: sel ? 800 : 600, tap: () => this.set('enrich.energy_arc.' + s2, lb) };
+          })
+        }));
+      }
+      return o;
+    });
+
+    // The CTA now governs only the question on screen; single-choice questions advance themselves.
+    const cur = shown[0] || null;
+    const curOk = !cur || cur.kind === 'none' || cur.optional || this.answered(cur);
+    const autoSingle = !!cur && cur.kind === 'options' && !cur.multi && shown.length === 1;
+    const showCta = (isQ && !autoSingle) || kind === 'welcome' || (kind === 'breath' && st.bstep !== 1);
+    let ctaLabel = 'Continue';
+    if (kind === 'welcome') ctaLabel = 'Begin';
+    if (sc.id === 'email') ctaLabel = 'Save and continue';
+    if (sc.id === 'bright') ctaLabel = 'Continue';
+    if (kind === 'breath') ctaLabel = st.bstep === 0 ? 'Start the minute' : 'See what happens next';
+    const ctaOn = kind === 'welcome' || kind === 'breath' ? true : curOk;
+
+    // done rows
+    const r = this.ranked(); const bs = this.brightSpot();
+    const doneRows = [
+      { label: 'Lowest areas', value: r.slice(0, 3).map(x => x.label).join(', ') },
+      { label: 'Bright spot', value: bs.dim + ' (tier ' + bs.tier + ')' },
+      { label: 'Deep dives fired', value: this.deepDims().length ? this.deepDims().map(k => this.NINE.find(n => n.k === k).label).join(', ') : 'None' },
+      { label: 'Priorities', value: (this.g('context.priority_top3', []).map(k => { const n = this.NINE.find(x => x.k === k); return n ? n.label : k; }).join(', ')) || 'Not set' },
+      { label: 'Tone', value: this.gentle() ? 'Gentlest compassion level' : 'Standard' },
+      { label: 'Breath settle', value: st.a['breath.tension_before'] !== undefined && st.a['breath.tension_after'] !== undefined ? (st.a['breath.tension_before'] - st.a['breath.tension_after']) + ' points softer' : 'Not recorded' }
+    ];
+    const name = this.g('context.name', '');
+    const nameOk = name && name !== '__skipped';
+
+    const vis = this.visible();
+    return {
+      // frame
+      fw: phone ? '390px' : '100%', fh: phone ? Math.max(420, Math.min(844, st.h - 40)) + 'px' : '100vh',
+      fr: phone ? '34px' : '0', fsh: phone ? '0 30px 80px rgba(65,66,66,.16), 0 2px 10px rgba(65,66,66,.06)' : 'none',
+      screenId: st.id,
+      // chrome
+      showChrome: chrome, actLabel: act ? act.label : '',
+      backOpacity: st.hist.length || activeIdx > 0 ? '1' : '0',
+      onBack: () => { if (oneAtATime && activeIdx > 0) { this.setState({ editIdx: activeIdx - 1 }); return; } this.back(); },
+      hasStep: oneAtATime, stepLabel: (activeIdx + 1) + ' of ' + rawParts.length,
+      dots: this.ACTS.map((_, i) => ({ w: i === sc.act ? '22px' : '5px', bg: i === sc.act ? acc : (i < sc.act ? '#a7dcd4' : '#e8e8e8') })),
+      // screen kind
+      isQ, isWelcome: kind === 'welcome', isAct: kind === 'act', isGenerating: kind === 'generating',
+      isTerminal: kind === 'terminal', isDone: kind === 'done', isBreath: kind === 'breath',
+      qPad: chrome ? '14px 22px 8px' : '26px 22px 8px',
+      // illo
+      hasIllo: !!(sc.illo && this.MOTIFS[sc.illo]) && activeIdx === 0,
+      illoBox: '0 0 200 90',
+      illoPaths: (this.MOTIFS[sc.illo] || []).map((d, i) => ({ d, delay: i * 150, o: i === 0 ? '1' : '0.62' })),
+      hasPreamble: !!sc.preamble && activeIdx === 0, preamble: sc.preamble || '',
+      parts,
+      // cta
+      showCta, ctaLabel, ctaOff: !ctaOn,
+      ctaBg: ctaOn ? acc : '#f0f0f0', ctaFg: ctaOn ? '#ffffff' : '#bdbebe',
+      ctaSh: ctaOn ? '0 6px 18px rgba(0,174,157,.28)' : 'none', ctaCursor: ctaOn ? 'pointer' : 'not-allowed',
+      onCta: () => {
+        if (!ctaOn) return;
+        if (kind === 'breath') { if (st.bstep === 0) this.startBreath(); else this.next(); return; }
+        if (isQ) { advance(); return; }
+        this.next();
+      },
+      // welcome
+      wTitle: this.WELCOME[st.wv].t, wSub: this.WELCOME[st.wv].s,
+      wPills: ['Private', 'Adaptive', 'Research-based', 'Not a diagnosis'].map(l => ({ label: l })),
+      // act
+      actNum: act ? act.n : '', actName: act ? act.name : '', actLine: act ? act.line : '', onActTap: this.next,
+      // breath
+      bIsRate: st.bstep !== 1, bIsBreathing: st.bstep === 1,
+      bEyebrow: st.bstep === 0 ? "That's everything. Before your reading, take a minute for yourself." : 'One minute done',
+      bPrompt: st.bstep === 0 ? 'How much tension are you carrying right now?' : 'And now?',
+      bFill: (st.bstep === 0 ? this.g('breath.tension_before', 50) : this.g('breath.tension_after', 50)) + '%',
+      bOnTrack: e => { const el = e.currentTarget; const k = st.bstep === 0 ? 'breath.tension_before' : 'breath.tension_after'; const move = this.trackDrag(el, fr => this.set(k, Math.round(fr * 100))); move(e); },
+      bPhase: st.bphase, bClock: '0:' + String(st.bt).padStart(2, '0'),
+      bOrbW: st.bphase === 'Breathe out' ? '92px' : '178px',
+      bCanSkip: st.bt <= 50, bOnSkip: () => { clearInterval(this._brT); this.setState({ bstep: 2, bt: 0 }); },
+      // generating
+      genLines: this.GEN_LINES.map((text, i) => ({
+        text, o: i < st.gen ? '1' : '0.22', fw: i === st.gen - 1 ? 700 : 400,
+        dot: i < st.gen ? acc : 'rgba(255,255,255,.2)',
+        fg: i < st.gen ? '#ffffff' : 'rgba(255,255,255,.55)'
+      })),
+      // done
+      doneTitle: nameOk ? 'Thank you, ' + name : 'Thank you',
+      doneSub: 'Your reflection is complete and saved. Your reading is being prepared and will be sent to ' + (this.g('context.email', 'your email') || 'your email') + '.',
+      doneRows,
+      onReset: this.reset,
+      // dev
+      devTools: this.props.devTools !== false, dev: st.dev, onDevToggle: () => this.setState({ dev: !st.dev }),
+      onAutofill: this.autofill,
+      devScreens: vis.map((s, i) => ({
+        no: String(i + 1).padStart(2, '0'),
+        label: (s.kind === 'act' ? 'Act transition \u2014 ' + (this.ACTS[s.act] ? this.ACTS[s.act].name : '')
+          : s.id === 'tension' ? 'Priority tension check'
+            : s.id === 'bright' ? 'Bright spot'
+              : s.id === 'breath' ? 'One minute of breathing'
+                : s.id === 'generating' ? 'The generating moment'
+                  : s.id === 'done' ? 'Reflection complete'
+                    : s.id === 'welcome' ? 'Welcome'
+                      : (s.parts && s.parts[0] && s.parts[0].prompt ? s.parts[0].prompt.slice(0, 46) : s.id)),
+        bg: s.id === st.id ? '#d6edea' : 'transparent',
+        go: () => this.goto(s.id)
+      }))
+    };
+  }
+}
+
+</script>
+</body>
+</html>

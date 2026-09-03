@@ -12,7 +12,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useLewisStore } from '../store/useLewisStore.js'
 import Icon from './icons.jsx'
-import { exportReportPdf } from './exportPdf.js'
 import { generateClientFallbackReport } from './fallbackReport.js'
 import './report.css'
 
@@ -1409,6 +1408,10 @@ export default function InsightReport({ report }) {
     if (downloading) return
     setDownloading(true)
     try {
+      // Lazy: exportPdf.js pulls in html2canvas/jsPDF (browser-only globals),
+      // which must never load outside a real browser — importing it eagerly
+      // broke server-side rendering of this same component for PDF generation.
+      const { exportReportPdf } = await import('./exportPdf.js')
       await exportReportPdf()
     } finally {
       setDownloading(false)

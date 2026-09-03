@@ -539,63 +539,154 @@ lewissupport@lifedhealth.com
     )
 
 
+TECH_ALERT_EMAIL = os.getenv("TECH_ALERT_EMAIL", "tech@lifedhealth.com")
+
+
+def send_report_failure_alert(
+    user_email: Optional[str],
+    user_name: Optional[str],
+    report_uuid: Optional[str],
+    order_id: Optional[str],
+    reason: str
+) -> bool:
+    """
+    Internal ops alert: a paid customer's report could NOT be sent (and,
+    per policy, no generic/stale substitute was sent in its place — see
+    send_report_delivery_email). Notifies tech@ with enough to find and
+    manually verify + send the report. Sent at most once per order — the
+    PDF-generation failure this guards is usually persistent, and the
+    retry queue / 30s reconciliation loop would otherwise re-alert on
+    every attempt.
+    """
+    if order_id:
+        try:
+            from auth import get_payment_order
+            order = get_payment_order(order_id)
+            if order and order.get("report_alert_mail_sent"):
+                return True  # already alerted for this order — don't spam tech@
+        except Exception as e:
+            logger.warning("Could not check report_alert_mail_sent for %s: %s", order_id, e)
+
+    name = (user_name or "(no name on file)").strip()
+    email = user_email or "(no email on file)"
+    rep_id = report_uuid or "(no report_uuid)"
+    order_ref = order_id or "(no order_id)"
+
+    subject = f"⚠️ LEWIS report NOT sent — manual send required · Order {order_ref}"
+    html_content = f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; color: #1e293b; background: #f8fafc;">
+      <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0;">
+        <h2 style="color: #b91c1c; margin: 0 0 12px 0; font-size: 18px;">Report delivery failed — no email was sent to the customer</h2>
+        <p style="font-size: 13.5px; color: #334155; line-height: 1.5;">
+          The system refused to send a generic or stale report in place of this customer's real one.
+          Please verify the report and send it manually.
+        </p>
+        <table style="width: 100%; font-size: 13.5px; border-collapse: collapse; margin: 16px 0;">
+          <tr><td style="padding: 6px 0; color: #64748b; width: 140px;"><strong>User Name:</strong></td><td style="padding: 6px 0; color: #0f172a;">{name}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>User Email:</strong></td><td style="padding: 6px 0; color: #0f172a;"><a href="mailto:{email}" style="color: #00ae9d;">{email}</a></td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Order ID:</strong></td><td style="padding: 6px 0; font-family: monospace; font-weight: 700; color: #0f172a;">{order_ref}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Report UUID:</strong></td><td style="padding: 6px 0; font-family: monospace; font-weight: 700; color: #0f172a;">{rep_id}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Failure reason:</strong></td><td style="padding: 6px 0; color: #b91c1c;">{reason}</td></tr>
+          <tr><td style="padding: 6px 0; color: #64748b;"><strong>Time:</strong></td><td style="padding: 6px 0; color: #64748b;">{datetime.now(timezone.utc).strftime("%d %B %Y, %H:%M UTC")}</td></tr>
+        </table>
+        <p style="font-size: 13px; color: #64748b;">
+          Use <code>/admin/resend-report/{order_ref}</code> once the underlying issue is fixed, or generate and send the report manually.
+        </p>
+      </div>
+    </div>
+    """
+    text_content = (
+        f"Report delivery failed — no email was sent to the customer.\n\n"
+        f"User Name: {name}\nUser Email: {email}\nOrder ID: {order_ref}\nReport UUID: {rep_id}\n"
+        f"Failure reason: {reason}\n\nUse /admin/resend-report/{order_ref} once fixed, or send manually."
+    )
+
+    ok = send_email(to_email=TECH_ALERT_EMAIL, subject=subject, html_content=html_content, text_content=text_content)
+    if ok and order_id:
+        try:
+            from auth import update_order_email_status
+            update_order_email_status(order_id, "report_alert", True)
+        except Exception:
+            pass
+    return ok
+
+
 def send_report_delivery_email(
     user_email: str,
     user_name: Optional[str] = None,
     report_uuid: Optional[str] = None,
     order_id: Optional[str] = None,
-    report_data: Optional[Dict[str, Any]] = None
+    report_data: Optional[Dict[str, Any]] = None,
+    plan_id: Optional[str] = None
 ) -> bool:
     """
     Send the completed Personal Wellbeing Insight Report to user email with attached PDF.
+
+    `plan_id` picks the renderer: 'streamlined_report' (₹349) -> the 12-page
+    report, anything else -> the 25-page report. There is no generic-content
+    fallback here on purpose — a customer's report is either their own
+    answer-derived PDF or no email goes out at all (see the except: below,
+    which returns False so mail_queue's retry/backoff and the reconciliation
+    loop pick it up again, instead of silently sending stale/generic content).
     """
     name = (user_name or "there").strip()
     rep_id = report_uuid or "LSR20260200"
     order_ref = order_id or "LS20260100"
     date_str = datetime.now(timezone.utc).strftime("%d %B %Y")
-    
+    is_streamlined = plan_id == "streamlined_report"
+    page_count_label = "12-page" if is_streamlined else "25-page"
+
     # Resolve public production domain (filter out localhost)
     raw_frontends = [u.strip() for u in os.getenv("FRONTEND_URL", "").split(",") if u.strip()]
     prod_frontends = [u for u in raw_frontends if "localhost" not in u and "127.0.0.1" not in u]
     frontend_base = prod_frontends[0] if prod_frontends else "https://lewiswellbeing.com"
     report_link = f"{frontend_base}/#mirror"
 
-    # 1. STRICT ATTACHMENT RULE: Always guarantee that authentic PDF content is loaded
-    pdf_bytes = None
     try:
-        from pdf_generator import build_insight_report_pdf
-        pdf_bytes = build_insight_report_pdf(
+        from pdf_generator import build_report_pdf_for_plan
+        pdf_bytes = build_report_pdf_for_plan(
+            plan_id=plan_id,
             report_data=report_data,
             report_uuid=rep_id,
             user_name=name,
             order_id=order_ref
         )
     except Exception as pdf_err:
-        logger.error("Failed to generate PDF for attachment (%s): %s", rep_id, pdf_err)
+        logger.error(
+            "Refusing to send report email for %s (order %s, plan %s): PDF generation failed: %s",
+            rep_id, order_ref, plan_id, pdf_err, exc_info=True
+        )
+        send_report_failure_alert(user_email, name, report_uuid, order_id, f"PDF generation failed: {pdf_err}")
+        return False
 
-    # Failsafe fallback: if pdf_bytes is missing or too small, load direct template file
     if not pdf_bytes or len(pdf_bytes) < 10000:
-        try:
-            from pdf_generator import get_template_pdf_path
-            tpl_path = get_template_pdf_path()
-            if tpl_path and os.path.exists(tpl_path):
-                with open(tpl_path, "rb") as f:
-                    pdf_bytes = f.read()
-                logger.info("Failsafe loaded authentic PDF template from %s (%d bytes)", tpl_path, len(pdf_bytes))
-        except Exception as e:
-            logger.error("Critical: Could not load fallback PDF bytes: %s", e)
+        logger.error(
+            "Refusing to send report email for %s (order %s): generated PDF is missing or suspiciously "
+            "small (%s bytes)", rep_id, order_ref, len(pdf_bytes) if pdf_bytes else 0
+        )
+        send_report_failure_alert(
+            user_email, name, report_uuid, order_id,
+            f"generated PDF missing or too small ({len(pdf_bytes) if pdf_bytes else 0} bytes)"
+        )
+        return False
+
+    # Persist the generated PDF so it's retrievable later (Lewis OS, resend,
+    # in-app download) without re-rendering. Best-effort: never blocks send.
+    try:
+        from auth import save_report_pdf
+        save_report_pdf(report_uuid=rep_id, plan_id=plan_id, pdf_bytes=pdf_bytes)
+    except Exception as save_err:
+        logger.warning("Could not persist report PDF for %s: %s", rep_id, save_err)
 
     pdf_filename = f"LEWIS-Insight-Report-{rep_id}.pdf"
     public_pdf_url = "https://lewis-production-953f.up.railway.app/download/Lewis-Insight-Report.pdf"
     direct_pdf_download = f"https://lewis-production-953f.up.railway.app/reports/{rep_id}/pdf" if rep_id else public_pdf_url
 
-    # Strict assertion: Ensure attachment payload is never empty
     attachments = [{
         "filename": pdf_filename,
-        "url": public_pdf_url,
-        "content": pdf_bytes if (pdf_bytes and len(pdf_bytes) > 10000) else None
+        "content": pdf_bytes
     }]
-    logger.info("Report delivery attachment verified: %s (Bytes: %s, URL: %s)", pdf_filename, len(pdf_bytes) if pdf_bytes else 0, public_pdf_url)
+    logger.info("Report delivery attachment ready: %s (Bytes: %d, plan: %s)", pdf_filename, len(pdf_bytes), plan_id or "personal_report")
 
     subject = f"Your LEWIS Personal Wellbeing Insight Report · Report ID {rep_id}"
 
@@ -718,7 +809,7 @@ def send_report_delivery_email(
           <!-- PDF Attachment Notice -->
           <div class="pdf-attached-box">
             <div style="font-size: 13.5px; color: #016257; line-height: 1.5;">
-              <strong>PDF Report Attached:</strong> Your full 25-page Insight Report document (<code>{pdf_filename}</code>) is attached directly to this email. You can download and save it to your device anytime.
+              <strong>PDF Report Attached:</strong> Your full {page_count_label} Insight Report document (<code>{pdf_filename}</code>) is attached directly to this email. You can download and save it to your device anytime.
             </div>
           </div>
 
@@ -784,7 +875,7 @@ Report ID: {rep_id}
 Order Reference: {order_ref}
 Date: {date_str}
 
-Please find your complete 25-page Insight Report attached directly as a PDF document.
+Please find your complete {page_count_label} Insight Report attached directly as a PDF document.
 
 Lewis Wellbeing Intelligence
 A Lifed Health Intelligence System
@@ -821,6 +912,8 @@ A Lifed Health Intelligence System
             logger.info("Scheduled 20-minute review invitation email for %s (delay=%ds)", user_email, review_delay)
         except Exception as rev_err:
             logger.warning("Could not queue review invitation email: %s", rev_err)
+    elif not sent:
+        send_report_failure_alert(user_email, name, report_uuid, order_id, "Brevo API send failed (see server logs)")
 
     return sent
 
@@ -1044,21 +1137,37 @@ def deferred_report_delivery(
     (it may not have existed yet at enqueue time) and send it.
     """
     rep_json = None
+    plan_id = None
     if report_uuid:
         try:
             from auth import get_report_by_uuid
             rec = get_report_by_uuid(report_uuid)
             if rec and rec.get("report_json"):
                 rep_json = rec["report_json"]
+            if rec:
+                plan_id = rec.get("paid_plan")
         except Exception as e:
             logger.warning("Could not fetch report data for email: %s", e)
+
+    # paid_plan is written onto the report row at payment time (see
+    # record_successful_payment); fall back to the order's plan_id if the
+    # report lookup above didn't have it (e.g. report row predates that write).
+    if not plan_id and order_id:
+        try:
+            from auth import get_payment_order
+            order = get_payment_order(order_id)
+            if order:
+                plan_id = order.get("plan_id")
+        except Exception as e:
+            logger.warning("Could not fetch order plan_id for email: %s", e)
 
     return send_report_delivery_email(
         user_email=user_email,
         user_name=user_name,
         report_uuid=report_uuid,
         order_id=order_id,
-        report_data=rep_json
+        report_data=rep_json,
+        plan_id=plan_id
     )
 
 

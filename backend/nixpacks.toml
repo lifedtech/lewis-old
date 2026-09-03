@@ -1,0 +1,17 @@
+# nixpacks.toml — Railway builds this service (backend/) with Nixpacks.
+# The full report PDF now server-renders a React component that lives in
+# ../frontend, so this build needs Node alongside the auto-detected Python
+# toolchain. Verified against https://nixpacks.com/docs/configuration/file
+# (the `providers` array + "..." array-extend syntax); NOT yet verified
+# against a real Railway build — check the deploy log the first time this
+# ships (`npm run build:report` output, and that
+# frontend/dist-report/render-report.mjs exists in the built image). If
+# Railway's build context doesn't reach ../frontend from this root, fall
+# back to a two-stage Dockerfile instead of fighting Nixpacks further.
+providers = ["python", "node"]
+
+[phases.setup]
+nixPkgs = ["...", "nodejs_20"]
+
+[phases.build]
+cmds = ["...", "cd ../frontend && npm ci && npm run build:report"]

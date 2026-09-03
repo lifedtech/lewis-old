@@ -1234,6 +1234,19 @@ button.mirror-unlock-btn:hover {
   border-color: transparent !important;
   box-shadow: none !important;
   padding: 0 !important;
+  align-items: center !important;
+}
+
+.main-card.transparent-card h1,
+.main-card.transparent-card h2,
+.main-card.transparent-card h3,
+.main-card.transparent-card p,
+.main-card.transparent-card .eyebrow,
+.screen-container h1,
+.screen-container h2,
+.screen-container p,
+.screen-container .eyebrow {
+  text-align: center !important;
 }
 
 /* Global Headline Font Size & Left Alignment Standard (Scoped to main-card) */
@@ -2675,4 +2688,65 @@ p.mobile-subtitle {
   border: none !important;
   box-shadow: none !important;
   border-radius: 0 !important;
+}
+
+/* ============================================================ */
+/* GLOBAL PRINT & PDF EXPORT STYLES                             */
+/* ============================================================ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 12mm 15mm;
+  }
+  
+  html, body, #root {
+    background: #ffffff !important;
+    color: #414242 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+  }
+
+  .no-print,
+  .no-print *,
+  header.app-header,
+  .floating-action-bar,
+  .debug-panel,
+  nav,
+  button,
+  .journey-nav {
+    display: none !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .report-page-container,
+  .report-container,
+  .streamlined-report-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  section.report-section,
+  .print-page-break {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  section.report-section:last-of-type {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
 }

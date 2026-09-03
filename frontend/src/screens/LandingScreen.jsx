@@ -165,7 +165,7 @@ export default function LandingScreen() {
   const handleNext = (e) => {
     if (e) e.preventDefault()
     setMobileMenuOpen(false)
-    setScreen('stage1_0About')
+    setScreen('sl_gate')
   }
 
   const navigateTo = (e, pageId) => {

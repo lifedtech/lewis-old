@@ -161,10 +161,17 @@ def _handoff(leverage_code, patterns, tier):
 
 
 def build_enriched_object(dimensions, leverage, bright_key, safety, patterns,
-                          portrait, habit, context):
+                          portrait, habit, context, narration=None):
     """Assemble the complete enriched object. `context` carries only
     reader-facing texture (arrival word, zones, rhythm, priorities); it can
-    change wording and suggestions, never a reading (invariant 5)."""
+    change wording and suggestions, never a reading (invariant 5).
+
+    `narration` is the already-computed, already-validated Road A/B text
+    for this submission ({"text": ..., "source": "road_a"|"road_b"}) — a
+    handful of report pages weave its per-section text in in place of
+    their own deterministic line when it validated as Road B. Optional:
+    absent or None, every page falls back to its deterministic wording,
+    exactly as before."""
     areas = _build_areas(dimensions)
 
     lwi = _find(patterns, "lwi") or {}
@@ -251,5 +258,6 @@ def build_enriched_object(dimensions, leverage, bright_key, safety, patterns,
             "friction": context.get("friction"),
             "prior_attempts": context.get("prior_attempts"),
         },
+        "narration": narration or {},
     }
     return enriched

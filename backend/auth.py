@@ -310,6 +310,10 @@ def init_db():
                             IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='coupon_code') THEN
                                 ALTER TABLE lewis_payment_orders ADD COLUMN coupon_code TEXT;
                             END IF;
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_payment_orders' AND column_name='report_alert_mail_sent') THEN
+                                ALTER TABLE lewis_payment_orders ADD COLUMN report_alert_mail_sent BOOLEAN DEFAULT FALSE;
+                                ALTER TABLE lewis_payment_orders ADD COLUMN report_alert_mail_sent_at TIMESTAMP WITH TIME ZONE;
+                            END IF;
 
                             -- Age & Gender columns for journey sessions & assessment records
                             IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='lewis_journey_sessions' AND column_name='age_category') THEN
@@ -342,6 +346,26 @@ def init_db():
                                 WHERE table_name='lewis_assessment_records' AND column_name='answers_json'
                             ) THEN
                                 ALTER TABLE lewis_assessment_records ADD COLUMN answers_json TEXT;
+                            END IF;
+                            -- Generated report PDFs, stored so each paid report is saved once
+                            -- and re-servable (resend, in-app download, Lewis OS) without
+                            -- re-rendering. One column per report format, since a report row
+                            -- can only ever earn the PDF matching what was actually paid for.
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns
+                                WHERE table_name='lewis_assessment_records' AND column_name='report_pdf_streamlined'
+                            ) THEN
+                                ALTER TABLE lewis_assessment_records ADD COLUMN report_pdf_streamlined BYTEA;
+                                ALTER TABLE lewis_assessment_records ADD COLUMN report_pdf_full BYTEA;
+                            END IF;
+                            -- report_html: the INSERT in save_encrypted_assessment_record has
+                            -- written this column for a while, but no CREATE/ALTER TABLE ever
+                            -- added it — every save silently failed (caught, logged, ignored).
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns
+                                WHERE table_name='lewis_assessment_records' AND column_name='report_html'
+                            ) THEN
+                                ALTER TABLE lewis_assessment_records ADD COLUMN report_html TEXT;
                             END IF;
                         END $$;
 
@@ -473,6 +497,13 @@ def init_db():
             "ALTER TABLE lewis_assessment_records ADD COLUMN age_category TEXT",
             "ALTER TABLE lewis_assessment_records ADD COLUMN gender TEXT",
             "ALTER TABLE lewis_assessment_records ADD COLUMN answers_json TEXT",
+            "ALTER TABLE lewis_assessment_records ADD COLUMN report_pdf_streamlined BLOB",
+            "ALTER TABLE lewis_assessment_records ADD COLUMN report_pdf_full BLOB",
+            # report_html: the INSERT in save_encrypted_assessment_record has
+            # written this column for a while, but no CREATE/ALTER TABLE ever
+            # added it — every save silently failed (caught, logged, ignored)
+            # on any DB whose table predates that INSERT change.
+            "ALTER TABLE lewis_assessment_records ADD COLUMN report_html TEXT",
             "ALTER TABLE lewis_journey_sessions ADD COLUMN age_category TEXT",
             "ALTER TABLE lewis_journey_sessions ADD COLUMN gender TEXT",
         ):
@@ -592,6 +623,8 @@ def init_db():
             "ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent INTEGER DEFAULT 0",
             "ALTER TABLE lewis_payment_orders ADD COLUMN review_mail_sent_at TIMESTAMP",
             "ALTER TABLE lewis_payment_orders ADD COLUMN coupon_code TEXT",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN report_alert_mail_sent INTEGER DEFAULT 0",
+            "ALTER TABLE lewis_payment_orders ADD COLUMN report_alert_mail_sent_at TIMESTAMP",
         ):
             try:
                 cursor.execute(col_stmt)
@@ -1581,10 +1614,31 @@ def save_encrypted_assessment_record(
     email_hash = blind_index_email(user_email) if user_email else None
 
     scores = report_data.get("dimensions") or report_data.get("scores") or {}
+    if not isinstance(scores, dict):
+        # The streamlined RRO's "dimensions" is a list (score-per-area), not
+        # a dict keyed by instrument — nothing to denormalize here, that's fine.
+        scores = {}
     wellbeing_band = scores.get("who5", {}).get("wellbeing_band") or "Moderate"
     overall_score = scores.get("who5", {}).get("scaled_score", 0.0)
     report_json_str = json.dumps(report_data, default=str)
     answers_json_str = json.dumps(answers, default=str) if answers is not None else None
+
+    # Pre-render standalone HTML format for Lewis OS / direct viewing
+    report_html_str = None
+    try:
+        from report_streamlined_html import render_streamlined_report_html
+        rro = {
+            "meta": {
+                "name": user_name or "Lewis Client",
+                "rro_id": report_uuid,
+                "date_display": datetime.now(timezone.utc).strftime("%d %B %Y")
+            }
+        }
+        if report_data and isinstance(report_data, dict):
+            rro.update(report_data)
+        report_html_str = render_streamlined_report_html(rro)
+    except Exception as render_err:
+        logger.warning("Could not pre-render report_html: %s", render_err)
 
     saved_to_pg = False
     if has_pg and DATABASE_URL:
@@ -1594,13 +1648,13 @@ def save_encrypted_assessment_record(
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO lewis_assessment_records
-                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, started_at, duration_seconds)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, started_at_iso, duration_seconds))
+                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, report_html, started_at, duration_seconds)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, report_html_str, started_at_iso, duration_seconds))
                     conn.commit()
                 conn.close()
                 saved_to_pg = True
-                logger.info("Saved encrypted assessment record %s to PostgreSQL", report_uuid)
+                logger.info("Saved encrypted assessment record %s with HTML to PostgreSQL", report_uuid)
         except Exception as e:
             logger.error("PostgreSQL error saving encrypted assessment record: %s", e)
 
@@ -1610,12 +1664,12 @@ def save_encrypted_assessment_record(
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO lewis_assessment_records
-                (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, started_at, duration_seconds)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, started_at_iso, duration_seconds))
+                (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, report_html, started_at, duration_seconds)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, report_html_str, started_at_iso, duration_seconds))
             conn.commit()
             conn.close()
-            logger.info("Saved encrypted assessment record %s to SQLite", report_uuid)
+            logger.info("Saved encrypted assessment record %s with HTML to SQLite", report_uuid)
         except Exception as e:
             logger.warning("SQLite error saving encrypted assessment record: %s", e)
 
@@ -2372,10 +2426,12 @@ def record_successful_payment(
 
 def update_order_email_status(order_id: str, email_type: str = "confirmation", status: bool = True) -> bool:
     """
-    Record in database whether confirmation, report-delivery, or review-invitation email has been sent.
+    Record in database whether confirmation, report-delivery, review-invitation,
+    or report-failure-alert (internal, to tech@) email has been sent.
     """
-    col_flag = f"{email_type}_mail_sent" if email_type in ("confirmation", "report", "review") else "report_mail_sent"
-    col_time = f"{email_type}_mail_sent_at" if email_type in ("confirmation", "report", "review") else "report_mail_sent_at"
+    known_types = ("confirmation", "report", "review", "report_alert")
+    col_flag = f"{email_type}_mail_sent" if email_type in known_types else "report_mail_sent"
+    col_time = f"{email_type}_mail_sent_at" if email_type in known_types else "report_mail_sent_at"
 
     if order_id in IN_MEMORY_ORDERS:
         IN_MEMORY_ORDERS[order_id][col_flag] = status
@@ -2469,7 +2525,6 @@ def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
             for r in cur.fetchall():
                 pending.append(dict(r))
             conn.close()
-            return pending
         except Exception as e:
             logger.warning("SQLite pending report deliveries query error: %s", e)
 
@@ -2553,7 +2608,6 @@ def get_pending_review_deliveries(min_age_seconds: int = 1200) -> list:
             for r in cur.fetchall():
                 pending.append(dict(r))
             conn.close()
-            return pending
         except Exception as e:
             logger.warning("SQLite pending review deliveries query error: %s", e)
 
@@ -2683,5 +2737,140 @@ def get_report_by_uuid(report_uuid: str) -> Optional[Dict[str, Any]]:
         logger.warning("SQLite error fetching report by UUID: %s", e)
 
     return None
+
+
+def _report_pdf_column(plan_id: Optional[str]) -> str:
+    return "report_pdf_streamlined" if plan_id == "streamlined_report" else "report_pdf_full"
+
+
+def save_report_pdf(report_uuid: str, plan_id: Optional[str], pdf_bytes: bytes) -> bool:
+    """
+    Save a generated report PDF against its report row — one column for the
+    12-page streamlined report, one for the 25-page full report — so it's
+    stored once and re-servable (resend, in-app download, Lewis OS) without
+    re-rendering every time.
+    """
+    if not report_uuid or not pdf_bytes:
+        return False
+    column = _report_pdf_column(plan_id)
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        f"UPDATE lewis_assessment_records SET {column} = %s WHERE report_uuid = %s",
+                        (psycopg2.Binary(pdf_bytes), report_uuid)
+                    )
+                conn.commit()
+                conn.close()
+                return True
+        except Exception as e:
+            logger.error("PostgreSQL error saving report PDF (%s): %s", column, e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute(
+            f"UPDATE lewis_assessment_records SET {column} = ? WHERE report_uuid = ?",
+            (pdf_bytes, report_uuid)
+        )
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        logger.warning("SQLite error saving report PDF (%s): %s", column, e)
+        return False
+
+
+def get_report_pdf(report_uuid: str, plan_id: Optional[str] = None) -> Optional[bytes]:
+    """
+    Fetch a previously-saved report PDF (see save_report_pdf). `plan_id`
+    picks which of the two stored formats to read; when omitted, whichever
+    of the two columns is populated wins (a report row only ever has the
+    one matching what was actually paid for).
+    """
+    if not report_uuid:
+        return None
+    columns = [_report_pdf_column(plan_id)] if plan_id else ["report_pdf_streamlined", "report_pdf_full"]
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        f"SELECT {', '.join(columns)} FROM lewis_assessment_records WHERE report_uuid = %s LIMIT 1",
+                        (report_uuid,)
+                    )
+                    row = cur.fetchone()
+                conn.close()
+                if row:
+                    for val in dict(row).values():
+                        if val:
+                            return bytes(val)
+        except Exception as e:
+            logger.error("PostgreSQL error fetching report PDF: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute(
+            f"SELECT {', '.join(columns)} FROM lewis_assessment_records WHERE report_uuid = ? LIMIT 1",
+            (report_uuid,)
+        )
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            for val in dict(row).values():
+                if val:
+                    return bytes(val)
+    except Exception as e:
+        logger.warning("SQLite error fetching report PDF: %s", e)
+
+    return None
+
+
+def get_order_by_id(order_id: str) -> Optional[Dict[str, Any]]:
+    """Retrieve payment order by order_id or report_uuid."""
+    if not order_id:
+        return None
+    clean_id = order_id.replace("USR-", "").strip()
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "SELECT * FROM lewis_payment_orders WHERE order_id = %s OR order_id = %s OR report_uuid = %s LIMIT 1",
+                        (order_id, clean_id, order_id)
+                    )
+                    row = cur.fetchone()
+                conn.close()
+                if row:
+                    return dict(row)
+        except Exception as e:
+            logger.error("PostgreSQL error fetching order by ID: %s", e)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT * FROM lewis_payment_orders WHERE order_id = ? OR order_id = ? OR report_uuid = ? LIMIT 1",
+            (order_id, clean_id, order_id)
+        )
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            return dict(row)
+    except Exception as e:
+        logger.warning("SQLite error fetching order by ID: %s", e)
+
+    return None
+
 
 

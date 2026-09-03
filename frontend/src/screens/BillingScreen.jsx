@@ -33,8 +33,16 @@ export default function BillingScreen() {
     authUser,
     analysisData,
     paymentConfig,
-    theme
+    theme,
+    selectedPlan,
+    planPrice,
+    streamlinedRRO,
+    transitionToFullVersion
   } = useLewisStore()
+
+  const isStreamlined = selectedPlan === 'streamlined_report' || planPrice === 349
+  const baseAmountInr = isStreamlined ? 349 : 749
+  const planKey = 'personal_report'
 
   const initialCurrency = detectLocalCurrency()
   const [fullName, setFullName] = useState(storeName || authUser?.name || '')
@@ -84,7 +92,7 @@ export default function BillingScreen() {
       .catch(() => {})
   }, [])
 
-  const currentPriceObj = formatCurrencyPrice(currency, liveRates, appliedCoupon)
+  const currentPriceObj = formatCurrencyPrice(currency, liveRates, appliedCoupon, baseAmountInr)
   const reportPrice = currentPriceObj.formatted
 
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false)
@@ -106,7 +114,7 @@ export default function BillingScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           code: code,
-          plan: 'personal_report',
+          plan: planKey,
           currency: currency,
         }),
       })
@@ -179,9 +187,9 @@ export default function BillingScreen() {
 
     try {
       await initiateCheckout({
-        plan: 'personal_report',
+        plan: planKey,
         currency: currency,
-        reportId: analysisData?.report_uuid,
+        reportId: analysisData?.report_uuid || streamlinedRRO?.meta?.rro_id,
         userEmail: trimmedEmail,
         userName: trimmedName,
         userPhone: '',
@@ -189,7 +197,7 @@ export default function BillingScreen() {
         onSuccess: (verifyData) => {
           setIsSubmitting(false)
           setPaymentSuccess({
-            reportUuid: analysisData?.report_uuid,
+            reportUuid: analysisData?.report_uuid || streamlinedRRO?.meta?.rro_id,
             orderId: verifyData.order_id,
             paymentId: verifyData.payment_id,
             email: trimmedEmail,
@@ -242,7 +250,7 @@ export default function BillingScreen() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
-            onClick={() => setScreen('mirror')}
+            onClick={() => setScreen(isStreamlined ? 'sl_mirror' : 'mirror')}
             className="header-back-btn"
             style={{
               background: 'transparent',
@@ -442,10 +450,10 @@ export default function BillingScreen() {
               )}
             </div>
 
-            {/* Email Address */}
+            {/* Email Address with Delivery Guarantee Notice */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <label htmlFor="billing-email" style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-main, #414242)' }}>
-                Email Address (for report delivery) <span style={{ color: '#d0574f' }}>*</span>
+                Email Address (Get your report on your mail) <span style={{ color: '#d0574f' }}>*</span>
               </label>
               <input
                 id="billing-email"
@@ -469,6 +477,21 @@ export default function BillingScreen() {
                   boxSizing: 'border-box',
                 }}
               />
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '7px',
+                marginTop: '2px',
+                fontSize: '12.5px',
+                color: 'var(--dawn, #00ae9d)',
+                fontWeight: 700,
+              }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <span>Get your full report and interactive link delivered directly to your mail</span>
+              </div>
               {errors.email && (
                 <span style={{ fontSize: '12px', color: '#d0574f', fontWeight: 600 }}>{errors.email}</span>
               )}
@@ -513,6 +536,69 @@ export default function BillingScreen() {
                 </>
               )}
             </motion.button>
+
+            {/* Try Full Version Option */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              marginTop: '12px',
+              width: '100%',
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                width: '100%',
+                margin: '4px 0',
+              }}>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-color, rgba(0, 174, 157, 0.18))' }} />
+                <span style={{ fontSize: '11.5px', color: 'var(--text-sub, #85918e)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>or</span>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-color, rgba(0, 174, 157, 0.18))' }} />
+              </div>
+
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.015 }}
+                whileTap={{ scale: 0.985 }}
+                onClick={() => {
+                  if (typeof transitionToFullVersion === 'function') {
+                    transitionToFullVersion()
+                  } else {
+                    setScreen('stage1_0About')
+                  }
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px 18px',
+                  borderRadius: '999px',
+                  border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.45))',
+                  background: 'var(--raised, #ffffff)',
+                  color: 'var(--dawn, #00ae9d)',
+                  fontSize: '13.5px',
+                  fontWeight: 700,
+                  fontFamily: NUNITO,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
+                  e.currentTarget.style.background = 'rgba(0, 174, 157, 0.06)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--panel-border, rgba(0, 174, 157, 0.45))'
+                  e.currentTarget.style.background = 'var(--raised, #ffffff)'
+                }}
+              >
+                <span>Would you like to try Full Version? →</span>
+              </motion.button>
+            </div>
           </form>
         </motion.div>
 
@@ -551,7 +637,7 @@ export default function BillingScreen() {
               fontWeight: 800,
               color: 'var(--text-main, #1e293b)',
             }}>
-              Personal Insight Report
+              {isStreamlined ? 'Complete Insight Report' : 'Personal Insight Report'}
             </h2>
           </div>
 
@@ -559,13 +645,19 @@ export default function BillingScreen() {
 
           {/* Included Features List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '11px' }}>
-            {[
+            {(isStreamlined ? [
+              'Full 11-Section Insight Report & Petals Diagram',
+              'Link Graph & Root Driver Leverage Analysis',
+              'Single focused habit architecture with if-then cues',
+              'Interactive Web View + Downloadable PDF',
+              'Get your complete report dispatched directly to your email',
+            ] : [
               'Full 9-domain psychological & biometric synthesis',
               'Personalized leverage point & anchor habit practice',
               'Cross-domain tension spillover analysis',
               'Full measure citations and peer-reviewed scientific studies',
               'Delivered to your email within 5–10 minutes after verification',
-            ].map((item, idx) => (
+            ]).map((item, idx) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
                 <span style={{
                   color: 'var(--dawn, #00ae9d)',

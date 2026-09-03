@@ -43,11 +43,35 @@ RAZORPAY_KEY_SECRET = (
 RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET", "").strip()
 
 # Authoritative Backend Pricing (in paise)
-# 74900 paise = ₹749.00
+STREAMLINED_REPORT_PRICE_PAISE = int(os.getenv("STREAMLINED_REPORT_PRICE_PAISE", "34900"))
 PERSONAL_REPORT_PRICE_PAISE = int(os.getenv("PERSONAL_REPORT_PRICE_PAISE", "74900"))
 TRANSFORMATION_BUNDLE_PRICE_PAISE = int(os.getenv("TRANSFORMATION_BUNDLE_PRICE_PAISE", "149900"))
 
 PLAN_CATALOG: Dict[str, Dict[str, Any]] = {
+    "streamlined_report": {
+        "id": "streamlined_report",
+        "name": "Lewis Insight Report",
+        "amount_paise": STREAMLINED_REPORT_PRICE_PAISE,
+        "amount_inr": STREAMLINED_REPORT_PRICE_PAISE // 100,
+        "currency": "INR",
+        "description": "Complete 11-Section Lewis Insight Report & Action Architecture",
+    },
+    "insight_report_349": {
+        "id": "streamlined_report",
+        "name": "Lewis Insight Report",
+        "amount_paise": STREAMLINED_REPORT_PRICE_PAISE,
+        "amount_inr": STREAMLINED_REPORT_PRICE_PAISE // 100,
+        "currency": "INR",
+        "description": "Complete 11-Section Lewis Insight Report & Action Architecture",
+    },
+    "reflection_report": {
+        "id": "streamlined_report",
+        "name": "Lewis Insight Report",
+        "amount_paise": STREAMLINED_REPORT_PRICE_PAISE,
+        "amount_inr": STREAMLINED_REPORT_PRICE_PAISE // 100,
+        "currency": "INR",
+        "description": "Complete 11-Section Lewis Insight Report & Action Architecture",
+    },
     "personal_report": {
         "id": "personal_report",
         "name": "Personal Insight Report",
@@ -269,8 +293,8 @@ def calculate_plan_price(
     coupon_code: Optional[str] = None
 ) -> Dict[str, Any]:
     """
-    Calculate price in target currency dynamically converted from base INR price (₹749),
-    with dynamic database-backed coupon code discounting.
+    Calculate price in target currency dynamically converted from the given
+    plan's base INR price, with dynamic database-backed coupon discounting.
     """
     curr = (target_currency or "INR").strip().upper()
     if curr not in DEFAULT_INR_EXCHANGE_RATES:
@@ -280,7 +304,14 @@ def calculate_plan_price(
     rate = rates.get(curr, DEFAULT_INR_EXCHANGE_RATES[curr]["rate"])
     meta = DEFAULT_INR_EXCHANGE_RATES[curr]
 
-    base_inr_full = PERSONAL_REPORT_PRICE_PAISE / 100.0  # 749.0
+    # Root cause of "customer sees ₹349, gets charged ₹749": this ignored
+    # plan_key entirely and always priced against PERSONAL_REPORT_PRICE_PAISE
+    # (₹749) — every non-personal_report plan (streamlined_report, bundle)
+    # was silently charged the personal_report price regardless of what the
+    # UI displayed.
+    normalized_plan = (plan_key or "personal_report").strip().lower()
+    plan_info = PLAN_CATALOG.get(normalized_plan) or PLAN_CATALOG["personal_report"]
+    base_inr_full = plan_info["amount_paise"] / 100.0
     applied_coupon_info = None
 
     if coupon_code:

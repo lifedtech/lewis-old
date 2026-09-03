@@ -1,18 +1,20 @@
 import React from 'react'
-import { SCREEN_ORDER, getStageInfo } from '../../shared/constants/screenOrder.js'
+import { SCREEN_ORDER, STREAMLINED_SCREEN_ORDER, getStageInfo } from '../../shared/constants/screenOrder.js'
 
 export default function DesktopProgress({ currentScreen }) {
-  const currentIndex = SCREEN_ORDER.indexOf(currentScreen)
+  const isStreamlined = currentScreen && currentScreen.startsWith('sl_')
+  const order = isStreamlined ? STREAMLINED_SCREEN_ORDER : SCREEN_ORDER
+  const currentIndex = order.indexOf(currentScreen)
   if (currentIndex <= 0) return null
 
   const stageInfo = getStageInfo(currentScreen)
-  const percent = ((currentIndex / (SCREEN_ORDER.length - 1)) * 100).toFixed(1)
+  const percent = ((currentIndex / (order.length - 1)) * 100).toFixed(1)
 
   return (
     <nav className="stage-track-v2" style={{ width: '100%', marginBottom: '16px', userSelect: 'none' }} aria-label="Journey progress">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', fontSize: '13px', fontFamily: "'Nunito', sans-serif" }}>
         <span style={{ color: 'var(--dawn, #00ae9d)', fontWeight: 700, letterSpacing: '0.04em', fontSize: '13px' }}>
-          Stage {stageInfo.num} · {stageInfo.name}
+          {isStreamlined ? `Act ${stageInfo.num} · ${stageInfo.name}` : `Stage ${stageInfo.num} · ${stageInfo.name}`}
         </span>
         <span style={{ color: 'var(--text-sub, #85918e)', fontWeight: 600, fontSize: '13.5px', fontFamily: "'Nunito', sans-serif" }}>
           {Math.round(percent)}%
