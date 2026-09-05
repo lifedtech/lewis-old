@@ -134,8 +134,8 @@ export default function ReportReviewScreen() {
       minHeight: '100vh',
       width: '100%',
       maxWidth: '100%',
-      background: '#f8faf9',
-      color: INK,
+      background: theme === 'dark' ? 'var(--bg-page, #0C1514)' : 'radial-gradient(ellipse at 50% 0%, #ebf7f4 0%, #f4faf8 45%, #ffffff 100%)',
+      color: 'var(--text-main, #1e293b)',
       fontFamily: NUNITO,
       display: 'flex',
       flexDirection: 'column',
@@ -199,10 +199,10 @@ export default function ReportReviewScreen() {
       {/* Main Content Area */}
       <main style={{
         flex: 1,
-        maxWidth: '680px',
+        maxWidth: '1120px',
         width: '100%',
         margin: '0 auto',
-        padding: 'clamp(16px, 3vh, 36px) clamp(16px, 3vw, 24px)',
+        padding: 'clamp(8px, 1.8vh, 24px) clamp(16px, 2.5vw, 32px)',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
@@ -215,11 +215,11 @@ export default function ReportReviewScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
           style={{
-            background: 'var(--panel, #ffffff)',
+            background: 'var(--raised, var(--panel, #ffffff))',
             borderRadius: '24px',
-            border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.22))',
+            border: '1.5px solid var(--border-color, rgba(0, 174, 157, 0.22))',
             boxShadow: 'var(--shadow-soft, 0 16px 40px rgba(0, 174, 157, 0.08))',
-            padding: 'clamp(24px, 4vw, 40px)',
+            padding: 'clamp(20px, 2.8vh, 32px) clamp(20px, 3vw, 36px)',
             boxSizing: 'border-box',
             width: '100%',
           }}
@@ -248,10 +248,10 @@ export default function ReportReviewScreen() {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </motion.div>
-              <h1 style={{ margin: '0 0 10px 0', fontSize: '24px', fontWeight: 800, color: INK }}>
+              <h1 style={{ margin: '0 0 10px 0', fontSize: '24px', fontWeight: 800, color: 'var(--text-main, #1e293b)' }}>
                 Thank You for Your Feedback!
               </h1>
-              <p style={{ margin: '0 0 24px 0', fontSize: '14.5px', color: '#64748b', lineHeight: 1.55 }}>
+              <p style={{ margin: '0 0 24px 0', fontSize: '14.5px', color: 'var(--text-sub, #64748b)', lineHeight: 1.55 }}>
                 Your review has been recorded. Your observations help us continually hone and elevate the personal insight report for everyone.
               </p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -282,9 +282,9 @@ export default function ReportReviewScreen() {
                     fontSize: '14px',
                     fontWeight: 700,
                     borderRadius: '999px',
-                    background: '#ffffff',
-                    border: '1.5px solid #e2e8f0',
-                    color: '#475569',
+                    background: 'var(--raised, #ffffff)',
+                    border: '1.5px solid var(--border-color, #e2e8f0)',
+                    color: 'var(--text-main, #475569)',
                     cursor: 'pointer',
                     fontFamily: NUNITO,
                   }}
@@ -294,297 +294,341 @@ export default function ReportReviewScreen() {
               </div>
             </div>
           ) : (
-            /* Review Form */
+            /* Review Form — Balanced Fit-To-Screen Grid */
             <form onSubmit={handleSubmit}>
-              {/* Header Title Lockup */}
-              <div style={{ marginBottom: '22px' }}>
-                <span style={{
-                  fontSize: '11.5px',
-                  fontWeight: 800,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: TEAL,
-                  display: 'block',
-                  marginBottom: '4px',
-                }}>
-                  Insight Report Feedback
-                </span>
-                <h1 style={{ margin: '0 0 6px 0', fontSize: 'clamp(22px, 2.4vw, 27px)', fontWeight: 800, color: INK, lineHeight: 1.25 }}>
-                  Review Your Lewis Insight Report
-                </h1>
-                <p style={{ margin: 0, fontSize: '13.5px', color: '#64748b', lineHeight: 1.5 }}>
-                  Take a quick moment to share how reading your personalised report felt.
-                </p>
-              </div>
-
               {errorMessage && (
                 <div style={{
                   background: '#fef2f2',
                   border: '1.2px solid #f87171',
                   borderRadius: '10px',
-                  padding: '10px 14px',
+                  padding: '8px 14px',
                   color: '#991b1b',
-                  fontSize: '13px',
+                  fontSize: '12.5px',
                   fontWeight: 600,
-                  marginBottom: '16px',
+                  marginBottom: '12px',
                 }}>
                   {errorMessage}
                 </div>
               )}
 
-              {/* User Details Row */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '12px',
-                marginBottom: '18px',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: 'clamp(18px, 2.5vw, 32px)',
+                alignItems: 'stretch',
               }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your-email@domain.com"
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      borderRadius: '10px',
-                      border: '1.5px solid #e2e8f0',
-                      fontSize: '13.5px',
-                      fontFamily: NUNITO,
-                      color: INK,
-                      boxSizing: 'border-box',
-                      outline: 'none',
-                    }}
-                    onFocus={(e) => e.currentTarget.style.borderColor = TEAL}
-                    onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                    Your Name (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="First Name"
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      borderRadius: '10px',
-                      border: '1.5px solid #e2e8f0',
-                      fontSize: '13.5px',
-                      fontFamily: NUNITO,
-                      color: INK,
-                      boxSizing: 'border-box',
-                      outline: 'none',
-                    }}
-                    onFocus={(e) => e.currentTarget.style.borderColor = TEAL}
-                    onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
-                  />
-                </div>
-              </div>
+                {/* ── LEFT COLUMN: Core Ratings & Feedback ── */}
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '14px' }}>
+                  <div>
+                    {/* Header Title Lockup */}
+                    <div style={{ marginBottom: '14px' }}>
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        color: TEAL,
+                        display: 'block',
+                        marginBottom: '3px',
+                      }}>
+                        Insight Report Feedback
+                      </span>
+                      <h1 style={{ margin: '0 0 4px 0', fontSize: 'clamp(20px, 2vw, 24px)', fontWeight: 800, color: 'var(--text-main, #1e293b)', lineHeight: 1.2 }}>
+                        Review Your Lewis Insight Report
+                      </h1>
+                      <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-sub, #64748b)', lineHeight: 1.4 }}>
+                        Take a quick moment to share how reading your personalised report felt.
+                      </p>
+                    </div>
 
-              {/* Q1: Star Rating */}
-              <div style={{
-                background: '#f8faf9',
-                border: '1.2px solid rgba(0, 174, 157, 0.18)',
-                borderRadius: '16px',
-                padding: '16px 20px',
-                marginBottom: '20px',
-                textAlign: 'center',
-              }}>
-                <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-                  1. Overall Insight Report Experience
-                </div>
-                <div style={{ display: 'inline-flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
-                  {[1, 2, 3, 4, 5].map((star) => {
-                    const active = (hoverRating || rating) >= star
-                    return (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setRating(star)}
-                        onMouseEnter={() => setHoverRating(star)}
-                        onMouseLeave={() => setHoverRating(0)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: '4px',
-                          cursor: 'pointer',
-                          fontSize: '34px',
-                          lineHeight: 1,
-                          color: active ? TEAL : '#cbd5e1',
-                          transition: 'transform 0.15s ease, color 0.15s ease',
-                          transform: (hoverRating === star || rating === star) ? 'scale(1.18)' : 'scale(1)',
-                        }}
-                        aria-label={`${star} Star`}
-                      >
-                        ★
-                      </button>
-                    )
-                  })}
-                </div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: TEAL, marginTop: '6px', height: '18px' }}>
-                  {RATING_LABELS[hoverRating || rating]}
-                </div>
-              </div>
+                    {/* User Details Row */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '10px',
+                      marginBottom: '12px',
+                    }}>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '3px' }}>
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="your-email@domain.com"
+                          style={{
+                            width: '100%',
+                            padding: '8px 11px',
+                            borderRadius: '10px',
+                            border: '1.5px solid var(--border-color, #e2e8f0)',
+                            background: 'var(--panel, rgba(255,255,255,0.7))',
+                            fontSize: '13px',
+                            fontFamily: NUNITO,
+                            color: 'var(--text-main, #1e293b)',
+                            boxSizing: 'border-box',
+                            outline: 'none',
+                          }}
+                          onFocus={(e) => e.currentTarget.style.borderColor = TEAL}
+                          onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border-color, #e2e8f0)'}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '3px' }}>
+                          Your Name <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="First Name"
+                          style={{
+                            width: '100%',
+                            padding: '8px 11px',
+                            borderRadius: '10px',
+                            border: '1.5px solid var(--border-color, #e2e8f0)',
+                            background: 'var(--panel, rgba(255,255,255,0.7))',
+                            fontSize: '13px',
+                            fontFamily: NUNITO,
+                            color: 'var(--text-main, #1e293b)',
+                            boxSizing: 'border-box',
+                            outline: 'none',
+                          }}
+                          onFocus={(e) => e.currentTarget.style.borderColor = TEAL}
+                          onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border-color, #e2e8f0)'}
+                        />
+                      </div>
+                    </div>
 
-              {/* Q2: Resonance */}
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '13.5px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-                  2. How accurately did the report capture your current season & patterns?
-                </label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {RESONANCE_OPTIONS.map((opt) => {
-                    const selected = resonanceChoice === opt
-                    return (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setResonanceChoice(opt)}
+                    {/* Q1: Star Rating Card */}
+                    <div style={{
+                      background: 'var(--panel, #f8faf9)',
+                      border: '1.2px solid var(--border-color, rgba(0, 174, 157, 0.18))',
+                      borderRadius: '14px',
+                      padding: '10px 16px',
+                      marginBottom: '12px',
+                      textAlign: 'center',
+                    }}>
+                      <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '4px' }}>
+                        1. Overall Insight Report Experience
+                      </div>
+                      <div style={{ display: 'inline-flex', gap: '6px', alignItems: 'center', justifyContent: 'center' }}>
+                        {[1, 2, 3, 4, 5].map((star) => {
+                          const active = (hoverRating || rating) >= star
+                          return (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setRating(star)}
+                              onMouseEnter={() => setHoverRating(star)}
+                              onMouseLeave={() => setHoverRating(0)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: '2px',
+                                cursor: 'pointer',
+                                fontSize: '30px',
+                                lineHeight: 1,
+                                color: active ? TEAL : '#cbd5e1',
+                                transition: 'transform 0.15s ease, color 0.15s ease',
+                                transform: (hoverRating === star || rating === star) ? 'scale(1.15)' : 'scale(1)',
+                              }}
+                              aria-label={`${star} Star`}
+                            >
+                              ★
+                            </button>
+                          )
+                        })}
+                      </div>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: TEAL, marginTop: '3px', minHeight: '16px' }}>
+                        {RATING_LABELS[hoverRating || rating]}
+                      </div>
+                    </div>
+
+                    {/* Q5: Feedback text */}
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '4px' }}>
+                        5. What was most valuable, or what could we improve? <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={comments}
+                        onChange={(e) => setComments(e.target.value)}
+                        placeholder="Share any thoughts or observations on your report..."
                         style={{
-                          padding: '8px 14px',
+                          width: '100%',
+                          padding: '8px 11px',
+                          borderRadius: '10px',
+                          border: '1.5px solid var(--border-color, #e2e8f0)',
+                          background: 'var(--panel, rgba(255,255,255,0.7))',
                           fontSize: '12.5px',
-                          fontWeight: 700,
-                          borderRadius: '999px',
-                          border: selected ? `1.5px solid ${TEAL}` : '1.5px solid #e2e8f0',
-                          background: selected ? 'rgba(0, 174, 157, 0.1)' : '#ffffff',
-                          color: selected ? TEAL : '#475569',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s ease',
+                          fontFamily: NUNITO,
+                          color: 'var(--text-main, #1e293b)',
+                          boxSizing: 'border-box',
+                          outline: 'none',
+                          resize: 'none',
                         }}
-                      >
-                        {selected && '✓ '}
-                        {opt}
-                      </button>
-                    )
-                  })}
+                        onFocus={(e) => e.currentTarget.style.borderColor = TEAL}
+                        onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border-color, #e2e8f0)'}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div style={{ marginTop: '8px' }}>
+                    <motion.button
+                      type="submit"
+                      disabled={status === 'submitting'}
+                      whileHover={{ scale: 1.015 }}
+                      whileTap={{ scale: 0.985 }}
+                      style={{
+                        width: '100%',
+                        padding: '12px 20px',
+                        fontSize: '14.5px',
+                        fontWeight: 800,
+                        borderRadius: '999px',
+                        background: '#00ae9d',
+                        color: '#ffffff',
+                        border: 'none',
+                        cursor: status === 'submitting' ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
+                        fontFamily: NUNITO,
+                        opacity: status === 'submitting' ? 0.7 : 1,
+                      }}
+                    >
+                      {status === 'submitting' ? 'Saving Your Review...' : 'Submit Report Review ★'}
+                    </motion.button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Q3: Clarity & Actionability */}
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '13.5px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-                  3. How clear and actionable were the recommendations & anchors?
-                </label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {CLARITY_OPTIONS.map((opt) => {
-                    const selected = clarityChoice === opt
-                    return (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setClarityChoice(opt)}
-                        style={{
-                          padding: '8px 14px',
-                          fontSize: '12.5px',
-                          fontWeight: 700,
-                          borderRadius: '999px',
-                          border: selected ? `1.5px solid ${TEAL}` : '1.5px solid #e2e8f0',
-                          background: selected ? 'rgba(0, 174, 157, 0.1)' : '#ffffff',
-                          color: selected ? TEAL : '#475569',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s ease',
-                        }}
-                      >
-                        {selected && '✓ '}
-                        {opt}
-                      </button>
-                    )
-                  })}
+                {/* ── RIGHT COLUMN: Dimensional Evaluation Pills ── */}
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  background: 'var(--panel, rgba(0, 174, 157, 0.03))',
+                  border: '1.2px solid var(--border-color, rgba(0, 174, 157, 0.14))',
+                  borderRadius: '18px',
+                  padding: 'clamp(14px, 2vh, 18px) clamp(14px, 2vw, 18px)',
+                  boxSizing: 'border-box',
+                  gap: '12px',
+                }}>
+                  {/* Q2: Resonance */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '6px' }}>
+                      2. How accurately did the report capture your patterns?
+                    </label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {RESONANCE_OPTIONS.map((opt) => {
+                        const selected = resonanceChoice === opt
+                        return (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => setResonanceChoice(opt)}
+                            style={{
+                              padding: '6px 11px',
+                              fontSize: '11.5px',
+                              fontWeight: 700,
+                              borderRadius: '999px',
+                              border: selected ? `1.5px solid ${TEAL}` : '1.5px solid var(--border-color, #e2e8f0)',
+                              background: selected ? 'rgba(0, 174, 157, 0.12)' : 'var(--raised, #ffffff)',
+                              color: selected ? TEAL : 'var(--text-main, #475569)',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {selected && '✓ '}
+                            {opt}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Q3: Clarity & Actionability */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '6px' }}>
+                      3. How clear and actionable were recommendations & anchors?
+                    </label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {CLARITY_OPTIONS.map((opt) => {
+                        const selected = clarityChoice === opt
+                        return (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => setClarityChoice(opt)}
+                            style={{
+                              padding: '6px 11px',
+                              fontSize: '11.5px',
+                              fontWeight: 700,
+                              borderRadius: '999px',
+                              border: selected ? `1.5px solid ${TEAL}` : '1.5px solid var(--border-color, #e2e8f0)',
+                              background: selected ? 'rgba(0, 174, 157, 0.12)' : 'var(--raised, #ffffff)',
+                              color: selected ? TEAL : 'var(--text-main, #475569)',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {selected && '✓ '}
+                            {opt}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Q4: Relief & Clarity */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: 'var(--text-main, #334155)', marginBottom: '6px' }}>
+                      4. Did reading your report provide a sense of clarity or validation?
+                    </label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {IMPACT_OPTIONS.map((opt) => {
+                        const selected = impactChoice === opt
+                        return (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => setImpactChoice(opt)}
+                            style={{
+                              padding: '6px 11px',
+                              fontSize: '11.5px',
+                              fontWeight: 700,
+                              borderRadius: '999px',
+                              border: selected ? `1.5px solid ${TEAL}` : '1.5px solid var(--border-color, #e2e8f0)',
+                              background: selected ? 'rgba(0, 174, 157, 0.12)' : 'var(--raised, #ffffff)',
+                              color: selected ? TEAL : 'var(--text-main, #475569)',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {selected && '✓ '}
+                            {opt}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Trust Footer Note */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 10px',
+                    borderRadius: '10px',
+                    background: 'rgba(0, 174, 157, 0.06)',
+                    fontSize: '11px',
+                    color: 'var(--text-sub, #64748b)',
+                    lineHeight: 1.35,
+                  }}>
+                    <span style={{ color: TEAL, fontSize: '13px' }}>🔒</span>
+                    <span>Your observations directly inform our continuous psychometric scoring calibration.</span>
+                  </div>
                 </div>
-              </div>
-
-              {/* Q4: Relief & Clarity */}
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '13.5px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-                  4. Did reading your report provide a sense of clarity or validation?
-                </label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {IMPACT_OPTIONS.map((opt) => {
-                    const selected = impactChoice === opt
-                    return (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setImpactChoice(opt)}
-                        style={{
-                          padding: '8px 14px',
-                          fontSize: '12.5px',
-                          fontWeight: 700,
-                          borderRadius: '999px',
-                          border: selected ? `1.5px solid ${TEAL}` : '1.5px solid #e2e8f0',
-                          background: selected ? 'rgba(0, 174, 157, 0.1)' : '#ffffff',
-                          color: selected ? TEAL : '#475569',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s ease',
-                        }}
-                      >
-                        {selected && '✓ '}
-                        {opt}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Q5: Feedback text */}
-              <div style={{ marginBottom: '22px' }}>
-                <label style={{ display: 'block', fontSize: '13.5px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                  5. What was the most valuable part, or what could we improve? <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
-                </label>
-                <textarea
-                  rows={3}
-                  value={comments}
-                  onChange={(e) => setComments(e.target.value)}
-                  placeholder="Share any thoughts, observations, or feedback on your report..."
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '12px',
-                    border: '1.5px solid #e2e8f0',
-                    fontSize: '13.5px',
-                    fontFamily: NUNITO,
-                    color: INK,
-                    boxSizing: 'border-box',
-                    outline: 'none',
-                    resize: 'vertical',
-                  }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = TEAL}
-                  onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
-                />
-              </div>
-
-              {/* Action Button */}
-              <div>
-                <motion.button
-                  type="submit"
-                  disabled={status === 'submitting'}
-                  whileHover={{ scale: 1.015 }}
-                  whileTap={{ scale: 0.985 }}
-                  style={{
-                    width: '100%',
-                    padding: '14px 24px',
-                    fontSize: '15px',
-                    fontWeight: 800,
-                    borderRadius: '999px',
-                    background: '#00ae9d',
-                    color: '#ffffff',
-                    border: 'none',
-                    cursor: status === 'submitting' ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
-                    fontFamily: NUNITO,
-                    opacity: status === 'submitting' ? 0.7 : 1,
-                  }}
-                >
-                  {status === 'submitting' ? 'Saving Your Review...' : 'Submit Report Review ★'}
-                </motion.button>
               </div>
             </form>
           )}

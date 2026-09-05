@@ -29,12 +29,13 @@ export default function StreamlinedRhythmScreen() {
   const [step, setStep] = useState(0)
   const [arcMap, setArcMap] = useState(
     energyArcPattern || [
-      { k: 'Morning', v: 2 },
-      { k: 'Afternoon', v: 2 },
-      { k: 'Evening', v: 2 },
-      { k: 'Night', v: 1 }
+      { k: 'Morning', v: null },
+      { k: 'Afternoon', v: null },
+      { k: 'Evening', v: null },
+      { k: 'Night', v: null }
     ]
   )
+  const isArcComplete = arcMap.every((p) => p.v != null)
 
   const handlePeriodChange = (period, val) => {
     const updated = arcMap.map((p) => (p.k === period ? { ...p, v: val } : p))
@@ -146,7 +147,7 @@ export default function StreamlinedRhythmScreen() {
               marginBottom: '32px',
             }}>
               {PERIODS.map((period) => {
-                const currentVal = arcMap.find((p) => p.k === period)?.v || 2
+                const currentVal = arcMap.find((p) => p.k === period)?.v ?? null
                 return (
                   <div
                     key={period}
@@ -206,7 +207,9 @@ export default function StreamlinedRhythmScreen() {
             {/* Continue Button */}
             <button
               type="button"
+              disabled={!isArcComplete}
               onClick={() => {
+                if (!isArcComplete) return
                 setProfileField('energyArcPattern', arcMap)
                 setStep(1)
               }}
@@ -218,14 +221,18 @@ export default function StreamlinedRhythmScreen() {
                 fontWeight: 700,
                 letterSpacing: '0.02em',
                 border: 'none',
-                background: 'var(--dawn, #00ae9d)',
-                color: '#ffffff',
-                cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
+                background: isArcComplete ? 'var(--dawn, #00ae9d)' : 'var(--btn-disabled-bg, #e5e7eb)',
+                color: isArcComplete ? '#ffffff' : 'var(--btn-disabled-text, #9ca3af)',
+                cursor: isArcComplete ? 'pointer' : 'not-allowed',
+                boxShadow: isArcComplete ? '0 4px 14px rgba(0, 174, 157, 0.25)' : 'none',
                 transition: 'all 0.2s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+              onMouseEnter={(e) => {
+                if (isArcComplete) e.currentTarget.style.transform = 'translateY(-1px)'
+              }}
+              onMouseLeave={(e) => {
+                if (isArcComplete) e.currentTarget.style.transform = 'translateY(0)'
+              }}
             >
               Continue
             </button>

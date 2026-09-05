@@ -353,7 +353,7 @@ export default function Stage5_1LandscapeScreen() {
             <button
               className="btn-primary"
               style={{ padding: '12px 40px', fontSize: '15px' }}
-              onClick={() => setScreen('stage5_0Email')}
+              onClick={() => setScreen('stage5_2Pss10')}
             >
               Continue
             </button>

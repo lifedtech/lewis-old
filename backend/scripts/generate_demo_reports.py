@@ -64,8 +64,8 @@ def build_streamlined_demo() -> bytes:
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
 
-    full_pdf = build_insight_report_pdf()  # sample fixture -> the real 25-page pipeline
-    full_path = os.path.join(OUT_DIR, "LEWIS-Insight-Report-FULL-25page-DEMO.pdf")
+    full_pdf = build_insight_report_pdf()  # sample fixture -> the real 24-page pipeline
+    full_path = os.path.join(OUT_DIR, "LEWIS-Insight-Report-FULL-24page-DEMO.pdf")
     with open(full_path, "wb") as f:
         f.write(full_pdf)
     print(f"wrote {len(full_pdf)} bytes -> {full_path}")

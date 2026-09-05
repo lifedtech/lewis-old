@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../../store/useLewisStore.js'
+import { useDeviceViewport } from '../../shared/hooks/useDeviceViewport.js'
 
 const ROLE_TILES = [
   {
@@ -122,7 +123,9 @@ const ROLE_TILES = [
 ]
 
 export default function StreamlinedIdentityScreen() {
-  const { identityRoles, setProfileField, setScreen } = useLewisStore()
+  const { identityRoles, setProfileField, setScreen, theme } = useLewisStore()
+  const { isMobile } = useDeviceViewport()
+  const isDark = theme === 'dark'
 
   const handleSelect = (roleId) => {
     setProfileField('identityRoles', [roleId])
@@ -146,14 +149,15 @@ export default function StreamlinedIdentityScreen() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: isMobile ? 'flex-start' : 'center',
         width: '100%',
         maxWidth: '720px',
         margin: '0 auto',
-        minHeight: '70vh',
-        padding: '0 20px',
+        minHeight: isMobile ? 'auto' : '70vh',
+        padding: isMobile ? '8px 12px 220px 12px' : '0 20px',
         boxSizing: 'border-box',
         textAlign: 'center',
+        WebkitOverflowScrolling: 'touch',
       }}
     >
       <p style={{
@@ -196,6 +200,7 @@ export default function StreamlinedIdentityScreen() {
         gap: '12px',
         width: '100%',
         maxWidth: '680px',
+        marginBottom: isMobile ? '32px' : '0',
       }}>
         {ROLE_TILES.map((tile, index) => {
           const isSelected = (identityRoles || []).includes(tile.id)
@@ -213,7 +218,7 @@ export default function StreamlinedIdentityScreen() {
                 textAlign: 'left',
                 padding: '14px 18px',
                 borderRadius: '16px',
-                ...(isDangling ? { gridColumn: '1 / -1', maxWidth: '334px', margin: '0 auto' } : {}),
+                ...(isDangling && !isMobile ? { gridColumn: '1 / -1', maxWidth: '334px', margin: '0 auto' } : {}),
                 fontFamily: "'Nunito', sans-serif",
                 border: isSelected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--card-border, #e5e7eb)',
                 background: isSelected ? 'rgba(0, 174, 157, 0.08)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
@@ -221,6 +226,10 @@ export default function StreamlinedIdentityScreen() {
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 boxShadow: 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
+                width: '100%',
+                boxSizing: 'border-box',
               }}
               onMouseEnter={(e) => {
                 if (!isSelected) e.currentTarget.style.borderColor = 'var(--dawn, #00ae9d)'
@@ -250,30 +259,97 @@ export default function StreamlinedIdentityScreen() {
         })}
       </div>
 
-      <div style={{ marginTop: '36px' }}>
-        <button
-          type="button"
-          onClick={handleNext}
+      {/* Explicit mobile bottom scroll spacer so flexbox parent cannot collapse scroll boundary */}
+      {isMobile && (
+        <div
           style={{
-            padding: '12px 38px',
-            borderRadius: '100px',
-            fontSize: '14.5px',
-            fontFamily: "'Nunito', sans-serif",
-            fontWeight: 700,
-            letterSpacing: '0.02em',
-            border: 'none',
-            background: 'var(--dawn, #00ae9d)',
-            color: '#ffffff',
-            cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
-            transition: 'all 0.2s ease',
+            height: '140px',
+            width: '100%',
+            flexShrink: 0,
+            pointerEvents: 'none',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Continue Button: Docked bottom bar on mobile with background gradient blur and pointer event passthrough, untouched inline layout on desktop */}
+      {isMobile ? (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: '16px 20px calc(16px + env(safe-area-inset-bottom, 0px)) 68px',
+            background: isDark
+              ? 'linear-gradient(to top, rgba(12, 21, 20, 0.98) 70%, rgba(12, 21, 20, 0) 100%)'
+              : 'linear-gradient(to top, rgba(246, 251, 249, 0.98) 70%, rgba(246, 251, 249, 0) 100%)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9980,
+            boxSizing: 'border-box',
+            pointerEvents: 'none',
+          }}
         >
-          Continue
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={handleNext}
+            style={{
+              width: '100%',
+              maxWidth: '340px',
+              minHeight: '44px',
+              padding: '11px 24px',
+              borderRadius: '100px',
+              fontSize: '15px',
+              fontFamily: "'Nunito', sans-serif",
+              fontWeight: 700,
+              letterSpacing: '0.02em',
+              border: 'none',
+              background: 'var(--dawn, #00ae9d)',
+              color: '#ffffff',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(0, 174, 157, 0.35)',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'auto',
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            Continue
+          </button>
+        </div>
+      ) : (
+        <div style={{ marginTop: '36px' }}>
+          <button
+            type="button"
+            onClick={handleNext}
+            style={{
+              padding: '12px 38px',
+              borderRadius: '100px',
+              fontSize: '14.5px',
+              fontFamily: "'Nunito', sans-serif",
+              fontWeight: 700,
+              letterSpacing: '0.02em',
+              border: 'none',
+              background: 'var(--dawn, #00ae9d)',
+              color: '#ffffff',
+              cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
+            Continue
+          </button>
+        </div>
+      )}
     </motion.div>
   )
 }

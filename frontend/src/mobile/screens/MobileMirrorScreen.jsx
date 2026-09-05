@@ -44,6 +44,11 @@ export default function MobileMirrorScreen() {
     if (isDownloading || isUnlocking) return
 
     if (!isReportUnlocked) {
+      useLewisStore.setState({
+        flowMode: 'full',
+        selectedPlan: 'personal_report',
+        planPrice: 749
+      })
       setScreen('billing')
       return
     }
@@ -344,7 +349,7 @@ export default function MobileMirrorScreen() {
                 <span>Insight Report Delivered</span>
               </div>
               <p style={{ margin: '2px 0 12px 0', fontSize: '12.5px', color: '#52605d', lineHeight: 1.45, textAlign: 'center' }}>
-                Your complete 25-page Insight Report has been compiled and emailed directly with the PDF attached.
+                Your complete 24-page Insight Report has been compiled and emailed directly with the PDF attached.
               </p>
               <button
                 onClick={() => setScreen('reportReview')}

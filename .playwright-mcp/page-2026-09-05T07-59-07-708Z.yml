@@ -1,0 +1,33 @@
+- generic [ref=e2]:
+  - generic [ref=e82]:
+    - banner [ref=e83]:
+      - generic [ref=e84]:
+        - button "Go back to previous question" [ref=e85] [cursor=pointer]
+        - button "Go to Home" [ref=e88] [cursor=pointer]:
+          - generic [ref=e89]:
+            - img "Lewis" [ref=e90]
+            - generic [ref=e91]: Lewis
+      - button "Switch to Dark mode" [ref=e93] [cursor=pointer]:
+        - generic [ref=e97]: Dark
+    - navigation "Journey progress" [ref=e98]:
+      - generic [ref=e99]:
+        - generic [ref=e100]: Stage 1 · Life Context
+        - generic [ref=e101]: 6%
+    - main [ref=e106]:
+      - generic [ref=e109]:
+        - generic [ref=e111]:
+          - paragraph [ref=e112]: CHOOSE ONE
+          - heading "Life Stability Spectrum" [level=1] [ref=e113]
+          - paragraph [ref=e114]: Where does your life feel right now? Slide to indicate your baseline stability.
+        - generic [ref=e115]:
+          - generic [ref=e116]: In between
+          - generic [ref=e118]:
+            - generic [ref=e119]: 50%
+            - slider [ref=e123] [cursor=pointer]: "50"
+            - generic [ref=e124]:
+              - generic [ref=e125]: TURBULENT
+              - generic [ref=e126]: BALANCED
+              - generic [ref=e127]: STEADY
+        - button "Continue" [ref=e129] [cursor=pointer]
+  - button "Contact Support" [ref=e77] [cursor=pointer]:
+    - generic [ref=e131]: Support

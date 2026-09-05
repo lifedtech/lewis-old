@@ -52,7 +52,7 @@ def test_full_report_pdf_is_the_full_report_not_the_streamlined_one():
     assert len(full_reader.pages) == 1, "full report should be a single continuous page, not paginated"
     full_height_pt = float(full_reader.pages[0].mediabox.height)
     assert full_height_pt > 15000, (
-        f"full report page height ({full_height_pt}pt) looks too short for a real ~25-section "
+        f"full report page height ({full_height_pt}pt) looks too short for a real ~24-section "
         "report — likely truncated or rendered from the wrong (short) source"
     )
 
@@ -64,7 +64,7 @@ def test_full_report_pdf_is_the_full_report_not_the_streamlined_one():
         f"streamlined report page height ({streamlined_height_pt}pt) looks too short for a real "
         "12-section report — likely truncated or rendered from the wrong (short) source"
     )
-    # The full report has roughly double the sections (25 vs 12), so its
+    # The full report has roughly double the sections (24 vs 12), so its
     # single page should be substantially taller than the streamlined one.
     assert full_height_pt > streamlined_height_pt, "full report should be taller than the streamlined report"
 
@@ -112,7 +112,7 @@ def test_plan_dispatch_picks_the_paid_for_report():
     """build_report_pdf_for_plan is the single place mailer.py and the
     download/Lewis-OS endpoints decide which renderer runs — it must route
     'streamlined_report' orders to the 12-page report and everything else
-    to the 25-page one, and it must never substitute generic content."""
+    to the 24-page one, and it must never substitute generic content."""
     sample_rro = {
         "meta": {"name": "Test User", "rro_id": "T1", "date_display": "1 January 2026"},
         "dimensions": [{"code": "who5", "score": 70}],
@@ -139,10 +139,67 @@ def test_plan_dispatch_picks_the_paid_for_report():
         pass
 
 
+def test_plan_dispatch_routes_by_real_shape_when_plan_id_is_wrong():
+    """The bug: an order tagged plan_id='personal_report' whose report_json
+    was actually a streamlined RRO (client-side state drift, or a coupon/
+    admin order that bypassed the normal checkout form) got refused outright
+    — the customer had a complete, real report and still got nothing. The
+    dispatcher must route by what the data actually is, not just the label."""
+    sample_rro = {
+        "meta": {"name": "Test User", "rro_id": "T4", "date_display": "1 January 2026"},
+        "dimensions": [{"code": "who5", "score": 70}],
+    }
+    # plan_id says full report, but the data is unmistakably a streamlined RRO.
+    pdf_bytes = build_report_pdf_for_plan("personal_report", report_data=sample_rro, report_uuid="T4")
+    assert pdf_bytes.startswith(b"%PDF-")
+
+    from pdf_generator import detect_report_shape
+    assert detect_report_shape(sample_rro) == "streamlined"
+    assert detect_report_shape({"insight_report": {"pages": [{"x": 1}]}}) == "full"
+    assert detect_report_shape({"pages": [{"x": 1}]}) == "full"
+    assert detect_report_shape({"x": 1}) is None
+    assert detect_report_shape(None) is None
+
+
+def test_concurrent_renders_share_one_worker_without_crosstalk():
+    """pdf_generator now renders every PDF on one persistent Playwright
+    worker thread/browser (see _pdf_worker_loop) instead of launching a
+    fresh Chromium per call — the actual fix for "25-page report generation
+    is slow". Fire renders from several threads at once and assert each
+    gets back its own correct, valid PDF: the queue-based dispatch must not
+    hand one caller's job or result to another."""
+    import threading
+
+    results = {}
+    errors = []
+
+    def _render(i):
+        try:
+            pdf_bytes = build_streamlined_report_pdf(
+                rro={"meta": {"name": f"User {i}", "rro_id": f"C{i}"}, "dimensions": [{"code": "who5", "score": 70}]},
+                report_uuid=f"C{i}",
+            )
+            results[i] = pdf_bytes
+        except Exception as e:
+            errors.append((i, e))
+
+    threads = [threading.Thread(target=_render, args=(i,)) for i in range(4)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(timeout=30)
+
+    assert not errors, f"concurrent renders raised: {errors}"
+    assert len(results) == 4
+    for pdf_bytes in results.values():
+        assert pdf_bytes.startswith(b"%PDF-")
+
+
 if __name__ == "__main__":
     test_template_pdf_resolves_and_builds()
     test_full_report_pdf_is_the_full_report_not_the_streamlined_one()
     test_react_report_component_covers_every_block_type_the_data_builder_emits()
     test_strict_mode_refuses_to_substitute_a_generic_report()
     test_plan_dispatch_picks_the_paid_for_report()
+    test_plan_dispatch_routes_by_real_shape_when_plan_id_is_wrong()
     print("ok")

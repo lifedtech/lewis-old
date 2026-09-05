@@ -38,7 +38,6 @@ export const SCREEN_ORDER = [
   'stage3_6BodyAwareness',
   'stage4Maze',
   'stage5_1Landscape',
-  'stage5_0Email',
   'stage5_2Pss10',
   'stage5_2Ucla3',
   'stage5_2Gse',

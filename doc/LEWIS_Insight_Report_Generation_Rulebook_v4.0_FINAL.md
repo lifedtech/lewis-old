@@ -1,8 +1,10 @@
 # LEWIS Insight Report: Generation Rulebook
 
-**Version 4.0 · Final.** The authoritative contract for generating a complete LEWIS Insight Report, in the redesigned twenty-five page format, for any user who finishes the full journey.
+**Version 4.0 · Final, with the post-4.0 programs-page amendment below.** The authoritative contract for generating a complete LEWIS Insight Report, in the redesigned twenty-four page format, for any user who finishes the full journey.
 
-This version supersedes v3.2. The words are unchanged: v4.0 carries the exact v3.2 content, voice, safety rules, distinctiveness requirements and appendix binding. What changed is the container. The report is redesigned from sixteen dense pages into **twenty-five pages that breathe**, grouped into six parts behind a contents page, and rendered in a new visual system: a single Nunito typeface, a deep-teal and green palette, a consistent line-icon set, rounded cards, redrawn data graphics, and photographic program imagery. Every page-by-page spec below is renumbered to the twenty-five page structure, and **Part C is new**, carrying the full visual system so any user's report renders like the approved redesign. A report generated to this rulebook should be indistinguishable in look and structure from that redesign.
+This version supersedes v3.2. The words are unchanged: v4.0 carries the exact v3.2 content, voice, safety rules, distinctiveness requirements and appendix binding. What changed is the container. The report is redesigned from sixteen dense pages into **pages that breathe**, grouped into six parts behind a contents page, and rendered in a new visual system: a single Nunito typeface, a deep-teal and green palette, a consistent line-icon set, rounded cards, and redrawn data graphics. Every page-by-page spec below is renumbered to that structure, and **Part C is new**, carrying the full visual system so any user's report renders like the approved redesign. A report generated to this rulebook should be indistinguishable in look and structure from that redesign.
+
+**Amendment (post-4.0).** v4.0 originally shipped at twenty-five pages, with a dedicated programs page (21) making the persuasive case for guided support. That page has since been removed: the free anchor is the whole recommendation, and the report ends at **twenty-four pages**. Program research is no longer pitched anywhere in the body; where a program would have fit, its research is still cited in the closing appendix (§13.3, §15), gated by the same commerce cap as before. Every page number from 21 onward in this document reflects that removal — old pages 22 to 25 are now 21 to 24. Nothing else about the words, voice, safety rules, or visual system changed.
 
 ---
 
@@ -16,7 +18,7 @@ Three parts, two readers.
 
 **The golden rule.** The enriched object decides; the model narrates. Every band, connection, starting point, safety flag and suggestion is fixed before a word is written. The model's job is warmth, clarity and usefulness to one specific person. It never decides what is true about that person.
 
-**What changed across versions, and why.** The through line, from v3.0 onward, is one principle: the report belongs to the reader, not to the system that produced it. v3.2 added one commercial intent, to help the reader take the program step that fits them. v4.0 changes only the container: the same words, in a redesigned twenty-five page format that gives each idea room to land.
+**What changed across versions, and why.** The through line, from v3.0 onward, is one principle: the report belongs to the reader, not to the system that produced it. v3.2 added one commercial intent, to help the reader take the program step that fits them. v4.0 changed only the container: the same words, in a redesigned page format that gives each idea room to land. The post-4.0 amendment then removed the one page that carried that commercial intent directly, landing at a twenty-four page format.
 
 | Changed | From | To |
 |---|---|---|
@@ -27,7 +29,9 @@ Three parts, two readers.
 | Programs page (v3.2) | Optional and second, free-path-first, hedged with what-would-not-suit, host questions, a one-question test and an honest-word-about-fit box | A confident lead-to-programs page: the research-backed case for attending, two best-fit programs, a call to action. The caveat boxes are removed |
 | Voice (v3.2) | Unhurried | Tightened by about ten percent for pace, with identical conclusions and warmth |
 | Structure (v4.0) | Sixteen dense pages | Twenty-five pages that breathe, in six parts behind a contents page. Each crowded page is given room across two |
-| Visual system (v4.0) | Two typefaces, tight cards, one wheel graphic | One Nunito typeface, a deep-teal and green palette, a consistent line-icon set, rounded cards, redrawn data graphics, and photographic program imagery. Documented in Part C |
+| Visual system (v4.0) | Two typefaces, tight cards, one wheel graphic | One Nunito typeface, a deep-teal and green palette, a consistent line-icon set, rounded cards, and redrawn data graphics. Documented in Part C |
+| Programs page (post-4.0 amendment) | A dedicated page (21) with the case for guided support, program cards with cover photography, placeholder chips, and a call to action | Removed. The free anchor is the whole plan; program research is cited only in the closing appendix, still gated by the commerce cap |
+| Structure (post-4.0 amendment) | Twenty-five pages | Twenty-four pages. Part five drops from six sub-pages to five; part six renumbers down by one |
 
 ---
 
@@ -40,7 +44,7 @@ Three parts, two readers.
 ┌──────────┐   ┌───────────────────┐  ┌────────────────────┐   ┌──────────────────┐   ┌─────────┐
 │ Answers  │   │ L1 input variable │  │ L4 patterns,       │   │ L5 Insight Report│   │ HTML to │
 │ Signals  │──▶│ L2 dimension score│─▶│    state portrait, │──▶│  Spine: fixed    │──▶│  PDF    │
-│ Context  │   │ L3 band, conf,    │  │    leverage,       │   │  Voice: warmth   │   │  25 pp  │
+│ Context  │   │ L3 band, conf,    │  │    leverage,       │   │  Voice: warmth   │   │  24 pp  │
 │ Priority │   │    composites     │  │    disclosure      │   │  Appendix bind   │   │         │
 └──────────┘   └───────────────────┘  └────────────────────┘   └──────────────────┘   └─────────┘
                                               │                          ▲
@@ -116,7 +120,7 @@ The complete data contract. Field names are normative.
 
 | Field | Obligation on generation |
 |---|---|
-| `completion.mode` | `full` selects the 25-page set. `pulse` selects the 2-page short form. Conclusions identical, depth differs |
+| `completion.mode` | `full` selects the 24-page set. `pulse` selects the 2-page short form. Conclusions identical, depth differs |
 | `lwi.band`, `lwi.shape` | Sets the overall-shape sentence on page 7. `uneven` requires strengths to be named before stretched areas |
 | `dimensions[d].band` | The only band word permitted for that area. Never soften, never upgrade |
 | `dimensions[d].read_type` | Sets firmness of voice per §8. Never printed as a label |
@@ -131,7 +135,7 @@ The complete data contract. Field names are normative.
 | `leverage.coherence` | Firmness of the starting-point claim |
 | `disclosure_plan[key]` | Per-section register. May be lowered, never raised |
 | `safety.*` | Triggers mandatory behaviour per §16. Outranks everything |
-| `commerce.cap` | Gates the programs page (page 21) per §13.3 |
+| `commerce.cap` | Gates how much program research is cited in the closing appendix, per §13.3 |
 | `handoff.*` | Seeds the pathway lead, focus and habit size |
 
 ## 4 · Invariants
@@ -143,15 +147,15 @@ Hold across every report, every user, every variant.
 3. **Company, not cause.** Connections describe areas that move together. Cause language is forbidden.
 4. **Answers carry the reading; exercises add texture.** The short interactive moments may deepen or question what the answers suggested. They may never raise a concern alone.
 5. **Circumstances shape words and suggestions, never magnitude.** What a person tells the reflection about their life changes what is said and offered. It never changes how an area was read.
-6. **The free anchor comes first.** The reader always meets their free anchor practice earlier in the report, before the programs page. The programs page may then lead confidently toward paid support.
-7. **Care before commerce.** When money is strained or safety fires, suggestion scope narrows automatically, and the persuasive framing of the programs page (page 21) softens or is suppressed per §13.3. This outranks the commercial intent.
-8. **Evidence, never a personal prediction.** Programs may be recommended, and recommended persuasively, using what research has found across groups of people. No specific outcome is ever promised to this reader.
+6. **The free anchor comes first, and is the whole plan.** The reader meets their free anchor practice early in the report, and nothing later frames it as a placeholder for something bigger. No dedicated page pitches paid programs.
+7. **Care before commerce.** When money is strained or safety fires, program research is dropped from the closing appendix entirely per §13.3. This outranks the commercial intent.
+8. **Evidence, never a personal prediction.** Where program research is cited, it uses what studies have found across groups of people. No specific outcome is ever promised to this reader.
 9. **Absent stays absent.** A skipped question, an unavailable signal, or a thin comparison group is named as missing or omitted entirely. Never imputed, never simulated.
 10. **Privacy by architecture.** No route exists for individual data to reach an employer. Identifiers stay out of any learned pattern.
 11. **Same object, same conclusions.** Warmth may vary between runs. Conclusions may not.
 12. **Safety outranks everything.** Tone, length, engagement, and commercial considerations all yield.
 13. **No system vocabulary in the body.** The reader never encounters the machinery that produced their report. See §6.
-14. **Research lives in the appendix.** No citation, study name, or instrument name appears in pages 1 through 23. The two appendix pages (24 and 25) are the only place any of it appears.
+14. **Research lives in the appendix.** No citation, study name, or instrument name appears in pages 1 through 22. The two appendix pages (23 and 24) are the only place any of it appears.
 15. **One typeface, one system.** Every page is set in Nunito and uses the Part C palette, icon set and components. The visual system is part of the contract, not decoration.
 
 ---
@@ -174,7 +178,7 @@ Three habits define good output here:
 
 The reader must never encounter the system that produced their report. This is not cosmetic. A report that narrates its own machinery reads as a system output rather than a reflection, and it invites the reader to evaluate the tool instead of understanding themselves.
 
-**Never appears anywhere in pages 1 to 23 (the body):**
+**Never appears anywhere in pages 1 to 22 (the body):**
 
 | Forbidden | Why | Say instead |
 |---|---|---|
@@ -191,7 +195,7 @@ The reader must never encounter the system that produced their report. This is n
 
 **The test.** Read any paragraph and ask: would a thoughtful person reading about their own wellbeing find this useful, or does it explain how the tool works? If the latter, cut it or replace it with something about them.
 
-## 7 · Structure: the 25 pages
+## 7 · Structure: the 24 pages
 
 Six parts behind two pages of front matter. Each part answers the question the part before it raises. Where v3.0 crowded a topic onto one page, v4.0 gives it two, so nothing has to be shrunk to fit.
 
@@ -244,20 +248,21 @@ Six parts behind two pages of front matter. Each part answers the question the p
 | 18 | Your next seven days | The seven-day table, what a good week is, why an ending rather than a bedtime routine |
 | 19 | Your optional supports | Four additions, each with a personalised rationale |
 | 20 | Choosing, and small adjustments | The choosing table and the pattern adjustments |
-| 21 | The programs made for where you are | The case for guided support, two best-fit programs with imagery, a call to book |
 
 **Part six · After this**
 
 | Page | Section | What it does for the reader |
 |---|---|---|
-| 22 | A thirty day experiment | Four weeks, four things to notice, questions to carry, lapse guidance |
-| 23 | What stands behind this report | How the reading was formed, privacy, limits, the closing line |
-| 24 | Appendix · the measures used | The nine measures, and the connections research |
-| 25 | Appendix · the research behind it | Practice research, program research, how to read any of it, the colophon |
+| 21 | A thirty day experiment | Four weeks, four things to notice, questions to carry, lapse guidance |
+| 22 | What stands behind this report | How the reading was formed, privacy, limits, the closing line |
+| 23 | Appendix · the measures used | The nine measures, and the connections research |
+| 24 | Appendix · the research behind it | Practice research, program research, how to read any of it, the colophon |
 
-**The v4.0 splits.** Every place v3.0 asked one page to carry two jobs, v4.0 gives each job its own page: orientation becomes how-to-read (3) plus the four words (4); the opening becomes where-you-are (5) plus what-it-tells-you (6); the shape becomes the wheel (7) plus what-each-area-asks (8); the connections become the diagram (9) plus the reading (10); stress becomes the rhythm (11) plus where-tension-settles (12); the anchor becomes the practice (17) plus the seven days (18); the supports become the four supports (19) plus choosing-and-adjustments (20); the appendix becomes measures (24) plus research (25). The words within are unchanged from v3.2; they simply have room now.
+**The v4.0 splits.** Every place v3.0 asked one page to carry two jobs, v4.0 gives each job its own page: orientation becomes how-to-read (3) plus the four words (4); the opening becomes where-you-are (5) plus what-it-tells-you (6); the shape becomes the wheel (7) plus what-each-area-asks (8); the connections become the diagram (9) plus the reading (10); stress becomes the rhythm (11) plus where-tension-settles (12); the anchor becomes the practice (17) plus the seven days (18); the supports become the four supports (19) plus choosing-and-adjustments (20); the appendix becomes measures (23) plus research (24). The words within are unchanged from v3.2; they simply have room now.
 
-**Eyebrow numbering.** Inside a multi-page part, the eyebrow carries its position: "A closer look · 1 of 3", "Your plan · 1 of 6" through "6 of 6", "Appendix · 1 of 2". Front matter and single-page parts use a plain eyebrow.
+**The post-4.0 removal.** v4.0 originally gave the programs case its own sixth plan page (21), between choosing (20) and the thirty day experiment (formerly 22). That page is gone: part five now ends at five sub-pages, and every page from the old 22 onward is renumbered down by one.
+
+**Eyebrow numbering.** Inside a multi-page part, the eyebrow carries its position: "A closer look · 1 of 3", "Your plan · 1 of 5" through "5 of 5", "Appendix · 1 of 2". Front matter and single-page parts use a plain eyebrow.
 
 ### 7.1 · Pulse variant
 
@@ -345,7 +350,7 @@ The single item most likely to survive gets two pages: the practice in full (17)
 
 **Page 18, Your next seven days.** One action per day, nothing more, as a seven-row table. Then **what counts as a good week** and **what would be too much**, and a closing box answering the obvious question the reader will have about why this practice rather than the one they expected.
 
-## 13 · Pages 19 to 21: supports, choosing, and programs
+## 13 · Pages 19 and 20: supports and choosing
 
 ### 13.1 · Optional supports (page 19)
 Four items maximum, each with a category tag, a short description, and a **"why this, for you"** paragraph tied to a specific finding from their own reflection. Generic rationale is a failure here. If the item cannot be justified from their data, it does not belong on the page.
@@ -355,60 +360,47 @@ Two required tables:
 - **How to choose between them.** Situation, which to try, and why. Include a row for "you are already at capacity" whose answer is none of them, stating that the anchor alone is a complete plan.
 - **Small adjustments for your specific pattern.** Four short cards addressing their particular rhythm, friction, and load.
 
-### 13.2 · Programs (page 21)
-Page 21 is written to lead the reader toward the programs that fit them. The voice is confident and inviting, never tentative. A program is never framed as optional, and never positioned as a lesser second choice to the free path. The reader has already met their free anchor on pages 17 and 18, so this page is free to make the case for going further.
+### 13.2 · Programs (removed post-4.0)
 
-Open with the case for guided support: a short box naming what a program gives that solo practice cannot, such as skilled facilitation, a protected setting and a set time, and the pull of showing up alongside others. Back each advantage with a plain-language research finding, expressed as what studies have found across groups of people (for example, that a structured recovery course improved participants' recovery, sleep and sense of wellbeing in a controlled trial). Never an author-year citation in the body, and never a promise to this reader.
+v4.0 gave the case for guided programs its own sixth plan page: a case-for-attending box, up to two program cards with cover photography and placeholder chips, and a call to action. **That page no longer exists.** The free anchor (pages 17 and 18) and the optional supports (19 and 20) are the whole recommendation; nothing in the body pitches a paid program, presents a program card, or asks the reader to book anything.
 
-Then at most two programs, each presented as made for this reader, each on a card with a **cover photograph** (per §23), with:
-- what it is, concretely: format, duration, size, setting
-- the practical details as **placeholder chips** (host, venue, dates, places, all-in price) for the operator to fill
-- **why this is the one for you**, reasoning from their findings
-- **what you walk away with**, the tangible takeaway plus the group-level research advantage behind it
-
-A second program is a complementary recommendation ("also made for you", or a deeper reset), never a "worth considering later" deferral. A genuinely off-pattern option may be named in one positive line as available for when circumstances change, never as a parked or de-recommended item.
-
-Close with a **call to action** that invites the reader to reserve a place and bring the practice they have already started. Small-group scarcity and timeliness are fair to mention when true.
-
-**Do not include on this page:** an optional or free-path-first framing, a "what would not suit you right now" box, host-vetting question lists, a one-question test, or an honest-word-about-fit caveat. The persuasive case is carried in prose the reader can evaluate, grounded in real findings.
-
-**Never on this page:** matching gates, ranking weights, trace tables, learning-status disclosures, author-year citations, or any promise of a specific outcome to this reader. Persuasion draws on group-level evidence, never on a personal guarantee.
+What remains of programs is a citation, not a pitch: where a program would have been the best fit for this reader's pattern, its research is named in the closing appendix (§15), in the same plain, group-level, no-promise register as every other appendix entry. §13.3 below still governs how much of that citation appears.
 
 ### 13.3 · Commerce gating
 
-The lead-to-programs voice of §13.2 applies only when `commerce.cap` is `none` and no safety flag has fired. Otherwise this table governs, and it outranks the commercial intent.
+`commerce.cap` no longer gates a persuasive page — there is none. It gates how much program research the closing appendix (§15) is allowed to cite, and it outranks the commercial intent.
 
 | `commerce.cap` | Behaviour |
 |---|---|
-| `none` | Page 21 leads confidently toward the programs, as recommended next steps, after the reader has met their free anchor earlier in the report |
-| `free_low_cost_only` | No paid program may lead. The persuasive framing is dropped. Paid options appear only as a clearly labelled later-if-it-fits note, with the reason given in plain terms |
-| `suppressed` | No programs page beyond one line pointing back to the free path |
+| `none` | The appendix cites the research behind the best-fit program, a complementary second, and one further mention |
+| `free_low_cost_only` | The appendix cites the research behind the best-fit program and one further mention only; no second program's research is cited |
+| `suppressed` | No program research appears in the appendix at all |
 
-A commission may never raise a suggestion's prominence. Price sensitivity may only ever lower it. Any program shown must be justifiable from the reader's own findings, and any advantage cited must be a real group-level finding, never an individual promise.
+A commission may never widen what this table allows. Price sensitivity or a fired safety flag may only ever narrow it. Any program research cited must be justifiable from the reader's own findings, and every claim must be a real group-level finding, never an individual promise.
 
-## 14 · Pages 22 and 23: integration and what stands behind it
+## 14 · Pages 21 and 22: integration and what stands behind it
 
-**Page 22, A thirty day experiment.** Four weeks with a distinct purpose each: build the cue, protect a boundary, add one support, retake and choose. A four-row table of moments to notice, each a single question with three options. Questions to carry, requiring no answers. Then a required closing box **on the days it does not go well**, stating that missed days are expected and built into the design, that the right response is to make the practice smaller rather than to try harder, and that the plan should shrink before self-judgement grows.
+**Page 21, A thirty day experiment.** Four weeks with a distinct purpose each: build the cue, protect a boundary, add one support, retake and choose. A four-row table of moments to notice, each a single question with three options. Questions to carry, requiring no answers. Then a required closing box **on the days it does not go well**, stating that missed days are expected and built into the design, that the right response is to make the practice smaller rather than to try harder, and that the plan should shrink before self-judgement grows.
 
-**Page 23, What stands behind this report.** Four cards in reader language: how the reading was formed, what the short exercises added, how their circumstances shaped the suggestions, and where the report speaks carefully. Then the privacy statement, four limits of a single reflection, and the closing line.
+**Page 22, What stands behind this report.** Four cards in reader language: how the reading was formed, what the short exercises added, how their circumstances shaped the suggestions, and where the report speaks carefully. Then the privacy statement, four limits of a single reflection, and the closing line.
 
 The privacy statement is not optional and not abbreviated. It must state that the report belongs to the reader, that individual answers never reach an employer and no route exists for that, that anything organisational is aggregated with small groups withheld, that identifiers stay out of any learned pattern, and that nothing is collected which the reflection does not need.
 
-## 15 · Pages 24 and 25: the appendix
+## 15 · Pages 23 and 24: the appendix
 
-The only two pages where research appears. Page 24 opens by telling the reader that nothing here is required in order to use their reflection and none of it changes what the report says.
+The only two pages where research appears. Page 23 opens by telling the reader that nothing here is required in order to use their reflection and none of it changes what the report says.
 
-**Page 24, the measures used.**
+**Page 23, the measures used.**
 
 1. **The measures behind each of the nine areas.** A table: area, the established measure with author and year, and what it is designed to capture in plain terms. Follow with a short note on why these measures were chosen (published, widely used, freely available, asking about wellbeing rather than screening for illness), that their wording is never altered, and that research practice treats short measures as indicating a broad range, which is why the report speaks in four words.
 2. **The research behind the connections described.** Prose, not a table. Cover effort and recovery, resource spillover, difficulty switching off, and why the short exercises are treated as texture.
 
-**Page 25, the research behind it.**
+**Page 24, the research behind it.**
 
 3. **The research behind the suggested practices.** Prose. Cover cue-anchored practices, habit formation and missed days, work-home boundaries, light progress noticing, and each practice actually suggested to this reader.
-4. **The research behind the programs suggested.** Prose. Cover the design of each program type actually recommended.
+4. **The research behind the programs cited.** Prose, gated by §13.3. Cover the design of each program type whose research is actually cited for this reader — never a pitch, never a card, just the same plain evidence register as the rest of the appendix.
 
-**Close with "how to read any of this":** every study describes patterns across groups of people, which is the honest currency of wellbeing research. They are good reasons to expect a practice or design is worth someone's time, not predictions about the reader specifically, and no finding promises a result. Page 25 then ends with the colophon: report title, prepared-for line, the non-clinical line, and the Lifed logo.
+**Close with "how to read any of this":** every study describes patterns across groups of people, which is the honest currency of wellbeing research. They are good reasons to expect a practice or design is worth someone's time, not predictions about the reader specifically, and no finding promises a result. Page 24 then ends with the colophon: report title, prepared-for line, the non-clinical line, and the Lifed logo.
 
 **Only include what was used.** The appendix covers the nine areas plus the connections, practices, and programs that actually appear in this reader's report. Do not pad with unused sources. Do not omit one that was relied on.
 
@@ -438,7 +430,7 @@ Never ask assessment questions, never name methods, never reflect distress back 
 Run before emitting. Any failure means fix or remove.
 
 **Vocabulary firewall**
-- [ ] No instrument name, citation, or author-year appears in pages 1 to 23
+- [ ] No instrument name, citation, or author-year appears in pages 1 to 22
 - [ ] No internal label (clear read, supported read, early read, leverage, disclosure, engine, algorithm, data quality, learning status) appears anywhere
 - [ ] No draft or demonstration language appears
 - [ ] No score, confidence value, or percentile digit appears
@@ -459,16 +451,15 @@ Run before emitting. Any failure means fix or remove.
 - [ ] The single-sitting limitation appears on page 10
 
 **Suggestions**
-- [ ] The free anchor precedes the programs page
-- [ ] The commerce cap is honoured, and the §13.2 lead-to-programs voice is used only when the cap is `none` and no safety flag fired
+- [ ] The free anchor is presented as the whole plan; no page pitches a paid program, shows a program card, or asks the reader to book anything
+- [ ] The commerce cap is honoured: program research is cited in the appendix only per the §13.3 table, and never when a safety flag has fired
 - [ ] Every optional support has a rationale tied to a specific finding from this reader
-- [ ] Every program has fit reasoning and a "what you walk away with" takeaway, with any advantage framed as a group-level research finding, never a personal promise
-- [ ] Page 21 leads toward the programs, carries no optional framing, and includes none of the removed caveat boxes (what-would-not-suit, host questions, one-question test, honest-word-about-fit)
+- [ ] Every program cited in the appendix is backed by a real group-level finding, never a personal promise
 - [ ] The why-the-plan-is-small box appears on page 16
-- [ ] The lapse guidance appears on pages 17 and 22
+- [ ] The lapse guidance appears on pages 17 and 21
 
 **Appendix**
-- [ ] All research is on pages 24 and 25 and nowhere else
+- [ ] All research is on pages 23 and 24 and nowhere else
 - [ ] Every measure listed corresponds to an area actually used
 - [ ] Every claim is an association, average, or design rationale, never a promise
 - [ ] The how-to-read-any-of-this note is present
@@ -477,12 +468,12 @@ Run before emitting. Any failure means fix or remove.
 - [ ] Distress tier behaviour applied exactly
 - [ ] Minor, disordered-eating and cultural-safety rules applied where flagged
 - [ ] Season-not-type framing present on page 5
-- [ ] Privacy statement present and complete on page 23
+- [ ] Privacy statement present and complete on page 22
 - [ ] Non-clinical line on the cover and in the running footer
 - [ ] No employer-facing framing anywhere
 
 **Structure and visual system (v4.0)**
-- [ ] All 25 pages present, in the six-part order, behind cover and contents
+- [ ] All 24 pages present, in the six-part order, behind cover and contents
 - [ ] Each multi-page part carries its "N of M" eyebrow; every page has the running header, footer and page number
 - [ ] Nunito throughout, Part C palette and band colours, the line-icon set, rounded cards; run the §24 design gate
 
@@ -608,8 +599,7 @@ Certain blocks appear in every report by design. They must not appear in identic
 | Page 16 why-the-plan-is-small box | The specific constraints named, and the argument for smallness drawn from them |
 | Page 18 closing question box | The actual question this reader is most likely to be asking about their anchor |
 | Page 19 rationale paragraphs | The finding each support is justified from, never a general benefit statement |
-| Page 21 case for attending | The research-backed advantages that most fit this reader's pattern, and the takeaway each recommended program offers |
-| Page 22 lapse guidance | Framed toward this reader's likely failure mode, whether that is perfectionism, forgetting, or overload |
+| Page 21 lapse guidance | Framed toward this reader's likely failure mode, whether that is perfectionism, forgetting, or overload |
 
 Same purpose in every report, different argument in every report. If one of these boxes could be lifted intact into another user's report, it has been written generically and must be rewritten from the findings.
 
@@ -649,11 +639,11 @@ Run alongside the §17 self-check. Any failure means rewrite, not adjust.
 
 Distinctiveness is a property of the writing, never of the findings. The following are identical in structure across every report and must stay that way.
 
-- The twenty-five page sequence, the six-part grouping, and every page title
+- The twenty-four page sequence, the six-part grouping, and every page title
 - The four band words and their meanings
 - The privacy statement, the limits, and the non-clinical line
 - Every safety insert and its wording discipline
-- The free-path-first rule and the fit-not-prediction framing
+- The free-anchor-is-the-plan rule and the fit-not-prediction framing
 - The appendix structure and the claims each measure licenses
 
 Two people with identical enriched objects must still receive identical conclusions. Variation belongs in how the truth is told, never in what the truth is.
@@ -667,7 +657,7 @@ New in v4.0. This is how the report looks, so a report generated for any user is
 ## 20 · Foundations
 
 ### 20.1 · Canvas
-Each page is a fixed A4 sheet, **794 x 1123 px** portrait, `box-sizing: border-box`, `position: relative`. Content pages use padding **28px 54px 54px**; the cover uses **64px 62px 46px** on a full-bleed dark panel. One `<section class="page">` per page, in order, twenty-five in total. Backgrounds are white for content pages, deep teal for the cover.
+Each page is a fixed A4 sheet, **794 x 1123 px** portrait, `box-sizing: border-box`, `position: relative`. Content pages use padding **28px 54px 54px**; the cover uses **64px 62px 46px** on a full-bleed dark panel. One `<section class="page">` per page, in order, twenty-four in total. Backgrounds are white for content pages, deep teal for the cover.
 
 ### 20.2 · Typeface
 **Nunito, and only Nunito** (Google Fonts; weights 400, 500, 600, 700, 800, plus italic 400 and 600). No second family. System fallback: `-apple-system, "Segoe UI", system-ui, sans-serif`. Base body is `400 12.5px/1.62`.
@@ -709,10 +699,10 @@ Corners are generously rounded: **cards 14 to 18px**, chips and pills **999px**,
 
 ## 21 · Page furniture
 
-Every content page (3 to 25) shares the same frame:
+Every content page (3 to 24) shares the same frame:
 
 - **Running header.** Left: `LIFED / Your LEWIS reflection`, `700 10px`, `.14em`, uppercase, teal 700 (the slash portion faint grey). Right: reader name and date, `600 9px`, uppercase, faint. A 1px `#ededed` rule underneath.
-- **Eyebrow.** `700 9.5px`, `.2em`, uppercase, teal 500. Inside a multi-page part it carries the position ("A closer look · 1 of 3", "Your plan · 3 of 6", "Appendix · 1 of 2").
+- **Eyebrow.** `700 9.5px`, `.2em`, uppercase, teal 500. Inside a multi-page part it carries the position ("A closer look · 1 of 3", "Your plan · 3 of 5", "Appendix · 1 of 2").
 - **H1.** `800 24px/1.1`, `-.015em`, teal 900.
 - **Deck.** `400 12.6px/1.45`, body grey, max-width ~600 to 640px, directly under the H1.
 - **Section labels.** The small caps titling a block: `700 9px`, `.16em`, uppercase, teal 600 or 700.
@@ -729,7 +719,6 @@ The **cover** breaks the frame: a full deep-teal panel, the inverted white logo,
 - **Icons.** One family of thin line icons (lucide style: `stroke-width 1.7`, round caps and joins, `fill:none`, `currentColor`), 14 to 22px, coloured to context. Section markers, card and box icons, map and area markers. Never clip-art, never filled illustrations.
 - **Table.** Header row filled teal 800, white `700 9.5px` uppercase text, end header cells rounded. Body rows `400 11px`, 1px `#ededed` separators, zebra fill `#faf8f4`, first column bold teal 900.
 - **Pull-quote.** A single strong line, `800 22px`, teal 900, with a 3px teal-500 left border. At most one per opening page.
-- **Placeholder chips (programs).** Operator-fillable fields render as dashed monospace chips: light fill, 1px dashed `#dcdcdc`, `10px ui-monospace`, muted text, reading `[ host name ]`, `[ venue ]`, `[ dates ]`, `[ places ]`, `[ all-in price ]`. These replace the old `{{merge}}` tokens and must read as human placeholders.
 
 ## 23 · Data graphics and imagery
 
@@ -741,21 +730,21 @@ All charts are hand-built inline SVG in the palette above. They are pictures of 
 - **The connections diagram (page 9).** Only the licensed links, each sized to its area's reading, company not cause.
 - **The stress lines and body map (pages 11 to 12).** Two lines for energy and stress across the day; a simple body outline marking where tension gathered.
 
-**Program imagery (page 21).** Each program card carries a calm, daylit, non-clinical **cover photograph** (~98px tall, full width, `object-fit: cover`) from the `assets/imagery/` library (evening practice, restful outdoor session, and similar). Choose an image matching the program's real feel; never a stock image implying a medical setting or a guaranteed transformation. The **Lifed logo** (`assets/logo-lifed.png`) appears white-inverted on the cover and full-colour in the page 25 colophon.
+**The Lifed logo** (`assets/logo-lifed.png`) appears white-inverted on the cover and full-colour in the page 24 colophon. There is no program imagery: since the programs page was removed post-4.0, no page carries a program cover photograph.
 
 ## 24 · The design self-check gate
 
 Run alongside §17. Any failure means fix before release.
 
 - [ ] Every page is A4, Nunito, on the Part C palette; no second typeface anywhere
-- [ ] Running header, footer and page number on every content page; a forward "Next" line on pages 3 to 24
+- [ ] Running header, footer and page number on every content page; a forward "Next" line on pages 3 to 23
 - [ ] Eyebrows carry the correct "N of M" position inside multi-page parts
 - [ ] Each band word appears only in its own colour, across chips, petals and text accents
 - [ ] Cards and boxes use the rounded, hairline, generously spaced style; nothing is cramped
 - [ ] Icons are the thin line family only, coloured to context, never filled clip-art
 - [ ] The cover and page 7 petal wheels, the page 5 map, the page 6 timeline and the page 9 connections diagram are present and carry no numbers
-- [ ] Program cards carry a calm daylit photograph and dashed `[ placeholder ]` chips, never live values or `{{merge}}` tokens
-- [ ] The colophon and the non-clinical line close page 25
+- [ ] No program card, cover photograph, or placeholder chip appears anywhere — that page was removed post-4.0
+- [ ] The colophon and the non-clinical line close page 24
 
 
 ---
@@ -782,11 +771,10 @@ Run alongside §17. Any failure means fix before release.
 - Correct: "Your tension clustered around the jaw, head and shoulders, which is the area most affected by long periods of close screen focus. This is the cheapest possible intervention for that particular pattern."
 - Incorrect: "Looking at greenery is good for attention." True but generic; it could appear in anyone's report.
 
-**A program suggestion**
-- Correct: "It works on exactly the boundary this report identifies as your starting point, and it teaches the transition rather than asking you to already be calm."
-- Correct, v3.2 advantage framing: "In a controlled trial, this kind of recovery course improved people's recovery, sleep and sense of wellbeing." A group-level finding used to make the case, not a personal promise.
+**Program research in the appendix (§15)**
+- Correct: "In a controlled trial, this kind of recovery course improved people's recovery, sleep and sense of wellbeing." A group-level finding, cited as background, not a pitch.
 - Incorrect: "This program will help your burnout." A promise, and diagnostic framing.
-- Incorrect: "These are optional, and only if the free path is not enough." The optional, free-path-first framing was removed from the programs page (now page 21) in v3.2.
+- Incorrect: "Reserve your place today, before spots fill." A call to book. The programs page this once lived on was removed post-4.0; nothing in the report asks the reader to book anything.
 
 **Opening a section**
 - Correct: "You arrived with one word: stretched. The full picture agrees, and refines it."
@@ -808,8 +796,8 @@ Run alongside §17. Any failure means fix before release.
 
 Paste at the top of the generation prompt.
 
-> You turn a LEWIS enriched object into a warm, non-clinical report written for one person about their own life. The object decides; you narrate. Use only each area's given band word. Speak clear readings plainly and supported readings as invitations to test. Connections describe areas that move together, never cause. The starting point is what the object says even when it is not the lowest area, and if it is not, say why. Never let system vocabulary reach the page: no instrument names, no citations, no internal labels, no scores, no machinery. All research lives in the closing two-page appendix (pages 24 and 25) and nowhere else. Use no em-dashes or en-dashes. The free anchor comes before the programs page, and every optional support needs a rationale drawn from this reader's own findings. The programs page (page 21) then leads confidently toward the best-fit programs, making the case with what research has found across groups of people, never with a promise of a specific outcome to this reader. Apply safety tiers exactly; when any fire, become gentler and shorter rather than more analytical. Keep the season-not-type framing, the privacy statement, and the non-clinical line. Lay it out across the twenty-five pages in six parts, in one Nunito typeface on the Part C palette, with the header, footer, line icons, rounded cards, band colours, data graphics and program photography of the redesign. Write so this report could not be mistaken for anyone else's: open every section from something only this reader produced, vary the shape of your explanations rather than repeating one frame, let section length follow what the findings warrant, and never write a paragraph that could be lifted into another user's report. Run the self-check gate, the distinctiveness gate and the design gate before emitting. When in doubt, say less, and make what remains more specific to this person.
+> You turn a LEWIS enriched object into a warm, non-clinical report written for one person about their own life. The object decides; you narrate. Use only each area's given band word. Speak clear readings plainly and supported readings as invitations to test. Connections describe areas that move together, never cause. The starting point is what the object says even when it is not the lowest area, and if it is not, say why. Never let system vocabulary reach the page: no instrument names, no citations, no internal labels, no scores, no machinery. All research lives in the closing two-page appendix (pages 23 and 24) and nowhere else. Use no em-dashes or en-dashes. The free anchor is the whole plan, and every optional support needs a rationale drawn from this reader's own findings. No page pitches a paid program, shows a program card, or asks the reader to book anything; where a program fits, only its research is cited in the closing appendix, gated by the commerce cap, using what research has found across groups of people, never a promise of a specific outcome to this reader. Apply safety tiers exactly; when any fire, become gentler and shorter rather than more analytical. Keep the season-not-type framing, the privacy statement, and the non-clinical line. Lay it out across the twenty-four pages in six parts, in one Nunito typeface on the Part C palette, with the header, footer, line icons, rounded cards, band colours and data graphics of the redesign. Write so this report could not be mistaken for anyone else's: open every section from something only this reader produced, vary the shape of your explanations rather than repeating one frame, let section length follow what the findings warrant, and never write a paragraph that could be lifted into another user's report. Run the self-check gate, the distinctiveness gate and the design gate before emitting. When in doubt, say less, and make what remains more specific to this person.
 
 ---
 
-*End of rulebook v4.0. Supersedes v3.2. The words are v3.2; the twenty-five page structure and the Part C visual system are new.*
+*End of rulebook v4.0, with the post-4.0 programs-page amendment folded in above. Supersedes v3.2. The words are v3.2; the twenty-four page structure and the Part C visual system are new; the programs page (originally page 21) has since been removed.*

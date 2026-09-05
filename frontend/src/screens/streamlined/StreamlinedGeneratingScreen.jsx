@@ -96,6 +96,15 @@ export default function StreamlinedGeneratingScreen() {
   const [progressPercent, setProgressPercent] = useState(15)
 
   useEffect(() => {
+    // Ensure streamlined flow mode and pricing are locked in
+    useLewisStore.setState({
+      isReportUnlocked: false,
+      unlockedReportId: null,
+      flowMode: 'streamlined',
+      selectedPlan: 'streamlined_report',
+      planPrice: 349
+    })
+
     // Step progression timer
     const stepInterval = setInterval(() => {
       setCurrentStepIndex((prev) => {

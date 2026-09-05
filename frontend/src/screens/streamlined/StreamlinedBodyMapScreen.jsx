@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../../store/useLewisStore.js'
+import { useDeviceViewport } from '../../shared/hooks/useDeviceViewport.js'
 
 const ZONES = [
   { id: 'Head and neck', label: 'Head and neck', zoneKey: 'head' },
@@ -12,6 +13,7 @@ const ZONES = [
 
 export default function StreamlinedBodyMapScreen() {
   const { bodyMapZones, toggleArrayItem, setProfileField, setScreen } = useLewisStore()
+  const { isMobile } = useDeviceViewport()
   const [hoveredZone, setHoveredZone] = useState(null)
 
   const isSelected = (id) => (bodyMapZones || []).includes(id)
@@ -50,7 +52,7 @@ export default function StreamlinedBodyMapScreen() {
 
   return (
     <motion.div
-      className="screen-container"
+      className="screen-container center-aligned"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -64,7 +66,7 @@ export default function StreamlinedBodyMapScreen() {
         maxWidth: '820px',
         margin: '0 auto',
         minHeight: '70vh',
-        padding: '0 20px',
+        padding: isMobile ? '8px 16px 24px 16px' : '0 20px',
         boxSizing: 'border-box',
         textAlign: 'center',
       }}
@@ -77,7 +79,9 @@ export default function StreamlinedBodyMapScreen() {
         letterSpacing: '0.14em',
         color: 'var(--dawn, #00ae9d)',
         textTransform: 'uppercase',
-        margin: '0 0 10px 0',
+        margin: '0 auto 10px auto',
+        textAlign: 'center',
+        width: '100%',
       }}>
         ACT 2 · HOW LIFE FEELS
       </p>
@@ -86,30 +90,42 @@ export default function StreamlinedBodyMapScreen() {
       <h1 style={{
         fontFamily: "'Manrope', sans-serif",
         fontWeight: 800,
-        fontSize: 'clamp(26px, 3.6vw, 44px)',
-        lineHeight: 1.15,
-        letterSpacing: '-0.035em',
-        margin: '0 0 8px 0',
+        fontSize: isMobile ? '21px' : 'clamp(26px, 3.6vw, 44px)',
+        lineHeight: 1.25,
+        letterSpacing: '-0.025em',
+        margin: '0 auto 8px auto',
         color: 'var(--text-main, #414242)',
         maxWidth: '720px',
+        textAlign: 'center',
+        width: '100%',
       }}>
-        Tap anywhere in your body that feels tense, heavy, or uncomfortable right now.
+        {isMobile ? (
+          <>
+            Tap anywhere in your body<br />
+            that feels tense, heavy, or<br />
+            uncomfortable right now.
+          </>
+        ) : (
+          'Tap anywhere in your body that feels tense, heavy, or uncomfortable right now.'
+        )}
       </h1>
 
       {/* Subtitle */}
       <p style={{
-        margin: '0 0 24px 0',
-        fontSize: 'clamp(13px, 1.6vw, 16px)',
+        margin: '0 auto 18px auto',
+        fontSize: isMobile ? '13.5px' : 'clamp(13px, 1.6vw, 16px)',
         color: 'var(--text-sub, #657370)',
         fontFamily: "'Nunito', sans-serif",
+        textAlign: 'center',
+        width: '100%',
       }}>
         Tap as many places as you need. Tap again to clear one.
       </p>
 
       {/* Interactive Silhouette Centerpiece */}
       <div style={{
-        margin: '0 auto 24px auto',
-        padding: '12px 24px',
+        margin: isMobile ? '0 auto 18px auto' : '0 auto 24px auto',
+        padding: isMobile ? '10px 18px' : '12px 24px',
         borderRadius: '24px',
         background: 'var(--card-bg, rgba(255, 255, 255, 0.7))',
         border: '1.5px solid var(--card-border, #d2e7e0)',
@@ -118,8 +134,8 @@ export default function StreamlinedBodyMapScreen() {
         <svg
           viewBox="0 0 200 320"
           style={{
-            width: '140px',
-            height: '210px',
+            width: isMobile ? '115px' : '140px',
+            height: isMobile ? '172px' : '210px',
             display: 'block',
             overflow: 'visible',
           }}

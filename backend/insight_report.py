@@ -1,8 +1,8 @@
-# insight_report.py — the deterministic 25-page LEWIS Insight Report.
+# insight_report.py — the deterministic 24-page LEWIS Insight Report.
 #
 # Implements Part B and Part C of the Insight Report Generation Rulebook
 # v4.0. Input: the enriched object (enrich.build_enriched_object).
-# Output: a structured JSON document of 25 pages of typed blocks, grouped
+# Output: a structured JSON document of 24 pages of typed blocks, grouped
 # into six parts behind a cover and a contents page, that the frontend
 # renders in the approved redesign and prints to PDF.
 #
@@ -12,10 +12,10 @@
 #   - No em-dashes or en-dashes anywhere in the document (§8.2).
 #   - Strengths are named before stretched areas when the shape is uneven.
 #   - Connections describe company, never cause (§9 p9, p10).
-#   - The free anchor (pages 17 and 18) precedes the programs page (21),
-#     which then leads confidently toward the best-fit programs unless
-#     commerce is capped or safety has fired (§13).
-#   - Research appears only on pages 24 and 25, bound to §18.
+#   - The free anchor (pages 17 and 18) is the plan; the dedicated
+#     programs sales page was removed, so program research is cited only
+#     in the appendix, still gated by commerce cap and safety tier (§13).
+#   - Research appears only on pages 23 and 24, bound to §18.
 #   - Safety tiers make the report gentler and shorter, never more
 #     analytical (§16).
 #
@@ -651,15 +651,10 @@ def _adjustment_cards(enriched):
 
 
 # ---------------------------------------------------------------------------
-# Programs (page 21), with commerce gating (§13.3).
-#
-# Each program carries a cover photograph from the imagery library (§23),
-# a concrete description, fit reasoning drawn from this reader's findings,
-# and the tangible takeaway plus the group-level research advantage behind
-# it. Operator-fillable details render as dashed placeholder chips.
+# Programs. The dedicated programs sales page was removed from the report;
+# this directory now only backs the research citations on the appendix
+# page, still gated by the same commerce cap (§13.3).
 # ---------------------------------------------------------------------------
-
-PROGRAM_CHIPS = ["[ host name ]", "[ venue ]", "[ dates ]", "[ places ]", "[ all-in price ]"]
 
 PROGRAMS = {
     "evening_winddown": {
@@ -703,54 +698,6 @@ PROGRAMS = {
         "research_key": "nature_contact",
     },
 }
-
-# The case for guided support (§13.2). Each advantage is backed by a
-# group-level finding, expressed in plain language with no citation and no
-# promise to this reader. The three shown are chosen from this reader's
-# own pattern, so the box differs between reports (§19.5).
-PROGRAM_ADVANTAGES = {
-    "facilitation": ("Skilled facilitation",
-                     "In a controlled trial, people who took a structured recovery course reported better recovery, improved sleep and a stronger sense of wellbeing.",
-                     "users"),
-    "protected_time": ("A protected room and a set time",
-                       "Gentle, breath led movement is linked across review after review to lower perceived stress.",
-                       "clock"),
-    "company": ("People beside you",
-                "Showing up alongside others has long been found to lighten the felt weight of a demanding season.",
-                "heart"),
-    "movement": ("Movement sized for a low season",
-                 "In a randomised trial with adults running low on energy, low intensity activity increased energy and reduced fatigue.",
-                 "zap"),
-    "setting": ("A setting that does some of the work",
-                "Spending around two hours a week in green surroundings is associated with good self reported health and wellbeing.",
-                "home"),
-}
-
-
-def _advantage_keys(enriched):
-    """Three advantages for the page 21 case, chosen from this reader's
-    pattern rather than from a fixed list."""
-    lead = enriched["handoff"]["lead_with"]
-    focus = enriched["handoff"]["primary_focus"]
-    keys = []
-    if lead == "down-regulation" or focus in ("PH", "EM"):
-        keys.append("facilitation")
-    if lead == "gentle activation" or focus == "EN":
-        keys.append("movement")
-    if enriched["areas"]["EC"]["band"] in ("Steady", "Strong") or focus == "EC":
-        keys.append("setting")
-    keys.append("protected_time")
-    if enriched["areas"]["RS"]["band"] in ("Steady", "Strong") or focus == "RS" \
-            or enriched["context"].get("support_preference") == "structured":
-        keys.append("company")
-    keys.append("facilitation")
-    ordered, seen = [], set()
-    for key in keys:
-        if key not in seen:
-            seen.add(key)
-            ordered.append(key)
-    return ordered[:3]
-
 
 def _pick_programs(enriched):
     """The best fit, a complementary second, and one off-pattern option
@@ -1765,7 +1712,7 @@ def _p16_pathway(enriched):
         + " is real, and your readings show a season with limited spare capacity. Under those conditions a large plan tends to fail in the first crowded week and leave you feeling worse than when you started, because now there is evidence. A small plan that survives contact with a real week is worth considerably more than an impressive one you abandon. If it feels almost too easy, it has been sized correctly."
     )
 
-    return _page(16, PART_FIVE, "Your plan · 1 of 6", "Your improvement pathway",
+    return _page(16, PART_FIVE, "Your plan · 1 of 5", "Your improvement pathway",
                  "A focused plan, deliberately reduced to fit this particular season. Lower intensity is not lower ambition. It is the fit for right now.", [
         {"type": "flow", "steps": steps,
          "first_move_label": "YOUR FIRST MOVE", "first_move": anchor["first_move"]},
@@ -1783,7 +1730,7 @@ def _p16_pathway(enriched):
 
 def _p17_anchor(enriched):
     anchor = _pick_anchor(enriched)
-    return _page(17, PART_FIVE, "Your plan · 2 of 6", "Your anchor practice",
+    return _page(17, PART_FIVE, "Your plan · 2 of 5", "Your anchor practice",
                  "One practice, described properly. This is the single thing this report would ask you to keep if you kept nothing else.", [
         {"type": "practice", "tag": anchor["tag"], "title": anchor["title"], "cols": [
             {"label": "WHEN", "text": anchor["when"], "icon": "clock"},
@@ -1803,7 +1750,7 @@ def _p17_anchor(enriched):
 
 def _p18_seven_days(enriched):
     anchor = _pick_anchor(enriched)
-    return _page(18, PART_FIVE, "Your plan · 3 of 6", "Your next seven days",
+    return _page(18, PART_FIVE, "Your plan · 3 of 5", "Your next seven days",
                  "One action a day, and deliberately nothing more. If a day is missed, the week is not.", [
         {"type": "sevendays", "title": None,
          "rows": [{"day": d, "focus": f, "action": a} for (d, f, a) in anchor["seven_days"]]},
@@ -1817,7 +1764,7 @@ def _p18_seven_days(enriched):
 
 def _p19_supports(enriched):
     supports = _build_supports(enriched)
-    return _page(19, PART_FIVE, "Your plan · 4 of 6", "Your optional supports",
+    return _page(19, PART_FIVE, "Your plan · 4 of 5", "Your optional supports",
                  "Small additions, chosen for your specific pattern. Take one at a time, and only after the anchor is steady. This is a shelf to choose from, not a list to complete.", [
         {"type": "supports", "items": [
             {"tag": s["tag"], "title": s["title"], "body": s["body"], "why": s["why"]}
@@ -1835,7 +1782,7 @@ def _p20_choosing(enriched):
     choose_rows.append(["You are already at capacity", "None of them",
                         "The anchor alone is a complete plan. Additions are genuinely optional"])
     adjustments = _adjustment_cards(enriched)
-    return _page(20, PART_FIVE, "Your plan · 5 of 6", "Choosing, and small adjustments",
+    return _page(20, PART_FIVE, "Your plan · 5 of 5", "Choosing, and small adjustments",
                  "Match the support to the situation you are actually in this week, then make the small changes that cost nothing.", [
         {"type": "table", "title": "HOW TO CHOOSE BETWEEN THEM",
          "columns": ["If this is your situation", "Try this one", "Because"],
@@ -1847,74 +1794,8 @@ def _p20_choosing(enriched):
     ], next_line="How to find out whether any of this is true for you, over thirty days.")
 
 
-def _p21_programs(enriched):
-    cap = enriched["commerce"]["cap"]
-    location = enriched["meta"]["location"]
-
-    # Suppressed cap (§13.3): nothing beyond one line pointing back to the
-    # free path. No persuasion, no program cards, no booking language.
-    if cap == "suppressed":
-        return _page(21, PART_FIVE, "Your plan · 6 of 6", "The free path is the plan",
-                     "Programs are optional at the best of times. Right now, the kindest and most effective plan is the free one.", [
-            _callout("THE FREE PATH IS THE WHOLE RECOMMENDATION",
-                     "No programs are suggested right now, and nothing about that is a limitation: the anchor practice and the optional supports are a complete plan. A future reflection can revisit guided options when more reserve is available.",
-                     variant="free", icon="check"),
-        ], next_line="How to find out whether any of this is true for you, over thirty days.")
-
-    primary_id, secondary_id, mention_id = _pick_programs(enriched)
-
-    def program_block(pid, tag):
-        p = PROGRAMS[pid]
-        return {"type": "program", "tag": tag, "title": p["title"], "image": p["image"],
-                "what": p["what"], "chips": list(PROGRAM_CHIPS), "why": p["why"],
-                "walkaway": p["walkaway"]}
-
-    # Money is asking for care: no paid program may lead, and the
-    # persuasive framing is dropped entirely (§13.3).
-    if cap == "free_low_cost_only":
-        reason = enriched["commerce"]["reason"] or "money is asking for care right now"
-        return _page(21, PART_FIVE, "Your plan · 6 of 6", "Guided support, noted for later",
-                     "The free path is your plan this month. What follows is noted for later, in case circumstances ease.", [
-            _callout("A CLEARLY LABELLED LATER, IF IT FITS",
-                     "Because " + reason + ", no paid program leads your plan. The option below is noted for later, if circumstances ease and only if it genuinely fits. Nothing in this report asks you to spend, and the anchor practice remains the whole recommendation.",
-                     variant="care", icon="heart"),
-            program_block(primary_id, "LATER, IF IT FITS"),
-        ], next_line="How to find out whether any of this is true for you, over thirty days.")
-
-    advantages = [PROGRAM_ADVANTAGES[k] for k in _advantage_keys(enriched)]
-    blocks = [
-        {"type": "programcase", "label": "WHY A GUIDED PROGRAM TAKES YOU FURTHER",
-         "items": [{"title": t, "body": b, "icon": ic} for (t, b, ic) in advantages]},
-        program_block(primary_id, "YOUR BEST FIT" + (" · " + location if location else "")),
-    ]
-    if secondary_id:
-        blocks.append(program_block(secondary_id, "ALSO MADE FOR YOU"))
-
-    good_to_know = []
-    if enriched["areas"]["EC"]["band"] in ("Steady", "Strong"):
-        good_to_know.append("close to home, in small culturally comfortable groups")
-    if enriched["handoff"]["lead_with"] in ("down-regulation", "gentleness"):
-        good_to_know.append("gently paced rather than intensive")
-    if good_to_know:
-        note = "Both programs are " + _join_names(good_to_know) + ", the format this report shows fits you best."
-    else:
-        note = "Both programs match the format this report shows fits you best."
-    if mention_id:
-        note += " " + PROGRAMS[mention_id]["title"] + " joins the same shelf whenever your circumstances open it up."
-    blocks.append(_callout("GOOD TO KNOW", note, icon="info"))
-
-    cta_body = ("These programs are the closest match"
-                + (" in " + location if location else "")
-                + " to the pattern this reflection found, chosen for your time, your setting and the exact thing you are working on. Small group places fill quickly, and the sooner you begin, the sooner your pattern can begin to change. Reserve your place, bring the practice you have already started, and let the room do the rest.")
-    blocks.append({"type": "cta", "label": "TAKE YOUR PLACE", "body": cta_body})
-
-    return _page(21, PART_FIVE, "Your plan · 6 of 6", "The programs made for where you are",
-                 "Chosen for exactly the pattern this reflection found. This is where the work you have begun becomes something you do with expert guidance, in a room built for it.",
-                 blocks, next_line="How to find out whether any of this is true for you, over thirty days.")
-
-
 # ---------------------------------------------------------------------------
-# Part six: after this, pages 22 to 25
+# Part six: after this, pages 21 to 24
 # ---------------------------------------------------------------------------
 
 def _p22_thirty_days(enriched):
@@ -1959,7 +1840,7 @@ def _p22_thirty_days(enriched):
     blocks.append(_callout("ON THE DAYS IT DOES NOT GO WELL",
         "You will miss days. That is expected, and it is built into the design of this plan rather than being a failure of it. A missed day tells you something about fit, which is genuinely useful information. If several days slip, the right response is to make the practice smaller rather than to try harder, and certainly rather than to think less of yourself. The plan should shrink before self judgement grows.",
         variant="synthesis", icon="heart"))
-    return _page(22, PART_SIX, "Your next month", "A thirty day experiment",
+    return _page(21, PART_SIX, "Your next month", "A thirty day experiment",
                  "The purpose is to learn something about your own life, not to complete a perfect routine. One repeated cue becomes the spine. Everything else stays optional.",
                  blocks, next_line="What stands behind everything you have just read.")
 
@@ -1973,7 +1854,7 @@ def _p23_what_stands_behind(enriched):
         + (_join_names(unread) + " were left unread rather than guessed. " if unread else "")
         + "That difference in wording is deliberate, and it is worth trusting when you read it."
     )
-    return _page(23, PART_SIX, "About this reflection", "What stands behind this report",
+    return _page(22, PART_SIX, "About this reflection", "What stands behind this report",
                  "A report that asks for your trust should be equally clear about where it is confident, where it is not, and what happens to what you shared.", [
         _cards([
             ("HOW YOUR READING WAS FORMED", None,
@@ -2008,7 +1889,7 @@ def _p24_appendix_measures(enriched):
     ordered = [c for c in AREA_ORDER if c in scored_codes]
     measure_rows = [[AREA_CODE_TO_NAME[c], MEASURE_ROWS[c][0], MEASURE_ROWS[c][1]] for c in ordered]
 
-    return _page(24, PART_SIX, "Appendix · 1 of 2", "The measures behind your reading",
+    return _page(23, PART_SIX, "Appendix · 1 of 2", "The measures behind your reading",
                  "For readers who would like to know what stands behind each part of this report. Nothing here is required in order to use your reflection, and none of it changes what your report says.", [
         {"type": "table", "title": "THE MEASURES BEHIND EACH OF THE NINE AREAS",
          "columns": ["Area", "Established measure used", "What it is designed to capture"],
@@ -2059,7 +1940,7 @@ def _p25_appendix_research(enriched):
     blocks.append({"type": "colophon", "title": "Your Lewis Insight Report",
                    "prepared": prepared, "line": NON_CLINICAL_LINE})
 
-    return _page(25, PART_SIX, "Appendix · 2 of 2", "The research behind what was suggested",
+    return _page(24, PART_SIX, "Appendix · 2 of 2", "The research behind what was suggested",
                  "Every practice and program in this report was chosen for a reason that can be named and checked. Here are those reasons in full.",
                  blocks)
 
@@ -2088,7 +1969,6 @@ def build_insight_report(enriched: dict) -> dict:
         _p18_seven_days(enriched),
         _p19_supports(enriched),
         _p20_choosing(enriched),
-        _p21_programs(enriched),
         _p22_thirty_days(enriched),
         _p23_what_stands_behind(enriched),
         _p24_appendix_measures(enriched),

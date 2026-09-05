@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
 import { buildFullAssessmentPayload } from '../lib/payload.js'
+import { buildClientFallbackAnalysis } from '../lib/scoring.js'
 
 /* ── 9-Petal Mirror Synthesis Geometry Vector Illustration ── */
 const MirrorSynthesisIllustration = () => {
@@ -103,24 +104,41 @@ export default function Stage10GeneratingScreen() {
   useEffect(() => {
     let mounted = true
     const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-    const TOTAL_DURATION_MS = 26000 // 26 second sequence for smooth cold-start & LLM generation tolerance
-    const startTime = Date.now()
     let isFinished = false
+    let currentVal = 0
+
+    // Fresh report generation should start with locked state & extended full plan
+    useLewisStore.setState({ 
+      isReportUnlocked: false, 
+      unlockedReportId: null,
+      flowMode: 'full',
+      selectedPlan: 'personal_report',
+      planPrice: 749
+    })
 
     // 1. Fire backend analysis synthesis
     async function runFetch() {
       try {
         const { payload, missing } = buildFullAssessmentPayload(useLewisStore.getState())
         if (missing.length > 0) {
-          useLewisStore.setState({ analysisMissing: missing, analysisData: null, analysisError: null })
+          const fallbackData = buildClientFallbackAnalysis(payload)
+          if (mounted) {
+            useLewisStore.setState({ analysisData: fallbackData, analysisMissing: null, analysisError: null })
+            isFinished = true
+          }
           return
         }
+
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 12000)
 
         const response = await fetch(`${API_BASE}/assessment/full`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: controller.signal
         })
+        clearTimeout(timeoutId)
 
         if (!response.ok) {
           const detail = await response.text()
@@ -133,57 +151,53 @@ export default function Stage10GeneratingScreen() {
           isFinished = true
         }
       } catch (err) {
-        console.error(err)
+        console.warn('Backend assessment error, using client fallback:', err)
         if (mounted) {
-          useLewisStore.setState({
-            analysisError: 'We could not put your synthesis together just now. Please try again in a little while.',
-            analysisData: null
-          })
+          try {
+            const { payload } = buildFullAssessmentPayload(useLewisStore.getState())
+            const fallbackData = buildClientFallbackAnalysis(payload)
+            useLewisStore.setState({ analysisData: fallbackData, analysisMissing: null, analysisError: null })
+          } catch (e) {
+            console.error('Fallback scoring error:', e)
+          }
+          isFinished = true
         }
       }
     }
 
     runFetch()
 
-    // 2. High-precision 26s progress ticker with smart completion
+    // 2. High-precision progress ticker
     const timer = setInterval(() => {
       if (!mounted) return
-      const elapsed = Date.now() - startTime
 
-      // Calculate target progress
-      let currentProgress = Math.floor((elapsed / TOTAL_DURATION_MS) * 100)
-
-      // If backend hasn't responded yet, hold comfortably at 94%
-      if (!isFinished && currentProgress > 94) {
-        currentProgress = 94
-      }
-
-      // If backend has completed, allow reaching 100%
       if (isFinished) {
-        currentProgress = Math.max(currentProgress, 95)
-        if (elapsed >= 10000 || currentProgress >= 98) {
-          currentProgress = 100
+        // Accelerate smoothly to 100%
+        currentVal = Math.min(100, currentVal + Math.floor(Math.random() * 4 + 3))
+      } else {
+        // Progress smoothly up to 92%
+        if (currentVal < 92) {
+          currentVal = Math.min(92, currentVal + Math.floor(Math.random() * 3 + 1))
         }
       }
 
-      const clamped = Math.min(100, Math.max(0, currentProgress))
-      setProgressPercent(clamped)
+      setProgressPercent(currentVal)
 
       const currentStep = Math.min(
         steps.length - 1,
-        Math.floor((clamped / 100) * steps.length)
+        Math.floor((currentVal / 100) * steps.length)
       )
       setStepIdx(currentStep)
 
-      if (clamped >= 100) {
+      if (currentVal >= 100) {
         clearInterval(timer)
         setTimeout(() => {
           if (mounted) {
             setScreen('mirror')
           }
-        }, 700)
+        }, 500)
       }
-    }, 60)
+    }, 80)
 
     return () => {
       mounted = false

@@ -2242,9 +2242,9 @@ def fetch_coupon_by_code(code: str) -> Optional[Dict[str, Any]]:
         logger.warning("SQLite error fetching coupon %s: %s", normalized_code, e)
 
     # In-memory hardcoded fallback for development
-    if normalized_code == "LWSR100":
+    if normalized_code in ("LWSR100", "LEWIS100", "LEWISFREE"):
         return {
-            "code": "LWSR100",
+            "code": normalized_code,
             "discount_type": "percentage",
             "discount_value": 100.0,
             "min_order_amount": 0,
@@ -2255,9 +2255,9 @@ def fetch_coupon_by_code(code: str) -> Optional[Dict[str, Any]]:
             "status": "active",
             "description": "100% OFF Free assessment unlock"
         }
-    elif normalized_code == "LWSR97":
+    elif normalized_code in ("LWSR97", "LEWIS97"):
         return {
-            "code": "LWSR97",
+            "code": normalized_code,
             "discount_type": "flat",
             "discount_value": 729.0,
             "min_order_amount": 749.0,
@@ -2478,6 +2478,15 @@ def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
     """
     Retrieve paid orders that were paid at least min_age_seconds ago whose report email has not yet been sent.
     Provides guaranteed recovery even across server restarts or worker crashes.
+
+    Excludes orders whose tech failure alert has already fired
+    (report_alert_mail_sent) — that alert means PDF generation has already
+    failed once and needs a human to fix the underlying data/order (see
+    send_report_failure_alert), not another automatic attempt every 30s
+    forever. Without this, an order that can never succeed (e.g. no real
+    answer-derived report data behind it) retries — and error-logs — on
+    every reconciliation pass indefinitely; /admin/resend-report explicitly
+    bypasses this via deferred_report_delivery(force=True) once it's fixed.
     """
     pending = []
     pg_queried = False
@@ -2493,6 +2502,7 @@ def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
                         WHERE status = 'paid'
                           AND user_email IS NOT NULL
                           AND (report_mail_sent IS FALSE OR report_mail_sent IS NULL)
+                          AND (report_alert_mail_sent IS FALSE OR report_alert_mail_sent IS NULL)
                           AND paid_at <= NOW() - (%s || ' seconds')::interval
                         ORDER BY paid_at ASC
                         LIMIT 20;
@@ -2518,6 +2528,7 @@ def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
                 WHERE status = 'paid'
                   AND user_email IS NOT NULL
                   AND (report_mail_sent = 0 OR report_mail_sent IS NULL)
+                  AND (report_alert_mail_sent = 0 OR report_alert_mail_sent IS NULL)
                   AND datetime(paid_at) <= datetime('now', '-' || ? || ' seconds')
                 ORDER BY paid_at ASC
                 LIMIT 20;
@@ -2536,7 +2547,7 @@ def get_pending_report_deliveries(min_age_seconds: int = 300) -> list:
             continue
         if order.get("status") != "paid" or not order.get("user_email"):
             continue
-        if order.get("report_mail_sent"):
+        if order.get("report_mail_sent") or order.get("report_alert_mail_sent"):
             continue
         paid_at = order.get("paid_at")
         if not paid_at:
@@ -2746,7 +2757,7 @@ def _report_pdf_column(plan_id: Optional[str]) -> str:
 def save_report_pdf(report_uuid: str, plan_id: Optional[str], pdf_bytes: bytes) -> bool:
     """
     Save a generated report PDF against its report row — one column for the
-    12-page streamlined report, one for the 25-page full report — so it's
+    12-page streamlined report, one for the 24-page full report — so it's
     stored once and re-servable (resend, in-app download, Lewis OS) without
     re-rendering every time.
     """

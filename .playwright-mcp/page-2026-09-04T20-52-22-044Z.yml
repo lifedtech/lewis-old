@@ -1,0 +1,76 @@
+- generic [ref=f1e2]:
+  - generic [ref=f1e4]:
+    - generic [ref=f1e6]:
+      - img "Lewis Motion Logo" [ref=f1e8]
+      - generic [ref=f1e15]: Lewis
+    - generic [ref=f1e17]: One moment
+    - generic [ref=f1e18]:
+      - generic [ref=f1e19]: Reading how you placed things
+      - generic [ref=f1e22]: Matching the Lifed catalogue to your pattern
+      - generic [ref=f1e25]: Building your page
+  - generic [ref=f1e29]:
+    - banner [ref=f1e30]:
+      - generic [ref=f1e31]:
+        - button "Lewis Home" [ref=f1e32] [cursor=pointer]:
+          - generic [ref=f1e33]:
+            - img "Lewis" [ref=f1e34]
+            - generic [ref=f1e35]: Lewis
+        - generic [ref=f1e36]:
+          - navigation [ref=f1e37]:
+            - button "How it works" [ref=f1e38] [cursor=pointer]
+            - button "The research" [ref=f1e39] [cursor=pointer]
+          - button "Switch to Dark mode" [ref=f1e41] [cursor=pointer]:
+            - generic [ref=f1e45]: Dark
+    - generic [ref=f1e48]:
+      - generic [ref=f1e49]: "Research Informed:"
+      - button "WHO-5" [ref=f1e50] [cursor=pointer]
+      - button "PSS-10" [ref=f1e55] [cursor=pointer]
+      - button "UCLA-3" [ref=f1e60] [cursor=pointer]
+      - button "PROMIS-4" [ref=f1e67] [cursor=pointer]
+      - button "CFPB-5" [ref=f1e72] [cursor=pointer]
+      - button "Flourishing" [ref=f1e77] [cursor=pointer]
+      - button "INS" [ref=f1e82] [cursor=pointer]
+      - button "Somatic" [ref=f1e86] [cursor=pointer]
+      - button "Circumplex" [ref=f1e93] [cursor=pointer]
+      - button "Body Map" [ref=f1e98] [cursor=pointer]
+      - button "ANS State" [ref=f1e104] [cursor=pointer]
+      - button "Breathing" [ref=f1e108] [cursor=pointer]
+      - button "Discounting" [ref=f1e113] [cursor=pointer]
+    - generic [ref=f1e120]:
+      - generic [ref=f1e121]:
+        - paragraph [ref=f1e122]: SCIENCE-BASED VIEW OF HOW YOU ARE LIVING
+        - heading "Understand your wellbeing, and exactly where to start." [level=1] [ref=f1e123]:
+          - generic [ref=f1e124]: Understand your wellbeing,
+          - generic [ref=f1e125]: and exactly where to start.
+        - paragraph [ref=f1e126]: LEWIS reads nine areas of your life together and turns what it finds into a plan you can actually follow. Twelve minutes, free to start.
+        - generic [ref=f1e127]:
+          - button "Begin your reflection" [ref=f1e128] [cursor=pointer]
+          - button "How Lewis works →" [ref=f1e129] [cursor=pointer]:
+            - generic [ref=f1e130]: How Lewis works
+            - generic [ref=f1e131]: →
+      - generic [ref=f1e133]:
+        - img "Lewis Nine Domains Orbit Animation"
+        - paragraph [ref=f1e134]: Nine connected domains of everyday wellbeing
+    - contentinfo [ref=f1e135]:
+      - generic [ref=f1e137]:
+        - generic [ref=f1e138]:
+          - generic [ref=f1e139]:
+            - img "Lewis" [ref=f1e140]
+            - generic [ref=f1e141]: Lewis
+          - paragraph [ref=f1e142]: Lewis is a non-clinical wellbeing reflection. It does not provide medical diagnosis or psychiatric treatment.
+        - generic [ref=f1e143]:
+          - generic [ref=f1e144]:
+            - heading "Information" [level=4] [ref=f1e145]
+            - generic [ref=f1e146]:
+              - button "Terms & Conditions" [ref=f1e147] [cursor=pointer]
+              - button "Privacy Policy" [ref=f1e148] [cursor=pointer]
+              - button "Contact Support" [ref=f1e149] [cursor=pointer]
+          - generic [ref=f1e150]:
+            - heading "Contact Us" [level=4] [ref=f1e151]
+            - generic [ref=f1e152]:
+              - link "lewissupport@lifedhealth.com" [ref=f1e153] [cursor=pointer]:
+                - /url: mailto:lewissupport@lifedhealth.com
+              - generic [ref=f1e158]: Kerala, India
+      - generic [ref=f1e164]:
+        - generic [ref=f1e165]: © 2025–2026 Holobiont Pvt Ltd. All rights reserved.
+        - generic [ref=f1e166]: Wellbeing Intelligence by Lifed

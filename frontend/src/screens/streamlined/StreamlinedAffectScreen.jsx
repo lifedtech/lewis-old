@@ -1,9 +1,11 @@
 import React, { useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../../store/useLewisStore.js'
+import { useDeviceViewport } from '../../shared/hooks/useDeviceViewport.js'
 
 export default function StreamlinedAffectScreen() {
   const { affect, setAffect, setScreen } = useLewisStore()
+  const { isMobile } = useDeviceViewport()
   const canvasRef = useRef(null)
 
   const handleCanvasClick = (e) => {
@@ -36,7 +38,7 @@ export default function StreamlinedAffectScreen() {
 
   return (
     <motion.div
-      className="screen-container"
+      className="screen-container center-aligned"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -50,7 +52,7 @@ export default function StreamlinedAffectScreen() {
         maxWidth: '780px',
         margin: '0 auto',
         minHeight: '70vh',
-        padding: '0 20px',
+        padding: isMobile ? '12px 24px 28px 24px' : '0 20px',
         boxSizing: 'border-box',
         textAlign: 'center',
       }}
@@ -63,7 +65,9 @@ export default function StreamlinedAffectScreen() {
         letterSpacing: '0.14em',
         color: 'var(--dawn, #00ae9d)',
         textTransform: 'uppercase',
-        margin: '0 0 10px 0',
+        margin: '0 auto 10px auto',
+        textAlign: 'center',
+        width: '100%',
       }}>
         ACT 2 · HOW LIFE FEELS
       </p>
@@ -72,25 +76,33 @@ export default function StreamlinedAffectScreen() {
       <h1 style={{
         fontFamily: "'Manrope', sans-serif",
         fontWeight: 800,
-        fontSize: 'clamp(24px, 3.3vw, 40px)',
-        lineHeight: 1.15,
-        letterSpacing: '-0.035em',
-        margin: '0 0 8px 0',
+        fontSize: isMobile ? '23px' : 'clamp(24px, 3.3vw, 40px)',
+        lineHeight: 1.2,
+        letterSpacing: '-0.03em',
+        margin: '0 auto 8px auto',
         color: 'var(--text-main, #414242)',
         width: '100%',
         maxWidth: '780px',
         textAlign: 'center',
         whiteSpace: 'normal',
       }}>
-        Place a dot where you feel right now.
+        {isMobile ? (
+          <>
+            Place a dot where<br />you feel right now.
+          </>
+        ) : (
+          'Place a dot where you feel right now.'
+        )}
       </h1>
 
       {/* Subtitle */}
       <p style={{
-        margin: '0 0 36px 0',
-        fontSize: 'clamp(13px, 1.6vw, 16px)',
+        margin: '0 auto 24px auto',
+        fontSize: isMobile ? '14px' : 'clamp(13px, 1.6vw, 16px)',
         color: 'var(--text-sub, #657370)',
         fontFamily: "'Nunito', sans-serif",
+        textAlign: 'center',
+        width: '100%',
       }}>
         One tap. Move it if it isn't quite right.
       </p>
@@ -98,15 +110,15 @@ export default function StreamlinedAffectScreen() {
       {/* Affect Grid Canvas Wrapper */}
       <div style={{
         position: 'relative',
-        width: '100%',
-        maxWidth: '320px',
+        width: isMobile ? '80%' : '100%',
+        maxWidth: isMobile ? '265px' : '320px',
         aspectRatio: '1/1',
-        margin: '20px auto 32px auto',
+        margin: isMobile ? '28px auto 36px auto' : '20px auto 32px auto',
       }}>
         {/* Axis Labels */}
         <span style={{
           position: 'absolute',
-          top: '-26px',
+          top: '-24px',
           left: '50%',
           transform: 'translateX(-50%)',
           fontSize: '11px',
@@ -121,7 +133,7 @@ export default function StreamlinedAffectScreen() {
         </span>
         <span style={{
           position: 'absolute',
-          bottom: '-26px',
+          bottom: '-24px',
           left: '50%',
           transform: 'translateX(-50%)',
           fontSize: '11px',
@@ -137,9 +149,9 @@ export default function StreamlinedAffectScreen() {
         <span style={{
           position: 'absolute',
           top: '50%',
-          left: '-32px',
+          left: isMobile ? '-18px' : '-32px',
           transform: 'translate(-50%, -50%) rotate(-90deg)',
-          fontSize: '11px',
+          fontSize: '10.5px',
           color: 'var(--text-sub, #85918e)',
           fontWeight: 700,
           letterSpacing: '0.08em',
@@ -152,9 +164,9 @@ export default function StreamlinedAffectScreen() {
         <span style={{
           position: 'absolute',
           top: '50%',
-          right: '-32px',
+          right: isMobile ? '-18px' : '-32px',
           transform: 'translate(50%, -50%) rotate(90deg)',
-          fontSize: '11px',
+          fontSize: '10.5px',
           color: 'var(--text-sub, #85918e)',
           fontWeight: 700,
           letterSpacing: '0.08em',

@@ -3,7 +3,7 @@
 # Two distinct reports, two distinct renderers — they must never alias
 # each other again (that was the bug: every "full report" download used
 # to silently serve the 12-page streamlined HTML):
-#   - build_insight_report_pdf()    -> the 24/25-page full report, server-
+#   - build_insight_report_pdf()    -> the 24-page full report, server-
 #                                       rendered from the same React
 #                                       component (report_full_html.py)
 #                                       the app shows on-screen.
@@ -12,7 +12,9 @@
 import json
 import os
 import logging
-from typing import Dict, Any, Optional
+import queue
+import threading
+from typing import Dict, Any, Callable, Optional
 from datetime import datetime, timezone
 
 from report_streamlined_html import render_streamlined_report_html
@@ -26,7 +28,7 @@ ASSET_PDF_PATHS = [
     os.path.join(BASE_DIR, "..", "frontend", "public", "Lewis-Insight-Report.pdf"),
     os.path.join(BASE_DIR, "..", "frontend", "Lewis-Insight-Report.pdf"),
 ]
-SAMPLE_FULL_REPORT_PATH = os.path.join(BASE_DIR, "tests", "fixtures", "sample_insight_report_25page.json")
+SAMPLE_FULL_REPORT_PATH = os.path.join(BASE_DIR, "tests", "fixtures", "sample_insight_report_24page.json")
 
 _sample_full_report_cache: Optional[Dict[str, Any]] = None
 
@@ -41,41 +43,84 @@ def _load_sample_full_report() -> Dict[str, Any]:
     return _sample_full_report_cache
 
 
-def _generate_pdf_sync(html_content: str) -> bytes:
-    """
-    Synchronously renders HTML with Playwright Headless Chromium to A4 PDF.
-    """
+# --- Persistent Playwright worker ------------------------------------------
+#
+# The actual "25-page report is slow" cause: every PDF used to launch a
+# fresh headless Chromium and tear it down again per call — on top of the
+# Node SSR subprocess render_full_report_html already spawns per call (see
+# report_full_html.py). Cold Chromium launch/close was ~1s of the ~4-5s
+# total per report on this machine, and worse (~10s+) the first time after
+# a deploy/restart. Playwright's sync API is confined to the thread that
+# created it, and PDF generation here is already called from multiple
+# threads (request threadpool, mail_queue's worker/reconciliation threads),
+# so one browser is kept alive in one dedicated worker thread for the life
+# of the process, and every caller submits render jobs to it through a
+# queue instead of launching its own.
+#
+# ponytail: jobs are serialized through a single browser/thread (no
+# parallel rendering). Fine for this app's actual load — reports are
+# generated once per order and then cached (see save_report_pdf) — and it
+# avoids running N simultaneous Chromium processes on a memory-constrained
+# host. If concurrent generation ever becomes the bottleneck, add more
+# worker threads (one browser each) behind the same queue.
+_pdf_job_queue: "queue.Queue" = queue.Queue()
+_pdf_worker_thread: Optional[threading.Thread] = None
+_pdf_worker_lock = threading.Lock()
+
+
+def _pdf_worker_loop() -> None:
     from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        try:
+            while True:
+                render_fn, html_content, result_queue = _pdf_job_queue.get()
+                try:
+                    result_queue.put((True, render_fn(browser, html_content)))
+                except Exception as e:
+                    result_queue.put((False, e))
+        finally:
+            browser.close()
+
+
+def _ensure_pdf_worker() -> None:
+    global _pdf_worker_thread
+    with _pdf_worker_lock:
+        if _pdf_worker_thread is None or not _pdf_worker_thread.is_alive():
+            _pdf_worker_thread = threading.Thread(
+                target=_pdf_worker_loop, daemon=True, name="pdf-render-worker"
+            )
+            _pdf_worker_thread.start()
+
+
+def _render_on_worker(render_fn: Callable[[Any, str], bytes], html_content: str) -> bytes:
+    """Run `render_fn(browser, html_content)` on the persistent worker
+    thread/browser and block for its result. Restarts the worker (paying
+    the launch cost once, not per call) if a prior crash left it dead."""
+    _ensure_pdf_worker()
+    result_queue: "queue.Queue" = queue.Queue(maxsize=1)
+    _pdf_job_queue.put((render_fn, html_content, result_queue))
+    ok, result = result_queue.get()
+    if not ok:
+        raise result
+    return result
+
+
+def _render_a4_page(browser, html_content: str) -> bytes:
+    page = browser.new_page()
+    try:
         page.set_content(html_content, wait_until="load", timeout=15000)
         page.wait_for_timeout(300)
         page.emulate_media(media="print")
-        pdf_bytes = page.pdf(
-            format="A4",
-            print_background=True,
-            prefer_css_page_size=True
-        )
-        browser.close()
-        return pdf_bytes
+        return page.pdf(format="A4", print_background=True, prefer_css_page_size=True)
+    finally:
+        page.close()
 
 
-def _generate_single_page_pdf_sync(html_content: str) -> bytes:
-    """
-    Renders HTML to Playwright/Chromium as ONE continuous PDF page sized
-    to the content's real height — no A4 pagination, no page breaks
-    (both render-report.jsx and report_streamlined_html.py already drop
-    break-after rules for this reason). Used for both the full report
-    (25 sections) and the streamlined report (12 sections): each reads
-    top-to-bottom as one long page instead of paginated sheets.
-    """
-    from playwright.sync_api import sync_playwright
-
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+def _render_single_page(browser, html_content: str) -> bytes:
+    page = browser.new_page()
+    try:
         page.set_content(html_content, wait_until="load", timeout=15000)
         # Wait for web fonts to actually finish loading before measuring
         # height — Nunito swaps in after `load` fires, reflows the text,
@@ -86,14 +131,31 @@ def _generate_single_page_pdf_sync(html_content: str) -> bytes:
         page.wait_for_timeout(300)
         page.emulate_media(media="print")
         content_height_px = page.evaluate("document.documentElement.scrollHeight")
-        pdf_bytes = page.pdf(
+        return page.pdf(
             width="210mm",
             height=f"{content_height_px}px",
             print_background=True,
             margin={"top": "0", "bottom": "0", "left": "0", "right": "0"},
         )
-        browser.close()
-        return pdf_bytes
+    finally:
+        page.close()
+
+
+def _generate_pdf_sync(html_content: str) -> bytes:
+    """Synchronously renders HTML with the persistent Playwright worker to A4 PDF."""
+    return _render_on_worker(_render_a4_page, html_content)
+
+
+def _generate_single_page_pdf_sync(html_content: str) -> bytes:
+    """
+    Renders HTML via the persistent Playwright worker as ONE continuous PDF
+    page sized to the content's real height — no A4 pagination, no page
+    breaks (both render-report.jsx and report_streamlined_html.py already
+    drop break-after rules for this reason). Used for both the full report
+    (25 sections) and the streamlined report (12 sections): each reads
+    top-to-bottom as one long page instead of paginated sheets.
+    """
+    return _render_on_worker(_render_single_page, html_content)
 
 
 def build_insight_report_pdf(
@@ -104,7 +166,7 @@ def build_insight_report_pdf(
     allow_generic_fallback: bool = True
 ) -> bytes:
     """
-    Generates the authoritative 24/25-page full Insight Report PDF,
+    Generates the authoritative 24-page full Insight Report PDF,
     server-rendering the exact same React report the app shows on-screen
     (frontend/src/report/InsightReport.jsx + report.css).
 
@@ -158,6 +220,20 @@ def build_insight_report_pdf(
         raise
 
 
+def detect_report_shape(report_data: Optional[Dict[str, Any]]) -> Optional[str]:
+    """
+    Which of the two report shapes `report_data` actually is, independent of
+    any (possibly wrong) plan_id label — 'full', 'streamlined', or None if
+    there's no usable data either way. See build_report_pdf_for_plan.
+    """
+    candidate = report_data.get("insight_report", report_data) if isinstance(report_data, dict) else None
+    if isinstance(candidate, dict) and candidate.get("pages"):
+        return "full"
+    if isinstance(report_data, dict) and report_data.get("dimensions"):
+        return "streamlined"
+    return None
+
+
 def build_report_pdf_for_plan(
     plan_id: Optional[str],
     report_data: Optional[Dict[str, Any]] = None,
@@ -168,12 +244,36 @@ def build_report_pdf_for_plan(
     """
     Single dispatch point: which of the two renderers a paying customer's
     report goes through must always be decided the same way, whether the
-    caller is the delivery email, the in-app download, or Lewis OS —
-    'streamlined_report' (₹349) gets the 12-page report, everything else
-    ('personal_report', 'bundle', unknown) gets the 25-page one. Never
+    caller is the delivery email, the in-app download, or Lewis OS. Never
     falls back to generic/sample content — a real customer only ever
     receives a report built from their own submitted answers.
+
+    The two report shapes are structurally distinguishable (a streamlined
+    RRO has "dimensions" as a scored-area list and no "pages"/"insight_report"
+    key; a full report has "pages"), so real data is routed by its actual
+    shape first — plan_id decides only when there's no usable data either
+    way (then it just picks which "no data" error to raise). This is
+    deliberate: plan_id can drift out of sync with which assessment the
+    customer actually completed (client-side state bugs, coupon/admin
+    testing that bypasses the normal checkout form), and when that happens
+    we still have their real report — better to serve it correctly than to
+    trust a mislabeled tag and refuse a report we could actually send.
     """
+    shape = detect_report_shape(report_data)
+
+    if shape == "full":
+        return build_insight_report_pdf(
+            report_data=report_data, report_uuid=report_uuid, user_name=user_name,
+            order_id=order_id, allow_generic_fallback=False
+        )
+    if shape == "streamlined":
+        return build_streamlined_report_pdf(
+            rro=report_data, report_uuid=report_uuid, user_name=user_name,
+            order_id=order_id, allow_generic_fallback=False
+        )
+
+    # No usable data either way — plan_id just picks which "no real report
+    # data" error to raise (still refuses; still never sends anything generic).
     if plan_id == "streamlined_report":
         return build_streamlined_report_pdf(
             rro=report_data, report_uuid=report_uuid, user_name=user_name,

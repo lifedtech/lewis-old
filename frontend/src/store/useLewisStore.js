@@ -34,8 +34,10 @@ const initialState = () => ({
   authToken: savedToken || null,
   authPendingDownload: false,
 
-  // Flow Mode ('streamlined' | 'full')
+  // Flow Mode ('streamlined' | 'full') & Plan Config
   flowMode: 'streamlined',
+  selectedPlan: 'streamlined_report',
+  planPrice: 349,
 
   // Pre-Stage & Stage 0
   isOver18: null,
@@ -150,7 +152,7 @@ const initialState = () => ({
 
   // Stage 8 Stress & Load
   energyArc: { morning: '', afternoon: '', evening: '', night: '' },
-  energyArcPattern: [{ k: 'Morning', v: 2 }, { k: 'Afternoon', v: 2 }, { k: 'Evening', v: 2 }, { k: 'Night', v: 1 }],
+  energyArcPattern: null,
   sleepOnset: '',
   stressResponseStyle: '',
   recoveryResponsiveness: '',
@@ -307,19 +309,24 @@ export const useLewisStore = create(persist((set, get) => ({
   },
 
   checkReportEntitlement: async (reportUuid) => {
-    if (!reportUuid) return false
+    if (!reportUuid) {
+      set({ isReportUnlocked: false, unlockedReportId: null })
+      return false
+    }
     try {
       const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
       const res = await fetch(`${API_BASE}/reports/${reportUuid}/status`)
       if (res.ok) {
         const data = await res.json()
-        if (data.is_unlocked) {
-          set({ isReportUnlocked: true, unlockedReportId: reportUuid })
-          return true
-        }
+        const unlocked = Boolean(data.is_unlocked)
+        set({ isReportUnlocked: unlocked, unlockedReportId: unlocked ? reportUuid : null })
+        return unlocked
+      } else {
+        set({ isReportUnlocked: false, unlockedReportId: null })
       }
     } catch (e) {
       console.warn('Entitlement check error:', e)
+      set({ isReportUnlocked: false, unlockedReportId: null })
     }
     return false
   },
@@ -357,6 +364,8 @@ export const useLewisStore = create(persist((set, get) => ({
     // and move smoothly into the extended flow without asking common questions again
     set((state) => ({
       flowMode: 'full',
+      selectedPlan: 'personal_report',
+      planPrice: 749,
       currentScreen: 'stage2Attention'
     }))
     if (typeof window !== 'undefined') {
@@ -397,6 +406,7 @@ export const useLewisStore = create(persist((set, get) => ({
     const {
       authToken, authUser, isAuthenticated, authPendingDownload,
       isPaymentProcessing, paymentError, analysisError,
+      isReportUnlocked, unlockedReportId,
       ...persisted
     } = state
     return persisted

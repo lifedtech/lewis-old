@@ -90,6 +90,7 @@ export default function MobileInstrumentScreen({ id }) {
           letterSpacing: '-0.015em',
           margin: 0,
           color: '#414242',
+          wordBreak: 'keep-all',
         }}>
           {titleText}
         </h1>

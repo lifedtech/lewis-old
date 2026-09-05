@@ -320,10 +320,10 @@ A Lifed Health Intelligence System
     """
 
     sent = send_email(to_email=user_email, subject=subject, html_content=html_content, text_content=text_content)
-    if sent and order_id:
+    if order_id:
         try:
             from auth import update_order_email_status
-            update_order_email_status(order_id, "confirmation", True)
+            update_order_email_status(order_id, "confirmation", bool(sent))
         except Exception:
             pass
     return sent
@@ -622,19 +622,25 @@ def send_report_delivery_email(
     """
     Send the completed Personal Wellbeing Insight Report to user email with attached PDF.
 
-    `plan_id` picks the renderer: 'streamlined_report' (₹349) -> the 12-page
-    report, anything else -> the 25-page report. There is no generic-content
-    fallback here on purpose — a customer's report is either their own
-    answer-derived PDF or no email goes out at all (see the except: below,
-    which returns False so mail_queue's retry/backoff and the reconciliation
-    loop pick it up again, instead of silently sending stale/generic content).
+    `plan_id` is a hint, not the source of truth — build_report_pdf_for_plan
+    routes by the actual shape of `report_data` first (plan_id can drift out
+    of sync with which assessment the customer actually completed), and the
+    email wording below follows that same real shape rather than plan_id, so
+    the subject/body text never claims a page count that doesn't match what's
+    attached. There is no generic-content fallback here on purpose — a
+    customer's report is either their own answer-derived PDF or no email
+    goes out at all (see the except: below, which returns False so
+    mail_queue's retry/backoff and the reconciliation loop pick it up again,
+    instead of silently sending stale/generic content).
     """
+    from pdf_generator import detect_report_shape
+
     name = (user_name or "there").strip()
     rep_id = report_uuid or "LSR20260200"
     order_ref = order_id or "LS20260100"
     date_str = datetime.now(timezone.utc).strftime("%d %B %Y")
-    is_streamlined = plan_id == "streamlined_report"
-    page_count_label = "12-page" if is_streamlined else "25-page"
+    shape = detect_report_shape(report_data) or ("streamlined" if plan_id == "streamlined_report" else "full")
+    page_count_label = "12-page" if shape == "streamlined" else "24-page"
 
     # Resolve public production domain (filter out localhost)
     raw_frontends = [u.strip() for u in os.getenv("FRONTEND_URL", "").split(",") if u.strip()]
@@ -888,13 +894,14 @@ A Lifed Health Intelligence System
         text_content=text_content,
         attachments=attachments
     )
-    if sent and order_id:
+    if order_id:
         try:
             from auth import update_order_email_status
-            update_order_email_status(order_id, "report", True)
+            update_order_email_status(order_id, "report", bool(sent))
         except Exception:
             pass
 
+    if sent and order_id:
         # Schedule Review & Experience Reflection email 20 minutes after report delivery
         try:
             from mail_queue import enqueue
@@ -1117,10 +1124,10 @@ A Lifed Health Intelligence System
         html_content=html_content,
         text_content=text_content
     )
-    if sent and order_id:
+    if order_id:
         try:
             from auth import update_order_email_status
-            update_order_email_status(order_id, "review", True)
+            update_order_email_status(order_id, "review", bool(sent))
         except Exception:
             pass
     return sent
@@ -1130,12 +1137,39 @@ def deferred_report_delivery(
     user_email: str,
     user_name: Optional[str] = None,
     report_uuid: Optional[str] = None,
-    order_id: Optional[str] = None
+    order_id: Optional[str] = None,
+    force: bool = False
 ) -> bool:
     """
     Worker-side handler for a queued "report_delivery" job: fetch the report
     (it may not have existed yet at enqueue time) and send it.
+
+    The bug this guards: the mail_queue retry, the 30s reconciliation loop,
+    and /admin/resend-report all funnel through this function, but nothing
+    stopped two of them landing on the same still-"unsent" order at once —
+    a customer got the same report emailed twice, sometimes with visibly
+    inconsistent wording between the two sends (built from two independent,
+    momentarily-diverging runs). `force=False` (the default, used by every
+    automatic path) skips the send if this order is already marked
+    report_mail_sent; only the admin resend endpoint passes force=True,
+    since resending on purpose is its whole point.
     """
+    # ponytail: a check-then-send guard, not an atomic claim — two automatic
+    # triggers landing within the same few seconds could still both pass this
+    # check before either sets report_mail_sent. Closes the actual observed
+    # gap (reconciliation vs. a manual resend, minutes apart); an atomic
+    # "UPDATE ... WHERE report_mail_sent = FALSE RETURNING" claim would close
+    # the narrower millisecond-level race too, if that's ever seen in practice.
+    if not force and order_id:
+        try:
+            from auth import get_payment_order
+            existing_order = get_payment_order(order_id)
+            if existing_order and existing_order.get("report_mail_sent"):
+                logger.info("Report already sent for order %s — skipping duplicate delivery.", order_id)
+                return True
+        except Exception as e:
+            logger.warning("Could not check report_mail_sent before delivery: %s", e)
+
     rep_json = None
     plan_id = None
     if report_uuid:

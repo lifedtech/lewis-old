@@ -36,7 +36,6 @@ import Stage3_4BreathingScreen from '../screens/Stage3_4BreathingScreen.jsx'
 import Stage3_5NsStateScreen from '../screens/Stage3_5NsStateScreen.jsx'
 import Stage3_6BodyAwarenessScreen from '../screens/Stage3_6BodyAwarenessScreen.jsx'
 import Stage4MazeScreen from '../screens/Stage4MazeScreen.jsx'
-import Stage5_0EmailScreen from '../screens/Stage5_0EmailScreen.jsx'
 import Stage5_1LandscapeScreen from '../screens/Stage5_1LandscapeScreen.jsx'
 import Stage5_2InsScreen from '../screens/Stage5_2InsScreen.jsx'
 import Stage5_3DeepDivesScreen from '../screens/Stage5_3DeepDivesScreen.jsx'
@@ -138,7 +137,6 @@ const MOBILE_SCREENS = {
   stage3_6BodyAwareness: Stage3_6BodyAwarenessScreen,
   stage4Maze: Stage4MazeScreen,
   stage5_1Landscape: Stage5_1LandscapeScreen,
-  stage5_0Email: Stage5_0EmailScreen,
   ...MOBILE_INSTRUMENT_SCREENS,
   stage5_2Ins: Stage5_2InsScreen,
   stage5_3DeepDives: Stage5_3DeepDivesScreen,

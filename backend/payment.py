@@ -78,7 +78,7 @@ PLAN_CATALOG: Dict[str, Dict[str, Any]] = {
         "amount_paise": PERSONAL_REPORT_PRICE_PAISE,
         "amount_inr": PERSONAL_REPORT_PRICE_PAISE // 100,
         "currency": "INR",
-        "description": "Complete 25-Page Lewis Insight Mirror (PDF) & Nervous System Profile",
+        "description": "Complete 24-Page Lewis Insight Mirror (PDF) & Nervous System Profile",
     },
     "essential": {
         "id": "personal_report",
@@ -86,7 +86,7 @@ PLAN_CATALOG: Dict[str, Dict[str, Any]] = {
         "amount_paise": PERSONAL_REPORT_PRICE_PAISE,
         "amount_inr": PERSONAL_REPORT_PRICE_PAISE // 100,
         "currency": "INR",
-        "description": "Complete 25-Page Lewis Insight Mirror (PDF) & Nervous System Profile",
+        "description": "Complete 24-Page Lewis Insight Mirror (PDF) & Nervous System Profile",
     },
     "bundle": {
         "id": "bundle",

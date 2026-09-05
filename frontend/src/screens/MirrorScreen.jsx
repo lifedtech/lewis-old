@@ -47,6 +47,11 @@ export default function MirrorScreen() {
   const handleGetReport = () => {
     // If not unlocked, navigate to Billing screen to collect delivery info and process payment
     if (!isReportUnlocked) {
+      useLewisStore.setState({
+        flowMode: 'full',
+        selectedPlan: 'personal_report',
+        planPrice: 749
+      })
       setScreen('billing')
       return
     }
@@ -424,7 +429,7 @@ export default function MirrorScreen() {
                   <span>Insight Report Delivered</span>
                 </div>
                 <p style={{ margin: '2px 0 14px 0', fontSize: '13.5px', color: '#52605d', lineHeight: 1.5, textAlign: 'center' }}>
-                  Your complete 25-page Insight Report has been compiled and emailed directly with the PDF attached.
+                  Your complete 24-page Insight Report has been compiled and emailed directly with the PDF attached.
                 </p>
                 <motion.button
                   whileHover={{ scale: 1.02 }}

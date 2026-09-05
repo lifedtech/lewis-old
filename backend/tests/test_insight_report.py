@@ -104,10 +104,10 @@ class TestGateAcrossProfiles:
             issues = check_report(report)
             assert issues == [], f"profile {scores}: {issues}"
 
-    def test_twenty_five_pages_always(self):
+    def test_twenty_four_pages_always(self):
         for scores in PROFILES:
             _, report = _build_report(scores, who5=scores["emotional"])
-            assert len(report["pages"]) == 25
+            assert len(report["pages"]) == 24
 
     def test_no_context_still_passes(self):
         ctx = {k: None for k in BASE_CONTEXT}
@@ -145,9 +145,7 @@ class TestSafetyBehaviour:
         enriched, report = _build_report(ALL_LOW, who5=25.0)
         assert enriched["safety"]["tier"] == "signpost"
         assert enriched["commerce"]["cap"] == "suppressed"
-        p21_text = _page_text(report["pages"][20]).lower()
-        assert "free path" in p21_text or "anchor practice" in p21_text
-        assert "booking" not in p21_text
+        assert "booking" not in _page_text(report).lower()
 
     def test_gentle_mode_adds_care_note_and_signpost(self):
         _, report = _build_report(ALL_LOW, who5=25.0)
@@ -162,16 +160,8 @@ class TestSafetyBehaviour:
 
 class TestCommerceGating:
     def test_money_strain_gates_to_free_low_cost(self):
-        enriched, report = _build_report(MONEY_STRAINED, who5=48.0)
+        enriched, _ = _build_report(MONEY_STRAINED, who5=48.0)
         assert enriched["commerce"]["cap"] == "free_low_cost_only"
-        p21_text = _page_text(report["pages"][20]).lower()
-        assert "later, if it fits" in p21_text
-
-    def test_free_path_precedes_programs(self):
-        _, report = _build_report(EVEN_HIGH, who5=78.0)
-        p17_num = report["pages"][16]["number"]
-        p21_num = report["pages"][20]["number"]
-        assert p17_num < p21_num
 
 
 class TestStructure:

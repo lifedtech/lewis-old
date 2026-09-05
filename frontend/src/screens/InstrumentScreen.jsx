@@ -70,14 +70,24 @@ export default function InstrumentScreen({ id }) {
             <h1 style={{
               fontFamily: "'Manrope', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(24px, 2.8vw, 36px)',
+              fontSize: 'clamp(24px, 2.6vw, 34px)',
               lineHeight: 1.18,
               letterSpacing: '-0.01em',
               margin: 0,
               color: INK,
               textAlign: 'left',
+              wordBreak: 'keep-all',
+              overflowWrap: 'normal',
             }}>
-              {Array.isArray(spec.title) ? spec.title.join(' ') : spec.title}
+              {Array.isArray(spec.title) ? (
+                spec.title.map((line, idx) => (
+                  <span key={idx} style={{ display: 'block', whiteSpace: 'nowrap' }}>
+                    {line}
+                  </span>
+                ))
+              ) : (
+                spec.title
+              )}
             </h1>
             {spec.subtitle && (
               <p style={{

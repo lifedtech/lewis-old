@@ -1,0 +1,7 @@
+[  815822ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:992
+[19871783ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.googletagmanager.com/gtag/js?id=G-2CY8PB7KQ0:0
+[19872222ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://connect.facebook.net/en_US/fbevents.js:0
+[19873510ms] [ERROR] Failed to load resource: net::ERR_NETWORK_CHANGED @ http://localhost:5173/src/components/LewisLoadingScreen.jsx:0
+[19873512ms] [ERROR] Failed to load resource: net::ERR_NETWORK_CHANGED @ http://localhost:5173/src/store/useLewisStore.js:0
+[19873513ms] [ERROR] Failed to load resource: net::ERR_NETWORK_CHANGED @ http://localhost:5173/node_modules/vite/dist/client/env.mjs:0
+[19873752ms] [WARNING] <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> @ http://localhost:5173/#stage1_2Stability:0

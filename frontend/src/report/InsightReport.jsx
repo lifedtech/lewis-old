@@ -1,4 +1,4 @@
-// InsightReport.jsx — renders the backend's 25-page insight report JSON in
+// InsightReport.jsx — renders the backend's 24-page insight report JSON in
 // the approved redesign (Rulebook v4.0 Part C), and prints it to PDF via
 // the browser.
 //
@@ -1222,7 +1222,7 @@ function Block({ block }) {
 /* Page furniture (§21)                                                */
 /* ------------------------------------------------------------------ */
 
-function CoverPage({ page, downloading, onDownload }) {
+function CoverPage({ page }) {
   const prepared = (page?.blocks || []).find((b) => b?.type === 'prepared')
   const petals = (page?.blocks || []).find((b) => b?.type === 'petals')
   const footer = (page?.blocks || []).find((b) => b?.type === 'callout')
@@ -1254,41 +1254,6 @@ function CoverPage({ page, downloading, onDownload }) {
             <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '22px', color: '#ffffff', letterSpacing: '-0.025em' }}>Lewis</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button
-              className="ir-cover-download-btn"
-              onClick={onDownload}
-              disabled={downloading}
-              style={{
-                border: '1.5px solid rgba(255, 255, 255, 0.65)',
-                borderRadius: '999px',
-                padding: '7px 18px',
-                font: '700 10.5px/1 Nunito, sans-serif',
-                letterSpacing: '.12em',
-                textTransform: 'uppercase',
-                color: '#ffffff',
-                background: 'rgba(0, 174, 157, 0.55)',
-                backdropFilter: 'blur(8px)',
-                cursor: downloading ? 'not-allowed' : 'pointer',
-                opacity: downloading ? 0.65 : 1,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '7px',
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (downloading) return
-                e.currentTarget.style.background = '#00ae9d'
-                e.currentTarget.style.transform = 'translateY(-1px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(0, 174, 157, 0.55)'
-                e.currentTarget.style.transform = 'translateY(0)'
-              }}
-            >
-              <Icon name="download" size={13} style={{ color: '#ffffff' }} />
-              {downloading ? 'Generating…' : 'Download 25-Page PDF'}
-            </button>
             <span style={{ border: '1px solid rgba(255,255,255,.42)', borderRadius: '999px', padding: '6px 15px', font: '700 9.5px/1 Nunito, sans-serif', letterSpacing: '.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,.88)' }}>Full reflection</span>
           </div>
         </div>
@@ -1358,12 +1323,12 @@ function CoverPage({ page, downloading, onDownload }) {
   )
 }
 
-function ReportPage({ page, meta, downloading, onDownload }) {
+function ReportPage({ page, meta }) {
   if (!page) return null
-  if (page.number === 1) return <CoverPage page={page} downloading={downloading} onDownload={onDownload} />
+  if (page.number === 1) return <CoverPage page={page} />
   const safeMeta = meta || {}
   const resolvedName = (safeMeta.name && safeMeta.name !== 'You') ? safeMeta.name : (useLewisStore.getState().name || useLewisStore.getState().authUser?.name || 'User')
-  const isAppendix = page.number >= 24
+  const isAppendix = page.number >= 23
   const headRight = isAppendix
     ? safeMeta.appendix_header
     : [resolvedName, safeMeta.date].filter(Boolean).join(' · ')
@@ -1430,14 +1395,14 @@ export default function InsightReport({ report }) {
   }, [authPendingDownload, handleDownload])
 
   const reportToRender = report || generateClientFallbackReport()
-  // Hard clamp: whatever report source (backend or fallback), the PDF must be exactly 25 pages.
-  const pagesToRender = (reportToRender?.pages || []).slice(0, 25)
+  // Hard clamp: whatever report source (backend or fallback), the PDF must be exactly 24 pages.
+  const pagesToRender = (reportToRender?.pages || []).slice(0, 24)
 
   return (
     <div className="ir-root">
       {pagesToRender.map((page) => (
         <div key={page.number} style={{ position: 'relative' }}>
-          <ReportPage page={page} meta={reportToRender.meta} downloading={downloading} onDownload={handleDownload} />
+          <ReportPage page={page} meta={reportToRender.meta} />
         </div>
       ))}
     </div>

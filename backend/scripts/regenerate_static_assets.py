@@ -1,5 +1,5 @@
 # regenerate_static_assets.py — regenerates the public sample
-# Lewis-Insight-Report.pdf (the 24/25-page report, no personal data) from
+# Lewis-Insight-Report.pdf (the 24-page report, no personal data) from
 # the real pipeline, and writes it to every place the app serves it from.
 #
 # Run this instead of ever hand-copying a PDF over these paths again —

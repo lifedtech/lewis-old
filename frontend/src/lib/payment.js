@@ -43,19 +43,30 @@ export async function initiateCheckout({
 
   try {
     // 1. Create order on backend (backend authoritatively determines price)
-    const orderRes = await fetch(`${API_BASE}/payment/create-order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        plan: plan || 'personal_report',
-        report_id: targetReportId,
-        currency: targetCurrency,
-        email: targetEmail,
-        name: targetName,
-        phone: targetPhone,
-        coupon_code: couponCode,
-      }),
+    const payloadBody = JSON.stringify({
+      plan: plan || 'personal_report',
+      report_id: targetReportId,
+      currency: targetCurrency,
+      email: targetEmail,
+      name: targetName,
+      phone: targetPhone,
+      coupon_code: couponCode,
     })
+
+    let orderRes = null
+    try {
+      orderRes = await fetch(`${API_BASE}/payment/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payloadBody,
+      })
+    } catch (netErr) {
+      orderRes = await fetch(`http://127.0.0.1:8000/payment/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payloadBody,
+      })
+    }
 
     if (!orderRes.ok) {
       const errDetail = await orderRes.text()

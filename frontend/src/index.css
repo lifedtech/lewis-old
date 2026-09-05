@@ -320,8 +320,8 @@ button[aria-label*="back" i]:focus-visible {
   -ms-overflow-style: none !important;
   /* IE/Edge */
   min-width: 0;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 *::-webkit-scrollbar {
@@ -2584,6 +2584,22 @@ p.mobile-subtitle {
   margin: 2px 0 0 0 !important;
 }
 
+/* Explicit Centering Overrides for Centered Screens */
+.mobile-app-root .screen-container,
+.mobile-app-root .center-aligned,
+.mobile-app-root .screen-container h1,
+.mobile-app-root .screen-container h2,
+.mobile-app-root .screen-container h3,
+.mobile-app-root .screen-container p,
+.mobile-app-root .screen-container .mobile-eyebrow,
+.mobile-app-root .screen-container .gate-eyebrow,
+.mobile-app-root .screen-container .gate-title,
+.mobile-app-root .screen-container .gate-subtitle,
+.mobile-app-root .center-aligned h1,
+.mobile-app-root .center-aligned p {
+  text-align: center !important;
+}
+
 /* Standardized Inputs & Textareas (+2px: 17px) */
 .mobile-app-root input,
 .mobile-app-root textarea,
@@ -2670,6 +2686,13 @@ p.mobile-subtitle {
 .mobile-app-root .btn-next:active {
   transform: scale(0.985) !important;
   background: #008a7c !important;
+}
+
+.mobile-app-root .billing-pay-btn {
+  font-size: 14.5px !important;
+  padding: 12px 14px !important;
+  white-space: nowrap !important;
+  gap: 8px !important;
 }
 
 /* Hide decorative background illustrations on mobile view */

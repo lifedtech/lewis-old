@@ -16,8 +16,11 @@ export default function StreamlinedMirrorScreen() {
   const displayName = name || streamlinedRRO?.meta?.name || 'Friend'
 
   const handlePayAndUnlock = () => {
-    setProfileField('selectedPlan', 'streamlined_report')
-    setProfileField('planPrice', 349)
+    useLewisStore.setState({
+      flowMode: 'streamlined',
+      selectedPlan: 'streamlined_report',
+      planPrice: 349
+    })
     setScreen('billing')
   }
 

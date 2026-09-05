@@ -1,0 +1,25 @@
+- generic [ref=f1e2]:
+  - generic [ref=f1e28]:
+    - banner [ref=f1e167]:
+      - generic [ref=f1e168]:
+        - button "Go back to previous question" [ref=f1e169] [cursor=pointer]
+        - button "Go to Home" [ref=f1e172] [cursor=pointer]:
+          - generic [ref=f1e173]:
+            - img "Lewis" [ref=f1e174]
+            - generic [ref=f1e175]: Lewis
+      - button "Switch to Dark mode" [ref=f1e177] [cursor=pointer]:
+        - generic [ref=f1e181]: Dark
+    - navigation "Journey progress" [ref=f1e182]:
+      - generic [ref=f1e183]:
+        - generic [ref=f1e184]: Stage 1 · Life Context
+        - generic [ref=f1e185]: 6%
+    - main [ref=f1e190]:
+      - generic [ref=f1e192]:
+        - paragraph [ref=f1e193]: WELCOME TO LEWIS
+        - heading "Before we begin, are you 18 or older?" [level=1] [ref=f1e194]
+        - paragraph [ref=f1e195]: LEWIS is built and tested for adults.
+        - generic [ref=f1e196]:
+          - button "Yes, I am 18 or older" [ref=f1e197] [cursor=pointer]
+          - button "No, I am under 18" [ref=f1e198] [cursor=pointer]
+  - button "Contact Support" [ref=f1e200] [cursor=pointer]:
+    - generic [ref=f1e204]: Support

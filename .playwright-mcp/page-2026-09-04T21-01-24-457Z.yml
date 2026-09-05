@@ -1,0 +1,42 @@
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e6]:
+      - img "Lewis Motion Logo" [ref=e8]
+      - generic [ref=e15]: Lewis
+    - generic [ref=e17]: One moment
+    - generic [ref=e18]:
+      - generic [ref=e19]: Reading how you placed things
+      - generic [ref=e22]: Matching the Lifed catalogue to your pattern
+      - generic [ref=e25]: Building your page
+  - generic [ref=e28]:
+    - banner [ref=e29]:
+      - generic [ref=e30]:
+        - button "Go back to previous question" [ref=e31] [cursor=pointer]
+        - button "Go to Home" [ref=e34] [cursor=pointer]:
+          - generic [ref=e35]:
+            - img "Lewis" [ref=e36]
+            - generic [ref=e37]: Lewis
+      - button "Switch to Dark mode" [ref=e39] [cursor=pointer]:
+        - generic [ref=e43]: Dark
+    - navigation "Journey progress" [ref=e44]:
+      - generic [ref=e45]:
+        - generic [ref=e46]: Stage 1 · Life Context
+        - generic [ref=e47]: 6%
+    - main [ref=e52]:
+      - generic [ref=e55]:
+        - generic [ref=e57]:
+          - paragraph [ref=e58]: CHOOSE ONE
+          - heading "Life Stability Spectrum" [level=1] [ref=e59]
+          - paragraph [ref=e60]: Where does your life feel right now? Slide to indicate your baseline stability.
+        - generic [ref=e61]:
+          - generic [ref=e62]: In between
+          - generic [ref=e64]:
+            - generic [ref=e65]: 50%
+            - slider [ref=e69] [cursor=pointer]: "50"
+            - generic [ref=e70]:
+              - generic [ref=e71]: TURBULENT
+              - generic [ref=e72]: BALANCED
+              - generic [ref=e73]: STEADY
+        - button "Continue" [ref=e75] [cursor=pointer]
+  - button "Contact Support" [ref=e77] [cursor=pointer]:
+    - generic [ref=e81]: Support

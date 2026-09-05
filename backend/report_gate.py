@@ -9,19 +9,15 @@
 # Checks implemented (Rulebook v4.0 §17 and §24):
 #   Vocabulary firewall  — no instrument name, citation, internal label,
 #                          score vocabulary or draft language in the body,
-#                          which in v4.0 is pages 1 to 23. Research lives
-#                          only on pages 24 and 25.
+#                          which in v4.0 is pages 1 to 22. Research lives
+#                          only on pages 23 and 24.
 #   Punctuation          — zero em-dashes and en-dashes in the whole document.
 #   Bands                — only the four band words (plus "Not read").
 #   Required content     — season framing (p5), single-sitting limit (p10),
 #                          why-the-plan-is-small (p16), lapse guidance
-#                          (p17 and p22), privacy statement (p23),
-#                          non-clinical line (p1), how-to-read note (p25),
-#                          free anchor before the programs page (p17 < p21).
-#   Programs             — the removed caveat boxes never reappear, and the
-#                          lead-to-programs voice is used only when the
-#                          commerce cap is none.
-#   Structure and design — 25 pages in six parts behind cover and contents,
+#                          (p17 and p21), privacy statement (p22),
+#                          non-clinical line (p1), how-to-read note (p24).
+#   Structure and design — 24 pages in six parts behind cover and contents,
 #                          "N of M" eyebrows, running forward lines, the
 #                          required data graphics, placeholder chips.
 
@@ -30,9 +26,9 @@ import re
 EM_DASH = "—"
 EN_DASH = "–"
 
-PAGE_COUNT = 25
-BODY_PAGES = 23          # pages 1 to 23 carry no research
-APPENDIX_PAGES = (24, 25)
+PAGE_COUNT = 24
+BODY_PAGES = 22          # pages 1 to 22 carry no research
+APPENDIX_PAGES = (23, 24)
 
 ALLOWED_BANDS = {"Running on empty", "Under pressure", "Steady", "Strong", "Not read"}
 
@@ -56,16 +52,16 @@ for _n in (9, 10, 11, 12):
     PART_OF_PAGE[_n] = PARTS[2]
 for _n in (13, 14, 15):
     PART_OF_PAGE[_n] = PARTS[3]
-for _n in (16, 17, 18, 19, 20, 21):
+for _n in (16, 17, 18, 19, 20):
     PART_OF_PAGE[_n] = PARTS[4]
-for _n in (22, 23, 24, 25):
+for _n in (21, 22, 23, 24):
     PART_OF_PAGE[_n] = PARTS[5]
 
 NUMBERED_EYEBROWS = {
     13: "A closer look · 1 of 3", 14: "A closer look · 2 of 3", 15: "A closer look · 3 of 3",
-    16: "Your plan · 1 of 6", 17: "Your plan · 2 of 6", 18: "Your plan · 3 of 6",
-    19: "Your plan · 4 of 6", 20: "Your plan · 5 of 6", 21: "Your plan · 6 of 6",
-    24: "Appendix · 1 of 2", 25: "Appendix · 2 of 2",
+    16: "Your plan · 1 of 5", 17: "Your plan · 2 of 5", 18: "Your plan · 3 of 5",
+    19: "Your plan · 4 of 5", 20: "Your plan · 5 of 5",
+    23: "Appendix · 1 of 2", 24: "Appendix · 2 of 2",
 }
 
 # Case-sensitive firewall terms: instrument names and acronyms that must
@@ -105,18 +101,6 @@ CLINICAL_PATTERNS = [
 MANDATED_PHRASES = [
     "it does not diagnose, grade, or replace professional care",
     "it reads how life feels across nine areas and suggests what may fit",
-]
-
-# The caveat boxes v3.2 removed from the programs page. Their reappearance
-# means the page has drifted back to the old optional framing (§13.2).
-REMOVED_PROGRAM_BOXES = [
-    "what would not suit you right now",
-    "questions worth asking any host",
-    "the one question test",
-    "an honest word about fit",
-    "worth considering later",
-    "saved for later",
-    "what to check before booking",
 ]
 
 
@@ -173,7 +157,7 @@ def check_report(report: dict) -> list[str]:
 
     by_number = {p.get("number"): p for p in pages}
     if sorted(by_number) != list(range(1, PAGE_COUNT + 1)):
-        issues.append("pages are not numbered 1 to 25 exactly once")
+        issues.append(f"pages are not numbered 1 to {PAGE_COUNT} exactly once")
         return issues
 
     full_text = _page_text(report)
@@ -182,7 +166,7 @@ def check_report(report: dict) -> list[str]:
     if EN_DASH in full_text:
         issues.append("en-dash found in document")
 
-    # ---- Vocabulary firewall, pages 1 to 23 -------------------------------
+    # ---- Vocabulary firewall, pages 1 to 22 -------------------------------
     body_text = "\n".join(_page_text(by_number[n]) for n in range(1, BODY_PAGES + 1))
 
     for pattern in INSTRUMENT_PATTERNS:
@@ -228,49 +212,18 @@ def check_report(report: dict) -> list[str]:
         issues.append("why-the-plan-is-small box missing from page 16")
     if not page_has(17, "missing a day", "missing a night", "nothing to catch up on"):
         issues.append("lapse guidance missing from page 17")
-    if not page_has(22, "miss days", "missed day"):
-        issues.append("lapse guidance missing from page 22")
-    if not page_has(23, "never shared with an employer"):
-        issues.append("privacy statement missing from page 23")
-    if not page_has(25, "how to read any of this"):
+    if not page_has(21, "miss days", "missed day"):
+        issues.append("lapse guidance missing from page 21")
+    if not page_has(22, "never shared with an employer"):
+        issues.append("privacy statement missing from page 22")
+    if not page_has(24, "how to read any of this"):
         issues.append("how-to-read note missing from the appendix")
 
-    # ---- The free anchor comes before the programs page (invariant 6) ------
+    # ---- The free anchor is the plan (invariant 6) --------------------------
     if "practice" not in _block_types(by_number[17]):
         issues.append("the free anchor practice is missing from page 17")
     if "sevendays" not in _block_types(by_number[18]):
         issues.append("the seven day table is missing from page 18")
-
-    # ---- Programs (§13.2, §13.3) -------------------------------------------
-    p21 = by_number[21]
-    p21_text = _page_text(p21).lower()
-    for phrase in REMOVED_PROGRAM_BOXES:
-        if phrase in p21_text:
-            issues.append(f"removed caveat box back on page 21: {phrase}")
-
-    program_blocks = [b for b in _all_blocks(p21) if b.get("type") == "program"]
-    if len(program_blocks) > 2:
-        issues.append(f"page 21 shows {len(program_blocks)} programs, at most two are allowed")
-    for block in program_blocks:
-        if not block.get("image"):
-            issues.append(f"program card without a cover photograph: {block.get('title')!r}")
-        if not block.get("walkaway"):
-            issues.append(f"program card without a what-you-walk-away-with: {block.get('title')!r}")
-        if not block.get("why"):
-            issues.append(f"program card without fit reasoning: {block.get('title')!r}")
-        chips = block.get("chips") or []
-        if not chips:
-            issues.append(f"program card without placeholder chips: {block.get('title')!r}")
-        for chip in chips:
-            if not (chip.startswith("[") and chip.endswith("]")):
-                issues.append(f"program detail is not a placeholder chip: {chip!r}")
-    if "{{" in p21_text:
-        issues.append("merge token left on page 21")
-
-    has_case = any(b.get("type") == "programcase" for b in _all_blocks(p21))
-    has_cta = any(b.get("type") == "cta" for b in _all_blocks(p21))
-    if program_blocks and has_case != has_cta:
-        issues.append("page 21 must carry both the case for guided support and the call to action, or neither")
 
     # ---- Structure and the design gate (§24) ------------------------------
     for number, page in sorted(by_number.items()):
@@ -284,7 +237,7 @@ def check_report(report: dict) -> list[str]:
         expected_eyebrow = NUMBERED_EYEBROWS.get(number)
         if expected_eyebrow and page.get("eyebrow") != expected_eyebrow:
             issues.append(f"page {number} eyebrow is {page.get('eyebrow')!r}, expected {expected_eyebrow!r}")
-        wants_next = 3 <= number <= 24
+        wants_next = 3 <= number <= PAGE_COUNT - 1
         if wants_next and not page.get("next"):
             issues.append(f"page {number} has no forward line")
         if not wants_next and page.get("next"):
@@ -301,15 +254,15 @@ def check_report(report: dict) -> list[str]:
         issues.append("the where-you-are map is missing from page 5")
     if "connections" not in _block_types(by_number[9]):
         issues.append("the connections diagram is missing from page 9")
-    if "colophon" not in _block_types(by_number[25]):
-        issues.append("the colophon is missing from page 25")
+    if "colophon" not in _block_types(by_number[PAGE_COUNT]):
+        issues.append(f"the colophon is missing from page {PAGE_COUNT}")
 
     contents = next((b for b in _all_blocks(by_number[2]) if b.get("type") == "contents"), None)
     if contents:
         listed = {item["page"]: item["title"]
                   for part in contents["parts"] for item in part["items"]}
         if sorted(listed) != list(range(3, PAGE_COUNT + 1)):
-            issues.append("the contents page does not list pages 3 to 25 exactly once")
+            issues.append(f"the contents page does not list pages 3 to {PAGE_COUNT} exactly once")
         for number, title in listed.items():
             if by_number[number]["title"] != title:
                 issues.append(f"contents entry for page {number} does not match its page title")

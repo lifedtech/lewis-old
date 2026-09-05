@@ -31,11 +31,12 @@ export default function PaymentConfirmScreen() {
   const customerName = latestPaymentOrder?.name || storeName || ''
   const orderId = latestPaymentOrder?.orderId || latestPaymentOrder?.order_id || `ORD-${Date.now().toString(36).toUpperCase()}`
 
-  const isStreamlined = selectedPlan === 'streamlined_report' || planPrice === 349 || latestPaymentOrder?.plan === 'streamlined_report'
+  const flowMode = useLewisStore((s) => s.flowMode)
+  const isStreamlined = latestPaymentOrder?.plan === 'streamlined_report' || selectedPlan === 'streamlined_report' || (flowMode === 'streamlined' && selectedPlan !== 'personal_report' && latestPaymentOrder?.plan !== 'personal_report')
 
   const planName = isStreamlined
     ? 'Complete Insight Report (11-Section PDF)'
-    : 'Personal Insight Report (25-Page PDF)'
+    : 'Personal Insight Report (24-Page PDF)'
 
   const formattedAmount = (() => {
     if (latestPaymentOrder && typeof latestPaymentOrder.amount === 'number') {
@@ -344,37 +345,65 @@ export default function PaymentConfirmScreen() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
-              <motion.button
-                whileHover={{ scale: 1.015 }}
-                whileTap={{ scale: 0.985 }}
-                onClick={() => {
-                  if (typeof transitionToFullVersion === 'function') {
-                    transitionToFullVersion()
-                  } else {
-                    setScreen('stage1_0About')
-                  }
-                }}
-                className="btn-primary"
-                style={{
-                  width: '100%',
-                  padding: '14px 24px',
-                  fontSize: '15px',
-                  fontWeight: 700,
-                  borderRadius: '999px',
-                  background: '#00ae9d',
-                  color: '#ffffff',
-                  border: 'none',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
-                  fontFamily: NUNITO,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
-              >
-                <span>Would you like to try LEWIS Extended Version? →</span>
-              </motion.button>
+              {isStreamlined ? (
+                <motion.button
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  onClick={() => {
+                    if (typeof transitionToFullVersion === 'function') {
+                      transitionToFullVersion()
+                    } else {
+                      setScreen('stage1_0About')
+                    }
+                  }}
+                  className="btn-primary"
+                  style={{
+                    width: '100%',
+                    padding: '14px 24px',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    borderRadius: '999px',
+                    background: '#00ae9d',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
+                    fontFamily: NUNITO,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <span>Would you like to try LEWIS Extended Version? →</span>
+                </motion.button>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  onClick={() => setScreen('mirror')}
+                  className="btn-primary"
+                  style={{
+                    width: '100%',
+                    padding: '14px 24px',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    borderRadius: '999px',
+                    background: '#00ae9d',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
+                    fontFamily: NUNITO,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <span>Return to Reflection Mirror →</span>
+                </motion.button>
+              )}
 
               <button
                 type="button"

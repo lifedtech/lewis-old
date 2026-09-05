@@ -23,7 +23,7 @@ from typing import Annotated, Any, Dict, List, Optional, Union
 
 from fastapi import FastAPI, HTTPException, Request, Response, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel, Field, StringConstraints, EmailStr
 from dotenv import load_dotenv
 
@@ -1264,7 +1264,7 @@ def get_report_pdf_file_endpoint(report_id: Optional[str] = None, order_id: Opti
     """
     Direct PDF delivery for Lewis OS — same access pattern as the /html
     endpoints above. Serves each user's saved 12-page streamlined or
-    25-page full report (whichever they paid for), generating and
+    24-page full report (whichever they paid for), generating and
     persisting it once if it hasn't been saved yet.
     """
     from auth import get_report_by_uuid, get_order_by_id, get_report_pdf, save_report_pdf
@@ -1306,7 +1306,7 @@ def get_report_pdf_file_endpoint(report_id: Optional[str] = None, order_id: Opti
 @app.get("/assets/Lewis-Insight-Report.pdf")
 def get_static_insight_report_pdf():
     """
-    Public downloadable authentic 25-page Lewis Insight Report PDF file.
+    Public downloadable authentic 24-page Lewis Insight Report PDF file.
     """
     from pdf_generator import build_insight_report_pdf
     pdf_bytes = build_insight_report_pdf()
@@ -1356,6 +1356,7 @@ def resend_report_delivery(order_id: str, _: None = Depends(require_admin)):
         user_name=order.get("user_name"),
         report_uuid=order.get("report_uuid"),
         order_id=order_id,
+        force=True,
     )
     if not sent:
         raise HTTPException(status_code=502, detail="Send failed — check server logs (Brevo/PDF errors)")
@@ -1398,6 +1399,32 @@ def resend_review_invitation(order_id: str, _: None = Depends(require_admin)):
     if not sent:
         raise HTTPException(status_code=502, detail="Send failed — check server logs")
     return {"status": "success", "order_id": order_id, "user_email": order["user_email"]}
+
+
+@app.get("/admin/order-status/{order_id}")
+def get_order_delivery_status(order_id: str, _: None = Depends(require_admin)):
+    """
+    Query the email delivery status of an order for Lewis OS / Admin dashboard.
+    """
+    from auth import get_payment_order
+    order = get_payment_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail=f"No order found for {order_id}")
+    return {
+        "status": "success",
+        "order_id": order_id,
+        "payment_status": order.get("status"),
+        "user_email": order.get("user_email"),
+        "user_name": order.get("user_name"),
+        "report_uuid": order.get("report_uuid"),
+        "plan_id": order.get("plan_id"),
+        "confirmation_mail_sent": bool(order.get("confirmation_mail_sent")),
+        "confirmation_mail_sent_at": str(order.get("confirmation_mail_sent_at")) if order.get("confirmation_mail_sent_at") else None,
+        "report_mail_sent": bool(order.get("report_mail_sent")),
+        "report_mail_sent_at": str(order.get("report_mail_sent_at")) if order.get("report_mail_sent_at") else None,
+        "review_mail_sent": bool(order.get("review_mail_sent")),
+        "review_mail_sent_at": str(order.get("review_mail_sent_at")) if order.get("review_mail_sent_at") else None,
+    }
 
 
 # --- Q&A Dataset & Lewis OS Tabular / CSV Export Endpoints --------------------
