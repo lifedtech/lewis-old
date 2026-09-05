@@ -77,6 +77,34 @@ def test_alert_is_not_repeated_for_an_order_already_alerted(monkeypatch):
     assert sent_emails == [], "an order already alerted must not re-alert tech@ on every retry"
 
 
+def test_non_final_attempt_fails_quietly_without_alerting_tech(monkeypatch):
+    """mail_queue retries a failed report_delivery job before giving up;
+    only the last of those tries should page tech@, or a transient blip the
+    very next retry fixes would still trigger a false "manual send required"
+    alert. Applies to both report shapes — this path is shape-agnostic."""
+    store = _fake_order_store(monkeypatch)
+
+    sent_emails = []
+    monkeypatch.setattr(mailer, "send_email", lambda **kw: sent_emails.append(kw) or True)
+    monkeypatch.setattr(
+        pdf_generator, "build_report_pdf_for_plan",
+        lambda **kw: (_ for _ in ()).throw(RuntimeError("transient blip"))
+    )
+
+    result = mailer.send_report_delivery_email(
+        user_email="customer@example.com",
+        user_name="Jane Doe",
+        report_uuid="REP-1",
+        order_id="ORD-1",
+        plan_id="personal_report",
+        is_final_attempt=False,
+    )
+
+    assert result is False, "the attempt still failed and must report that"
+    assert sent_emails == [], "not the last attempt — must not page tech@ yet"
+    assert "report_alert_mail_sent" not in store["ORD-1"]
+
+
 def test_deferred_delivery_skips_an_order_already_marked_sent(monkeypatch):
     """The bug: the reconciliation loop and /admin/resend-report both funnel
     through deferred_report_delivery with no idempotency check, so a report

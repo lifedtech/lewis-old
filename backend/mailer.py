@@ -617,7 +617,8 @@ def send_report_delivery_email(
     report_uuid: Optional[str] = None,
     order_id: Optional[str] = None,
     report_data: Optional[Dict[str, Any]] = None,
-    plan_id: Optional[str] = None
+    plan_id: Optional[str] = None,
+    is_final_attempt: bool = True
 ) -> bool:
     """
     Send the completed Personal Wellbeing Insight Report to user email with attached PDF.
@@ -632,14 +633,27 @@ def send_report_delivery_email(
     goes out at all (see the except: below, which returns False so
     mail_queue's retry/backoff and the reconciliation loop pick it up again,
     instead of silently sending stale/generic content).
+
+    `is_final_attempt` gates the tech@ "manual verification needed" alert:
+    mail_queue retries a failed report_delivery job up to MAX_ATTEMPTS times
+    before giving up, so alerting on every one of those attempts would page
+    tech@ for blips the next retry quietly fixes. Only the caller that knows
+    this was the last attempt (mail_queue on exhaustion, or a direct
+    single-shot call like /admin/resend-report) should set this True. Applies
+    identically to both report shapes — full and streamlined both flow
+    through this one function.
     """
-    from pdf_generator import detect_report_shape
+    from pdf_generator import PLAN_SHAPE
 
     name = (user_name or "there").strip()
     rep_id = report_uuid or "LSR20260200"
     order_ref = order_id or "LS20260100"
     date_str = datetime.now(timezone.utc).strftime("%d %B %Y")
-    shape = detect_report_shape(report_data) or ("streamlined" if plan_id == "streamlined_report" else "full")
+    # plan_id (what was actually paid for) is the source of truth for the
+    # wording here, same as build_report_pdf_for_plan below — if the stored
+    # report doesn't actually match, that call raises instead of sending,
+    # so this label is never attached to the wrong PDF.
+    shape = PLAN_SHAPE.get(plan_id, "full")
     page_count_label = "12-page" if shape == "streamlined" else "24-page"
 
     # Resolve public production domain (filter out localhost)
@@ -662,7 +676,8 @@ def send_report_delivery_email(
             "Refusing to send report email for %s (order %s, plan %s): PDF generation failed: %s",
             rep_id, order_ref, plan_id, pdf_err, exc_info=True
         )
-        send_report_failure_alert(user_email, name, report_uuid, order_id, f"PDF generation failed: {pdf_err}")
+        if is_final_attempt:
+            send_report_failure_alert(user_email, name, report_uuid, order_id, f"PDF generation failed: {pdf_err}")
         return False
 
     if not pdf_bytes or len(pdf_bytes) < 10000:
@@ -670,10 +685,11 @@ def send_report_delivery_email(
             "Refusing to send report email for %s (order %s): generated PDF is missing or suspiciously "
             "small (%s bytes)", rep_id, order_ref, len(pdf_bytes) if pdf_bytes else 0
         )
-        send_report_failure_alert(
-            user_email, name, report_uuid, order_id,
-            f"generated PDF missing or too small ({len(pdf_bytes) if pdf_bytes else 0} bytes)"
-        )
+        if is_final_attempt:
+            send_report_failure_alert(
+                user_email, name, report_uuid, order_id,
+                f"generated PDF missing or too small ({len(pdf_bytes) if pdf_bytes else 0} bytes)"
+            )
         return False
 
     # Persist the generated PDF so it's retrievable later (Lewis OS, resend,
@@ -919,7 +935,7 @@ A Lifed Health Intelligence System
             logger.info("Scheduled 20-minute review invitation email for %s (delay=%ds)", user_email, review_delay)
         except Exception as rev_err:
             logger.warning("Could not queue review invitation email: %s", rev_err)
-    elif not sent:
+    elif not sent and is_final_attempt:
         send_report_failure_alert(user_email, name, report_uuid, order_id, "Brevo API send failed (see server logs)")
 
     return sent
@@ -1138,7 +1154,8 @@ def deferred_report_delivery(
     user_name: Optional[str] = None,
     report_uuid: Optional[str] = None,
     order_id: Optional[str] = None,
-    force: bool = False
+    force: bool = False,
+    is_final_attempt: bool = True
 ) -> bool:
     """
     Worker-side handler for a queued "report_delivery" job: fetch the report
@@ -1201,7 +1218,8 @@ def deferred_report_delivery(
         report_uuid=report_uuid,
         order_id=order_id,
         report_data=rep_json,
-        plan_id=plan_id
+        plan_id=plan_id,
+        is_final_attempt=is_final_attempt
     )
 
 

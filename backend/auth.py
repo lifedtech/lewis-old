@@ -367,6 +367,23 @@ def init_db():
                             ) THEN
                                 ALTER TABLE lewis_assessment_records ADD COLUMN report_html TEXT;
                             END IF;
+                            -- The upgrade-linkage bug: a streamlined (₹349) submission and a
+                            -- later full (₹749) submission from the same person each mint their
+                            -- own independent report_uuid via save_encrypted_assessment_record —
+                            -- nothing recorded that they're the same person's journey. Support
+                            -- had to manually reconcile two disconnected report_uuids per
+                            -- customer. linked_report_uuid points a new record at the most
+                            -- recent prior record for the same user_email_hash (set once, at
+                            -- save time — see save_encrypted_assessment_record). Each record
+                            -- still keeps its own independent report_json / report_uuid, so
+                            -- both reports remain independently sendable; this only adds
+                            -- traceability, it does not merge or overwrite either one.
+                            IF NOT EXISTS (
+                                SELECT 1 FROM information_schema.columns
+                                WHERE table_name='lewis_assessment_records' AND column_name='linked_report_uuid'
+                            ) THEN
+                                ALTER TABLE lewis_assessment_records ADD COLUMN linked_report_uuid TEXT;
+                            END IF;
                         END $$;
 
                         CREATE TABLE IF NOT EXISTS lewis_report_reviews (
@@ -486,7 +503,8 @@ def init_db():
                 duration_seconds INTEGER,
                 is_unlocked BOOLEAN DEFAULT 0,
                 unlocked_at TIMESTAMP,
-                paid_plan TEXT
+                paid_plan TEXT,
+                linked_report_uuid TEXT
             )
         """)
 
@@ -504,6 +522,9 @@ def init_db():
             # added it — every save silently failed (caught, logged, ignored)
             # on any DB whose table predates that INSERT change.
             "ALTER TABLE lewis_assessment_records ADD COLUMN report_html TEXT",
+            # See the matching PostgreSQL migration comment above (upgrade
+            # linkage) for why this column exists.
+            "ALTER TABLE lewis_assessment_records ADD COLUMN linked_report_uuid TEXT",
             "ALTER TABLE lewis_journey_sessions ADD COLUMN age_category TEXT",
             "ALTER TABLE lewis_journey_sessions ADD COLUMN gender TEXT",
         ):
@@ -1613,6 +1634,41 @@ def save_encrypted_assessment_record(
     email_enc = encrypt_pii(user_email) if user_email else None
     email_hash = blind_index_email(user_email) if user_email else None
 
+    # Upgrade linkage: a streamlined and a later full submission from the
+    # same person each get their own report_uuid (still true after this —
+    # both stay independently generatable/sendable), but nothing previously
+    # recorded that they're the same journey. Link the new record to the
+    # most recent prior one for this email hash, if any, so support can
+    # trace "this ₹749 report followed that ₹349 one" without two
+    # disconnected report_uuids.
+    linked_report_uuid = None
+    if email_hash:
+        try:
+            if has_pg and DATABASE_URL:
+                conn = get_pg_conn()
+                if conn:
+                    with conn.cursor() as cur:
+                        cur.execute(
+                            "SELECT report_uuid FROM lewis_assessment_records "
+                            "WHERE user_email_hash = %s ORDER BY completed_at DESC LIMIT 1",
+                            (email_hash,)
+                        )
+                        row = cur.fetchone()
+                        linked_report_uuid = row["report_uuid"] if row else None
+                    conn.close()
+            else:
+                lookup_conn = sqlite3.connect(DB_PATH)
+                lookup_conn.row_factory = sqlite3.Row
+                row = lookup_conn.execute(
+                    "SELECT report_uuid FROM lewis_assessment_records "
+                    "WHERE user_email_hash = ? ORDER BY completed_at DESC LIMIT 1",
+                    (email_hash,)
+                ).fetchone()
+                linked_report_uuid = row["report_uuid"] if row else None
+                lookup_conn.close()
+        except Exception as e:
+            logger.warning("Could not look up prior report for linkage: %s", e)
+
     scores = report_data.get("dimensions") or report_data.get("scores") or {}
     if not isinstance(scores, dict):
         # The streamlined RRO's "dimensions" is a list (score-per-area), not
@@ -1648,9 +1704,9 @@ def save_encrypted_assessment_record(
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO lewis_assessment_records
-                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, report_html, started_at, duration_seconds)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, report_html_str, started_at_iso, duration_seconds))
+                        (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, report_html, started_at, duration_seconds, linked_report_uuid)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, report_html_str, started_at_iso, duration_seconds, linked_report_uuid))
                     conn.commit()
                 conn.close()
                 saved_to_pg = True
@@ -1664,9 +1720,9 @@ def save_encrypted_assessment_record(
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO lewis_assessment_records
-                (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, report_html, started_at, duration_seconds)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, report_html_str, started_at_iso, duration_seconds))
+                (report_uuid, user_name_encrypted, user_email_encrypted, user_email_hash, age_category, gender, wellbeing_band, overall_score, report_json, answers_json, report_html, started_at, duration_seconds, linked_report_uuid)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (report_uuid, name_enc, email_enc, email_hash, age_category, gender, wellbeing_band, overall_score, report_json_str, answers_json_str, report_html_str, started_at_iso, duration_seconds, linked_report_uuid))
             conn.commit()
             conn.close()
             logger.info("Saved encrypted assessment record %s with HTML to SQLite", report_uuid)
@@ -2645,6 +2701,102 @@ def get_pending_review_deliveries(min_age_seconds: int = 1200) -> list:
                 "user_email": order.get("user_email"),
                 "user_name": order.get("user_name"),
                 "report_mail_sent_at": report_mail_sent_at,
+            })
+
+    return pending
+
+
+def get_pending_confirmation_deliveries(min_age_seconds: int = 60) -> list:
+    """
+    Retrieve paid orders whose payment-confirmation email has not gone out,
+    at least min_age_seconds after payment. The gap this closes: the
+    confirmation email only ever gets one immediate, unretried attempt
+    (mail_queue.enqueue with delay_seconds=0) — unlike report_delivery and
+    review_invitation, nothing was watching for it getting lost the same way
+    those two already are (a process restart mid-dispatch, a momentary Brevo
+    blip). No alert-gate here (contrast get_pending_report_deliveries): a
+    confirmation resend has no PDF-generation step that can permanently fail,
+    so there's no "needs a human" terminal state to protect against endless
+    retries — a bad address just keeps failing harmlessly and rarely.
+    """
+    pending = []
+    pg_queried = False
+
+    if has_pg and DATABASE_URL:
+        try:
+            conn = get_pg_conn()
+            if conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT order_id, payment_id, report_uuid, user_email, user_name,
+                               amount, currency, paid_at
+                        FROM lewis_payment_orders
+                        WHERE status = 'paid'
+                          AND user_email IS NOT NULL
+                          AND (confirmation_mail_sent IS FALSE OR confirmation_mail_sent IS NULL)
+                          AND paid_at <= NOW() - (%s || ' seconds')::interval
+                        ORDER BY paid_at ASC
+                        LIMIT 20;
+                    """, (str(min_age_seconds),))
+                    rows = cur.fetchall()
+                    for r in rows:
+                        pending.append(dict(r))
+                conn.close()
+                pg_queried = True
+                return pending
+        except Exception as e:
+            logger.warning("PostgreSQL pending confirmation deliveries query error: %s", e)
+
+    # Local SQLite fallback (used only when PostgreSQL is unreachable or in local dev)
+    if not pg_queried and DB_PATH and DB_PATH != ":memory:" and os.path.exists(DB_PATH):
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT order_id, payment_id, report_uuid, user_email, user_name,
+                       amount, currency, paid_at
+                FROM lewis_payment_orders
+                WHERE status = 'paid'
+                  AND user_email IS NOT NULL
+                  AND (confirmation_mail_sent = 0 OR confirmation_mail_sent IS NULL)
+                  AND datetime(paid_at) <= datetime('now', '-' || ? || ' seconds')
+                ORDER BY paid_at ASC
+                LIMIT 20;
+            """, (min_age_seconds,))
+            for r in cur.fetchall():
+                pending.append(dict(r))
+            conn.close()
+        except Exception as e:
+            logger.warning("SQLite pending confirmation deliveries query error: %s", e)
+
+    # In-memory fallback tier
+    seen = {p["order_id"] for p in pending}
+    cutoff = datetime.now(timezone.utc) - timedelta(seconds=min_age_seconds)
+    for order_id, order in IN_MEMORY_ORDERS.items():
+        if order_id in seen:
+            continue
+        if order.get("status") != "paid" or not order.get("user_email"):
+            continue
+        if order.get("confirmation_mail_sent"):
+            continue
+        paid_at = order.get("paid_at")
+        if not paid_at:
+            continue
+        try:
+            paid_at_dt = datetime.fromisoformat(paid_at)
+        except ValueError:
+            continue
+        if paid_at_dt <= cutoff:
+            pending.append({
+                "order_id": order_id,
+                "payment_id": order.get("payment_id"),
+                "report_uuid": order.get("report_uuid"),
+                "user_email": order.get("user_email"),
+                "user_name": order.get("user_name"),
+                "amount": order.get("amount"),
+                "currency": order.get("currency"),
+                "paid_at": paid_at,
             })
 
     return pending

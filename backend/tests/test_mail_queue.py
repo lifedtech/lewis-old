@@ -77,7 +77,11 @@ def test_enqueue_delayed_not_yet_due_stays_put(fake_redis):
 
 
 def test_failed_job_is_rescheduled_then_dead_lettered_after_max_attempts(fake_redis, monkeypatch):
-    monkeypatch.setattr(mail_queue, "_dispatch", lambda kind, payload: False)
+    seen_final_flags = []
+    monkeypatch.setattr(
+        mail_queue, "_dispatch",
+        lambda kind, payload, is_final_attempt=True: seen_final_flags.append(is_final_attempt) or False
+    )
 
     raw = json.dumps({"kind": "payment_confirmation", "payload": {}, "attempts": 0})
 
@@ -95,9 +99,13 @@ def test_failed_job_is_rescheduled_then_dead_lettered_after_max_attempts(fake_re
     assert len(dead) == 1
     assert json.loads(dead[0])["attempts"] == mail_queue.MAX_ATTEMPTS
 
+    # Only the very last attempt should be flagged final — earlier retries
+    # must not tell mailer.py to page tech@ for a blip the next try might fix.
+    assert seen_final_flags == [False] * (mail_queue.MAX_ATTEMPTS - 1) + [True]
+
 
 def test_successful_job_is_not_requeued(fake_redis, monkeypatch):
-    monkeypatch.setattr(mail_queue, "_dispatch", lambda kind, payload: True)
+    monkeypatch.setattr(mail_queue, "_dispatch", lambda kind, payload, is_final_attempt=True: True)
     raw = json.dumps({"kind": "support_notification", "payload": {}, "attempts": 0})
     mail_queue._handle_job(raw)
     assert not fake_redis.zsets.get(mail_queue.DELAYED_KEY)
@@ -111,8 +119,53 @@ def test_enqueue_falls_back_to_direct_send_when_redis_is_down(monkeypatch):
 
     monkeypatch.setattr(mail_queue, "_redis", BrokenRedis())
     calls = []
-    monkeypatch.setattr(mail_queue, "_dispatch", lambda kind, payload: calls.append((kind, payload)))
+    monkeypatch.setattr(
+        mail_queue, "_dispatch",
+        lambda kind, payload, is_final_attempt=True: calls.append((kind, payload, is_final_attempt)) or True
+    )
 
     mail_queue.enqueue("support_notification", {"x": 1})
     time.sleep(0.2)  # the fallback runs in a daemon thread
-    assert calls == [("support_notification", {"x": 1})]
+    # First of up to MAX_ATTEMPTS tries, so not yet the final one.
+    assert calls == [("support_notification", {"x": 1}, False)]
+
+
+def test_in_memory_fallback_retries_then_gives_up(monkeypatch):
+    """The gap this closes: with no Redis, enqueue() used to call _dispatch
+    once and drop the job on failure with no retry at all — a single Brevo
+    blip or momentary PDF error meant the customer's report was gone for
+    good. Applies to both report shapes, since both route through the same
+    "report_delivery" kind / _dispatch."""
+    monkeypatch.setattr(mail_queue, "_redis", None)
+
+    scheduled = []  # (delay, attempts) captured instead of really sleeping
+    monkeypatch.setattr(
+        mail_queue.threading, "Timer",
+        lambda delay, fn, args: scheduled.append((delay, args)) or _NoopTimer()
+    )
+
+    seen_final_flags = []
+    monkeypatch.setattr(
+        mail_queue, "_dispatch",
+        lambda kind, payload, is_final_attempt=True: seen_final_flags.append(is_final_attempt) or False
+    )
+
+    mail_queue.enqueue("report_delivery", {"order_id": "ORD-1"}, delay_seconds=300)
+    assert len(scheduled) == 1  # the original delayed dispatch, not yet a retry
+
+    # Simulate each Timer firing in turn, exactly as real retries would —
+    # each failing call schedules exactly one more, until the final attempt.
+    for _ in range(mail_queue.MAX_ATTEMPTS):
+        delay, args = scheduled.pop(0)
+        mail_queue._dispatch_with_retry(*args)
+
+    assert seen_final_flags == [False] * (mail_queue.MAX_ATTEMPTS - 1) + [True]
+    assert scheduled == []  # no further retry scheduled past the final attempt
+
+
+class _NoopTimer:
+    def __init__(self):
+        self.daemon = None
+
+    def start(self):
+        pass

@@ -222,9 +222,10 @@ def build_insight_report_pdf(
 
 def detect_report_shape(report_data: Optional[Dict[str, Any]]) -> Optional[str]:
     """
-    Which of the two report shapes `report_data` actually is, independent of
-    any (possibly wrong) plan_id label — 'full', 'streamlined', or None if
-    there's no usable data either way. See build_report_pdf_for_plan.
+    Which of the two report shapes `report_data` actually is — 'full',
+    'streamlined', or None if there's no usable data either way. See
+    build_report_pdf_for_plan, which uses this to VERIFY paid_plan against
+    the actual stored content rather than trust either one alone.
     """
     candidate = report_data.get("insight_report", report_data) if isinstance(report_data, dict) else None
     if isinstance(candidate, dict) and candidate.get("pages"):
@@ -232,6 +233,25 @@ def detect_report_shape(report_data: Optional[Dict[str, Any]]) -> Optional[str]:
     if isinstance(report_data, dict) and report_data.get("dimensions"):
         return "streamlined"
     return None
+
+
+# What a paying customer is owed for each plan they can actually pay for
+# (payment.py's PLAN_CATALOG) — ₹349 streamlined_report gets the 12-page
+# report, everything else (₹749 personal_report, essential, bundle,
+# transformation_bundle, and any legacy/unknown plan_id) gets the 24-page
+# full report. This is the money-to-content mapping and must not drift.
+PLAN_SHAPE = {"streamlined_report": "streamlined"}
+
+
+class ReportShapeMismatchError(RuntimeError):
+    """
+    Raised when the report actually stored for this report_uuid doesn't
+    match what the customer paid for. Refusing to send is the point: a
+    customer must never receive the wrong report for their plan, and a
+    mismatch here means the data is wrong somewhere upstream (e.g. an
+    upgrade that never regenerated the full report under this uuid) — that
+    needs a human, not a best-effort guess at send time.
+    """
 
 
 def build_report_pdf_for_plan(
@@ -248,33 +268,27 @@ def build_report_pdf_for_plan(
     falls back to generic/sample content — a real customer only ever
     receives a report built from their own submitted answers.
 
-    The two report shapes are structurally distinguishable (a streamlined
-    RRO has "dimensions" as a scored-area list and no "pages"/"insight_report"
-    key; a full report has "pages"), so real data is routed by its actual
-    shape first — plan_id decides only when there's no usable data either
-    way (then it just picks which "no data" error to raise). This is
-    deliberate: plan_id can drift out of sync with which assessment the
-    customer actually completed (client-side state bugs, coupon/admin
-    testing that bypasses the normal checkout form), and when that happens
-    we still have their real report — better to serve it correctly than to
-    trust a mislabeled tag and refuse a report we could actually send.
+    plan_id — what the customer actually paid for — is the source of truth
+    for which shape gets sent. detect_report_shape() is used only to verify
+    the stored report_data actually matches that plan; a mismatch is refused
+    outright (ReportShapeMismatchError) rather than silently serving
+    whichever shape the content happens to be. Correctness of the money-to-
+    content mapping matters more than tolerating a drifted plan_id label.
     """
-    shape = detect_report_shape(report_data)
+    expected_shape = PLAN_SHAPE.get(plan_id, "full")
+    actual_shape = detect_report_shape(report_data)
 
-    if shape == "full":
-        return build_insight_report_pdf(
-            report_data=report_data, report_uuid=report_uuid, user_name=user_name,
-            order_id=order_id, allow_generic_fallback=False
-        )
-    if shape == "streamlined":
-        return build_streamlined_report_pdf(
-            rro=report_data, report_uuid=report_uuid, user_name=user_name,
-            order_id=order_id, allow_generic_fallback=False
+    if actual_shape is not None and actual_shape != expected_shape:
+        raise ReportShapeMismatchError(
+            f"order_id={order_id or '(none)'} report_uuid={report_uuid or '(none)'} paid for "
+            f"plan_id={plan_id!r} (expects a {expected_shape} report), but the stored report is "
+            f"{actual_shape}-shaped. Refusing to send the wrong report."
         )
 
-    # No usable data either way — plan_id just picks which "no real report
-    # data" error to raise (still refuses; still never sends anything generic).
-    if plan_id == "streamlined_report":
+    # actual_shape is None (no usable data either way) still routes by
+    # expected_shape below — allow_generic_fallback=False means it still
+    # refuses to send rather than substituting anything generic.
+    if expected_shape == "streamlined":
         return build_streamlined_report_pdf(
             rro=report_data, report_uuid=report_uuid, user_name=user_name,
             order_id=order_id, allow_generic_fallback=False
