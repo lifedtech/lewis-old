@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../store/useLewisStore.js'
+import { useDeviceViewport } from '../shared/hooks/useDeviceViewport.js'
 import LewisLogo from '../components/LewisLogo.jsx'
 import ThemeToggle from '../components/ThemeToggle.jsx'
 import LewisFooter from '../components/LewisFooter.jsx'
@@ -25,6 +26,8 @@ export default function PaymentConfirmScreen() {
     planPrice,
     transitionToFullVersion
   } = useLewisStore()
+
+  const { isMobile } = useDeviceViewport()
 
   const customerEmail = latestPaymentOrder?.email || storeEmail || 'your email'
   const customerPhone = latestPaymentOrder?.phone || storePhone || ''
@@ -87,17 +90,18 @@ export default function PaymentConfirmScreen() {
       {/* Screen Header (Stretched to outer corners) */}
       <header style={{
         width: '100%',
-        padding: 'clamp(14px, 2vh, 22px) clamp(16px, 3.5vw, 44px)',
+        padding: isMobile ? '12px 14px' : 'clamp(14px, 2vh, 22px) clamp(16px, 3.5vw, 44px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         boxSizing: 'border-box',
         position: 'relative',
         zIndex: 10,
+        gap: '8px',
       }}>
         <div
           onClick={() => setScreen('landing')}
-          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s ease' }}
+          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s ease', flexShrink: 0 }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
@@ -108,9 +112,9 @@ export default function PaymentConfirmScreen() {
           }}
           aria-label="Go to Landing Page"
         >
-          <LewisLogo size={32} showText={true} animated={false} />
+          <LewisLogo size={isMobile ? 28 : 32} showText={true} animated={false} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '6px' : '10px', flexShrink: 0 }}>
           <ThemeToggle />
           {!hasSubmittedFeedback && (
             <motion.button
@@ -121,17 +125,19 @@ export default function PaymentConfirmScreen() {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                height: '34px',
-                padding: '0 14px',
+                gap: '4px',
+                height: isMobile ? '30px' : '34px',
+                padding: isMobile ? '0 8px' : '0 14px',
                 borderRadius: '999px',
                 background: 'var(--raised, #ffffff)',
                 border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.45))',
                 color: 'var(--dawn, #00ae9d)',
                 fontFamily: NUNITO,
-                fontSize: '13px',
+                fontSize: isMobile ? '11.5px' : '13px',
                 fontWeight: 700,
                 cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
                 boxShadow: 'var(--shadow-soft, 0 2px 10px rgba(0, 174, 157, 0.1))',
                 transition: 'all 0.2s ease',
               }}
@@ -142,8 +148,8 @@ export default function PaymentConfirmScreen() {
                 e.currentTarget.style.borderColor = 'var(--panel-border, rgba(0, 174, 157, 0.45))'
               }}
             >
-              <span style={{ fontSize: '15px', color: 'var(--dawn, #00ae9d)' }}>★</span>
-              <span>Rate Experience</span>
+              <span style={{ fontSize: isMobile ? '13px' : '15px', color: 'var(--dawn, #00ae9d)' }}>★</span>
+              <span>{isMobile ? 'Rate' : 'Rate Experience'}</span>
             </motion.button>
           )}
 
@@ -155,17 +161,19 @@ export default function PaymentConfirmScreen() {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
-              height: '34px',
-              padding: '0 14px',
+              gap: '4px',
+              height: isMobile ? '30px' : '34px',
+              padding: isMobile ? '0 8px' : '0 14px',
               borderRadius: '999px',
               background: 'var(--raised, #ffffff)',
               border: '1.5px solid var(--panel-border, rgba(0, 174, 157, 0.45))',
               color: 'var(--dawn, #00ae9d)',
               fontFamily: NUNITO,
-              fontSize: '13px',
+              fontSize: isMobile ? '11.5px' : '13px',
               fontWeight: 700,
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
               boxShadow: 'var(--shadow-soft, 0 2px 10px rgba(0, 174, 157, 0.1))',
               transition: 'all 0.2s ease',
             }}
@@ -176,12 +184,12 @@ export default function PaymentConfirmScreen() {
               e.currentTarget.style.borderColor = 'var(--panel-border, rgba(0, 174, 157, 0.45))'
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
               <circle cx="12" cy="12" r="10" />
               <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-            <span>Support</span>
+            <span style={{ whiteSpace: 'nowrap' }}>Support</span>
           </motion.button>
         </div>
       </header>
@@ -482,41 +490,41 @@ export default function PaymentConfirmScreen() {
               <div style={{ width: '100%', height: '1px', background: 'var(--border-color, rgba(0, 174, 157, 0.16))', margin: '14px 0' }} />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
-                  <span>Order Reference ID</span>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--text-main, #414242)' }}>{orderId}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
+                  <span style={{ flexShrink: 0 }}>Order Reference ID</span>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--text-main, #414242)', textAlign: 'right', wordBreak: 'break-all' }}>{orderId}</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
-                  <span>Plan Purchased</span>
-                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>{planName}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
+                  <span style={{ flexShrink: 0 }}>Plan Purchased</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)', textAlign: 'right', wordBreak: 'break-word' }}>{planName}</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
-                  <span>Amount Paid</span>
-                  <span style={{ fontWeight: 800, color: 'var(--dawn, #00ae9d)', fontSize: '14.5px' }}>{formattedAmount}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
+                  <span style={{ flexShrink: 0 }}>Amount Paid</span>
+                  <span style={{ fontWeight: 800, color: 'var(--dawn, #00ae9d)', fontSize: '14.5px', textAlign: 'right' }}>{formattedAmount}</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
-                  <span>Delivery Email</span>
-                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>{customerEmail}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
+                  <span style={{ flexShrink: 0 }}>Delivery Email</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)', textAlign: 'right', wordBreak: 'break-all' }}>{customerEmail}</span>
                 </div>
 
                 {customerPhone && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
-                    <span>Mobile Number</span>
-                    <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>{customerPhone}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
+                    <span style={{ flexShrink: 0 }}>Mobile Number</span>
+                    <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)', textAlign: 'right' }}>{customerPhone}</span>
                   </div>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
-                  <span>Delivery Method</span>
-                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)' }}>Email PDF Attachment</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
+                  <span style={{ flexShrink: 0 }}>Delivery Method</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main, #414242)', textAlign: 'right' }}>Email PDF Attachment</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
-                  <span>Estimated Delivery</span>
-                  <span style={{ fontWeight: 700, color: 'var(--dawn, #008a7c)' }}>Within 5 to 10 Minutes</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', color: 'var(--text-sub, #64748b)' }}>
+                  <span style={{ flexShrink: 0 }}>Estimated Delivery</span>
+                  <span style={{ fontWeight: 700, color: 'var(--dawn, #008a7c)', textAlign: 'right' }}>Within 5 to 10 Minutes</span>
                 </div>
               </div>
             </div>
