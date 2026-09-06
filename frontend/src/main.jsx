@@ -2,6 +2,10 @@ import { StrictMode, Component } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import { initErrorTracker, captureFrontendError } from './lib/errorTracker'
+
+// Initialize global client-side error telemetry
+initErrorTracker()
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -15,6 +19,10 @@ class ErrorBoundary extends Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('Lewis Application Render Error:', error, errorInfo)
+    captureFrontendError(error, {
+      componentStack: errorInfo?.componentStack,
+      boundary: 'RootErrorBoundary',
+    }, 'critical')
   }
 
   handleReset = () => {

@@ -404,6 +404,35 @@ def init_db():
                         CREATE INDEX IF NOT EXISTS idx_report_review_email ON lewis_report_reviews (user_email);
                         CREATE INDEX IF NOT EXISTS idx_report_review_id ON lewis_report_reviews (review_id);
 
+                        CREATE TABLE IF NOT EXISTS lewis_error_logs (
+                            id TEXT PRIMARY KEY,
+                            fingerprint TEXT NOT NULL,
+                            level TEXT NOT NULL DEFAULT 'error',
+                            source TEXT NOT NULL DEFAULT 'backend',
+                            error_type TEXT NOT NULL,
+                            message TEXT NOT NULL,
+                            stack_trace TEXT,
+                            path TEXT,
+                            method TEXT,
+                            status_code INTEGER,
+                            user_identifier TEXT,
+                            ip_address TEXT,
+                            user_agent TEXT,
+                            context_data TEXT,
+                            status TEXT NOT NULL DEFAULT 'unresolved',
+                            occurrence_count INTEGER NOT NULL DEFAULT 1,
+                            resolution_notes TEXT,
+                            resolved_at TIMESTAMP WITH TIME ZONE,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                            last_seen_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                        );
+                        CREATE INDEX IF NOT EXISTS idx_error_logs_fingerprint_status ON lewis_error_logs (fingerprint, status);
+                        CREATE INDEX IF NOT EXISTS idx_error_logs_status ON lewis_error_logs (status);
+                        CREATE INDEX IF NOT EXISTS idx_error_logs_created_at ON lewis_error_logs (created_at);
+                        CREATE INDEX IF NOT EXISTS idx_error_logs_last_seen ON lewis_error_logs (last_seen_at);
+                        CREATE INDEX IF NOT EXISTS idx_error_logs_level ON lewis_error_logs (level);
+                        CREATE INDEX IF NOT EXISTS idx_error_logs_source ON lewis_error_logs (source);
+
                         -- All access to these tables goes through this backend's own
                         -- privileged connection (DATABASE_URL) or the Supabase service
                         -- key, both of which bypass RLS. Enabling it with no anon/
@@ -417,16 +446,13 @@ def init_db():
                         ALTER TABLE lewis_payment_orders ENABLE ROW LEVEL SECURITY;
                         ALTER TABLE lewis_system_counters ENABLE ROW LEVEL SECURITY;
                         ALTER TABLE lewis_report_reviews ENABLE ROW LEVEL SECURITY;
+                        ALTER TABLE lewis_error_logs ENABLE ROW LEVEL SECURITY;
                     """)
                     conn.commit()
                 conn.close()
                 logger.info("Supabase PostgreSQL tables initialized & ready.")
-                return
         except Exception as e:
             logger.warning("PostgreSQL table init encountered error (%s), using fallback.", e)
-
-    if USE_SUPABASE_REST:
-        return
 
     try:
         conn = sqlite3.connect(DB_PATH)
@@ -630,6 +656,37 @@ def init_db():
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lewis_error_logs (
+                id TEXT PRIMARY KEY,
+                fingerprint TEXT NOT NULL,
+                level TEXT NOT NULL DEFAULT 'error',
+                source TEXT NOT NULL DEFAULT 'backend',
+                error_type TEXT NOT NULL,
+                message TEXT NOT NULL,
+                stack_trace TEXT,
+                path TEXT,
+                method TEXT,
+                status_code INTEGER,
+                user_identifier TEXT,
+                ip_address TEXT,
+                user_agent TEXT,
+                context_data TEXT,
+                status TEXT NOT NULL DEFAULT 'unresolved',
+                occurrence_count INTEGER NOT NULL DEFAULT 1,
+                resolution_notes TEXT,
+                resolved_at TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_seen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_err_fingerprint_status ON lewis_error_logs (fingerprint, status)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_err_status ON lewis_error_logs (status)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_err_created_at ON lewis_error_logs (created_at)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_err_last_seen ON lewis_error_logs (last_seen_at)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_err_level ON lewis_error_logs (level)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_err_source ON lewis_error_logs (source)")
 
         for col_stmt in (
             "ALTER TABLE lewis_payment_orders ADD COLUMN user_name TEXT",

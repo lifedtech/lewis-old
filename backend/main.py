@@ -17,11 +17,12 @@
 import os
 import hmac
 import logging
+import traceback
 from contextlib import asynccontextmanager
 from datetime import date, datetime, timezone
 from typing import Annotated, Any, Dict, List, Optional, Union
 
-from fastapi import FastAPI, HTTPException, Request, Response, Header, Depends
+from fastapi import FastAPI, HTTPException, Request, Response, Header, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel, Field, StringConstraints, EmailStr
@@ -58,6 +59,10 @@ from auth import (
 from payment import (
     get_public_payment_config, create_order, verify_payment,
     verify_webhook_signature, process_webhook_event, validate_coupon,
+)
+from error_tracker import (
+    log_error, get_errors, get_error_by_id, update_error_status,
+    bulk_update_errors, delete_error, get_error_stats,
 )
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("lewis.api")
@@ -128,14 +133,33 @@ app.add_middleware(
     # "dev server moved and the app went blank" failures.
     allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
     allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Admin-Key", "Accept"],
 )
 
 
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
     logger.exception("Unhandled error on %s", request.url.path)
+    client_ip = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent")
+    try:
+        log_error(
+            level="critical" if isinstance(exc, (SystemError, MemoryError, RuntimeError)) else "error",
+            source="backend",
+            error_type=exc.__class__.__name__,
+            message=str(exc) or repr(exc),
+            stack_trace=traceback.format_exc(),
+            path=str(request.url.path),
+            method=request.method,
+            status_code=500,
+            ip_address=client_ip,
+            user_agent=user_agent,
+            context_data={"query_params": dict(request.query_params)}
+        )
+    except Exception as db_err:
+        logger.error("Failed to log unhandled exception to DB: %s", db_err)
+
     return JSONResponse(
         status_code=500,
         content={"detail": "Something went wrong on our side. Your answers were not stored."},
@@ -321,6 +345,30 @@ class VerifyPaymentInput(BaseModel):
     email: Optional[ShortText] = None
     name: Optional[ShortText] = None
     phone: Optional[ShortText] = None
+
+
+class ErrorLogInput(BaseModel):
+    level: Optional[str] = Field(default="error", max_length=20)
+    source: Optional[str] = Field(default="frontend", max_length=50)
+    error_type: Optional[str] = Field(default="Error", max_length=100)
+    message: str = Field(..., min_length=1, max_length=4000)
+    stack_trace: Optional[str] = Field(default=None, max_length=15000)
+    path: Optional[str] = Field(default=None, max_length=500)
+    method: Optional[str] = Field(default=None, max_length=10)
+    status_code: Optional[int] = None
+    user_identifier: Optional[str] = Field(default=None, max_length=150)
+    context_data: Optional[Dict[str, Any]] = None
+
+
+class UpdateErrorStatusInput(BaseModel):
+    status: str = Field(..., min_length=1, max_length=30)
+    resolution_notes: Optional[str] = Field(default=None, max_length=2000)
+
+
+class BulkUpdateErrorInput(BaseModel):
+    error_ids: List[str] = Field(..., min_length=1, max_length=200)
+    status: str = Field(..., min_length=1, max_length=30)
+    resolution_notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 # --- Endpoints -----------------------------------------------------------------
@@ -1633,6 +1681,135 @@ async def get_streamlined_report_html_endpoint(report_id: str):
     except Exception as exc:
         logger.error("Error rendering streamlined HTML report: %s", exc, exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to render HTML report")
+
+
+# --- Error Tracking & Issue Management for Lewis OS -----------------------------
+
+@app.post("/api/errors/log")
+@app.post("/errors/log")
+async def log_client_error(payload: ErrorLogInput, request: Request):
+    """
+    Public ingest endpoint for frontend / client-side error telemetry.
+    Captures React boundary crashes, unhandled rejections, and runtime exceptions.
+    """
+    client_ip = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent")
+    
+    rec = log_error(
+        level=payload.level or "error",
+        source=payload.source or "frontend",
+        error_type=payload.error_type or "Error",
+        message=payload.message,
+        stack_trace=payload.stack_trace,
+        path=payload.path or str(request.url.path),
+        method=payload.method or request.method,
+        status_code=payload.status_code,
+        user_identifier=payload.user_identifier,
+        ip_address=client_ip,
+        user_agent=user_agent,
+        context_data=payload.context_data
+    )
+    return {"status": "success", "error_id": rec.get("id"), "fingerprint": rec.get("fingerprint")}
+
+
+@app.get("/admin/errors")
+@app.get("/api/admin/errors")
+def list_errors_for_admin(
+    status: Optional[str] = Query(None, description="Filter by status (unresolved, investigating, resolved, ignored, all)"),
+    source: Optional[str] = Query(None, description="Filter by source (frontend, backend, payment, email, llm, all)"),
+    level: Optional[str] = Query(None, description="Filter by level (error, critical, warning, info, all)"),
+    search: Optional[str] = Query(None, description="Search in message, error type, or path"),
+    sort_by: str = Query("last_seen_at", description="Sort by created_at, last_seen_at, occurrence_count, level, status"),
+    sort_order: str = Query("desc", description="Sort direction (asc or desc)"),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    _: None = Depends(require_admin)
+):
+    """
+    Query errors with filtering, sorting, searching, and pagination for Lewis OS dashboard.
+    """
+    result = get_errors(
+        status=status,
+        source=source,
+        level=level,
+        search=search,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        limit=limit,
+        offset=offset
+    )
+    return {"status": "success", **result}
+
+
+@app.get("/admin/errors/stats")
+@app.get("/api/admin/errors/stats")
+def get_error_metrics(_: None = Depends(require_admin)):
+    """
+    Get summary statistics and counts for Lewis OS monitoring widgets.
+    """
+    stats = get_error_stats()
+    return {"status": "success", "stats": stats}
+
+
+@app.get("/admin/errors/{error_id}")
+@app.get("/api/admin/errors/{error_id}")
+def get_error_details(error_id: str, _: None = Depends(require_admin)):
+    """
+    Get full error report details including stack trace and metadata.
+    """
+    rec = get_error_by_id(error_id)
+    if not rec:
+        raise HTTPException(status_code=404, detail=f"Error log '{error_id}' not found.")
+    return {"status": "success", "error": rec}
+
+
+@app.patch("/admin/errors/{error_id}")
+@app.patch("/api/admin/errors/{error_id}")
+def update_error(error_id: str, payload: UpdateErrorStatusInput, _: None = Depends(require_admin)):
+    """
+    Update error triage status (unresolved, investigating, resolved, ignored) and notes in Lewis OS.
+    """
+    try:
+        updated = update_error_status(
+            error_id=error_id,
+            status=payload.status,
+            resolution_notes=payload.resolution_notes
+        )
+        if not updated:
+            raise HTTPException(status_code=404, detail=f"Error log '{error_id}' not found.")
+        return {"status": "success", "error": updated}
+    except ValueError as val_err:
+        raise HTTPException(status_code=422, detail=str(val_err))
+
+
+@app.post("/admin/errors/bulk")
+@app.post("/api/admin/errors/bulk")
+def bulk_update_error_records(payload: BulkUpdateErrorInput, _: None = Depends(require_admin)):
+    """
+    Bulk update multiple error statuses simultaneously from Lewis OS.
+    """
+    try:
+        updated_count = bulk_update_errors(
+            error_ids=payload.error_ids,
+            status=payload.status,
+            resolution_notes=payload.resolution_notes
+        )
+        return {"status": "success", "updated_count": updated_count}
+    except ValueError as val_err:
+        raise HTTPException(status_code=422, detail=str(val_err))
+
+
+@app.delete("/admin/errors/{error_id}")
+@app.delete("/api/admin/errors/{error_id}")
+def delete_error_record(error_id: str, _: None = Depends(require_admin)):
+    """
+    Delete an error log entry.
+    """
+    success = delete_error(error_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"Error log '{error_id}' not found.")
+    return {"status": "success", "deleted_id": error_id}
+
 
 
 
