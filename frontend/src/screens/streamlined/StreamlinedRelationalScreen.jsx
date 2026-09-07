@@ -156,6 +156,8 @@ export default function StreamlinedRelationalScreen() {
                     key={ctx}
                     type="button"
                     onClick={() => handleSelectContext(ctx)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '12px 20px',
                       borderRadius: '100px',
@@ -256,6 +258,8 @@ export default function StreamlinedRelationalScreen() {
                     key={opt.val}
                     type="button"
                     onClick={() => handleSelectScale(opt.val)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '14px 20px',
                       borderRadius: '16px',
@@ -287,9 +291,12 @@ export default function StreamlinedRelationalScreen() {
             <button
               type="button"
               onClick={handleBack}
+              className="nav-prev-btn btn-ghost"
               style={{
                 background: 'transparent',
+                backgroundColor: 'transparent',
                 border: 'none',
+                boxShadow: 'none',
                 color: 'var(--text-mute, #9ca3af)',
                 fontSize: '13px',
                 fontFamily: "'Nunito', sans-serif",

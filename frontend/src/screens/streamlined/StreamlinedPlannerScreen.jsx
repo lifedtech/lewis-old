@@ -91,6 +91,8 @@ export default function StreamlinedPlannerScreen() {
               key={opt}
               type="button"
               onClick={() => handleSelect(opt)}
+              className={`option-pill ${isSelected ? 'selected active' : ''}`}
+              aria-pressed={isSelected}
               style={{
                 padding: '14px 22px',
                 borderRadius: '16px',

@@ -122,6 +122,8 @@ export default function StreamlinedPressuresScreen() {
               key={p}
               type="button"
               onClick={() => handleToggle(p)}
+              className={`option-pill ${isSelected ? 'selected active' : ''}`}
+              aria-pressed={isSelected}
               style={{
                 padding: '10px 20px',
                 borderRadius: '100px',
@@ -146,6 +148,7 @@ export default function StreamlinedPressuresScreen() {
         <button
           type="button"
           onClick={handleNext}
+          className="btn-primary"
           style={{
             padding: '12px 36px',
             borderRadius: '100px',

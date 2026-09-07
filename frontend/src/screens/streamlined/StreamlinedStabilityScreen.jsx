@@ -277,6 +277,7 @@ export default function StreamlinedStabilityScreen() {
         <button
           type="button"
           onClick={handleNext}
+          className="btn-primary"
           style={{
             padding: '12px 36px',
             borderRadius: '100px',

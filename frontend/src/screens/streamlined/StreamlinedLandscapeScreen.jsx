@@ -172,8 +172,8 @@ export default function StreamlinedLandscapeScreen() {
           marginBottom: isMobile ? '12px' : '24px',
           padding: isMobile ? '10px 8px' : '16px',
           borderRadius: isMobile ? '16px' : '20px',
-          background: 'var(--card-bg, rgba(255, 255, 255, 0.7))',
-          border: '1px solid var(--card-border, #e5e7eb)',
+          background: 'var(--raised, rgba(255, 255, 255, 0.7))',
+          border: '1px solid var(--border-color, #e5e7eb)',
           boxShadow: 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
           touchAction: 'none',
         }}>
@@ -184,7 +184,7 @@ export default function StreamlinedLandscapeScreen() {
                 key={card}
                 drag
                 dragSnapToOrigin={true}
-                whileDrag={{ scale: 1.14, zIndex: 1000, boxShadow: '0 12px 28px rgba(0, 0, 0, 0.25)' }}
+                whileDrag={{ scale: 1.14, zIndex: 1000, boxShadow: '0 12px 28px rgba(0, 0, 0, 0.35)' }}
                 onDrag={handleDrag}
                 onDragEnd={(e, info) => handleDragEnd(e, info, card)}
                 onClick={() => setSelectedCard(isSelected ? null : card)}
@@ -193,15 +193,16 @@ export default function StreamlinedLandscapeScreen() {
                   borderRadius: '100px',
                   fontSize: isMobile ? '11.5px' : '13px',
                   fontFamily: "'Nunito', sans-serif",
-                  fontWeight: 600,
-                  border: isSelected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--card-border, #cbd5e1)',
-                  background: isSelected ? 'var(--dawn, #00ae9d)' : '#ffffff',
+                  fontWeight: isSelected ? 700 : 600,
+                  border: isSelected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--border-strong, #cbd5e1)',
+                  background: isSelected ? 'var(--dawn, #00ae9d)' : 'var(--card-bg, #ffffff)',
                   color: isSelected ? '#ffffff' : 'var(--text-main, #414242)',
                   cursor: 'grab',
                   userSelect: 'none',
                   touchAction: 'none',
                   WebkitTapHighlightColor: 'transparent',
-                  boxShadow: isSelected ? '0 2px 8px rgba(0, 174, 157, 0.3)' : '0 1px 4px rgba(0,0,0,0.04)',
+                  boxShadow: isSelected ? '0 0 0 1.5px var(--dawn, #00ae9d), 0 4px 14px rgba(0, 174, 157, 0.35)' : 'var(--card-shadow, 0 1px 4px rgba(0,0,0,0.08))',
+                  transition: 'background 0.15s ease, color 0.15s ease, border-color 0.15s ease',
                 }}
               >
                 {card}
@@ -379,11 +380,11 @@ export default function StreamlinedLandscapeScreen() {
                       fontSize: isMobile ? '10px' : '12px',
                       fontFamily: "'Nunito', sans-serif",
                       fontWeight: 600,
-                      background: '#ffffff',
-                      border: '1px solid var(--card-border, #e5e7eb)',
+                      background: 'var(--card-bg, #ffffff)',
+                      border: '1px solid var(--border-strong, #e5e7eb)',
                       color: 'var(--text-main, #414242)',
                       cursor: 'grab',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                      boxShadow: 'var(--card-shadow, 0 1px 4px rgba(0,0,0,0.08))',
                       userSelect: 'none',
                       touchAction: 'none',
                       WebkitTapHighlightColor: 'transparent',
@@ -400,7 +401,7 @@ export default function StreamlinedLandscapeScreen() {
                     title="Drag to another category, or tap to remove"
                   >
                     <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{card}</span>
-                    <span style={{ marginLeft: '2px', opacity: 0.45, flexShrink: 0 }}>✕</span>
+                    <span style={{ marginLeft: '2px', opacity: 0.6, flexShrink: 0 }}>✕</span>
                   </motion.div>
                 ))}
               </div>
@@ -414,6 +415,7 @@ export default function StreamlinedLandscapeScreen() {
         <button
           type="button"
           onClick={handleNext}
+          className="btn-primary"
           style={{
             padding: '12px 38px',
             borderRadius: '100px',

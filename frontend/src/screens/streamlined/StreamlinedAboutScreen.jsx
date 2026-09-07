@@ -157,6 +157,8 @@ export default function StreamlinedAboutScreen() {
                   key={band}
                   type="button"
                   onClick={() => setProfileField('ageCategory', band)}
+                  className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                  aria-pressed={isSelected}
                   style={{
                     padding: '8px 18px',
                     borderRadius: '24px',
@@ -207,6 +209,8 @@ export default function StreamlinedAboutScreen() {
                     setProfileField('sexAtBirth', opt)
                     setProfileField('gender', opt)
                   }}
+                  className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                  aria-pressed={isSelected}
                   style={{
                     padding: '8px 18px',
                     borderRadius: '24px',
@@ -234,6 +238,7 @@ export default function StreamlinedAboutScreen() {
             type="button"
             onClick={handleNext}
             disabled={!name.trim()}
+            className="btn-primary"
             style={{
               padding: '12px 36px',
               borderRadius: '100px',

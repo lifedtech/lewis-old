@@ -201,6 +201,8 @@ export default function StreamlinedMeaningScreen() {
                   key={opt.label}
                   type="button"
                   onClick={() => handleSelect(opt.val)}
+                  className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                  aria-pressed={isSelected}
                   style={{
                     padding: '13px 20px',
                     borderRadius: '16px',
@@ -234,9 +236,12 @@ export default function StreamlinedMeaningScreen() {
       <button
         type="button"
         onClick={handleBack}
+        className="nav-prev-btn btn-ghost"
         style={{
           background: 'transparent',
+          backgroundColor: 'transparent',
           border: 'none',
+          boxShadow: 'none',
           color: 'var(--text-mute, #9ca3af)',
           fontSize: '13px',
           fontFamily: "'Nunito', sans-serif",

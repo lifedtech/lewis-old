@@ -107,6 +107,7 @@ export default function StreamlinedGateScreen() {
         <button
           type="button"
           onClick={() => handleChoice(true)}
+          className="btn-primary"
           style={{
             width: isMobile ? '100%' : 'auto',
             padding: '14px 32px',

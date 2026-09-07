@@ -247,10 +247,14 @@ function LuxuryTensionSlider({ value, onChange }) {
       }}>
         <button
           type="button"
+          className="btn-ghost slider-edge-btn nav-prev-btn"
           onClick={() => onChange(0)}
           style={{
-            background: 'none',
+            background: 'transparent',
+            backgroundColor: 'transparent',
             border: 'none',
+            boxShadow: 'none',
+            outline: 'none',
             padding: '4px 0',
             fontSize: '12.5px',
             fontFamily: "'Nunito', sans-serif",
@@ -275,10 +279,14 @@ function LuxuryTensionSlider({ value, onChange }) {
 
         <button
           type="button"
+          className="btn-ghost slider-edge-btn nav-prev-btn"
           onClick={() => onChange(100)}
           style={{
-            background: 'none',
+            background: 'transparent',
+            backgroundColor: 'transparent',
             border: 'none',
+            boxShadow: 'none',
+            outline: 'none',
             padding: '4px 0',
             fontSize: '12.5px',
             fontFamily: "'Nunito', sans-serif",
@@ -415,6 +423,7 @@ export default function StreamlinedBreathingScreen() {
             <button
               type="button"
               onClick={handleStartBreath}
+              className="btn-primary"
               style={{
                 padding: '12px 38px',
                 borderRadius: '100px',
@@ -468,9 +477,12 @@ export default function StreamlinedBreathingScreen() {
             <button
               type="button"
               onClick={() => setPhase('after')}
+              className="nav-prev-btn skip-btn btn-ghost"
               style={{
                 background: 'transparent',
+                backgroundColor: 'transparent',
                 border: 'none',
+                boxShadow: 'none',
                 color: 'var(--text-mute, #9ca3af)',
                 fontSize: '13px',
                 fontFamily: "'Nunito', sans-serif",
@@ -517,6 +529,7 @@ export default function StreamlinedBreathingScreen() {
             <button
               type="button"
               onClick={handleFinish}
+              className="btn-primary"
               style={{
                 padding: '12px 38px',
                 borderRadius: '100px',

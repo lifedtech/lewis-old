@@ -267,21 +267,27 @@ export default function StreamlinedBodyMapScreen() {
               key={zone.id}
               type="button"
               onClick={() => handleToggle(zone.id)}
+              className={`option-pill ${selected ? 'selected active' : ''}`}
+              aria-pressed={selected}
               style={{
                 padding: '8px 18px',
                 borderRadius: '24px',
                 fontSize: '13px',
                 fontFamily: "'Nunito', sans-serif",
-                fontWeight: 600,
+                fontWeight: selected ? 700 : 600,
                 border: selected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--card-border, #e5e7eb)',
-                background: selected ? 'rgba(0, 174, 157, 0.08)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
+                background: selected ? 'rgba(0, 174, 157, 0.14)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
                 color: selected ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #414242)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                boxShadow: 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+                boxShadow: selected ? '0 0 0 1.5px var(--dawn, #00ae9d), 0 4px 14px rgba(0, 174, 157, 0.18)' : 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
               }}
             >
-              {zone.label}
+              {selected && <span style={{ fontSize: '12px', lineHeight: 1 }}>✓</span>}
+              <span>{zone.label}</span>
             </button>
           )
         })}
@@ -292,21 +298,27 @@ export default function StreamlinedBodyMapScreen() {
         <button
           type="button"
           onClick={() => handleToggle('none')}
+          className={`option-pill ${isNoneSelected ? 'selected active' : ''}`}
+          aria-pressed={isNoneSelected}
           style={{
             padding: '8px 18px',
             borderRadius: '24px',
             fontSize: '13px',
             fontFamily: "'Nunito', sans-serif",
-            fontWeight: 600,
+            fontWeight: isNoneSelected ? 700 : 600,
             border: isNoneSelected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--card-border, #e5e7eb)',
-            background: isNoneSelected ? 'rgba(0, 174, 157, 0.08)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
+            background: isNoneSelected ? 'rgba(0, 174, 157, 0.14)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
             color: isNoneSelected ? 'var(--dawn, #00ae9d)' : 'var(--text-sub, #657370)',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
-            boxShadow: 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+            boxShadow: isNoneSelected ? '0 0 0 1.5px var(--dawn, #00ae9d), 0 4px 14px rgba(0, 174, 157, 0.18)' : 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
           }}
         >
-          Nothing feels tense right now
+          {isNoneSelected && <span style={{ fontSize: '12px', lineHeight: 1 }}>✓</span>}
+          <span>Nothing feels tense right now</span>
         </button>
       </div>
 
@@ -315,6 +327,7 @@ export default function StreamlinedBodyMapScreen() {
         <button
           type="button"
           onClick={handleNext}
+          className="btn-primary"
           style={{
             padding: '12px 38px',
             borderRadius: '100px',

@@ -250,6 +250,9 @@ export default function Stage1_13BodyRhythmScreen() {
                     <button
                       key={opt}
                       onClick={() => handleSelect(currentQ.key, opt)}
+                      className={`choice-card ${active ? 'selected active' : ''}`}
+                      aria-pressed={active}
+                      data-selected={active}
                       style={{
                         display: 'flex',
                         alignItems: 'center',

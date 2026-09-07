@@ -179,15 +179,18 @@ export default function StreamlinedRhythmScreen() {
                             key={lvl.val}
                             type="button"
                             onClick={() => handlePeriodChange(period, lvl.val)}
+                            className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                            aria-pressed={isSelected}
+                            data-selected={isSelected}
                             style={{
                               width: '100%',
                               padding: '8px 0',
                               borderRadius: '100px',
                               fontSize: '12px',
                               fontFamily: "'Nunito', sans-serif",
-                              fontWeight: 600,
+                              fontWeight: isSelected ? 800 : 600,
                               border: isSelected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--card-border, #e5e7eb)',
-                              background: isSelected ? 'var(--dawn, #00ae9d)' : '#ffffff',
+                              background: isSelected ? 'var(--dawn, #00ae9d)' : 'transparent',
                               color: isSelected ? '#ffffff' : 'var(--text-main, #414242)',
                               cursor: 'pointer',
                               transition: 'all 0.15s ease',
@@ -213,6 +216,7 @@ export default function StreamlinedRhythmScreen() {
                 setProfileField('energyArcPattern', arcMap)
                 setStep(1)
               }}
+              className="btn-primary"
               style={{
                 padding: '12px 38px',
                 borderRadius: '100px',
@@ -300,6 +304,8 @@ export default function StreamlinedRhythmScreen() {
                     key={opt}
                     type="button"
                     onClick={() => handleSelectSleepOnset(opt)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '14px 22px',
                       borderRadius: '16px',
@@ -390,6 +396,8 @@ export default function StreamlinedRhythmScreen() {
                     key={opt}
                     type="button"
                     onClick={() => handleSelectStressResponse(opt)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '14px 22px',
                       borderRadius: '16px',
@@ -424,9 +432,12 @@ export default function StreamlinedRhythmScreen() {
       <button
         type="button"
         onClick={handleBack}
+        className="nav-prev-btn btn-ghost"
         style={{
           background: 'transparent',
+          backgroundColor: 'transparent',
           border: 'none',
+          boxShadow: 'none',
           color: 'var(--text-mute, #9ca3af)',
           fontSize: '13px',
           fontFamily: "'Nunito', sans-serif",

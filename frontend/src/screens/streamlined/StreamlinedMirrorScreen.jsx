@@ -241,6 +241,7 @@ export default function StreamlinedMirrorScreen() {
           <button
             type="button"
             onClick={handlePayAndUnlock}
+            className="btn-primary"
             style={{
               width: '100%',
               padding: '13px 20px',

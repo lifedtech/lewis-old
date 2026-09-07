@@ -195,18 +195,21 @@ export default function Stage8_1EnergyArcScreen() {
                           whileHover={{ y: -1 }}
                           whileTap={{ scale: 0.96 }}
                           onClick={() => updateObjectField('energyArc', tod.key, level)}
+                          className={`option-pill ${selected ? 'selected active' : ''}`}
+                          aria-pressed={selected}
+                          data-selected={selected}
                           style={{
                             padding: '6px 14px',
                             borderRadius: '10px',
                             border: selected ? '1.5px solid var(--dawn, #00ae9d)' : '1.5px solid var(--border-color, #d2e7e0)',
                             background: selected ? 'var(--dawn, #00ae9d)' : 'var(--panel, #f2f9f6)',
-                            color: selected ? 'var(--action-text, #ffffff)' : 'var(--text-main, #414242)',
+                            color: selected ? '#ffffff' : 'var(--text-main, #414242)',
                             fontFamily: "'Nunito', sans-serif",
-                            fontWeight: selected ? 700 : 600,
+                            fontWeight: selected ? 800 : 600,
                             fontSize: '12.5px',
                             cursor: 'pointer',
                             transition: 'all 0.18s ease',
-                            boxShadow: selected ? '0 2px 8px rgba(0,174,157,0.22)' : 'none',
+                            boxShadow: selected ? '0 2px 10px rgba(0,174,157,0.35)' : 'none',
                             outline: 'none',
                           }}
                         >

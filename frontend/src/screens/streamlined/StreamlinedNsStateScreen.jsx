@@ -110,6 +110,8 @@ export default function StreamlinedNsStateScreen() {
               key={card.id}
               type="button"
               onClick={() => handleSelect(card.id)}
+              className={`choice-card ${isSelected ? 'selected active' : ''}`}
+              aria-pressed={isSelected}
               style={{
                 display: 'flex',
                 flexDirection: 'column',

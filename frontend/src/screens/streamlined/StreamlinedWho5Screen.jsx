@@ -106,6 +106,8 @@ export default function StreamlinedWho5Screen() {
                   key={opt.val}
                   type="button"
                   onClick={() => handleSelect(opt.val)}
+                  className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                  aria-pressed={isSelected}
                   style={{
                     padding: '12px 20px',
                     borderRadius: '16px',

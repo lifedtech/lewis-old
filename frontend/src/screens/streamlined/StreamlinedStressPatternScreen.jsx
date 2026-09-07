@@ -116,6 +116,8 @@ export default function StreamlinedStressPatternScreen() {
               key={item.id}
               type="button"
               onClick={() => handleSelect(item.id)}
+              className={`choice-card ${isSelected ? 'selected active' : ''}`}
+              aria-pressed={isSelected}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -197,9 +199,12 @@ export default function StreamlinedStressPatternScreen() {
       <button
         type="button"
         onClick={handleBack}
+        className="nav-prev-btn btn-ghost"
         style={{
           background: 'transparent',
+          backgroundColor: 'transparent',
           border: 'none',
+          boxShadow: 'none',
           color: 'var(--text-mute, #9ca3af)',
           fontSize: '13px',
           fontFamily: "'Nunito', sans-serif",

@@ -311,38 +311,42 @@ export default function StreamlinedDeepDivesScreen() {
                     key={flag}
                     type="button"
                     onClick={() => handleToggleFlag(flag)}
+                    className={`flag-choice-card option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       display: 'flex',
+                      flexDirection: 'row',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       padding: '14px 18px',
                       borderRadius: '16px',
-                      fontSize: '13.5px',
+                      fontSize: '14px',
                       fontFamily: "'Nunito', sans-serif",
-                      fontWeight: 600,
+                      fontWeight: isSelected ? 700 : 600,
                       border: isSelected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--card-border, #e5e7eb)',
-                      background: isSelected ? 'rgba(0, 174, 157, 0.08)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
+                      background: isSelected ? 'rgba(0, 174, 157, 0.12)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
                       color: isSelected ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #414242)',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
                       textAlign: 'left',
-                      boxShadow: 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+                      boxShadow: isSelected ? '0 0 0 1.5px var(--dawn, #00ae9d), 0 4px 14px rgba(0, 174, 157, 0.18)' : 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+                      boxSizing: 'border-box',
                     }}
                   >
-                    <span>{flag}</span>
+                    <span style={{ textAlign: 'left', flex: 1, paddingRight: '12px', lineHeight: 1.35 }}>{flag}</span>
                     <span style={{
-                      width: '18px',
-                      height: '18px',
+                      width: '20px',
+                      height: '20px',
                       borderRadius: '50%',
-                      border: isSelected ? 'none' : '1.5px solid #cbd5e1',
+                      border: isSelected ? '2px solid var(--dawn, #00ae9d)' : '2px solid var(--border-strong, #cbd5e1)',
                       background: isSelected ? 'var(--dawn, #00ae9d)' : 'transparent',
                       color: '#ffffff',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '11px',
+                      fontWeight: 800,
                       flexShrink: 0,
-                      marginLeft: '10px',
                     }}>
                       {isSelected ? '✓' : ''}
                     </span>
@@ -355,6 +359,7 @@ export default function StreamlinedDeepDivesScreen() {
             <button
               type="button"
               onClick={() => setSubStep(1)}
+              className="btn-primary"
               style={{
                 padding: '12px 38px',
                 borderRadius: '100px',
@@ -439,22 +444,29 @@ export default function StreamlinedDeepDivesScreen() {
                     key={opt}
                     type="button"
                     onClick={() => handleSelectTraj(opt)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '13px 20px',
                       borderRadius: '16px',
                       fontSize: '14px',
                       fontFamily: "'Nunito', sans-serif",
-                      fontWeight: 600,
+                      fontWeight: isSelected ? 700 : 600,
                       border: isSelected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--card-border, #e5e7eb)',
-                      background: isSelected ? 'rgba(0, 174, 157, 0.08)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
+                      background: isSelected ? 'rgba(0, 174, 157, 0.14)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
                       color: isSelected ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #414242)',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
-                      boxShadow: 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+                      boxShadow: isSelected ? '0 0 0 1.5px var(--dawn, #00ae9d), 0 4px 14px rgba(0, 174, 157, 0.18)' : 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
                       textAlign: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
                     }}
                   >
-                    {opt}
+                    {isSelected && <span style={{ fontSize: '13px', lineHeight: 1 }}>✓</span>}
+                    <span>{opt}</span>
                   </button>
                 )
               })}
@@ -524,22 +536,29 @@ export default function StreamlinedDeepDivesScreen() {
                     key={opt}
                     type="button"
                     onClick={() => handleSelectFriction(opt)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '13px 20px',
                       borderRadius: '16px',
                       fontSize: '14px',
                       fontFamily: "'Nunito', sans-serif",
-                      fontWeight: 600,
+                      fontWeight: isSelected ? 700 : 600,
                       border: isSelected ? '1.5px solid var(--dawn, #00ae9d)' : '1px solid var(--card-border, #e5e7eb)',
-                      background: isSelected ? 'rgba(0, 174, 157, 0.08)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
+                      background: isSelected ? 'rgba(0, 174, 157, 0.14)' : 'var(--card-bg, rgba(255, 255, 255, 0.7))',
                       color: isSelected ? 'var(--dawn, #00ae9d)' : 'var(--text-main, #414242)',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
-                      boxShadow: 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
+                      boxShadow: isSelected ? '0 0 0 1.5px var(--dawn, #00ae9d), 0 4px 14px rgba(0, 174, 157, 0.18)' : 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
                       textAlign: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
                     }}
                   >
-                    {opt}
+                    {isSelected && <span style={{ fontSize: '13px', lineHeight: 1 }}>✓</span>}
+                    <span>{opt}</span>
                   </button>
                 )
               })}
@@ -552,9 +571,12 @@ export default function StreamlinedDeepDivesScreen() {
       <button
         type="button"
         onClick={handleBack}
+        className="nav-prev-btn btn-ghost"
         style={{
           background: 'transparent',
+          backgroundColor: 'transparent',
           border: 'none',
+          boxShadow: 'none',
           color: 'var(--text-mute, #9ca3af)',
           fontSize: '13px',
           fontFamily: "'Nunito', sans-serif",

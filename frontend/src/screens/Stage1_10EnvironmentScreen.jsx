@@ -166,6 +166,9 @@ export default function Stage1_10EnvironmentScreen() {
                   <button
                     key={opt}
                     onClick={() => handleSelect(opt)}
+                    className={`choice-card ${active ? 'selected active' : ''}`}
+                    aria-pressed={active}
+                    data-selected={active}
                     style={{
                       display: 'flex',
                       alignItems: 'center',

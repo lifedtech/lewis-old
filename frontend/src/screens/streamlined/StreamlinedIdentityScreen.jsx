@@ -210,6 +210,8 @@ export default function StreamlinedIdentityScreen() {
               key={tile.id}
               type="button"
               onClick={() => handleSelect(tile.id)}
+              className={`choice-card ${isSelected ? 'selected active' : ''}`}
+              aria-pressed={isSelected}
               style={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -297,6 +299,7 @@ export default function StreamlinedIdentityScreen() {
           <button
             type="button"
             onClick={handleNext}
+            className="btn-primary"
             style={{
               width: '100%',
               maxWidth: '340px',
@@ -329,6 +332,7 @@ export default function StreamlinedIdentityScreen() {
           <button
             type="button"
             onClick={handleNext}
+            className="btn-primary"
             style={{
               padding: '12px 38px',
               borderRadius: '100px',

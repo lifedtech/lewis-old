@@ -124,6 +124,7 @@ export default function StreamlinedWelcomeScreen() {
       <button
         type="button"
         onClick={handleBegin}
+        className="btn-primary"
         style={{
           padding: '14px 44px',
           borderRadius: '100px',

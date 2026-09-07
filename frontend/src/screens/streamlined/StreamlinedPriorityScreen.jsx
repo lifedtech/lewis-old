@@ -115,6 +115,8 @@ export default function StreamlinedPriorityScreen() {
               key={card}
               type="button"
               onClick={() => handleToggle(card)}
+              className={`option-pill ${isSelected ? 'selected active' : ''}`}
+              aria-pressed={isSelected}
               style={{
                 padding: '14px 18px',
                 borderRadius: '16px',
@@ -147,6 +149,7 @@ export default function StreamlinedPriorityScreen() {
         <button
           type="button"
           onClick={handleNext}
+          className="btn-primary"
           style={{
             padding: '12px 38px',
             borderRadius: '100px',

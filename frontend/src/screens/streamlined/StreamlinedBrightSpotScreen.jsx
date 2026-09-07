@@ -135,6 +135,7 @@ export default function StreamlinedBrightSpotScreen() {
         <button
           type="button"
           onClick={handleNext}
+          className="btn-primary"
           style={{
             padding: '12px 38px',
             borderRadius: '100px',

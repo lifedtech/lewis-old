@@ -134,6 +134,8 @@ export default function StreamlinedBodyScreen() {
                     key={opt}
                     type="button"
                     onClick={() => handleSelectMovement(opt)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '14px 22px',
                       borderRadius: '16px',
@@ -233,6 +235,8 @@ export default function StreamlinedBodyScreen() {
                     key={opt}
                     type="button"
                     onClick={() => handleSelectSleep(opt)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '14px 22px',
                       borderRadius: '16px',
@@ -264,9 +268,12 @@ export default function StreamlinedBodyScreen() {
             <button
               type="button"
               onClick={handleBack}
+              className="nav-prev-btn btn-ghost"
               style={{
                 background: 'transparent',
+                backgroundColor: 'transparent',
                 border: 'none',
+                boxShadow: 'none',
                 color: 'var(--text-mute, #9ca3af)',
                 fontSize: '13px',
                 fontFamily: "'Nunito', sans-serif",

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLewisStore } from '../../store/useLewisStore.js'
 import { useDeviceViewport } from '../../shared/hooks/useDeviceViewport.js'
@@ -7,14 +7,15 @@ export default function StreamlinedAffectScreen() {
   const { affect, setAffect, setScreen } = useLewisStore()
   const { isMobile } = useDeviceViewport()
   const canvasRef = useRef(null)
+  const [isPointerDown, setIsPointerDown] = useState(false)
 
-  const handleCanvasClick = (e) => {
+  const updateCoordinates = (clientX, clientY) => {
     if (!canvasRef.current) return
     const rect = canvasRef.current.getBoundingClientRect()
     // Map to -1.0 to 1.0 based on center
-    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+    const x = ((clientX - rect.left) / rect.width) * 2 - 1
     // Y is inverted in DOM (0 is top), top is +1 (Activated)
-    const y = 1 - ((e.clientY - rect.top) / rect.height) * 2
+    const y = 1 - ((clientY - rect.top) / rect.height) * 2
 
     // Clamp
     const clampX = Math.max(-1, Math.min(1, x))
@@ -23,11 +24,41 @@ export default function StreamlinedAffectScreen() {
     setAffect(clampX, clampY)
   }
 
+  const handlePointerDown = (e) => {
+    setIsPointerDown(true)
+    updateCoordinates(e.clientX, e.clientY)
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId)
+    } catch {}
+  }
+
+  const handlePointerMove = (e) => {
+    if (!isPointerDown) return
+    updateCoordinates(e.clientX, e.clientY)
+  }
+
+  const handlePointerUp = (e) => {
+    setIsPointerDown(false)
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch {}
+  }
+
   const handleNext = () => {
     setScreen('sl_3_2BodyMap')
   }
 
   const hasSelected = affect?.x !== null && affect?.x !== undefined
+
+  const getActiveQuadrant = (x, y) => {
+    if (x === null || x === undefined || y === null || y === undefined) return null
+    if (x < 0 && y > 0) return { key: 'tense', label: 'Tense', mood: 'Unpleasant · High Energy', color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.16)', border: 'rgba(244, 63, 94, 0.45)' }
+    if (x >= 0 && y > 0) return { key: 'alert', label: 'Alert', mood: 'Pleasant · High Energy', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.16)', border: 'rgba(245, 158, 11, 0.45)' }
+    if (x < 0 && y <= 0) return { key: 'heavy', label: 'Heavy', mood: 'Unpleasant · Low Energy', color: '#6366f1', bg: 'rgba(99, 102, 241, 0.16)', border: 'rgba(99, 102, 241, 0.45)' }
+    return { key: 'serene', label: 'Serene', mood: 'Pleasant · Low Energy', color: '#10b981', bg: 'rgba(16, 185, 129, 0.16)', border: 'rgba(16, 185, 129, 0.45)' }
+  }
+
+  const activeQuad = hasSelected ? getActiveQuadrant(affect.x, affect.y) : null
 
   const getDotStyle = () => {
     if (!hasSelected) return { display: 'none' }
@@ -97,7 +128,7 @@ export default function StreamlinedAffectScreen() {
 
       {/* Subtitle */}
       <p style={{
-        margin: '0 auto 24px auto',
+        margin: '0 auto 20px auto',
         fontSize: isMobile ? '14px' : 'clamp(13px, 1.6vw, 16px)',
         color: 'var(--text-sub, #657370)',
         fontFamily: "'Nunito', sans-serif",
@@ -110,69 +141,77 @@ export default function StreamlinedAffectScreen() {
       {/* Affect Grid Canvas Wrapper */}
       <div style={{
         position: 'relative',
-        width: isMobile ? '80%' : '100%',
-        maxWidth: isMobile ? '265px' : '320px',
+        width: isMobile ? '82%' : '100%',
+        maxWidth: isMobile ? '275px' : '330px',
         aspectRatio: '1/1',
-        margin: isMobile ? '28px auto 36px auto' : '20px auto 32px auto',
+        margin: isMobile ? '28px auto 20px auto' : '24px auto 24px auto',
       }}>
         {/* Axis Labels */}
         <span style={{
           position: 'absolute',
-          top: '-24px',
+          top: '-26px',
           left: '50%',
           transform: 'translateX(-50%)',
-          fontSize: '11px',
-          color: 'var(--text-sub, #85918e)',
-          fontWeight: 700,
-          letterSpacing: '0.08em',
+          fontSize: '11.5px',
+          color: 'var(--text-main, #414242)',
+          fontWeight: 800,
+          letterSpacing: '0.12em',
           textTransform: 'uppercase',
           whiteSpace: 'nowrap',
           fontFamily: '"Nunito", sans-serif',
+          pointerEvents: 'none',
+          userSelect: 'none',
         }}>
           Activated
         </span>
         <span style={{
           position: 'absolute',
-          bottom: '-24px',
+          bottom: '-26px',
           left: '50%',
           transform: 'translateX(-50%)',
-          fontSize: '11px',
-          color: 'var(--text-sub, #85918e)',
-          fontWeight: 700,
-          letterSpacing: '0.08em',
+          fontSize: '11.5px',
+          color: 'var(--text-main, #414242)',
+          fontWeight: 800,
+          letterSpacing: '0.12em',
           textTransform: 'uppercase',
           whiteSpace: 'nowrap',
           fontFamily: '"Nunito", sans-serif',
+          pointerEvents: 'none',
+          userSelect: 'none',
         }}>
           Calm
         </span>
         <span style={{
           position: 'absolute',
           top: '50%',
-          left: isMobile ? '-18px' : '-32px',
+          left: isMobile ? '-22px' : '-34px',
           transform: 'translate(-50%, -50%) rotate(-90deg)',
-          fontSize: '10.5px',
-          color: 'var(--text-sub, #85918e)',
-          fontWeight: 700,
-          letterSpacing: '0.08em',
+          fontSize: '11px',
+          color: 'var(--text-main, #414242)',
+          fontWeight: 800,
+          letterSpacing: '0.12em',
           textTransform: 'uppercase',
           whiteSpace: 'nowrap',
           fontFamily: '"Nunito", sans-serif',
+          pointerEvents: 'none',
+          userSelect: 'none',
         }}>
           Unpleasant
         </span>
         <span style={{
           position: 'absolute',
           top: '50%',
-          right: isMobile ? '-18px' : '-32px',
+          right: isMobile ? '-22px' : '-34px',
           transform: 'translate(50%, -50%) rotate(90deg)',
-          fontSize: '10.5px',
-          color: 'var(--text-sub, #85918e)',
-          fontWeight: 700,
-          letterSpacing: '0.08em',
+          fontSize: '11px',
+          color: 'var(--text-main, #414242)',
+          fontWeight: 800,
+          letterSpacing: '0.12em',
           textTransform: 'uppercase',
           whiteSpace: 'nowrap',
           fontFamily: '"Nunito", sans-serif',
+          pointerEvents: 'none',
+          userSelect: 'none',
         }}>
           Pleasant
         </span>
@@ -180,34 +219,154 @@ export default function StreamlinedAffectScreen() {
         {/* The Grid Box */}
         <div
           ref={canvasRef}
-          onClick={handleCanvasClick}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          onClick={(e) => updateCoordinates(e.clientX, e.clientY)}
           style={{
             width: '100%',
             height: '100%',
             background: `
-              radial-gradient(circle at 20% 20%, rgba(214, 237, 234, 0.7) 0%, transparent 70%),
-              radial-gradient(circle at 80% 20%, rgba(230, 244, 208, 0.7) 0%, transparent 70%),
-              radial-gradient(circle at 20% 80%, rgba(214, 237, 234, 0.7) 0%, transparent 70%),
-              radial-gradient(circle at 80% 80%, rgba(230, 250, 242, 0.7) 0%, transparent 70%),
-              var(--card-bg, #f2f9f6)
+              radial-gradient(circle at 24% 24%, rgba(244, 63, 94, 0.28) 0%, rgba(244, 63, 94, 0.05) 54%, transparent 74%),
+              radial-gradient(circle at 76% 24%, rgba(245, 158, 11, 0.28) 0%, rgba(245, 158, 11, 0.05) 54%, transparent 74%),
+              radial-gradient(circle at 24% 76%, rgba(99, 102, 241, 0.28) 0%, rgba(99, 102, 241, 0.05) 54%, transparent 74%),
+              radial-gradient(circle at 76% 76%, rgba(16, 185, 129, 0.28) 0%, rgba(16, 185, 129, 0.05) 54%, transparent 74%),
+              var(--card-bg, #13201E)
             `,
-            border: '1.5px solid var(--card-border, #d2e7e0)',
+            border: '1.5px solid var(--border-strong, rgba(255, 255, 255, 0.15))',
             borderRadius: '24px',
             position: 'relative',
             cursor: 'crosshair',
             overflow: 'hidden',
-            boxShadow: 'var(--card-shadow, 0 8px 24px rgba(0, 174, 157, 0.08))',
+            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.22), 0 2px 10px rgba(0, 174, 157, 0.12)',
+            touchAction: 'none',
+            userSelect: 'none',
           }}
         >
           {/* Crosshair Lines */}
-          <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'var(--card-border, rgba(0, 0, 0, 0.08))' }} />
-          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'var(--card-border, rgba(0, 0, 0, 0.08))' }} />
+          <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '1px', background: 'var(--border-strong, rgba(255, 255, 255, 0.15))', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'var(--border-strong, rgba(255, 255, 255, 0.15))', pointerEvents: 'none' }} />
 
-          {/* Quadrant Corner Labels */}
-          <span style={{ position: 'absolute', top: '14px', left: '16px', fontSize: '11px', fontWeight: 700, color: 'var(--text-sub, #657370)', fontFamily: "'Nunito', sans-serif" }}>Tense</span>
-          <span style={{ position: 'absolute', top: '14px', right: '16px', fontSize: '11px', fontWeight: 700, color: 'var(--text-sub, #657370)', fontFamily: "'Nunito', sans-serif" }}>Alert</span>
-          <span style={{ position: 'absolute', bottom: '14px', left: '16px', fontSize: '11px', fontWeight: 700, color: 'var(--text-sub, #657370)', fontFamily: "'Nunito', sans-serif" }}>Heavy</span>
-          <span style={{ position: 'absolute', bottom: '14px', right: '16px', fontSize: '11px', fontWeight: 700, color: 'var(--text-sub, #657370)', fontFamily: "'Nunito', sans-serif" }}>Serene</span>
+          {/* Quadrant Badge: TENSE (Top-Left: Unpleasant + Activated) */}
+          <div style={{
+            position: 'absolute',
+            top: '12px',
+            left: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '3px 8px',
+            borderRadius: '10px',
+            background: 'rgba(244, 63, 94, 0.16)',
+            border: '1px solid rgba(244, 63, 94, 0.38)',
+            backdropFilter: 'blur(8px)',
+            pointerEvents: 'none',
+            userSelect: 'none',
+            boxShadow: activeQuad?.key === 'tense' ? '0 0 14px rgba(244, 63, 94, 0.5)' : 'none',
+            transition: 'all 0.2s ease',
+          }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f43f5e', flexShrink: 0 }} />
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 800,
+              fontFamily: "'Nunito', sans-serif",
+              color: 'var(--quad-tense-text, #fda4af)',
+              letterSpacing: '0.02em',
+            }}>
+              Tense
+            </span>
+          </div>
+
+          {/* Quadrant Badge: ALERT (Top-Right: Pleasant + Activated) */}
+          <div style={{
+            position: 'absolute',
+            top: '12px',
+            right: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '3px 8px',
+            borderRadius: '10px',
+            background: 'rgba(245, 158, 11, 0.16)',
+            border: '1px solid rgba(245, 158, 11, 0.38)',
+            backdropFilter: 'blur(8px)',
+            pointerEvents: 'none',
+            userSelect: 'none',
+            boxShadow: activeQuad?.key === 'alert' ? '0 0 14px rgba(245, 158, 11, 0.5)' : 'none',
+            transition: 'all 0.2s ease',
+          }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b', flexShrink: 0 }} />
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 800,
+              fontFamily: "'Nunito', sans-serif",
+              color: 'var(--quad-alert-text, #fde047)',
+              letterSpacing: '0.02em',
+            }}>
+              Alert
+            </span>
+          </div>
+
+          {/* Quadrant Badge: HEAVY (Bottom-Left: Unpleasant + Calm) */}
+          <div style={{
+            position: 'absolute',
+            bottom: '12px',
+            left: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '3px 8px',
+            borderRadius: '10px',
+            background: 'rgba(99, 102, 241, 0.16)',
+            border: '1px solid rgba(99, 102, 241, 0.38)',
+            backdropFilter: 'blur(8px)',
+            pointerEvents: 'none',
+            userSelect: 'none',
+            boxShadow: activeQuad?.key === 'heavy' ? '0 0 14px rgba(99, 102, 241, 0.5)' : 'none',
+            transition: 'all 0.2s ease',
+          }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6366f1', flexShrink: 0 }} />
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 800,
+              fontFamily: "'Nunito', sans-serif",
+              color: 'var(--quad-heavy-text, #c7d2fe)',
+              letterSpacing: '0.02em',
+            }}>
+              Heavy
+            </span>
+          </div>
+
+          {/* Quadrant Badge: SERENE (Bottom-Right: Pleasant + Calm) */}
+          <div style={{
+            position: 'absolute',
+            bottom: '12px',
+            right: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '3px 8px',
+            borderRadius: '10px',
+            background: 'rgba(16, 185, 129, 0.16)',
+            border: '1px solid rgba(16, 185, 129, 0.38)',
+            backdropFilter: 'blur(8px)',
+            pointerEvents: 'none',
+            userSelect: 'none',
+            boxShadow: activeQuad?.key === 'serene' ? '0 0 14px rgba(16, 185, 129, 0.5)' : 'none',
+            transition: 'all 0.2s ease',
+          }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', flexShrink: 0 }} />
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 800,
+              fontFamily: "'Nunito', sans-serif",
+              color: 'var(--quad-serene-text, #6ee7b7)',
+              letterSpacing: '0.02em',
+            }}>
+              Serene
+            </span>
+          </div>
 
           {/* Interactive Dot */}
           {hasSelected && (
@@ -218,11 +377,12 @@ export default function StreamlinedAffectScreen() {
                 position: 'absolute',
                 width: '26px',
                 height: '26px',
-                background: 'var(--dawn, #00ae9d)',
+                background: activeQuad?.color || 'var(--dawn, #00ae9d)',
                 border: '3px solid #ffffff',
                 borderRadius: '50%',
                 transform: 'translate(-50%, -50%)',
-                boxShadow: '0 4px 14px rgba(0, 174, 157, 0.35)',
+                boxShadow: `0 0 0 4px ${activeQuad ? activeQuad.color + '44' : 'rgba(0, 174, 157, 0.3)'}, 0 4px 14px rgba(0, 0, 0, 0.4)`,
+                pointerEvents: 'none',
                 ...getDotStyle(),
               }}
             />
@@ -231,11 +391,12 @@ export default function StreamlinedAffectScreen() {
       </div>
 
       {/* Continue Button */}
-      <div style={{ marginTop: '16px' }}>
+      <div style={{ marginTop: '8px' }}>
         <button
           type="button"
           onClick={handleNext}
           disabled={!hasSelected}
+          className="btn-primary"
           style={{
             padding: '12px 38px',
             borderRadius: '100px',

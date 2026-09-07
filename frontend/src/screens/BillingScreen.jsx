@@ -847,23 +847,24 @@ export default function BillingScreen() {
                   type="button"
                   onClick={handleApplyCoupon}
                   disabled={isValidatingCoupon}
-                  className="btn-apply-coupon"
+                  className="btn-primary btn-apply-coupon"
                   style={{
                     flexShrink: 0,
                     width: 'auto',
-                    padding: '9px 16px',
+                    padding: '9px 18px',
                     borderRadius: '10px',
-                    background: '#00ae9d',
+                    background: 'var(--dawn, #00ae9d)',
+                    backgroundColor: 'var(--dawn, #00ae9d)',
                     color: '#ffffff',
                     border: 'none',
                     fontSize: '13px',
-                    fontWeight: 700,
+                    fontWeight: 800,
                     fontFamily: NUNITO,
                     cursor: isValidatingCoupon ? 'wait' : 'pointer',
                     opacity: isValidatingCoupon ? 0.7 : 1,
                     whiteSpace: 'nowrap',
                     transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 8px rgba(0, 174, 157, 0.25)',
+                    boxShadow: '0 2px 10px rgba(0, 174, 157, 0.4)',
                     margin: 0,
                     minWidth: 'auto',
                     minHeight: 'auto',

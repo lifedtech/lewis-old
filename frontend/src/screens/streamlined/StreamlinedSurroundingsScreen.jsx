@@ -320,6 +320,8 @@ export default function StreamlinedSurroundingsScreen() {
                     key={num}
                     type="button"
                     onClick={() => handleSelectIns(num)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       gridColumn: isLast ? '1 / -1' : 'auto',
                       display: 'flex',
@@ -430,6 +432,8 @@ export default function StreamlinedSurroundingsScreen() {
                     key={opt}
                     type="button"
                     onClick={() => handleSelectNature(opt)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '13px 20px',
                       borderRadius: '16px',
@@ -513,6 +517,8 @@ export default function StreamlinedSurroundingsScreen() {
                     key={opt}
                     type="button"
                     onClick={() => handleSelectCulture(opt)}
+                    className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                    aria-pressed={isSelected}
                     style={{
                       padding: '13px 20px',
                       borderRadius: '16px',
@@ -541,9 +547,12 @@ export default function StreamlinedSurroundingsScreen() {
       <button
         type="button"
         onClick={handleBack}
+        className="nav-prev-btn btn-ghost"
         style={{
           background: 'transparent',
+          backgroundColor: 'transparent',
           border: 'none',
+          boxShadow: 'none',
           color: 'var(--text-mute, #9ca3af)',
           fontSize: '13px',
           fontFamily: "'Nunito', sans-serif",

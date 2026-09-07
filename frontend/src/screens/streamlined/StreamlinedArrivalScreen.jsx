@@ -104,6 +104,8 @@ export default function StreamlinedArrivalScreen() {
                   key={label}
                   type="button"
                   onClick={() => setProfileField('arrivalMood', idx)}
+                  className={`option-pill ${isSelected ? 'selected active' : ''}`}
+                  aria-pressed={isSelected}
                   style={{
                     padding: '8px 18px',
                     borderRadius: '24px',
@@ -171,6 +173,7 @@ export default function StreamlinedArrivalScreen() {
           <button
             type="button"
             onClick={handleNext}
+            className="btn-primary"
             style={{
               padding: '12px 36px',
               borderRadius: '100px',
