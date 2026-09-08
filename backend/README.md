@@ -1,52 +1,55 @@
-# LEWIS Backend
+# LEWIS Backend API & Worker Engine
 
-FastAPI server — exposes the LEWIS 9D scoring engine and AI narrative generation.
+FastAPI server providing psychometric scoring, deterministic & AI narrative generation, PDF rendering, asynchronous mail queue dispatch, payment gateway handling, live journey telemetry, and Lewis OS error triage.
 
-## Setup
+## Setup & Local Run
 
 ```bash
 cd backend
-python -m venv .venv
-.venv\Scripts\activate        # Windows
+python -m venv ..\.venv
+..\.venv\Scripts\activate        # Windows
 pip install -r requirements.txt
-```
-
-## Run
-
-```bash
 uvicorn main:app --reload --port 8000
 ```
 
-API docs available at http://127.0.0.1:8000/docs
+API interactive documentation is available at `http://127.0.0.1:8000/docs` in development mode.
 
-## Endpoints
+## Key Endpoints
 
-| Method | Path                     | Auth              | Description                        |
-|--------|--------------------------|-------------------|-------------------------------------|
-| GET    | `/`                      | none              | Health check                       |
-| POST   | `/assessment/full`       | optional (Bearer) | Full 9D score + AI narrative; persists a de-identified copy if authenticated |
-| POST   | `/pulse/calculate`       | none              | Quick WHO-5 pulse check            |
-| POST   | `/auth/register`         | none              | Create account, returns session token |
-| POST   | `/auth/login`            | none              | Returns session token              |
-| POST   | `/auth/logout`           | Bearer            | Revokes the caller's session server-side |
-| GET    | `/auth/me`               | Bearer            | Caller's own profile               |
-| GET    | `/auth/assessments`      | Bearer            | Caller's own report vault          |
-| GET    | `/analytics/onboarding`  | `X-Internal-Key`  | Aggregate usage metrics for the Onboarding system integration only |
+| Category | Method | Path | Auth | Description |
+|---|---|---|---|---|
+| **Health** | `GET` | `/` | None | Health check & engine status |
+| **Assessments** | `POST` | `/assessment/full` | Optional Bearer | Full 9D score, W-matrix leverage & 25-page report |
+| | `POST` | `/assessment/streamlined` | Optional Bearer | Fast-track assessment scoring & RRO report |
+| | `POST` | `/pulse/calculate` | None | Rapid WHO-5 pulse calculation |
+| **Auth & Vault** | `POST` | `/auth/register` | None | Creates user account & session token |
+| | `POST` | `/auth/login` | None | Authenticates user & returns token |
+| | `POST` | `/auth/logout` | Bearer | Server-side session revocation |
+| | `GET` | `/auth/me` | Bearer | Caller's user profile |
+| | `GET` | `/auth/assessments` | Bearer | User's encrypted report vault |
+| **Payments** | `GET` | `/payment/config` | None | Public Razorpay / Stripe gateway settings |
+| | `POST` | `/payment/create-order` | None | Creates gateway checkout order |
+| | `POST` | `/payment/verify` | None | Verifies signature & unlocks report |
+| | `POST` | `/payment/webhook` | Webhook Sig | Gateway event webhook processor |
+| **Telemetry** | `POST` | `/journey/ping` | None | Live journey heartbeat & stage progress |
+| | `POST` | `/journey/complete` | None | Records completed assessment duration |
+| **PDF & Mail** | `GET` | `/report/pdf/:uuid` | Unlocked/Key | Serves compiled PDF report |
+| | `POST` | `/report/email-pdf` | None | Enqueues background email delivery of report |
+| **Observability**| `POST` | `/errors/log` | None | Ingests frontend & client error reports |
+| | `GET` | `/errors` | `X-Admin-Key` | Queries error log entries with filters |
+| | `GET` | `/errors/stats` | `X-Admin-Key` | Aggregated error counts, levels & trends |
 
-## Required production configuration
+## Key Modules
 
-See `.env.example` for the full list. In production (`ENVIRONMENT=production`) the app **refuses to start** without: `LEWIS_ANON_SALT`, and a real database backend (`DATABASE_URL`, or `SUPABASE_URL` + `SUPABASE_SERVICE_KEY`) — it will not silently fall back to the local SQLite dev store. `/docs`, `/redoc`, and `/openapi.json` are also disabled in production.
-
-## Security notes
-
-- Sessions are Bearer tokens stored client-side in `localStorage` and revocable via `POST /auth/logout` (server-side revocation; the client always clears its own local state too, even if that request fails). This is an **immediate fix**, not a full hardening — `localStorage` is still readable by any JS running on the page, so if an XSS vulnerability is ever introduced anywhere on the frontend, a token can still be exfiltrated (there just isn't a known XSS sink today). The **architectural** fix — `HttpOnly`/`Secure`/`SameSite` cookies plus CSRF protection — is a larger, deliberate follow-up: it touches every authenticated fetch call in the frontend, `CORSMiddleware`'s `allow_credentials` setting, and requires a CSRF token issuance/verification flow, and was intentionally not bundled into this pass to keep it reviewable and testable on its own.
-- Rate limiting is per-IP and in-memory (single process only — see `security.py`'s comments on the Redis migration path if this ever needs to scale to multiple instances/workers). The real client IP behind Railway/Render requires `LEWIS_TRUSTED_PROXY_IPS` to be set correctly — see `.env.example`.
-
-## Files
-
-| File          | Role                                              |
-|---------------|---------------------------------------------------|
-| `main.py`     | FastAPI app, route handlers, request/response models |
-| `scoring.py`  | WHO-5, PSS-10, UCLA-3, SQI, and 9D cascade engine |
-| `content.py`  | Habit prescription catalog and routing logic     |
-| `llm.py`      | Groq/OpenAI client — generates the AI narrative  |
+| Module | Description |
+|---|---|
+| `main.py` | FastAPI application, middleware routing, and exception handlers |
+| `scoring.py` | 9D scoring engine and W-matrix leverage resolution |
+| `scoring_streamlined.py` | Streamlined assessment state and RRO generator |
+| `insight_report.py` | Deterministic 25-page report JSON generator (v4.0 rulebook) |
+| `pdf_generator.py` | Headless Chromium / print-CSS PDF generation service |
+| `mail_queue.py` / `mailer.py` | Async background worker and email dispatch system |
+| `payment.py` | Multi-gateway payment handling (Razorpay & Stripe) |
+| `error_tracker.py` | Error logging, DB persistence, and triage management |
+| `crypto_vault.py` | AES-256-GCM encrypted storage for sensitive records |
+| `auth.py` | Session management, Supabase/SQLite dual database layer |
