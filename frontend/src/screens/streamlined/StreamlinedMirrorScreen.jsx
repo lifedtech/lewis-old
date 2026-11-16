@@ -277,7 +277,7 @@ export default function StreamlinedMirrorScreen() {
           boxShadow: 'var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.04))',
         }}>
           {/* Header row: Badge + Tag */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', width: '100%', marginBottom: '10px' }}>
             <span style={{
               fontSize: '11px',
               fontFamily: "'Nunito', sans-serif",
@@ -290,17 +290,6 @@ export default function StreamlinedMirrorScreen() {
               borderRadius: '100px',
             }}>
               WANT EVEN DEEPER?
-            </span>
-            <span style={{
-              fontSize: '12px',
-              fontFamily: "'Nunito', sans-serif",
-              fontWeight: 800,
-              color: 'var(--dawn, #00ae9d)',
-              background: 'rgba(0, 174, 157, 0.08)',
-              padding: '2px 8px',
-              borderRadius: '6px',
-            }}>
-              FREE
             </span>
           </div>
 
