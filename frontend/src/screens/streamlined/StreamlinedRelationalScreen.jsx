@@ -286,30 +286,6 @@ export default function StreamlinedRelationalScreen() {
                 )
               })}
             </div>
-
-            {/* Back button */}
-            <button
-              type="button"
-              onClick={handleBack}
-              className="nav-prev-btn btn-ghost"
-              style={{
-                background: 'transparent',
-                backgroundColor: 'transparent',
-                border: 'none',
-                boxShadow: 'none',
-                color: 'var(--text-mute, #9ca3af)',
-                fontSize: '13px',
-                fontFamily: "'Nunito', sans-serif",
-                fontWeight: 600,
-                cursor: 'pointer',
-                padding: '8px 16px',
-                transition: 'color 0.2s ease',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--dawn, #00ae9d)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-mute, #9ca3af)')}
-            >
-              ← Previous
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
