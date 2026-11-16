@@ -138,6 +138,8 @@ export default function StreamlinedWelcomeScreen() {
           cursor: 'pointer',
           boxShadow: '0 4px 14px rgba(0, 174, 157, 0.25)',
           transition: 'all 0.2s ease',
+          alignSelf: 'center',
+          margin: '0 auto',
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
         onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
