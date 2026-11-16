@@ -6,6 +6,15 @@
   ],
   "scripts": {
     "build": "npm --prefix frontend run build",
-    "deploy": "npx wrangler deploy"
-  }
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.124.0"
+  },
+  "trustedDependencies": [
+    "prisma",
+    "@prisma/client",
+    "@prisma/engines",
+    "esbuild"
+  ]
 }
