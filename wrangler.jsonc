@@ -1,6 +1,6 @@
 {
   "$schema": "frontend/node_modules/wrangler/config-schema.json",
-  "name": "lewis",
+  "name": "lewis-old",
   "main": "frontend/src/worker/index.ts",
   "compatibility_date": "2026-07-25",
   "compatibility_flags": ["nodejs_compat"],
